@@ -1,0 +1,196 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Identity;
+@using pepeizqs_deals_web.Data;
+
+@inject UserManager<Usuario> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+<style>
+    .caja-diseño {
+        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+        border: 2px solid var(--fondoOscuro);
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        border-radius: 5px;
+    }
+</style>
+
+@if (usuario != null)
+{
+    <div class="caja-diseño" style="padding: 40px;">
+        <div style="margin-bottom: 20px;">
+            <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword1", "Account")</label>
+            <input value="@contraseñaActual" @onchange="@(e => CambiarActualContraseña(e))" type="password" class="entrada-texto" autocomplete="current-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword2", "Account")" />
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword3", "Account")</label>
+            <input value="@contraseñaNueva1" @onchange="@(e => CambiarNuevaContraseña1(e))" type="password" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword4", "Account")" />
+
+            @if (string.IsNullOrEmpty(mensajeAviso1) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeAviso1
+                </div>
+            }
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword5", "Account")</label>
+            <input value="@contraseñaNueva2" @onchange="@(e => CambiarNuevaContraseña2(e))" type="password" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword6", "Account")" />
+
+            @if (string.IsNullOrEmpty(mensajeAviso2) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeAviso2
+                </div>
+            }
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <button @onclick="ClickearCambiarContraseña" class="boton-pequeño" style="font-size: 18px; width: fit-content; padding: 12px 20px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword7", "Account")
+            </button>
+
+            @if (string.IsNullOrEmpty(mensajeExito) == false)
+            {
+                <div class="alert alert-success alert-dismissible" style="margin-bottom: 0px;" role="alert">
+                    @mensajeExito
+                </div>
+            }
+
+            @if (string.IsNullOrEmpty(mensajeError) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px;" role="alert">
+                    @mensajeError
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    private Usuario usuario = new Usuario();
+
+    private string contraseñaActual = string.Empty;
+    private string contraseñaNueva1 = string.Empty;
+    private string contraseñaNueva2 = string.Empty;
+
+    private string mensajeAviso1 = string.Empty;
+    private string mensajeAviso2 = string.Empty;
+
+    private string mensajeExito = string.Empty;
+    private string mensajeError = string.Empty;
+
+    protected override async void OnInitialized()
+    {
+        usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    private void CambiarActualContraseña(ChangeEventArgs texto)
+    {
+        contraseñaActual = texto.Value.ToString();
+    }
+
+    private void CambiarNuevaContraseña1(ChangeEventArgs texto)
+    {
+        contraseñaNueva1 = texto.Value.ToString();
+
+        if (contraseñaNueva1.Length > 0 && contraseñaNueva1.Length < 6)
+        {
+            mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword8", "Account");
+        }
+        else if (contraseñaNueva1.Length > 5)
+        {
+            if (contraseñaNueva1.Any(char.IsDigit) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword9", "Account");
+            }
+            else if (contraseñaNueva1.Any(char.IsUpper) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword10", "Account");
+            }
+            else if (contraseñaNueva1.Any(char.IsLetterOrDigit) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword11", "Account");
+            }
+            else
+            {
+                mensajeAviso1 = null;
+            }
+        }
+        else
+        {
+            mensajeAviso1 = null;
+        }
+
+        if (contraseñaNueva2.Length > 0)
+        {
+            if (contraseñaNueva1 == contraseñaNueva2)
+            {
+                mensajeAviso2 = null;
+            }
+        }
+    }
+
+    private void CambiarNuevaContraseña2(ChangeEventArgs texto)
+    {
+        contraseñaNueva2 = texto.Value.ToString();
+
+        if (contraseñaNueva1.Length > 5)
+        {
+            if (contraseñaNueva1 == contraseñaNueva2)
+            {
+                mensajeAviso2 = null;
+            }
+            else
+            {
+                mensajeAviso2 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword12", "Account");
+            }
+        }
+        else
+        {
+            mensajeAviso2 = null;
+        }
+    }
+
+    private async void ClickearCambiarContraseña()
+    {
+        mensajeExito = null;
+        mensajeError = null;
+
+        if (contraseñaNueva1.Length > 5 && contraseñaNueva2.Length > 5 && string.IsNullOrEmpty(mensajeAviso1) == true && string.IsNullOrEmpty(mensajeAviso2) == true)
+        {
+            bool resultado1 = await UserManager.CheckPasswordAsync(usuario, contraseñaActual);
+
+            if (resultado1 == false)
+            {
+                mensajeError = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword13", "Account");
+            }
+            else
+            {
+                IdentityResult resultado2 = UserManager.ChangePasswordAsync(usuario, contraseñaActual, contraseñaNueva1).Result;
+
+                if (resultado2.Succeeded == true)
+                {
+                    mensajeExito = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword14", "Account");
+                    Herramientas.Correos.EnviarCambioContraseña(idioma, usuario.Email);
+                }
+                else
+                {
+                    mensajeError = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword15", "Account");
+
+                    foreach (var error in resultado2.Errors)
+                    {
+                        mensajeError = error.Description;
+                    }
+                }
+            }           
+        }
+    }
+}

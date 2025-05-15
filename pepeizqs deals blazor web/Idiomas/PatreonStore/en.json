@@ -1,0 +1,16 @@
+{
+  "Title": "Store",
+  "String1": "you have {0} Pepe Coins to spend",
+  "String2": "Available Games",
+  "String3": "Historical",
+  "Daily": "Daily Entry",
+  "Buy2": "Got",
+  "Buy": "Are you sure you want to get {0}?",
+  "Yes": "Yes",
+  "No": "No",
+  "Close": "Close",
+  "Redeem": "Redeem on Steam",
+  "Poor": "You do not have enough Pepe Coins to get {0}.",
+  "Problem": "All of these games come from Humble Bundle and Fanatical bundles, but if you have any problems with the key, send me an email to admin@pepeizqdeals.com so I can return the Pepe Coins you spend.",
+  "Limit": "You have reached the limit of 30 Pepe Coins in the account, if you spend Pepe Coins in any game you will earn coins again each day."
+}

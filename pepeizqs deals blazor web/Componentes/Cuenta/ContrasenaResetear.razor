@@ -1,0 +1,187 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.WebUtilities;
+@using pepeizqs_deals_web.Data;
+@using System.Text;
+
+@inject UserManager<Usuario> UserManager
+
+<style>
+    .caja-diseño {
+        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+        border: 2px solid var(--fondoOscuro);
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        border-radius: 5px;
+    }
+</style>
+
+@if (codigo != null)
+{
+    <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
+        <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ResetPassword")</div>
+
+        <hr>
+
+        <div class="row">
+            <div style="display: flex; flex-direction: column;">
+                <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "ResetPassword")</label>
+                <input value="@correo" @onchange="@(e => CambiarCorreo(e))" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+
+                <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "ResetPassword")</label>
+                <input value="@contraseñaNueva1" @onchange="@(e => CambiarNuevaContraseña1(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+
+                @if (string.IsNullOrEmpty(mensajeAviso1) == false)
+                {
+                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                        @mensajeAviso1
+                    </div>
+                }
+
+                <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ResetPassword")</label>
+                <input value="@contraseñaNueva2" @onchange="@(e => CambiarNuevaContraseña2(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+
+                @if (string.IsNullOrEmpty(mensajeAviso2) == false)
+                {
+                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                        @mensajeAviso2
+                    </div>
+                }
+
+                <div class="perfil-flexible-izquierda" style="margin-top: 30px;">
+                    <button @onclick="ResetearContraseña" class="boton" style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ResetPassword")</button>
+                </div>
+
+                @if (string.IsNullOrEmpty(mensajeExito) == false)
+                {
+                    <div class="alert alert-success alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                        @mensajeExito
+                    </div>
+                }
+
+                @if (string.IsNullOrEmpty(mensajeError) == false)
+                {
+                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                        @mensajeError
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    [Parameter]
+    public string codigo { get; set; }
+
+    private string correo = string.Empty;
+    private string contraseñaNueva1 = string.Empty;
+    private string contraseñaNueva2 = string.Empty;
+
+    private string mensajeAviso1 = string.Empty;
+    private string mensajeAviso2 = string.Empty;
+
+    private string mensajeExito = string.Empty;
+    private string mensajeError = string.Empty;
+
+    private void CambiarCorreo(ChangeEventArgs texto)
+    {
+        correo = texto.Value.ToString();
+    }
+
+    private void CambiarNuevaContraseña1(ChangeEventArgs texto)
+    {
+        contraseñaNueva1 = texto.Value.ToString();
+
+        if (contraseñaNueva1.Length > 0 && contraseñaNueva1.Length < 6)
+        {
+            mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword8", "Account");
+        }
+        else if (contraseñaNueva1.Length > 5)
+        {
+            if (contraseñaNueva1.Any(char.IsDigit) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword9", "Account");
+            }
+            else if (contraseñaNueva1.Any(char.IsUpper) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword10", "Account");
+            }
+            else if (contraseñaNueva1.Any(char.IsLetterOrDigit) == false)
+            {
+                mensajeAviso1 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword11", "Account");
+            }
+            else
+            {
+                mensajeAviso1 = null;
+            }
+        }
+        else
+        {
+            mensajeAviso1 = null;
+        }
+
+        if (contraseñaNueva2.Length > 0)
+        {
+            if (contraseñaNueva1 == contraseñaNueva2)
+            {
+                mensajeAviso2 = null;
+            }
+        }
+    }
+
+    private void CambiarNuevaContraseña2(ChangeEventArgs texto)
+    {
+        contraseñaNueva2 = texto.Value.ToString();
+
+        if (contraseñaNueva1.Length > 5)
+        {
+            if (contraseñaNueva1 == contraseñaNueva2)
+            {
+                mensajeAviso2 = null;
+            }
+            else
+            {
+                mensajeAviso2 = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword12", "Account");
+            }
+        }
+        else
+        {
+            mensajeAviso2 = null;
+        }
+    }
+
+    private async void ResetearContraseña()
+    {
+        mensajeExito = null;
+        mensajeError = null;
+
+        if (contraseñaNueva1.Length > 5 && contraseñaNueva2.Length > 5 && string.IsNullOrEmpty(mensajeAviso1) == true && string.IsNullOrEmpty(mensajeAviso2) == true)
+        {
+            Usuario usuario = await UserManager.FindByEmailAsync(correo);
+
+            if (usuario != null)
+            {
+                IdentityResult resultado = UserManager.ResetPasswordAsync(usuario, codigo, contraseñaNueva1).Result;
+
+                if (resultado.Succeeded == true)
+                {
+                    mensajeExito = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "ResetPassword");
+                    Herramientas.Correos.EnviarContraseñaReseteada(usuario.Language, usuario.Email);
+                }
+                else
+                {
+                    foreach (var error in resultado.Errors)
+                    {
+                        mensajeError = error.Description;
+                    }                  
+                }
+            }
+        }  
+    }
+}

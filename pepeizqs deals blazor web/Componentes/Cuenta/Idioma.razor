@@ -1,0 +1,262 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+<style>
+    .caja-diseño {
+        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+        border: 2px solid var(--fondoOscuro);
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        border-radius: 5px;
+    }
+</style>
+
+@if (usuario != null)
+{
+    <div style="display: flex; flex-direction: column; gap: 40px;">
+        <div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 18px; margin-bottom: 5px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountLanguage")
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div>
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountLanguage")
+                </div>
+
+                <div>
+                    @idiomaWeb
+                </div>
+            </div>
+
+            @if (Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.Language) == "en" || Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageOverride) == "en")
+            {
+                <div style="font-size: 14px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountLanguage")
+                </div>
+            }
+
+            <div>
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountLanguage")
+            </div>
+
+            <div class="menu-dropdown" style="width: fit-content; margin-top: 5px;">
+                <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+                    <img src="@banderaSobreescrita" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                    <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
+                        @idiomaSobreescrito
+                    </div>
+
+                    <div style="max-width: 9px; min-width: 9px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                        </svg>
+                    </div>
+                </button>
+
+                <div>
+                    <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+                        @{
+                            List<Herramientas.IdiomaClase> listadoIdiomas = new List<Herramientas.IdiomaClase>();
+
+                            foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
+                            {
+                                if (idioma2.WebOfrece == true)
+                                {
+                                    idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                    listadoIdiomas.Add(idioma2);
+                                }
+                            }
+
+                            if (listadoIdiomas.Count > 0)
+                            {
+                                listadoIdiomas = listadoIdiomas.OrderBy(x => x.Traduccion).ToList();
+                            }
+
+                            foreach (var idioma2 in listadoIdiomas)
+                            {
+                                <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaWeb(e, idioma2.Id))">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        @{
+                                            string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
+                                        }
+
+                                        <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
+                                    </div>
+                                </button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (avisoSobreescrito == true)
+            {
+                <div style="background-color: var(--fondoAlerta); border: 1px solid var(--fondoBotonPequeño); padding: 20px 25px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "AccountLanguage")
+                </div>
+            }
+        </div>
+
+        <div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 15px;">
+            <div style="font-size: 18px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountLanguage")
+            </div>
+
+            <div>
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountLanguage")
+            </div>
+
+            <div class="menu-dropdown" style="width: fit-content;">
+                <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+                    <img src="@banderaJuegos" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                    <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
+                        @idiomaJuegos
+                    </div>
+
+                    <div style="max-width: 9px; min-width: 9px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                        </svg>
+                    </div>
+                </button>
+
+                <div>
+                    <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+                        @{
+                            List<Herramientas.IdiomaClase> listadoIdiomas2 = new List<Herramientas.IdiomaClase>();
+
+                            foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
+                            {
+                                idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                listadoIdiomas2.Add(idioma2);
+                            }
+
+                            if (listadoIdiomas2.Count > 0)
+                            {
+                                listadoIdiomas2 = listadoIdiomas2.OrderBy(x => x.Traduccion).ToList();
+                            }
+
+                            foreach (var idioma2 in listadoIdiomas2)
+                            {
+                                <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaJuegos(e, idioma2.Id))">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        @{
+                                            string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
+                                        }
+
+                                        <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
+                                    </div>
+                                </button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    private Usuario usuario = new Usuario();
+
+    private string idiomaWeb = string.Empty;
+    private string idiomaSobreescrito = string.Empty;
+    private string banderaSobreescrita = string.Empty;
+    private bool avisoSobreescrito = false;
+    private string idiomaJuegos = string.Empty;
+    private string banderaJuegos = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+
+        if (usuario != null)
+        {
+            idiomaWeb = Herramientas.Idiomas.BuscarTexto(idioma, Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.Language), "Languages");
+
+            if (string.IsNullOrEmpty(usuario.LanguageOverride) == true)
+            {
+                idiomaSobreescrito = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountLanguage");
+                banderaSobreescrita = null;
+            }
+            else
+            {
+                idiomaSobreescrito = Herramientas.Idiomas.BuscarTexto(idioma, Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageOverride), "Languages");
+                banderaSobreescrita = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(usuario.LanguageOverride) + ".svg";
+            }
+
+            if (string.IsNullOrEmpty(usuario.LanguageGames) == true)
+            {
+                idiomaJuegos = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountLanguage");
+                banderaJuegos = null;
+            }
+            else
+            {
+                idiomaJuegos = Herramientas.Idiomas.BuscarTexto(idioma, Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageGames), "Languages");
+                banderaJuegos = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(usuario.LanguageGames) + ".svg";
+            }
+        }
+    }
+
+    private async void CambiarIdiomaWeb(MouseEventArgs e, string nuevoIdioma)
+    {
+        bool actualizar = false;
+
+        if (string.IsNullOrEmpty(usuario.LanguageOverride) == true || usuario.LanguageOverride != nuevoIdioma)
+        {
+            actualizar = true;
+        }
+
+        if (actualizar == true)
+        {
+            usuario.LanguageOverride = nuevoIdioma;
+
+            idiomaSobreescrito = Herramientas.Idiomas.BuscarTexto(idioma, Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageOverride), "Languages");
+            banderaSobreescrita = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(usuario.LanguageOverride) + ".svg";
+
+            await UserManager.UpdateAsync(usuario);
+
+            idioma = usuario.LanguageOverride;
+            avisoSobreescrito = true;
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async void CambiarIdiomaJuegos(MouseEventArgs e, string nuevoIdioma)
+    {
+        bool actualizar = false;
+
+        if (string.IsNullOrEmpty(usuario.LanguageGames) == true || usuario.LanguageGames != nuevoIdioma)
+        {
+            actualizar = true;
+        }
+
+        if (actualizar == true)
+        {
+            usuario.LanguageGames = nuevoIdioma;
+
+            idiomaJuegos = Herramientas.Idiomas.BuscarTexto(idioma, Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageGames), "Languages");
+            banderaJuegos = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(usuario.LanguageGames) + ".svg";
+
+            await UserManager.UpdateAsync(usuario);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

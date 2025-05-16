@@ -1,0 +1,459 @@
+﻿@using APIs.Steam
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.JSInterop
+@using Microsoft.VisualBasic
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JavaScript
+
+@if (bundle != null)
+{
+	if (tipo == Tipo.Bundle)
+	{
+		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda + " • pepeizq's deals";
+		string descripcion = string.Empty;
+		string enlace = "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/";
+		string imagen = string.Empty;
+
+		if (bundle.Tiers != null)
+		{
+			string precio = bundle.Tiers[0].Precio.ToString();
+			precio = precio.Replace(".", ",");
+			precio = precio.Trim() + "€";
+
+			if (bundle.Pick == false)
+			{
+				descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Bundle") + " " + precio;
+			}
+			else
+			{
+				descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Bundle") + " " + precio;
+			}
+		}
+
+		if (string.IsNullOrEmpty(bundle.ImagenNoticia) == false)
+		{
+			if (bundle.ImagenNoticia.Contains("https://") == true)
+			{
+				imagen = bundle.ImagenNoticia;
+			}
+		}
+
+		string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(bundle.NombreBundle, false).Split(' ');
+		List<string> keywordsLista = new List<string>();
+		keywordsLista.AddRange(keywordsEnBruto);
+
+		string keywords = "bundle";
+
+		foreach (string keyword in keywordsLista)
+		{
+			if (keyword.Length > 3)
+			{
+				keywords = keywords + ", " + keyword;
+			}
+		}
+
+		if (bundle.Juegos != null)
+		{
+			if (bundle.Juegos.Count > 0)
+			{
+				foreach (var juego in bundle.Juegos)
+				{
+					if (juego != null)
+					{
+						if (string.IsNullOrEmpty(juego.Nombre) == false)
+						{
+							string[] keywordsEnBrutoJuego = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
+							List<string> keywordsListaJuego = new List<string>();
+							keywordsListaJuego.AddRange(keywordsEnBrutoJuego);
+
+							foreach (string keyword in keywordsListaJuego)
+							{
+								if (keywords.Contains(keyword) == false && keyword.Length > 3)
+								{
+									keywords = keywords + ", " + keyword;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		<HeadContent>
+			<meta name="og:title" Content="@titulo" />
+			<meta name="description" content="@descripcion" />
+			<meta name="og:description" content="@descripcion" />
+			<meta name="og:url" content="@enlace" />
+			<meta name="og:image" content="@imagen" />
+			<meta name="og:site_name" content="pepeizq's deals" />
+			<meta name="og:type" content="website" />
+			<meta name="robots" content="index, follow" />
+			<meta name="keywords" content="@keywords" />
+
+			<script type="application/ld+json">
+            @{
+                string seoJson = "{" + Environment.NewLine +
+                    Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
+                    Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "SoftwareApplication" + Strings.ChrW(34) + "," + Environment.NewLine +
+                    Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.NombreBundle + Strings.ChrW(34) + "," + Environment.NewLine +
+                    Strings.ChrW(34) + "operatingSystem" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "WINDOWS" + Strings.ChrW(34) + "," + Environment.NewLine +
+                    Strings.ChrW(34) + "applicationCategory" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "GameApplication" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "image" + Strings.ChrW(34) + ": {" + Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ImageObject" + Strings.ChrW(34) + "," + Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.ImagenBundle + Strings.ChrW(34) + "," + Strings.ChrW(34) + "contentUrl" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.NombreBundle + Strings.ChrW(34) + "}";
+
+                seoJson = seoJson + "}";
+            }
+
+            @((MarkupString)seoJson)
+        </script>
+
+			<link rel="canonical" href="@enlace" />
+		</HeadContent>
+	}
+}
+
+<script>
+	window.ChangeUrl = function (url) {
+		history.pushState(null, '', url);
+	}
+</script>
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+<style>
+	.bundle-tabla {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+
+	@@media (max-width: 800px) {
+		.bundle-tabla {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+	}
+</style>
+
+@if (bundle != null)
+{
+	if (tipo == Tipo.Bundle)
+	{
+		<div style="margin-bottom: 40px; position: -webkit-sticky; position: sticky; top: 70px; z-index: 3; overflow: hidden;">
+			<div class="caja-diseño" style="padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
+				<div style="display: flex; align-items: center; flex-direction: row;">
+					<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" style="width: auto;" target="_blank">
+						<div style="height: 60px; padding-left: 20px; padding-right: 20px;">
+							<img src="@Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).ImagenTienda" style="height: 100%;" alt="@bundle.NombreBundle" />
+						</div>
+					</a>
+
+					<div style="padding-left: 20px; padding-right: 20px;">
+						<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="background-color: transparent; padding: 0px; font-size: 20px; margin-bottom: 10px;" target="_blank">
+							@bundle.NombreBundle
+						</a>
+
+						<div style="display: flex; align-items: center; flex-direction: row; font-size: 14px;">
+							@bundle.FechaEmpieza.Day.ToString()/@bundle.FechaEmpieza.Month.ToString()/@bundle.FechaEmpieza.Year.ToString() • @bundle.FechaTermina.Day.ToString()/@bundle.FechaTermina.Month.ToString()/@bundle.FechaTermina.Year.ToString()
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
+			</a>
+		</div>
+	}
+
+	if (tipo == Tipo.Noticia)
+	{
+		<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
+			<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px; margin-bottom: 40px;" target="_blank">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
+			</a>
+		</div>
+	}
+
+	if (bundle.Tiers != null)
+	{
+		decimal totalMinimos = 0;
+
+		if (bundle.Tiers.Count > 0)
+		{
+			int i = 0;
+
+			foreach (var tier in OrdenarTiers(bundle.Tiers))
+			{
+				string marginFinal = string.Empty;
+
+				if (tier.Posicion != bundle.Tiers.Count && bundle.Pick == false)
+				{
+					marginFinal = "margin-bottom: 40px;";
+
+					if (tipo == Tipo.Juego)
+					{
+						marginFinal = "margin-bottom: 20px;";
+					}
+				}
+
+				List<Bundles2.BundleJuego> juegosTier = new List<Bundles2.BundleJuego>();
+
+				if (bundle.Juegos != null)
+				{
+					if (bundle.Juegos.Count > 0)
+					{
+						foreach (var juego in bundle.Juegos)
+						{
+							if (juego.Tier != null)
+							{
+								if (juego.Tier.Posicion == tier.Posicion)
+								{
+									juegosTier.Add(juego);
+								}
+							}
+						}
+					}
+				}				
+
+				if (juegosTier.Count > 0)
+				{
+					juegosTier = juegosTier.OrderBy(x => x.Nombre).ToList();
+				}
+
+				foreach (var juego in juegosTier)
+				{
+					if (juego.Juego.Tipo == Juegos.JuegoTipo.DLC)
+					{
+						if (string.IsNullOrEmpty(juego.Juego.Maestro) == false)
+						{
+							if (juego.Juego.Maestro != "no")
+							{
+								foreach (var juego2 in juegosTier)
+								{
+									if (juego2.JuegoId == juego.Juego.Maestro)
+									{
+										if (juego2.DLCs == null)
+										{
+											juego2.DLCs = new List<string>();
+										}
+
+										bool añadir = true;
+
+										if (juego2.DLCs.Count > 0)
+										{
+											foreach (var dlc in juego2.DLCs)
+											{
+												if (dlc == juego.JuegoId)
+												{
+													añadir = false;
+													break;
+												}
+											}
+										}
+
+										if (añadir == true)
+										{
+											juego2.DLCs.Add(juego.JuegoId);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				if (bundle.Pick == true)
+				{
+					<div class="caja-diseño" style="padding: 30px; font-size: 18px; display: flex; align-items: center; flex-direction: row; gap: 40px; justify-content: center; margin-bottom: 30px;">
+						@foreach (var tier2 in OrdenarTiers(bundle.Tiers))
+						{
+							<div style="text-align: center; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 15px 30px;">
+								@if (tier2.CantidadJuegos == 1)
+								{
+									<label>@tier2.CantidadJuegos.ToString() @Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Bundle") • @Herramientas.Precios.Euro(decimal.Parse(tier2.Precio))</label>
+								}
+								else if (tier2.CantidadJuegos > 1)
+								{
+									<label>@tier2.CantidadJuegos.ToString() @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Bundle") • @Herramientas.Precios.Euro(decimal.Parse(tier2.Precio))</label> <label>/</label> <label style="font-size: 14px;">@Herramientas.Precios.Euro(decimal.Parse(tier2.Precio) / tier2.CantidadJuegos) (@Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Bundle"))</label>
+								}
+							</div>
+						}
+					</div>
+				}
+
+				string espacioFondo = "margin-bottom: 40px;";
+
+				if (i == bundle.Tiers.Count - 1 || bundle.Pick == true)
+				{
+					espacioFondo = string.Empty;
+				}
+
+				<div class="caja-diseño" style="padding: 30px; @espacioFondo">
+					@if (bundle.Pick == false)
+					{
+						<div style="font-size: 18px; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; margin-bottom: 30px; border-radius: 5px;">
+							<div style="margin-bottom: 5px;">
+								Tier @tier.Posicion: @Herramientas.Precios.Euro(decimal.Parse(tier.Precio))
+							</div>
+
+							@foreach (var juego in juegosTier)
+							{
+								if (juego.Juego.PrecioMinimosHistoricos != null)
+								{
+									foreach (var historico in juego.Juego.PrecioMinimosHistoricos)
+									{
+										if (historico.DRM == juego.DRM)
+										{
+											totalMinimos = totalMinimos + historico.Precio;
+
+											break;
+										}
+									}
+								}
+							}
+
+							<div style="font-size: 14px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Bundle"): @Herramientas.Precios.Euro(totalMinimos)
+							</div>
+						</div>
+					}
+
+					<div class="bundle-tabla" style="display: grid; grid-gap: 40px; margin-top: 10px;">
+						@foreach (var juego in juegosTier)
+						{
+							bool mostrar = true;
+
+							if (juego.Juego.Tipo == Juegos.JuegoTipo.DLC)
+							{
+								if (string.IsNullOrEmpty(juego.Juego.Maestro) == false)
+								{
+									if (juego.Juego.Maestro != "no")
+									{
+										foreach (var juego2 in juegosTier)
+										{
+											if (juego2.JuegoId == juego.Juego.Maestro)
+											{
+												mostrar = false;
+											}
+										}
+									}
+								}
+							}
+							
+							if (mostrar == true)
+							{
+								<pepeizqs_deals_web.Pages.Componentes.Interfaz.CajaJuego 
+									idioma="@idioma" juego="juego.Juego" drmBundle="juego.DRM" dlcsBundle="juego.DLCs" juegosUsuario="@juegosUsuario" idBundle="@bundleId"
+									tipo="Interfaz.CajaJuego.Tipo.Bundle" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosGog="@usuario?.GogWishlist" usuarioDeseadosWeb="@usuario?.Wishlist"/>
+							}
+						}
+					</div>
+				</div>
+
+				if (bundle.Pick == true)
+				{
+					break;
+				}
+
+				i += 1;
+			}
+		}
+	}
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private bool usuarioPatreon = false;
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+	[Parameter]
+	public int bundleId { get; set; }
+
+	[Parameter]
+	public Tipo tipo { get; set; } = Tipo.Bundle;
+
+    public Bundles2.Bundle bundle = null;
+
+	protected override async Task OnInitializedAsync()
+	{
+		bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
+
+		if (bundle != null)
+		{
+			if (bundle.Juegos != null)
+			{
+				if (bundle.Juegos.Count > 0)
+				{
+					foreach (var juego in bundle.Juegos)
+					{
+						if (string.IsNullOrEmpty(juego.JuegoId) == false)
+						{
+							juego.Juego = BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
+							juego.Imagen = juego.Juego.Imagenes.Header_460x215;
+						}
+					}
+				}
+			}
+		}
+
+		//------------------------------------------------------------
+
+		usuario = await UserManager.FindByIdAsync(usuarioId);
+
+		if (usuario != null)
+		{
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool primerRender)
+	{
+		if (primerRender == true && tipo == Tipo.Bundle)
+		{
+			if (bundle != null)
+			{
+				await JavaScript.InvokeVoidAsync("ChangeUrl", "/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/");
+			}			
+		}
+	}
+
+	public enum Tipo
+	{
+		Bundle,
+		Bundles,
+		Juego,
+		Noticia
+	}
+
+	private List<Bundles2.BundleTier> OrdenarTiers(List<Bundles2.BundleTier> tiers)
+	{
+		if (tiers != null)
+		{
+			tiers.Sort(delegate (Bundles2.BundleTier t1, Bundles2.BundleTier t2)
+			{
+				return t1.Posicion.CompareTo(t2.Posicion);
+			});
+		}
+
+		return tiers;
+	}
+}

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using pepeizqs_deals_web.Data;
 
-namespace pepeizqs_deals_blazor_web.Components.Account
+namespace pepeizqs_deals_blazor_web.Componentes.Account
 {
     // Remove the "else if (EmailSender is IdentityNoOpEmailSender)" block from RegisterConfirmation.razor after updating with a real implementation.
     internal sealed class IdentityNoOpEmailSender : IEmailSender<Usuario>

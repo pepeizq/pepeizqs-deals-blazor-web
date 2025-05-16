@@ -1,0 +1,965 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.JSInterop
+@using System.Text.Json
+@using pepeizqs_deals_web.Data
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JavaScript
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter");
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Filter");
+	string enlace = "https://pepeizqdeals.com/filter/" + ids + "/";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+	string keywords = "filter";
+
+	if (string.IsNullOrEmpty(ids) == false)
+	{
+		string[] ids2 = ids.Split(',');
+
+		if (ids2.Length > 0)
+		{
+			foreach (string id in ids2)
+			{
+				if (string.IsNullOrEmpty(id) == false)
+				{
+					if (id.ToLower().Contains("t") == true)
+					{
+						string cadena = id.Replace("t", null);
+
+						if (titulo.Contains("•") == false)
+						{
+							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+						}
+						else
+						{
+							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+						}
+
+						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags").ToLower();
+					}
+
+					if (id.ToLower().Contains("c") == true)
+					{
+						string cadena = id.Replace("c", null);
+
+						if (titulo.Contains("•") == false)
+						{
+							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+						}
+						else
+						{
+							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+						}
+
+						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories").ToLower();
+					}
+
+					if (id.ToLower().Contains("s") == true)
+					{
+						string cadena = id.Replace("s", null);
+
+						if (titulo.Contains("•") == false)
+						{
+							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+						}
+						else
+						{
+							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+						}
+
+						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter").ToLower();
+					}
+
+					if (id.ToLower().Contains("i") == true)
+					{
+						string cadena = id.Replace("i", null);
+
+						if (titulo.Contains("•") == false)
+						{
+							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+						}
+						else
+						{
+							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+						}
+
+						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter").ToLower();
+					}
+
+					if (id.ToLower().Contains("d") == true)
+					{
+						string cadena = id.Replace("d", null);
+						
+						if (titulo.Contains("•") == false)
+						{
+							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+						}
+						else
+						{
+							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+						}
+
+						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter").ToLower();
+					}
+				}
+			}
+		}
+	}
+
+	titulo = titulo + " • pepeizq's deals";
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="@keywords" />
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<script>
+	window.ChangeUrl = function (url) {
+		history.pushState(null, '', url);
+	}
+</script>
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+<style>
+	.boton-expandir {
+		transition: transform .2s;
+		filter: brightness(100%);
+		background-color: var(--fondoOscuro);
+	}
+
+		.boton-expandir:hover {
+			transform: scale(1.05);
+			filter: brightness(120%);
+		}
+</style>
+
+@if (cargado == false)
+{
+	<div style="text-align: center; width: 100%;">
+		<div class="cargando" />
+	</div>	
+}
+else
+{
+	<h1 style="font-size: 23px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter")
+	</h1>
+
+	<hr>
+
+	@if (idsLista != null)
+	{
+		if (idsLista.Count > 0)
+		{
+			<div style="display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px; margin-bottom: 20px;">
+				@foreach (var id in idsLista)
+				{
+					if (id.Contains("d") == true)
+					{
+						string letra = "d";
+						string cadena = id.Replace(letra, null);
+						string deck = Herramientas.Idiomas.BuscarTexto(idioma, "Deck4", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+
+						if (string.IsNullOrEmpty(deck) == false)
+						{
+							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+									<div style="font-size: 14px;">@deck</div>
+									<div style="max-width: 14px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+										</svg>
+									</div>
+								</div>
+							</button>
+						}
+					}
+
+					if (id.Contains("i") == true)
+					{
+						string letra = "i";
+						string cadena = id.Replace(letra, null);
+						string tipo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+
+						if (string.IsNullOrEmpty(tipo) == false)
+						{
+							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+									<div style="font-size: 14px;">@tipo</div>
+									<div style="max-width: 14px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+										</svg>
+									</div>
+								</div>
+							</button>
+						}
+					}
+
+					if (id.Contains("s") == true)
+					{
+						string letra = "s";
+						string cadena = id.Replace(letra, null);
+						string sistema = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+
+						if (string.IsNullOrEmpty(sistema) == false)
+						{
+							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+									<div style="font-size: 14px;">@sistema</div>
+									<div style="max-width: 14px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+										</svg>
+									</div>
+								</div>
+							</button>
+						}
+					}
+
+					if (id.Contains("t") == true)
+					{
+						string letra = "t";
+						string cadena = id.Replace(letra, null);
+						string etiqueta = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+
+						if (string.IsNullOrEmpty(etiqueta) == false)
+						{
+							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+									<div style="font-size: 14px;">@etiqueta</div>
+									<div style="max-width: 14px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+										</svg>
+									</div>
+								</div>
+							</button>
+						}
+					}
+
+					if (id.Contains("c") == true)
+					{
+						string letra = "c";
+						string cadena = id.Replace(letra, null);
+						string categoria = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+
+						if (string.IsNullOrEmpty(categoria) == false)
+						{
+							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+									<div style="font-size: 14px;">@categoria</div>
+									<div style="max-width: 14px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+										</svg>
+									</div>
+								</div>
+							</button>
+						}
+					}
+				}
+			</div>
+		}
+	}
+
+	<div style="display: flex; align-items: start; gap: 40px;">
+		<div style="width: 30%; display: flex; flex-direction: column; gap: 20px;">
+			@if (decks.Count > 0)
+			{
+				string letra = "d";
+
+				<div>
+					<button @onclick="(e => AbrirDeck(e))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "Deck4", "Filter") (@CantidadIDs(letra))
+							</div>
+
+							<div>
+								@if (enseñarDeck == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarDeck == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var deck in decks)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + deck.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, deck.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="font-size: 14px;">
+										@deck.Contenido
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+
+			@if (tipos.Count > 0)
+			{
+				string letra = "i";
+
+				<div>
+					<button @onclick="(e => AbrirTipos(e))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Filter") (@CantidadIDs(letra))
+							</div>
+
+							<div>
+								@if (enseñarTipos == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarTipos == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var tipo in tipos)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + tipo.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, tipo.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="font-size: 14px;">
+										@tipo.Contenido
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+
+			@if (sistemas.Count > 0)
+			{
+				string letra = "s";
+
+				<div>
+					<button @onclick="(e => AbrirSistemas(e))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Filter") (@CantidadIDs(letra))
+							</div>
+
+							<div>
+								@if (enseñarSistemas == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarSistemas == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var sistema in sistemas)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + sistema.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, sistema.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="font-size: 14px;">
+										@sistema.Contenido
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+
+			@if (etiquetas.Count > 0)
+			{
+				string letra = "t";
+
+				<div>
+					<button @onclick="(e => AbrirEtiquetas(e))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Filter") (@CantidadIDs(letra))
+							</div>
+
+							<div>
+								@if (enseñarEtiquetas == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarEtiquetas == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var etiqueta in etiquetas)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + etiqueta.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, etiqueta.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="font-size: 14px;">
+										@etiqueta.Contenido
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+
+			@if (categorias.Count > 0)
+			{
+				string letra = "c";
+
+				<div>
+					<button @onclick="(e => AbrirCategorias(e))" style="background-color: transparent; color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Filter") (@CantidadIDs(letra))
+							</div>
+							
+							<div>
+								@if (enseñarCategorias == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarCategorias == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var categoria in categorias)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + categoria.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, categoria.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="display: flex; align-items: center; gap: 10px;">
+										<div style="max-width: 30px;">
+											@{
+												string imagenCategoria = "/imagenes/categorias/" + @categoria.Id + ".webp";
+											}
+
+											<img src="@imagenCategoria" style="width: 100%; height: 100%;"/>
+										</div>
+
+										<div style="width: 100%; font-size: 14px;">
+											@categoria.Contenido
+										</div>
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+		</div>
+
+		<div style="width: 100%;">
+			<div class="caja-diseño" style="padding: 0px 20px; display: flex; flex-direction: column; gap: 20px;">
+				<Virtualize Context="juego" Items="resultadosGestor" ItemSize="107" OverscanCount="6">
+					<ItemContent>
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" />
+					</ItemContent>
+				</Virtualize>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	#nullable enable
+	[Parameter]
+	public string? ids { get; set; }
+	#nullable disable
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+	private bool cargado = false;
+
+	private List<string> idsLista = new List<string>();
+
+	private List<Juegos.Juego> resultadosGestor = new List<Juegos.Juego>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		cargado = false;
+
+		usuario = await UserManager.FindByIdAsync(usuarioId);			
+
+		if (usuario != null)
+		{
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+		}
+
+		CargarDeck();
+		CargarTipos();
+		CargarSistemas();
+		CargarEtiquetas();
+		CargarCategorias();
+
+		idsLista = Herramientas.Listados.Generar(ids);
+
+		resultadosGestor = BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
+
+		cargado = true;
+	}
+
+	private class FiltroItem
+	{
+		public string Id { get; set; }
+		public string Contenido { get; set; }
+	}
+
+	private async void CambiarIDs(MouseEventArgs e, string nuevaId, string letra)
+	{
+		nuevaId = letra + nuevaId;
+
+		bool encontrado = false;
+
+		int i = 0;
+		if (idsLista != null)
+		{
+			if (idsLista.Count > 0)
+			{
+				foreach (var id in idsLista)
+				{
+					if (id == nuevaId)
+					{
+						encontrado = true;
+						break;
+					}
+
+					i += 1;
+				}
+			}
+		}
+
+		if (encontrado == false)
+		{
+			if (idsLista == null)
+			{
+				idsLista = new List<string>();
+			}
+
+			idsLista.Add(nuevaId);
+		}
+		else
+		{
+			idsLista.RemoveAt(i);
+		}
+
+		ids = null;
+
+		foreach (var id in idsLista)
+		{
+			ids = ids + "," + id;
+		}
+
+		if (string.IsNullOrEmpty(ids) == false)
+		{
+			ids = ids.Remove(0, 1);
+		}
+
+		resultadosGestor = BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
+
+		if (string.IsNullOrEmpty(ids) == false)
+		{
+			await JavaScript.InvokeVoidAsync("ChangeUrl", "/filter/" + ids + "/");
+		}
+		else
+		{
+			await JavaScript.InvokeVoidAsync("ChangeUrl", "/filter/");
+		}
+	}
+
+	private int CantidadIDs(string letra)
+	{
+		int i = 0;
+
+		if (idsLista != null)
+		{
+			if (idsLista.Count > 0)
+			{
+				foreach (var id in idsLista)
+				{
+					if (id.Contains(letra) == true)
+					{
+						i += 1;
+					}
+				}
+			}
+		}
+
+		return i;
+	}
+
+	#region Deck
+
+	private List<FiltroItem> decks = new List<FiltroItem>();
+
+	private void CargarDeck()
+	{
+		List<string> cadenas = new List<string>();
+		cadenas.Add("2");
+		cadenas.Add("3");
+
+		foreach (var cadena in cadenas)
+		{
+			FiltroItem nuevoDeck = new FiltroItem();
+			nuevoDeck.Id = cadena;
+			nuevoDeck.Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+
+			decks.Add(nuevoDeck);
+		}
+	}
+
+	private bool enseñarDeck = true;
+
+	private void AbrirDeck(MouseEventArgs e)
+	{
+		if (enseñarDeck == true)
+		{
+			enseñarDeck = false;
+		}
+		else
+		{
+			enseñarDeck = true;
+		}
+	}
+
+	#endregion
+
+	#region Tipos
+
+	private List<FiltroItem> tipos = new List<FiltroItem>();
+
+	private void CargarTipos()
+	{
+		List<string> cadenas = new List<string>();
+		cadenas.Add("0");
+		cadenas.Add("1");
+		cadenas.Add("3");
+		cadenas.Add("4");
+
+		foreach (var cadena in cadenas)
+		{
+			FiltroItem nuevoTipo = new FiltroItem();
+			nuevoTipo.Id = cadena;
+			nuevoTipo.Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+
+			tipos.Add(nuevoTipo);
+		}
+	}
+
+	private bool enseñarTipos = true;
+
+	private void AbrirTipos(MouseEventArgs e)
+	{
+		if (enseñarTipos == true)
+		{
+			enseñarTipos = false;
+		}
+		else
+		{
+			enseñarTipos = true;
+		}
+	}
+
+	#endregion
+
+	#region Sistemas
+
+	private List<FiltroItem> sistemas = new List<FiltroItem>();
+
+	private void CargarSistemas()
+	{
+		List<string> cadenas = new List<string>();
+		cadenas.Add("1");
+		cadenas.Add("2");
+		cadenas.Add("3");
+
+		foreach (var cadena in cadenas)
+		{
+			FiltroItem nuevoSistema = new FiltroItem();
+			nuevoSistema.Id = cadena;
+			nuevoSistema.Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+
+			sistemas.Add(nuevoSistema);
+		}
+	}
+
+	private bool enseñarSistemas = false;
+
+	private void AbrirSistemas(MouseEventArgs e)
+	{
+		if (enseñarSistemas == true)
+		{
+			enseñarSistemas = false;
+		}
+		else
+		{
+			enseñarSistemas = true;
+		}
+	}
+
+	#endregion
+
+	#region Etiquetas
+
+	private List<FiltroItem> etiquetas = new List<FiltroItem>();
+
+	private void CargarEtiquetas()
+	{
+		string json = Herramientas.Idiomas.CogerTodo(idioma, "Tags");
+
+		if (string.IsNullOrEmpty(json) == false)
+		{
+			var items2 = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+			foreach (var item2 in items2)
+			{
+				FiltroItem nuevaEtiqueta = new FiltroItem();
+				nuevaEtiqueta.Id = item2.Key;
+				nuevaEtiqueta.Contenido = item2.Value.ToString();
+
+				etiquetas.Add(nuevaEtiqueta);
+			}
+		}
+	}
+
+	private bool enseñarEtiquetas = false;
+
+	private void AbrirEtiquetas(MouseEventArgs e)
+	{
+		if (enseñarEtiquetas == true)
+		{
+			enseñarEtiquetas = false;
+		}
+		else
+		{
+			enseñarEtiquetas = true;
+		}
+	}
+
+	#endregion
+
+	#region Categorias
+
+	private List<FiltroItem> categorias = new List<FiltroItem>();
+
+	private void CargarCategorias()
+	{
+		string json = Herramientas.Idiomas.CogerTodo(idioma, "Categories");
+
+		if (string.IsNullOrEmpty(json) == false)
+		{
+			var items2 = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+			foreach (var item2 in items2)
+			{
+				FiltroItem nuevaEtiqueta = new FiltroItem();
+				nuevaEtiqueta.Id = item2.Key;
+				nuevaEtiqueta.Contenido = item2.Value.ToString();
+
+				categorias.Add(nuevaEtiqueta);
+			}
+		}
+	}
+
+	private bool enseñarCategorias = false;
+
+	private void AbrirCategorias(MouseEventArgs e)
+	{
+		if (enseñarCategorias == true)
+		{
+			enseñarCategorias = false;
+		}
+		else
+		{
+			enseñarCategorias = true;
+		}
+	}
+
+	#endregion
+}

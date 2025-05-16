@@ -1,9 +1,11 @@
-﻿@using Microsoft.AspNetCore.Components
+﻿@rendermode InteractiveServer 
+
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
-@using pepeizqs_deals_web.Areas.Identity.Data
+@using pepeizqs_deals_web.Data
 
 @inherits Juegos.Juego
 
@@ -12,27 +14,27 @@
 
 <style>
     .buscador-panel {
-    height: calc(100% - var(--alturaCabecera));
-    width: 100%;
-    left: 0;
-    top: 0;
-    overflow-x: auto;
-    position: fixed;
-    z-index: 1000;
-    margin-top: var(--alturaCabecera);
-    padding: 10px;
-    background-color: var(--fondoOscuroTransparente);
+        height: calc(100% - var(--alturaCabecera));
+        width: 100%;
+        left: 0;
+        top: 0;
+        overflow-x: auto;
+        position: fixed;
+        z-index: 1000;
+        margin-top: var(--alturaCabecera);
+        padding: 10px;
+        background-color: var(--fondoOscuroTransparente);
     }
 
     .boton-superior {
-    display: block;
-    padding: 6px 12px;
-    margin: 0px;
-    transition: transform .2s;
+        display: block;
+        padding: 6px 12px;
+        margin: 0px;
+        transition: transform .2s;
     }
 
     .boton-superior:hover {
-    transform: scale(1.01);
+        transform: scale(1.01);
     }
 
     @@media (max-width: 800px) {
@@ -63,7 +65,7 @@
     }
 </style>
 
-<a href="/" class="texto-logo" style="background-color: transparent; border: 0; flex: 1 auto 1;">
+<a href="/" id="cabecera" class="texto-logo" style="background-color: transparent; border: 0; flex: 1 auto 1;">
     pepeizq's deals
 </a>
 
@@ -340,10 +342,7 @@ else
 
     [Parameter]
     public Usuario usuario { get; set; }
-
-    [Parameter]
-    public bool usuarioLogeado { get; set; }
-
+    private bool usuarioLogeado = false;
     private bool usuarioPatreon = false;
     private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
 
@@ -356,8 +355,9 @@ else
 
     protected override void OnInitialized()
     {
-        if (usuarioLogeado == true)
+        if (usuario != null)
         {
+            usuarioLogeado = true;
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
             juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
 

@@ -5,6 +5,7 @@ using Gratis2;
 using Microsoft.Data.SqlClient;
 using Noticias;
 using Suscripciones2;
+using System.Globalization;
 
 namespace BaseDatos.Noticias
 {
@@ -34,12 +35,12 @@ namespace BaseDatos.Noticias
 
 			if (lector.IsDBNull(5) == false)
 			{
-				noticia.FechaEmpieza = DateTime.Parse(lector.GetString(5));
+				noticia.FechaEmpieza = DateTime.Parse(lector.GetString(5), CultureInfo.InvariantCulture);
 			}
 
 			if (lector.IsDBNull(6) == false)
 			{
-				noticia.FechaTermina = DateTime.Parse(lector.GetString(6));
+				noticia.FechaTermina = DateTime.Parse(lector.GetString(6), CultureInfo.InvariantCulture);
 			}
 
 			if (lector.IsDBNull(7) == false)

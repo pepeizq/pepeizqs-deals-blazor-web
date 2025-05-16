@@ -1,20 +1,20 @@
 using Microsoft.AspNetCore.Identity;
 using pepeizqs_deals_web.Data;
 
-namespace pepeizqs_deals_blazor_web.Components.Account
+namespace pepeizqs_deals_blazor_web.Componentes.Account
 {
     internal sealed class IdentityUserAccessor(UserManager<Usuario> userManager, IdentityRedirectManager redirectManager)
     {
-        public async Task<Usuario> GetRequiredUserAsync(HttpContext context)
+        public async Task<Usuario> GetRequiredUserAsync(HttpContext contexto)
         {
-            var user = await userManager.GetUserAsync(context.User);
+            Usuario? usuario = await userManager.GetUserAsync(contexto.User);
 
-            if (user is null)
+            if (usuario is null)
             {
-                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(context.User)}'.", context);
+                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(contexto.User)}'.", contexto);
             }
 
-            return user;
+            return usuario;
         }
     }
 }

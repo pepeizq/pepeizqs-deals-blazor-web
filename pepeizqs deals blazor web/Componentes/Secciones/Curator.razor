@@ -1,0 +1,376 @@
+﻿@using APIs.Steam
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.VisualBasic
+@using pepeizqs_deals_web.Data
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+
+@if (curator != null)
+{
+	string titulo = curator.Nombre + " (Curator) • pepeizq's deals";
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Curators");
+	string enlace = "https://pepeizqdeals.com/curator/" + curator.Slug?.ToLower() + "/";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+
+	if (string.IsNullOrEmpty(curator.Descripcion) == false)
+	{
+		descripcion = curator.Descripcion;
+	}
+
+	if (string.IsNullOrEmpty(curator.Imagen) == false)
+	{
+		imagen = curator.Imagen;
+	}
+
+	string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(curator.Nombre, false).Split(' ');
+	List<string> keywordsLista = new List<string>();
+	keywordsLista.AddRange(keywordsEnBruto);
+
+	string keywords = "curator";
+
+	foreach (string keyword in keywordsLista)
+	{
+		if (keyword.Length > 3 && keywords.Contains(keyword) == false)
+		{
+			keywords = keywords + ", " + keyword;
+		}
+	}
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+
+		@if (string.IsNullOrEmpty(descripcion) == false)
+		{
+			string descripcionMeta = descripcion;
+
+			if (descripcionMeta.Length > 150)
+			{
+				descripcionMeta = descripcionMeta.Substring(0, 150) + " ...";
+			}
+
+			<meta name="description" content="@descripcionMeta" />
+			<meta name="og:description" content="@descripcionMeta" />
+		}
+
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="@keywords" />
+	
+		<script type="application/ld+json">
+			@{
+				string seoJson = "{" + Environment.NewLine +
+					Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ProfilePage" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "mainEntity" + Strings.ChrW(34) + ": {" + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Organization" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + curator.Nombre + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "description" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + descripcion + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + imagen + Strings.ChrW(34);
+
+				if (curator.Web != null)
+				{
+					if (string.IsNullOrEmpty(curator.Web.Enlace) == false)
+					{
+						seoJson = seoJson + "," + Environment.NewLine + Strings.ChrW(34) + "sameAs" + Strings.ChrW(34) + ": [ " + Strings.ChrW(34) + curator.Web.Enlace + Strings.ChrW(34) + " ]";
+					}
+				}
+
+				seoJson = seoJson + "}" + Environment.NewLine + "}";
+            }
+
+            @((MarkupString)seoJson)
+        </script>
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+
+	<style>
+		.caja-diseño {
+			background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+			border: 2px solid var(--fondoOscuro);
+			box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+			border-radius: 5px;
+		}
+	</style>
+
+	<div>
+		@if (string.IsNullOrEmpty(curator.ImagenFondo) == false)
+		{
+			<img class="juego-fondo" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.ImagenFondo)" alt="Background" loading="lazy" />
+		}
+
+		<div style="position: relative; display: flex; flex-direction: column; gap: 40px;">
+			<div class="caja-diseño" style="display: flex; align-items: center;">
+				<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Imagen)" style="width: 140px; height: 140px;" alt="@curator.Nombre" />
+
+				<div style="display: flex; flex-direction: column; gap: 15px; padding: 25px;">
+					<div style="font-size: 20px;">
+						@if (curator.Web != null)
+						{
+							<a href="@curator.Web.Enlace" target="_blank">@curator.Nombre</a>
+						}
+						else
+						{
+							@curator.Nombre
+						}
+					</div>
+
+					<div>
+						@curator.Descripcion
+					</div>
+				</div>
+			</div>
+
+			@if (juegosDestacados.Count > 1)
+			{
+				<div>
+					<div style="font-size: 20px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Curators")
+					</div>
+					<hr />
+					<div class="caja-diseño" style="padding: 40px;">
+						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; width: 100%;">
+							@foreach (var destacado in juegosDestacados)
+							{
+								<CajaJuego idioma="@idioma" juego="@destacado" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorDestacado" />
+							}
+						</div>
+					</div>
+				</div>
+			}
+
+			@if (juegosCurator.Count > 0)
+			{
+				<div style="display: flex; align-items: start; gap: 40px;">
+					<div class="caja-diseño" style="width: 30%; display: flex; flex-direction: column; gap: 10px; padding: 20px;">
+						<div>
+							<div style="margin: 0px 10px 10px 10px; font-size: 18px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Curators")
+							</div>
+							<hr style="margin: 0px;" />
+						</div>
+
+						@{
+							string fondoJuegos = string.Empty;
+
+							if (filtrado == 1)
+							{
+								fondoJuegos = "background-color: var(--fondoBotonPequeño);";
+							}
+							else
+							{
+								fondoJuegos = "background-color: transparent;";
+							}
+
+							string fondoDLCs = string.Empty;
+
+							if (filtrado == 2)
+							{
+								fondoDLCs = "background-color: var(--fondoBotonPequeño);";
+							}
+							else
+							{
+								fondoDLCs = "background-color: transparent;";
+							}
+
+							string fondoBandasSonoras = string.Empty;
+
+							if (filtrado == 3)
+							{
+								fondoBandasSonoras = "background-color: var(--fondoBotonPequeño);";
+							}
+							else
+							{
+								fondoBandasSonoras = "background-color: transparent;";
+							}
+
+							string fondoSoftware = string.Empty;
+
+							if (filtrado == 4)
+							{
+								fondoSoftware = "background-color: var(--fondoBotonPequeño);";
+							}
+							else
+							{
+								fondoSoftware = "background-color: transparent;";
+							}
+						}
+
+						@if (juegosCuratorJuegos.Count > 0)
+						{
+							<button @onclick="(e => MostrarListado(e, juegosCuratorJuegos, 1))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoJuegos">
+								<div style="display: flex; align-items: center;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Curators") (@juegosCuratorJuegos.Count.ToString())
+								</div>
+							</button>
+						}
+
+						@if (juegosCuratorDLCs.Count > 0)
+						{
+							<button @onclick="(e => MostrarListado(e, juegosCuratorDLCs, 2))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoDLCs">
+								<div style="display: flex; align-items: center;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Curators") (@juegosCuratorDLCs.Count.ToString())
+								</div>
+							</button>
+						}
+
+						@if (juegosCuratorBandasSonoras.Count > 0)
+						{
+							<button @onclick="(e => MostrarListado(e, juegosCuratorBandasSonoras, 3))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoBandasSonoras">
+								<div style="display: flex; align-items: center;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Curators") (@juegosCuratorBandasSonoras.Count.ToString())
+								</div>
+							</button>
+						}
+
+						@if (juegosCuratorSoftware.Count > 0)
+						{
+							<button @onclick="(e => MostrarListado(e, juegosCuratorSoftware, 4))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoSoftware">
+								<div style="display: flex; align-items: center;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Curators") (@juegosCuratorSoftware.Count.ToString())
+								</div>
+							</button>
+						}
+					</div>
+
+					<div class="caja-diseño" style="width: 100%; padding: 0px 20px;">
+						<div style="display: flex; flex-direction: column; gap: 20px;">
+							<Virtualize Context="juego" Items="juegosCuratorMostrar" ItemSize="107" OverscanCount="6">
+								<ItemContent>
+									<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorLista" />
+								</ItemContent>
+							</Virtualize>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	[Parameter]
+	public int curatorIdSteam { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private bool usuarioPatreon = false;
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+	private BaseDatos.Curators.Curator curator = null;
+	private List<Juegos.Juego> juegosCurator = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosDestacados = new List<Juegos.Juego>();
+
+	private int filtrado = 0;
+	private List<Juegos.Juego> juegosCuratorMostrar = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosCuratorJuegos = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosCuratorDLCs = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosCuratorBandasSonoras = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosCuratorSoftware = new List<Juegos.Juego>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		usuario = await UserManager.FindByIdAsync(usuarioId);
+
+		if (usuario != null)
+		{
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+		}
+
+		curator = BaseDatos.Curators.Buscar.Uno(curatorIdSteam);
+
+		if (curator != null)
+		{
+			if (string.IsNullOrEmpty(curator.ImagenFondo) == true)
+			{
+				SteamCuratorAPIVanidad api = await APIs.Steam.Curator.ExtraerVanidad(curator.IdSteam.ToString());
+
+				if (api != null)
+				{
+					if (string.IsNullOrEmpty(api.Imagen) == false)
+					{
+						BaseDatos.Curators.Actualizar.ImagenFondo(api.Imagen, curator.IdSteam);
+						curator.ImagenFondo = api.Imagen;
+					}
+				}
+			}
+
+			if (curator.Fecha == null)
+			{
+				global::BaseDatos.Curators.Actualizar.Ejecutar(curator);
+			}
+			else
+			{
+				if (curator.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
+				{
+					global::BaseDatos.Curators.Actualizar.Ejecutar(curator);
+				}
+			}
+
+			juegosCurator = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.SteamIds);
+
+			if (juegosCurator.Count > 0)
+			{
+				juegosCurator = juegosCurator.Where(x => x.Analisis != null).Where(x => x.Analisis.Cantidad != null).OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
+
+				juegosCuratorMostrar = juegosCurator;
+
+				foreach (var juegoCurator in juegosCurator)
+				{
+					if (juegoCurator.Tipo == Juegos.JuegoTipo.Game)
+					{
+						if (juegosDestacados.Count < 6)
+						{
+							juegosDestacados.Add(juegoCurator);
+						}
+
+						juegosCuratorJuegos.Add(juegoCurator);
+					}
+					else if (juegoCurator.Tipo == Juegos.JuegoTipo.DLC)
+					{
+						juegosCuratorDLCs.Add(juegoCurator);
+					}
+					else if (juegoCurator.Tipo == Juegos.JuegoTipo.Music)
+					{
+						juegosCuratorBandasSonoras.Add(juegoCurator);
+					}
+					else if (juegoCurator.Tipo == Juegos.JuegoTipo.Software)
+					{
+						juegosCuratorSoftware.Add(juegoCurator);
+					}
+				}
+			}
+		}
+
+	}
+
+	private void MostrarListado(MouseEventArgs e, List<Juegos.Juego> juegos, int nuevoFiltrado)
+	{
+		if (nuevoFiltrado != filtrado)
+		{
+			juegosCuratorMostrar = juegos;
+			filtrado = nuevoFiltrado;
+		}
+		else
+		{
+			juegosCuratorMostrar = juegosCurator;
+			filtrado = 0;
+		}
+	}
+}

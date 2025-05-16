@@ -1,0 +1,246 @@
+﻿@using BaseDatos.Juegos;
+@using Juegos;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Data.SqlClient;
+@using Microsoft.JSInterop
+@using pepeizqs_deals_web.Data;
+
+@inject UserManager<Usuario> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastAdded") + " • pepeizq's deals";
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded");
+	string enlace = "https://pepeizqdeals.com/free/";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+	string keywords = "last, added";
+
+	if (juegosMostrar.Count > 0)
+	{
+		int i = 0;
+		foreach (var juego in juegosMostrar)
+		{
+			if (i < 10)
+			{
+				string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
+				List<string> keywordsLista = new List<string>();
+				keywordsLista.AddRange(keywordsEnBruto);
+
+				foreach (var keyword in keywordsLista)
+				{
+					if (keywords.Contains(keyword) == false && keyword.Length > 3)
+					{
+						keywords = keywords + ", " + keyword;
+					}
+				}
+			}
+
+			i += 1;
+		}
+	}
+
+	<HeadContent>
+		<meta name="og:title" content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="@keywords" />
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+@if (juegosMostrar.Count > 0)
+{
+	<div style="max-width: 1000px; margin: auto;">
+		<div style="background-color: var(--fondoCuerpo);">
+			<div style="display: flex; align-items: center; width: 100%;">
+				<div style="width: 100%; font-size: 23px; text-align: left;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded")
+				</div>
+			</div>
+		</div>
+
+		<hr />
+
+		<div>
+			<Virtualize Context="juego" Items="juegosMostrar" ItemSize="107" OverscanCount="6">
+				<ItemContent>
+					<div class="perfil-flexible-centrado" style="margin-top: 25px; margin-bottom: 25px;">
+						<a class="boton-pequeño" style="padding: 0px;" href="/game/@juego.Id/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/">
+							<div class="perfil-flexible-centrado">
+								<div>
+									<img src="@juego.Imagenes.Header_460x215" style="width: 230px; height: 107px;" />
+								</div>
+
+								<div style="width: 100%; padding: 5px 20px;">
+									<div style="font-size: 18px;">@juego.Nombre</div>
+
+									@if (usuario != null)
+									{
+										if (BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
+										{
+											<div class="perfil-flexible-centrado" style="justify-content: left; margin-top: 10px;">
+												<div style="font-size: 13px;">@juego.Id</div>
+											</div>
+										}
+									}									
+								</div>
+
+								<div style="width: 250px; padding: 5px 15px; text-align: center; font-size: 17px;">
+									@GenerarMensaje(juego)
+								</div>
+							</div>
+						</a>
+					</div>
+				</ItemContent>
+			</Virtualize>
+		</div>
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	private List<Juegos.Juego> juegosMostrar = new List<Juegos.Juego>();
+
+	private Usuario usuario = new Usuario();
+
+	protected override async Task OnInitializedAsync()
+	{
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			juegosMostrar = Buscar.Ultimos(conexion, "juegos", 500);
+
+			if (juegosMostrar != null)
+			{
+				if (juegosMostrar.Count > 0)
+				{
+					juegosMostrar = juegosMostrar.OrderBy(x => x.Id).Reverse().ToList();
+				}
+			}
+		}
+
+		usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+	}
+
+	private string GenerarMensaje(Juegos.Juego juego)
+	{
+		string mensaje = string.Empty;
+
+		if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
+		{
+			if (juego.FreeToPlay.ToLower() == "true")
+			{
+				return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage6", "Header");
+			}
+		}
+
+		if (juego.Gratis != null)
+		{
+			if (juego.Gratis.Count > 0)
+			{
+				foreach (var gratis in juego.Gratis)
+				{
+					if (DateTime.Now >= gratis.FechaEmpieza && DateTime.Now <= gratis.FechaTermina)
+					{
+						return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage5", "Header");
+					}
+				}
+			}
+		}
+
+		if (juego.Bundles != null)
+		{
+			if (juego.Bundles.Count > 0)
+			{
+				foreach (var bundle in juego.Bundles)
+				{
+					if (DateTime.Now >= bundle.FechaEmpieza && DateTime.Now <= bundle.FechaTermina)
+					{
+						return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage4", "Header");
+					}
+				}
+			}
+		}
+
+		if (juego.Suscripciones != null)
+		{
+			if (juego.Suscripciones.Count > 0)
+			{
+				foreach (var suscripcion in juego.Suscripciones)
+				{
+					if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
+					{
+						return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage3", "Header");
+					}
+				}
+			}
+		}
+
+		decimal minimoCantidad = 10000000;
+		Juegos.JuegoPrecio minimoFinal = new Juegos.JuegoPrecio();
+
+		if (juego.PrecioActualesTiendas != null)
+		{
+			foreach (var precio in juego.PrecioActualesTiendas)
+			{
+				if (Herramientas.OfertaActiva.Verificar(precio) == true)
+				{
+					decimal tempPrecio = precio.Precio;
+
+					if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+					{
+						tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, precio.Moneda);
+					}
+
+					if (tempPrecio < minimoCantidad)
+					{
+						minimoCantidad = tempPrecio;
+						minimoFinal = precio;
+					}
+				}
+			}
+		}
+
+		if (minimoFinal != null)
+		{
+			if (minimoFinal.Precio > 0)
+			{
+				string precioTexto = string.Empty;
+
+				precioTexto = minimoFinal.Precio.ToString();
+				precioTexto = precioTexto.Replace(".", ",");
+
+				int int1 = precioTexto.IndexOf(",");
+
+				if (int1 == precioTexto.Length - 2)
+				{
+					precioTexto = precioTexto + "0";
+				}
+
+				precioTexto = precioTexto + "€";
+
+				return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage1", "Header"), precioTexto);
+			}
+			else
+			{
+				return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage2", "Header");
+			}
+		}
+
+		return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage2", "Header");
+	}
+}

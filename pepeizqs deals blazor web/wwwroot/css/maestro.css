@@ -1,0 +1,65 @@
+﻿:root {
+    --fondoOscuro: #002033;
+    --fondoOscuroTransparente: rgba(0, 32, 51, 0.9);
+    --fondoCuerpo: #1b2838;
+    --tamañoTexto: 16px;
+    --colorTexto: #f5f5f5;
+    --colorTextoHover: #b9e2fa;
+    --colorTextoVisitado: #cbeafb;
+    --fondoEntrada: #0d1621;
+    --fondoBoton: #146a9c;
+    --fondoBotonHover: #105279;
+    --fondoBotonPequeño: #0d1621;
+    --fondoBotonPequeñoHover: #060a0f;
+    --fondoBotonPequeñoTransparente: rgba(13, 22, 33, 0.5);
+    --colorTextoPeligro: #f04f5e;
+    --colorTextoPeligroHover: #b91020;
+    --colorTextoOscuro: #86aeef;
+    --fondoAlerta: #574200;
+    --colorTextoBien: #011a11;
+    --fondoBien: #035637;
+    --colorTextoDlc: #edddf0;
+    --fondoDlc: #733b7f;
+    --colorEnlace: #95c0fe;
+    --colorEnlaceHover: #3486fd;
+    --fondoCodigo: #345884;
+    --alturaCabecera: 70px;
+    --anchoCuerpo: 1320px;
+    --fondoMinimo: #002c47;
+    --deckVerificado: #59bf40;
+    --deckJugable: #ffc82c;
+    --fondoOpcionesTransparente: rgba(13, 22, 33, 0.95);
+    --fondoBandaSonora: #ab4364;
+    --fondoPeligro: #842029;
+}
+
+@font-face {
+    font-family: 'Motiva Sans';
+    src: url('../fuente/MotivaSansRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+a {
+    color: var(--colorEnlace);
+}
+
+    a:hover {
+        color: var(--colorEnlaceHover);
+    }
+
+dl, ol, ul {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#components-reconnect-modal {
+    display: none;
+}
+
+    #components-reconnect-modal.components-reconnect-show,
+    #components-reconnect-modal.components-reconnect-failed,
+    #components-reconnect-modal.components-reconnect-rejected {
+        display: block;
+    }

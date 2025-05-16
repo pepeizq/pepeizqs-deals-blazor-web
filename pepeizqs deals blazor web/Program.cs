@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using pepeizqs_deals_blazor_web.Components;
-using pepeizqs_deals_blazor_web.Components.Account;
+using pepeizqs_deals_blazor_web.Componentes;
+using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
+{
+	opciones.DetailedErrors = true;
+});
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -33,6 +35,20 @@ builder.Services.AddIdentityCore<Usuario>(options => options.SignIn.RequireConfi
 
 builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
 
+#region Optimizador
+
+builder.Services.AddWebOptimizer(opciones => {
+	opciones.AddCssBundle("/css/bundle.css", new NUglify.Css.CssSettings
+	{
+		CommentMode = NUglify.Css.CssComment.None,
+
+	}, "lib/bootstrap/dist/css/bootstrap.min.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css", "lib/font-awesome/css/all.css");
+
+	opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
+});
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,7 +69,16 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode(opciones =>
+{
+	opciones.DisableWebSocketCompression = true;
+});
+
+#region Optimizador (Despues Compresion)
+
+app.UseWebOptimizer();
+
+#endregion
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

@@ -1,0 +1,539 @@
+﻿@using APIs.Steam
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.VisualBasic
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Free") + " • pepeizq's deals";
+    string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Free");
+    string enlace = "https://pepeizqdeals.com/free/";
+    string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+    string keywords = "free";
+
+    if (juegosActuales.Count > 0)
+    {
+        juegosActuales = juegosActuales.OrderBy(x => x.Nombre).ToList();
+
+        int juegos = 0;
+        int dlcs = 0;
+
+        foreach (var juego in juegosActuales)
+        {
+            if (juego.Juego.Tipo == Juegos.JuegoTipo.Game)
+            {
+                juegos += 1;
+            }
+            else if (juego.Juego.Tipo == Juegos.JuegoTipo.DLC)
+            {
+                dlcs += 1;
+            }
+
+            string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(juego.Nombre + " " + Gratis2.GratisCargar.DevolverGratis(juego.Tipo).Nombre, false).Split(' ');
+            List<string> keywordsLista = new List<string>();
+            keywordsLista.AddRange(keywordsEnBruto);
+
+            foreach (var keyword in keywordsLista)
+            {
+                if (keywords.Contains(keyword) == false && keyword.Length > 3)
+                {
+                    keywords = keywords + ", " + keyword;
+                }
+            }
+        }
+
+        if (juegos == 0)
+        {
+            if (dlcs == 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Free"), dlcs.ToString()) + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Free");
+            }
+            else if (dlcs > 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Free"), dlcs.ToString()) + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+        }
+        else if (juegos > 0)
+        {
+            if (juegos == 1 && dlcs == 0)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Free"), juegos.ToString()) + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Free");
+            }
+            else if (juegos > 1 && dlcs == 0)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Free"), juegos.ToString()) + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+            else if (juegos == 1 && dlcs == 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Free"), juegos.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Free") + " " +
+                    string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Free"), dlcs.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+            else if (juegos > 1 && dlcs == 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Free"), juegos.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Free") + " " +
+                    string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Free"), dlcs.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+            else if (juegos == 1 && dlcs > 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Free"), juegos.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Free") + " " +
+                    string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Free"), dlcs.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+            else if (juegos > 1 && dlcs > 1)
+            {
+                titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Free"), juegos.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Free") + " " +
+                    string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Free"), dlcs.ToString()) + " " +
+                    Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Free");
+            }
+        }
+
+        if (string.IsNullOrEmpty(titulo) == true)
+        {
+            titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Free");
+        }
+    }
+
+    <HeadContent>
+        <meta name="og:title" Content="@titulo" />
+        <meta name="description" content="@descripcion" />
+        <meta name="og:description" content="@descripcion" />
+        <meta name="og:url" content="@enlace" />
+        <meta name="og:image" content="@imagen" />
+        <meta name="og:site_name" content="pepeizq's deals" />
+        <meta name="og:type" content="website" />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content="@keywords" />
+
+        <script type="application/ld+json">
+			@{
+				string seoJson = "{" + Environment.NewLine +
+					Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ItemList" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Free PC Games and DLCs to claim" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "numberOfItems" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + juegosActuales.Count.ToString() + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "itemListOrder" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Descending" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "itemListElement" + Strings.ChrW(34) + ": [";
+
+				int i = 0;
+                    while (i < juegosActuales.Count)
+				{
+					if (i != 0)
+					{
+						seoJson = seoJson + ",";
+					}
+
+					seoJson = seoJson + "{" + Environment.NewLine +
+						Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ListItem" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "position" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + (i + 1).ToString() + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + juegosActuales[i].Nombre + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://pepeizqdeals.com/game/" + juegosActuales[i].JuegoId.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegosActuales[i].Nombre) + "/" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + juegosActuales[i].Imagen + Strings.ChrW(34) + "}";
+
+					i += 1;
+				}
+
+				seoJson = seoJson + "]" + Environment.NewLine + "}";
+			}
+
+			@((MarkupString)seoJson)
+		</script>
+
+        <link rel="canonical" href="@enlace" />
+    </HeadContent>
+}
+
+<script>
+    function enseñarTooltip(e, id) {
+        var x = e.clientX,
+            y = e.clientY;
+
+        var tooltip = document.getElementById(id);
+
+        if (screen.width / 2 > x) {
+            tooltip.style.top = (y + 10) + 'px';
+            tooltip.style.left = (x + 20) + 'px';
+        }
+        else {
+            tooltip.style.top = (y - 10) + 'px';
+            tooltip.style.left = (x - 20 - tooltip.getBoundingClientRect().width) + 'px';
+        };
+    };
+
+    function moverScroll(id) {
+        const element = document.getElementById(id);
+        const y = element.getBoundingClientRect().top + window.pageYOffset;
+
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    function ocultar(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+</script>
+
+<script>
+    function moverScroll(id) {
+        const yOffset = -30;
+        const element = document.getElementById(id);
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+</script>
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+@if (juegosActuales.Count > 0)
+{
+	<h1 style="font-size: 23px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Free")
+	</h1>
+
+    <hr>
+
+    <div class="caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; gap: 30px; padding: 30px;">
+        @foreach (var juego in juegosActuales)
+        {
+            bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego.Juego, juego.DRM);
+            bool usuarioTieneDeseado = false;
+
+            string fondoColor = string.Empty;
+
+            if (usuarioTieneJuego == true)
+            {
+                fondoColor = "background-color: var(--fondoBien);";
+            }
+            else
+            {
+                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, juego.Juego, juego.DRM);
+
+                if (usuarioTieneDeseado == true)
+                {
+                    fondoColor = "background-color: var(--fondoAlerta);";
+                }
+            }
+
+            bool usuarioConectado = false;
+
+            if (string.IsNullOrEmpty(usuarioId) == false)
+            {
+                usuarioConectado = true;
+            }
+
+            Herramientas.ToolTipDatos tooltipDatos = Herramientas.Tooltip.Generar(idioma, juego.Juego, juego.DRM, usuarioConectado, usuarioTieneJuego, usuarioTieneDeseado);
+
+            <div class="tooltip-juego" onmousemove="enseñarTooltip(event, 'tooltip-@juego.JuegoId.ToString()-@juego.Tipo.ToString()')">
+                <div id="tooltip-@juego.JuegoId.ToString()-@juego.Tipo.ToString()" class="tooltip-relleno" style="max-width: 460px;">
+                    @if (string.IsNullOrEmpty(tooltipDatos.Video) == false)
+                    {
+                        <video src="@tooltipDatos.Video" autoplay="autoplay" loop muted style="object-fit: cover; width: 100%;" />
+                    }
+
+                    <div style="padding: 15px;">
+                        <div style="text-align: left;">
+                            @tooltipDatos.Nombre
+                        </div>
+
+                        @{
+                            int gratisEstado = 0;
+
+                            if (juego.Juego.Gratis != null)
+                            {
+                                gratisEstado = juego.Juego.Gratis.Count;
+
+                                if (gratisEstado > 0)
+                                {
+                                    gratisEstado -= 1;
+                                }
+                            }
+
+                            if (gratisEstado > 0)
+                            {
+                                <hr />
+
+                                <div style="text-align: left;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Free")
+                                </div>
+                            }
+                            else if (gratisEstado == 0)
+                            {
+                                <hr />
+
+                                <div style="text-align: left;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Free")
+                                </div>
+                            }
+                        }
+
+                        @if (string.IsNullOrEmpty(tooltipDatos.ReviewsIcono) == false && string.IsNullOrEmpty(tooltipDatos.ReviewsCantidad) == false)
+                        {
+                            <hr />
+
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="@tooltipDatos.ReviewsIcono" style="width: 20px; height: 20px;" alt="Reviews" />
+                                <label style="font-size: 14px;">@tooltipDatos.ReviewsCantidad</label>
+                            </div>
+                        }
+
+                        @if (string.IsNullOrEmpty(tooltipDatos.UsuarioMensaje) == false)
+                        {
+                            <hr />
+
+                            <div style="text-align: left;">
+                                @tooltipDatos.UsuarioMensaje
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <a href="@Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon)" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor" target="_blank">
+                    <div style="width: 100%; text-align: center; padding: 5px;">
+                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagen)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
+
+                        <div style="margin-top: 10px; margin-bottom: 5px; text-align: center; padding: 5px;">
+                            @{
+                                Gratis2.Gratis gratis = Gratis2.GratisCargar.DevolverGratis(juego.Tipo);
+                            }
+
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; height: 40px;">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(gratis.ImagenLogo)" style="max-width: 140px; max-width: 140px;" alt="Store" />
+
+                                @if (gratis.DRMEnseñar == true)
+                                {
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(juego.DRM))" style="width: 28px; height: 28px;" alt="DRM" />
+                                }
+                            </div>                            
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+<div style="font-size: 23px; margin-top: 60px;">
+    @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Free")
+</div>
+
+<div style="display: flex; align-items: start; margin-top: 10px;">
+    @foreach (var año in años)
+    {
+        <div style="margin-right: 15px;">
+            <button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style=" padding: 6px 10px; width: auto;">
+                @año
+            </button>
+
+            @if (añoSeleccionado == año)
+            {
+                <div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
+                </div>
+
+                <div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
+                    @foreach (var gratisPasado in gratisPasados)
+                    {
+                        List<Juegos.JuegoGratis> gratisAño = new List<Juegos.JuegoGratis>();
+
+                        foreach (var juego in gratisPasado.Juegos)
+                        {
+                            if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
+                            {
+                                gratisAño.Add(juego);
+                            }
+                        }
+
+                        if (gratisAño.Count > 0)
+                        {
+                            <div style="margin-right: 15px; font-size: 14px;">
+                                <a onclick="moverScroll('pasado-@gratisPasado.Tipo.Nombre')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
+                                    <img src="@gratisPasado.Tipo.ImagenIcono" style="width: 22px; height: 22px;" alt="Store"/> (@gratisAño.Count.ToString())
+                                </a>
+                            </div>                           
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div style="margin-top: 55px;">
+    @foreach (var gratisPasado in gratisPasados)
+    {
+        List<Juegos.JuegoGratis> gratisAño = new List<Juegos.JuegoGratis>();
+
+        foreach (var juego in gratisPasado.Juegos)
+        {
+            if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
+            {
+                gratisAño.Add(juego);
+            }
+        }
+
+        if (gratisAño.Count > 0)
+        {
+            <hr>
+
+            <div id="pasado-@gratisPasado.Tipo.Nombre" style="display: flex; align-items: start;">
+                <div class="perfil" style="width: 20%;">
+                    <img src="@gratisPasado.Tipo.ImagenLogo" alt="Store"/>
+                </div>
+
+                <div class="perfil" style="width: 80%;">
+                    @{
+                        int i = 1;
+                        while (i < 13)
+                        {
+                            List<Juegos.JuegoGratis> gratisMensual = new List<Juegos.JuegoGratis>();
+
+                            foreach (var juego in gratisAño)
+                            {
+                                if (juego.FechaEmpieza.Month == i)
+                                {
+                                    gratisMensual.Add(juego);
+                                }
+                            }
+
+                            if (gratisMensual.Count > 0)
+                            {
+                                <label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
+
+                                <ul>
+                                    @foreach (var juegoMensual in gratisMensual)
+                                    {
+                                        <li>
+                                            <a href="/game/@juegoMensual.JuegoId/@Herramientas.EnlaceAdaptador.Nombre(juegoMensual.Nombre)/">
+                                                <label style="cursor: pointer;">@juegoMensual.Nombre</label> 
+
+                                                @if (gratisPasado.Tipo.DRMEnseñar == true)
+                                                {
+                                                    <label style="cursor: pointer; margin-left: 5px;">(@Juegos.JuegoDRM2.DevolverDRM(juegoMensual.DRM))</label>
+                                                }
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+
+                            i += 1;
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    [Parameter]
+    public string usuarioId { get; set; }
+
+    private Usuario usuario = new Usuario();
+    private bool usuarioPatreon = false;
+    private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+    private List<Juegos.JuegoGratis> juegosActuales = new List<Juegos.JuegoGratis>();
+    private List<Gratis2.GratisComponente> gratisPasados = new List<Gratis2.GratisComponente>();
+
+    private List<string> años = new List<string>();
+    private string añoSeleccionado = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuario = await UserManager.FindByIdAsync(usuarioId);
+
+        if (usuario != null)
+        {
+            usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+        }
+
+        //--------------------------------------------------------------------
+
+        DateTime arranque = new DateTime(2011, 1, 1);
+
+        int i = 0;
+        while (i < 100)
+        {
+            if (arranque.Year != DateTime.Now.Year)
+            {
+                años.Add(arranque.Year.ToString());
+                arranque = arranque.AddYears(1);
+            }
+            i += 1;
+        }
+
+        años.Add(DateTime.Now.Year.ToString());
+        años.Reverse();
+
+        //--------------------------------------------------------------------
+
+        juegosActuales = BaseDatos.Gratis.Buscar.Actuales();
+
+        if (juegosActuales.Count > 0)
+        {
+            foreach (var juegoActual in juegosActuales)
+            {
+                Juegos.Juego juego2 = BaseDatos.Juegos.Buscar.UnJuego(juegoActual.JuegoId.ToString());
+                juegoActual.Imagen = juego2.Imagenes.Header_460x215;
+                juegoActual.Juego = juego2;
+            }
+        }
+    }
+
+    private void CambiarAño(MouseEventArgs e, string nuevoAño)
+    {
+        añoSeleccionado = nuevoAño;
+
+        List<Juegos.JuegoGratis> juegosPasados = BaseDatos.Gratis.Buscar.Año(añoSeleccionado);
+
+        if (juegosPasados.Count > 0)
+        {
+            gratisPasados.Clear();
+
+            foreach (var gratis in Gratis2.GratisCargar.GenerarListado())
+            {
+                List<Juegos.JuegoGratis> juegos2 = new List<Juegos.JuegoGratis>();
+
+                foreach (var juego in juegosPasados)
+                {
+                    if (juego.Tipo == gratis.Tipo)
+                    {
+                        juegos2.Add(juego);
+                    }
+                }
+
+                if (juegos2.Count > 0)
+                {
+                    Gratis2.GratisComponente componente = new Gratis2.GratisComponente();
+                    componente.Juegos = juegos2;
+                    componente.Tipo = gratis;
+
+                    gratisPasados.Add(componente);
+                }
+            }
+        }
+    }
+}

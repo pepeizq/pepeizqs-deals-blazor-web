@@ -1,0 +1,103 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS") + " • pepeizq's deals";
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "RSS");
+	string enlace = "https://pepeizqdeals.com/rss";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="deals, games, free, offers, bundles" />
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+<div style="max-width: 1200px; margin: auto;">
+	<h1 style="font-size: 23px;">@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS")</h1>
+	<hr />
+
+	<div style="display: flex; flex-direction: column; gap: 40px;">
+		<div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
+			<div style="font-size: 18px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "RSS")
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "RSS")
+			</div>
+
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "RSS")
+
+				<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
+					<label style="text-decoration: none;">https://pepeizqdeals.com/rss-en.xml</label>
+				</div>
+			</div>
+
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "RSS")
+
+				<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
+					<label style="text-decoration: none;">https://pepeizqdeals.com/rss-es.xml</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
+			<div style="font-size: 18px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "RSS")
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "RSS")
+			</div>
+
+			<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
+				<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam/1000</label>
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "RSS")
+			</div>
+
+			<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
+				<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam,gog/1000</label>
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "RSS")
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "RSS")
+			</div>
+		</div>
+	</div>	
+</div>
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+}

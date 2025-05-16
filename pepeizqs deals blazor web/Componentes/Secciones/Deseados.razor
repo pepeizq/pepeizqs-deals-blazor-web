@@ -1,0 +1,1798 @@
+﻿@using APIs.Steam
+@using Juegos
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.JSInterop
+@using pepeizqs_deals_web.Data
+@using System.Text.Json
+@using System.Text
+@using Tiendas2
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JavaScript
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Wishlist") + " • pepeizq's deals";
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Wishlist");
+	string enlace = "https://pepeizqdeals.com/wishlist/";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="deals, games, free, offers, bundles" />
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<script>
+	window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+	const arrayBuffer = await contentStreamReference.arrayBuffer();
+	const blob = new Blob([arrayBuffer]);
+	const url = URL.createObjectURL(blob);
+	const anchorElement = document.createElement('a');
+	anchorElement.href = url;
+	anchorElement.download = fileName ?? '';
+	anchorElement.click();
+	anchorElement.remove();
+	URL.revokeObjectURL(url);
+	}
+</script>
+
+<style>
+    .caja-diseño {
+        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+        border: 2px solid var(--fondoOscuro);
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        border-radius: 5px;
+    }
+</style>
+
+<style>
+	.deseado-imagen {
+		width: 26%;
+	}
+
+	@@media (max-width: 800px) {
+		.deseado-imagen {
+			display: none;
+		}
+	}
+</style>
+
+<style>
+	.cargando {
+		width: 48px;
+		height: 48px;
+		border: 5px solid var(--colorTexto);
+		border-bottom-color: transparent;
+		border-radius: 50%;
+		display: inline-block;
+		box-sizing: border-box;
+		animation: rotation 1s linear infinite;
+	}
+
+	@@keyframes rotation {
+	0% {
+	transform: rotate(0deg);
+	}
+
+	100% {
+	transform: rotate(360deg);
+	}
+	}
+</style>
+
+@if (usuario != null)
+{
+	if (cargado == false)
+	{
+		<div style="text-align: center; width: 100%;">
+			<div class="cargando" />
+		</div>		
+	}
+	else
+	{
+		if (deseadosGestor.Count == 0)
+		{
+			<div style="max-width: 800px; margin: auto;">
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Wishlist")
+				</div>
+			</div>
+		}
+
+		if (deseadosGestor.Count > 0)
+		{
+			<div style="max-width: 1000px; margin: auto;">
+				<div style="background-color: var(--fondoCuerpo);">
+					<div style="display: flex; align-items: center; width: 100%;">
+						<div style="width: 100%; font-size: 23px; text-align: left;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Wishlist")
+
+							@if (string.IsNullOrEmpty(otroUsuario) == false)
+							{
+								<label style="font-size: 14px; margin-left: 10px;">(@otroUsuario)</label>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div style="margin-top: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+					<div style="display: flex; align-items: center; gap: 20px;">
+						@{
+							string subrayadoOfertas = string.Empty;
+							string subrayadoMinimos = string.Empty;
+							string subrayadoBundles = string.Empty;
+							string subrayadoSuscripciones = string.Empty;
+
+							if (pestañaMostrar == 0)
+							{
+								subrayadoOfertas = "border-bottom: 1px solid var(--colorEnlace);";
+							}
+							else if (pestañaMostrar == 1)
+							{
+								subrayadoMinimos = "border-bottom: 1px solid var(--colorEnlace);";
+							}
+							else if (pestañaMostrar == 2)
+							{
+								subrayadoBundles = "border-bottom: 1px solid var(--colorEnlace);";
+							}
+							else if (pestañaMostrar == 3)
+							{
+								subrayadoSuscripciones = "border-bottom: 1px solid var(--colorEnlace);";
+							}
+						}
+
+						<button @onclick="(e => CambiarPestaña(e, 0))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+							<div style="@subrayadoOfertas padding-bottom: 5px;">
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Wishlist"), cantidadOfertas)
+							</div>
+						</button>
+
+						<button @onclick="(e => CambiarPestaña(e, 1))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+							<div style="@subrayadoMinimos padding-bottom: 5px;">
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Wishlist"), cantidadMinimos)
+							</div>
+						</button>
+
+						<button @onclick="(e => CambiarPestaña(e, 2))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+							<div style="@subrayadoBundles padding-bottom: 5px;">
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String29", "Wishlist"), deseadosBundles.Count)
+							</div>
+						</button>
+
+						<button @onclick="(e => CambiarPestaña(e, 3))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+							<div style="@subrayadoSuscripciones padding-bottom: 5px;">
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Wishlist"), deseadosSuscripciones.Count)
+							</div>
+						</button>
+					</div>
+
+					<div class="menu-dropdown" style="width: auto;">
+						<button class="boton-pequeño" style="display: flex; align-items: center; width: 100%; padding: 10px 15px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="font-size: 14px; padding-right: 5px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Wishlist"):
+							</div>
+
+							<div style="font-size: 14px; color: var(--colorEnlace); padding-right: 15px;">
+								@ordenamientoElegido
+							</div>
+
+							<div style="max-width: 9px;">
+								<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+									<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+								</svg>
+							</div>
+						</button>
+
+						<div class="menu-dropdown-contenido" style="right: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasPorcentaje">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Wishlist")
+							</button>
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasCantidad">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Wishlist")
+							</button>
+							<hr />
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreAZ">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Wishlist")
+							</button>
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreZA">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Wishlist")
+							</button>
+
+							@if (pestañaMostrar == 0 || pestañaMostrar == 1)
+							{
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarPrecio">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Wishlist")
+								</button>
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarDescuento">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Wishlist")
+								</button>
+							}			
+						</div>
+					</div>
+				</div>
+
+				@if (pestañaMostrar == 0 || pestañaMostrar == 1)
+				{
+					<div class="caja-diseño" style="padding: 20px; width: 100%; margin: 15px 0px 25px 0px; display: flex; flex-direction: column; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div style="max-width: 20px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+									<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+								</svg>
+							</div>
+
+							<input type="text" @onchange="(e => TextoCambiaBusqueda(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Wishlist")" />
+						</div>
+
+						@if (string.IsNullOrEmpty(otroUsuario) == true && usuarioLogeado == true)
+						{
+							<div style="display: flex; flex-direction: column; gap: 10px;">
+								<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
+									<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "Wishlist")">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String19", "Wishlist")
+
+											@if (enseñarDescuentoMinimo == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
+												</div>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
+												</div>
+											}
+										</div>
+									</button>
+
+									<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "Wishlist")">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Wishlist")
+
+											@if (enseñarPrecioMaximo == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
+												</div>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
+												</div>
+											}
+										</div>
+									</button>
+
+									<button class="boton-pequeño" @onclick="OpcionesCompartir" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Wishlist")
+
+											@if (enseñarCompartir == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
+												</div>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
+												</div>
+											}
+										</div>
+									</button>
+
+									<button class="boton-pequeño" @onclick="OpcionesExportar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Wishlist")
+
+											@if (enseñarExportar == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
+												</div>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
+												</div>
+											}
+										</div>
+									</button>
+								</div>
+
+								@if (enseñarDescuentoMinimo == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
+
+											<label style="min-width: 65px; text-align: center;">@minimoDescuento%</label>
+										</div>
+									</div>
+								}
+
+								@if (enseñarPrecioMaximo == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
+
+											<label style="min-width: 65px; text-align: center;">@maximoPrecio€</label>
+										</div>
+									</div>
+								}
+
+								@if (enseñarCompartir == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<div class="checkbox-caja">
+												<input type="checkbox" class="checkbox-interior" checked="@estadoCompartir" @onchange="CompartirDeseados">
+											</div>
+
+											<div style="display: flex; flex-direction: column; gap: 10px; width: 100%; font-size: 15px;">
+												@if (estadoCompartir == false)
+												{
+													<div>
+														@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Wishlist")
+													</div>
+												}
+												else
+												{
+													<div>
+														@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Wishlist")
+													</div>
+
+													<input type="text" value="@compartirNombre" @onchange="(e => TextoCambiaDeseados(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Wishlist")" />
+
+													@if (string.IsNullOrEmpty(compartirEnlace) == false)
+													{
+														<a href="@compartirEnlace" target="_blank">@compartirEnlace</a>
+													}
+												}
+											</div>
+										</div>
+									</div>
+								}
+
+								@if (enseñarExportar == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+										<div style="font-size: 15px;">
+											<div style="margin-bottom: 15px;">
+												@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Wishlist")
+											</div>
+
+											<button @onclick="@(e => DescargarJson())" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
+												@Herramientas.Idiomas.BuscarTexto(idioma, "String25", "Wishlist")
+											</button>
+										</div>
+									</div>
+								}
+							</div>
+						}
+					</div>
+
+					List<JuegoDeseadoMostrar> deseadosFinales = new List<JuegoDeseadoMostrar>();
+
+					if (pestañaMostrar == 0)
+					{
+						deseadosFinales = deseadosOfertas;
+					}
+
+					if (pestañaMostrar == 1)
+					{
+						deseadosFinales = deseadosHistoricos;
+					}
+
+					if (deseadosFinales.Count > 0)
+					{
+						<Virtualize Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
+							<ItemContent>
+								<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
+									<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
+										<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
+											<div class="deseado-imagen">
+												@{
+													string imagen = juego.Imagen;
+
+													if (imagen.Contains(APIs.GOG.Juego.dominioImagenes) == true)
+													{
+														imagen = imagen.Replace("_glx_logo", null);
+														imagen = imagen.Replace(".png", ".webp");
+													}
+												}
+
+												<img src="@imagen" style="height: 100%; width: 100%;" />
+											</div>
+
+											<div style="width: 100%; padding: 5px 20px;">
+												<div style="margin-top: 5px;">@juego.Nombre</div>
+
+												<div style="display: flex; align-items: center; margin-top: 5px;">
+													<div style="width: 20px; height: 20px;">
+														<img src="@Juegos.JuegoDRM2.SacarImagen(juego.DRM)" style="width: 100%; height: 100%;" />
+													</div>
+
+													@{
+														if (juego.Precio.Precio > 0)
+														{
+															List<Tiendas2.Tienda> tiendas = TiendasCargar.GenerarListado();
+
+															foreach (var tienda in tiendas)
+															{
+																if (tienda.Id == juego.Precio.Tienda)
+																{
+																	<div style="width: 20px; height: 20px; margin-left: 10px;">
+																		<img src="@tienda.ImagenIcono" style="width: 100%; height: 100%;" />
+																	</div>
+
+																	break;
+																}
+															}
+														}
+													}
+												</div>
+											</div>
+
+											<div>
+												<div style="display: flex; align-items: center;">
+													<div style="text-align: center; padding: 10px 15px; margin: 0px; min-width: 65px;" class="juego-descuento">
+														@juego.Precio.Descuento.ToString()%
+													</div>
+
+													<div style="padding: 5px 15px; min-width: 110px; text-align: center; font-size: 18px;">
+														@MensajeMinimo(juego.Precio, false)
+													</div>
+												</div>
+
+												@if (juego.Historico == true)
+												{
+													<div style="text-align: center; font-size: 14px; padding: 5px 15px; background-color: var(--fondoAlerta);">
+														@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Wishlist")
+													</div>
+												}
+												else
+												{
+													<div style="text-align: center; font-size: 14px; padding: 5px; background-color: var(--fondoOscuro);">
+														@juego.HistoricoPrecio
+													</div>
+												}
+											</div>
+										</div>
+									</a>
+
+									@if (string.IsNullOrEmpty(otroUsuario) == true && usuarioLogeado == true && juego.Importado == false)
+									{
+										<div style="background-color: transparent; padding: 5px 10px; display: flex; align-items: center; gap: 10px; right: -100px; position: absolute;">
+											<button @onclick="@(e => QuitarJuego(e, juego.Id, juego.DRM, juego))" style="width: fit-content; font-size: 14px; color: var(--colorEnlace); background: transparent; border: 0px; text-decoration: none; margin-left: auto;">
+												@Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Wishlist")
+											</button>
+										</div>
+									}
+								</div>
+							</ItemContent>
+						</Virtualize>
+					}
+				}
+				else if (pestañaMostrar == 2)
+				{
+					if (deseadosBundles.Count > 0)
+					{
+						<div>
+							<Virtualize Context="juego" Items="deseadosBundles" ItemSize="alturaFila">
+								<ItemContent>
+									@if (juego.IdBundle > 0)
+									{
+										Bundles2.Bundle bundle = BaseDatos.Bundles.Buscar.UnBundle(juego.IdBundle);
+
+										if (bundle != null)
+										{
+											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
+												<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" target="_blank">
+													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
+														<div class="deseado-imagen">
+															@{
+																string imagen = juego.Imagen;
+
+																if (imagen.Contains(APIs.GOG.Juego.dominioImagenes) == true)
+																{
+																	imagen = imagen.Replace("_glx_logo", null);
+																	imagen = imagen.Replace(".png", ".webp");
+																}
+															}
+
+															<img src="@imagen" style="height: 100%; width: 100%;" />
+														</div>
+
+														<div style="width: 100%; padding: 5px 20px;">
+															<div style="margin-top: 5px;">@juego.Nombre</div>
+
+															<div style="display: flex; align-items: center; margin-top: 5px;">
+																<div style="width: 20px; height: 20px;">
+																	<img src="@Juegos.JuegoDRM2.SacarImagen(juego.DRM)" style="width: 100%; height: 100%;" />
+																</div>
+
+																<div style="width: 20px; height: 20px; margin-left: 10px;">
+																	<img src="@Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).ImagenIcono" style="width: 100%; height: 100%;" />
+																</div>
+															</div>
+														</div>
+
+														<div style="display: flex; align-items: center; justify-content: center; min-width: 175px; font-size: 18px;">
+															<div style="padding: 5px 15px; text-align: center; font-size: 18px;">
+																@if (bundle.Pick == true)
+																{
+																	<div>
+																		@Herramientas.Precios.Euro(decimal.Parse(bundle.Tiers[0].Precio))
+																	</div>
+
+																	<div style="font-size: 14px; margin-top: 5px;">
+																		@if (bundle.Tiers[0].CantidadJuegos == 1)
+																		{
+																			@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String15", "Wishlist"), bundle.Tiers[0].CantidadJuegos)
+																		}
+																		else if (bundle.Tiers[0].CantidadJuegos > 1)
+																		{
+																			@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "Wishlist"), bundle.Tiers[0].CantidadJuegos)
+																		}
+																	</div>
+																}
+																else
+																{
+																	foreach (var juegoBundle in bundle.Juegos)
+																	{
+																		if (juegoBundle.JuegoId == juego.Id.ToString())
+																		{
+																			foreach (var tier in bundle.Tiers)
+																			{
+																				if (tier.Posicion == juegoBundle.Tier.Posicion)
+																				{
+																					<div>
+																						@Herramientas.Precios.Euro(decimal.Parse(tier.Precio))
+																					</div>
+
+																					<div style="font-size: 14px; margin-top: 5px;">
+																						@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String17", "Wishlist"), tier.Posicion)
+																					</div>
+
+																					break;
+																				}
+																			}
+																		}
+																	}
+																}
+															</div>
+														</div>
+													</div>
+												</a>
+
+												@if (string.IsNullOrEmpty(otroUsuario) == true && usuarioLogeado == true && juego.Importado == false)
+												{
+													<div style="background-color: transparent; padding: 5px 10px; display: flex; align-items: center; gap: 10px; right: -100px; position: absolute;">
+														<button @onclick="@(e => QuitarJuego(e, juego.Id, juego.DRM, juego))" style="width: fit-content; font-size: 14px; color: var(--colorEnlace); background: transparent; border: 0px; text-decoration: none; margin-left: auto;">
+															@Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Wishlist")
+														</button>
+													</div>
+												}
+											</div>
+										}
+									}
+								</ItemContent>
+							</Virtualize>
+						</div>
+					}
+				}
+				else if (pestañaMostrar == 3)
+				{
+					if (deseadosSuscripciones.Count > 0)
+					{
+						<div>
+							<Virtualize Context="juego" Items="deseadosSuscripciones" ItemSize="alturaFila">
+								<ItemContent>
+									@if (juego.IdSuscripcion > 0)
+									{
+										JuegoSuscripcion suscripcion = BaseDatos.Suscripciones.Buscar.UnJuego(juego.IdSuscripcion, null);
+
+										if (suscripcion != null)
+										{
+											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
+												<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon)" target="_blank">
+													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
+														<div class="deseado-imagen">
+															@{
+																string imagen = juego.Imagen;
+
+																if (imagen.Contains(APIs.GOG.Juego.dominioImagenes) == true)
+																{
+																	imagen = imagen.Replace("_glx_logo", null);
+																	imagen = imagen.Replace(".png", ".webp");
+																}
+															}
+
+															<img src="@imagen" style="height: 100%; width: 100%;" />
+														</div>
+
+														<div style="width: 100%; padding: 5px 20px;">
+															<div style="margin-top: 5px;">@juego.Nombre</div>
+
+															<div style="display: flex; align-items: center; margin-top: 5px;">
+																<div style="width: 20px; height: 20px;">
+																	<img src="@Juegos.JuegoDRM2.SacarImagen(juego.DRM)" style="width: 100%; height: 100%;" />
+																</div>
+
+																<div style="width: 20px; height: 20px; margin-left: 10px;">
+																	<img src="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).ImagenIcono" style="width: 100%; height: 100%;" />
+																</div>
+															</div>
+														</div>
+
+														<div style="display: flex; align-items: center; justify-content: center; min-width: 175px; font-size: 18px;">
+															<div style="padding: 5px 15px; text-align: center; font-size: 18px;">
+																@Herramientas.Precios.Euro((decimal)Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Precio)
+															</div>
+														</div>
+													</div>
+												</a>
+
+												@if (string.IsNullOrEmpty(otroUsuario) == true && usuarioLogeado == true && juego.Importado == false)
+												{
+													<div style="background-color: transparent; padding: 5px 10px; display: flex; align-items: center; gap: 10px; right: -100px; position: absolute;">
+														<button @onclick="@(e => QuitarJuego(e, juego.Id, juego.DRM, juego))" style="width: fit-content; font-size: 14px; color: var(--colorEnlace); background: transparent; border: 0px; text-decoration: none; margin-left: auto;">
+															@Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Wishlist")
+														</button>
+													</div>
+												}
+											</div>
+										}	
+									}
+								</ItemContent>
+							</Virtualize>
+						</div>
+					}
+				}
+			</div>
+		}
+	}
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	[Parameter]
+	public bool usuarioLogeado { get; set; }
+
+	[Parameter]
+	public string otroUsuario { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private bool usuarioPatreon = false;
+
+	private int pestañaMostrar = 0;
+
+	private List<JuegoDeseadoMostrar> deseadosGestor = new List<JuegoDeseadoMostrar>();
+	private List<JuegoDeseadoMostrar> deseadosOfertas = new List<JuegoDeseadoMostrar>();
+	private List<JuegoDeseadoMostrar> deseadosHistoricos = new List<JuegoDeseadoMostrar>();
+	private List<JuegoDeseadoMostrar> deseadosBundles = new List<JuegoDeseadoMostrar>();
+	private List<JuegoDeseadoMostrar> deseadosSuscripciones = new List<JuegoDeseadoMostrar>();
+
+	private List<string> deseadosSteam = new List<string>();
+	private List<JuegoDeseado> deseadosWeb = new List<JuegoDeseado>();
+	private List<string> deseadosGog = new List<string>();
+
+	private int cantidadOfertas = 0;
+	private int cantidadMinimos = 0;
+	private string ordenamientoElegido = string.Empty;
+
+	private int alturaFila = 82;
+
+	private string textoBuscador { get; set; }
+
+	private bool cargado = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (string.IsNullOrEmpty(otroUsuario) == true)
+		{
+			usuario = await UserManager.FindByIdAsync(usuarioId);
+		}
+		else
+		{
+			usuario = await UserManager.FindByIdAsync(BaseDatos.Usuarios.Buscar.UsuarioDeseadosNickname(otroUsuario));
+		}
+
+		if (usuario != null)
+		{
+			deseadosGestor = new List<JuegoDeseadoMostrar>();
+
+			if (string.IsNullOrEmpty(otroUsuario) == true)
+			{
+				usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+
+				estadoCompartir = usuario.WishlistPublic;
+				compartirNombre = usuario.WishlistNickname;
+				compartirEnlace = "https://pepeizqdeals.com/wishlist/" + compartirNombre + "/";
+			}
+
+			#region Filtrado
+
+			if (usuario.WishlistOption3 == null)
+			{
+				minimoDescuento = 1;
+			}
+			else
+			{
+				if (usuario.WishlistOption3 == 0 || usuario.WishlistOption3 == null)
+				{
+					minimoDescuento = 1;
+				}
+				else if (usuario.WishlistOption3 > 0)
+				{
+					minimoDescuento = usuario.WishlistOption3;
+				}
+			}
+
+			if (usuario.WishlistOption4 == null)
+			{
+				maximoPrecio = 90;
+			}
+			else
+			{
+				if (usuario.WishlistOption4 == 0 || usuario.WishlistOption4 == null)
+				{
+					maximoPrecio = 90;
+				}
+				else if (usuario.WishlistOption4 > 0)
+				{
+					maximoPrecio = usuario.WishlistOption4;
+				}
+			}
+
+			#endregion
+
+			#region Deseados Steam
+
+			if (string.IsNullOrEmpty(usuario.SteamWishlist) == false)
+			{
+				deseadosSteam = Herramientas.Listados.Generar(usuario.SteamWishlist);
+			}
+
+			if (deseadosSteam.Count > 0)
+			{
+				List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(deseadosSteam);
+
+				if (juegos != null)
+				{
+					int i = 0;
+
+					foreach (var juego in juegos)
+					{
+						i += 1;
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, JuegoDRM.Steam, true);
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			#region Deseados Web
+
+			if (string.IsNullOrEmpty(usuario.Wishlist) == false)
+			{
+				deseadosWeb = JsonSerializer.Deserialize<List<JuegoDeseado>>(usuario.Wishlist);
+			}
+
+			if (deseadosWeb != null)
+			{
+				if (deseadosWeb.Count > 0)
+				{
+					int i = 0;
+
+					foreach (var deseadoWeb in deseadosWeb)
+					{
+						i += 1;
+
+						Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(deseadoWeb.IdBaseDatos);
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, deseadoWeb.DRM, false);
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			#region Deseados GOG
+
+			if (string.IsNullOrEmpty(usuario.GogWishlist) == false)
+			{
+				deseadosGog = Herramientas.Listados.Generar(usuario.GogWishlist);
+			}
+
+			if (deseadosGog.Count > 0)
+			{
+				List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosGOG(deseadosGog);
+
+				if (juegos != null)
+				{
+					int i = 0;
+
+					foreach (var juego in juegos)
+					{
+						i += 1;
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, JuegoDRM.GOG, true);
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			if (deseadosGestor != null)
+			{
+				if (deseadosGestor.Count > 0)
+				{
+					if (usuario != null)
+					{
+						if (usuario.WishlistSort == null)
+						{
+							usuario.WishlistSort = 3;
+						}
+
+						ElegirOrdenamiento();
+					}
+				}
+			}
+
+			#region Bundles
+
+			List<Bundles2.Bundle> bundlesActuales = BaseDatos.Bundles.Buscar.Actuales();
+
+			if (bundlesActuales.Count > 0)
+			{
+				foreach (var bundle in bundlesActuales)
+				{
+					foreach (var bundleJuego in bundle.Juegos)
+					{
+						foreach (var deseado in deseadosGestor)
+						{
+							if (bundleJuego.JuegoId == deseado.Id.ToString() && bundleJuego.DRM == deseado.DRM)
+							{
+								JuegoDeseadoMostrar nuevoDeseadoBundle = new JuegoDeseadoMostrar();
+								nuevoDeseadoBundle.Id = deseado.Id;
+								nuevoDeseadoBundle.Nombre = deseado.Nombre;
+								nuevoDeseadoBundle.IdBundle = bundle.Id;
+								nuevoDeseadoBundle.DRM = deseado.DRM;
+								nuevoDeseadoBundle.Imagen = deseado.Imagen;
+								nuevoDeseadoBundle.Importado = deseado.Importado;
+
+								deseadosBundles.Add(nuevoDeseadoBundle);
+							}
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			#region Suscripciones
+
+			List<JuegoSuscripcion> suscripcionesActuales = BaseDatos.Suscripciones.Buscar.Actuales();
+
+			if (suscripcionesActuales.Count > 0)
+			{
+				foreach (var juegoSuscripcion in suscripcionesActuales)
+				{
+					foreach (var deseado in deseadosGestor)
+					{
+						if (juegoSuscripcion.JuegoId == deseado.Id && juegoSuscripcion.DRM == deseado.DRM)
+						{
+							JuegoDeseadoMostrar nuevoDeseadoSuscripcion = new JuegoDeseadoMostrar();
+							nuevoDeseadoSuscripcion.Id = deseado.Id;
+							nuevoDeseadoSuscripcion.Nombre = deseado.Nombre;
+							nuevoDeseadoSuscripcion.IdSuscripcion = juegoSuscripcion.Id;
+							nuevoDeseadoSuscripcion.DRM = deseado.DRM;
+							nuevoDeseadoSuscripcion.Imagen = deseado.Imagen;
+							nuevoDeseadoSuscripcion.Importado = deseado.Importado;
+
+							deseadosSuscripciones.Add(nuevoDeseadoSuscripcion);
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			cargado = true;
+		}
+
+		deseadosSteam.Clear();
+		deseadosWeb.Clear();
+		deseadosGog.Clear();
+	}
+
+	private void CambiarPestaña(MouseEventArgs e, int nuevaPestaña)
+	{
+		pestañaMostrar = nuevaPestaña;
+	}
+
+	private void AñadirJuegoMostrar(Juegos.Juego juego, JuegoDRM drm, bool importado)
+	{
+		bool yaEsta = false;
+
+		if (deseadosGestor.Count > 0)
+		{
+			foreach (var deseado in deseadosGestor)
+			{
+				if (deseado.Id == juego.Id && deseado.DRM == drm)
+				{
+					yaEsta = true;
+					break;
+				}
+			}
+		}
+
+		if (yaEsta == false)
+		{
+			bool añadido = false;
+
+			if (juego.PrecioMinimosHistoricos != null)
+			{
+				if (juego.PrecioMinimosHistoricos.Count > 0)
+				{
+					foreach (var historico in juego.PrecioMinimosHistoricos)
+					{
+						if (historico.DRM == drm)
+						{
+							if (Herramientas.OfertaActiva.Verificar(historico) == true)
+							{
+								JuegoDeseadoMostrar nuevoDeseado = new JuegoDeseadoMostrar();
+								nuevoDeseado.Id = juego.Id;
+								nuevoDeseado.IdSteam = juego.IdSteam;
+								nuevoDeseado.IdGog = juego.IdGog;
+								nuevoDeseado.SlugEpic = juego.SlugEpic;
+								nuevoDeseado.Nombre = juego.Nombre;
+								nuevoDeseado.Imagen = juego.Imagenes.Header_460x215;
+								nuevoDeseado.DRM = drm;
+								nuevoDeseado.Precio = historico;
+								nuevoDeseado.Historico = true;
+								nuevoDeseado.Importado = importado;
+
+								if (juego.Analisis != null)
+								{
+									if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false)
+									{
+										nuevoDeseado.ReseñasPorcentaje = juego.Analisis.Porcentaje.Replace("%", null);
+									}
+
+									if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
+									{
+										nuevoDeseado.ReseñasCantidad = juego.Analisis.Cantidad.Replace(",", null);
+									}
+								}
+								else
+								{
+									nuevoDeseado.ReseñasPorcentaje = "0";
+									nuevoDeseado.ReseñasCantidad = "0";
+								}
+
+								deseadosGestor.Add(nuevoDeseado);
+
+								cantidadOfertas = cantidadOfertas + 1;
+								cantidadMinimos = cantidadMinimos + 1;
+								añadido = true;
+							}
+
+							break;
+						}
+					}
+				}
+			}
+
+			if (añadido == false)
+			{
+				if (juego.PrecioActualesTiendas != null)
+				{
+					if (juego.PrecioActualesTiendas.Count > 0)
+					{
+						JuegoPrecio precioFinal = null;
+						decimal precioReferencia = 1000000;
+
+						foreach (var actual in juego.PrecioActualesTiendas)
+						{
+							if (actual != null)
+							{
+								if (actual.DRM == drm)
+								{
+									if (Herramientas.OfertaActiva.Verificar(actual) == true)
+									{
+										if (actual.Precio > 0)
+										{
+											decimal tempPrecio = actual.Precio;
+
+											if (actual.Moneda != Herramientas.JuegoMoneda.Euro)
+											{
+												tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, actual.Moneda);
+											}
+
+											if (precioReferencia > tempPrecio)
+											{
+												precioReferencia = tempPrecio;
+												precioFinal = actual;
+												precioFinal.Precio = precioReferencia;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+
+						if (precioFinal != null)
+						{
+							JuegoDeseadoMostrar nuevoDeseado = new JuegoDeseadoMostrar();
+							nuevoDeseado.Id = juego.Id;
+							nuevoDeseado.IdSteam = juego.IdSteam;
+							nuevoDeseado.IdGog = juego.IdGog;
+							nuevoDeseado.SlugEpic = juego.SlugEpic;
+							nuevoDeseado.Nombre = juego.Nombre;
+							nuevoDeseado.Imagen = juego.Imagenes.Header_460x215;
+							nuevoDeseado.DRM = drm;
+							nuevoDeseado.Precio = precioFinal;
+							nuevoDeseado.Historico = false;
+							nuevoDeseado.HistoricoPrecio = MensajeMinimo(SacarMinimo(juego, drm), false);
+							nuevoDeseado.Importado = importado;
+
+							if (juego.Analisis != null)
+							{
+								nuevoDeseado.ReseñasPorcentaje = juego.Analisis.Porcentaje.Replace("%", null);
+								nuevoDeseado.ReseñasCantidad = juego.Analisis.Cantidad.Replace(",", null);
+							}
+							else
+							{
+								nuevoDeseado.ReseñasPorcentaje = "0";
+								nuevoDeseado.ReseñasCantidad = "0";
+							}
+
+							deseadosGestor.Add(nuevoDeseado);
+
+							cantidadOfertas = cantidadOfertas + 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private JuegoPrecio SacarMinimo(Juegos.Juego juego, Juegos.JuegoDRM drm)
+	{
+		foreach (var minimo in juego.PrecioMinimosHistoricos)
+		{
+			if (drm == minimo.DRM)
+			{
+				return minimo;
+			}
+		}
+
+		return null;
+	}
+
+	private string MensajeMinimo(JuegoPrecio precio, bool moneda)
+	{
+		if (precio.Precio >= 0)
+		{
+			decimal tempPrecio = precio.Precio;
+
+			if (moneda == true)
+			{
+				if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+				{
+					tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, precio.Moneda);
+				}
+			}
+
+			return Herramientas.Precios.Euro(tempPrecio);
+		}
+
+		return null;
+	}
+
+	private async void QuitarJuego(MouseEventArgs e, int juegoId, Juegos.JuegoDRM drm, JuegoDeseadoMostrar juegoMostrar)
+	{
+		Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
+
+		if (juego != null)
+		{
+			await Herramientas.Deseados.CambiarEstado(null, UserManager, usuario, juego, false, drm);
+		}
+
+		if (deseadosOfertas.Count > 0)
+		{
+			deseadosOfertas.Remove(juegoMostrar);
+		}
+
+		if (deseadosHistoricos.Count > 0)
+		{
+			deseadosHistoricos.Remove(juegoMostrar);
+		}
+
+		if (deseadosBundles.Count > 0)
+		{
+			deseadosBundles.Remove(juegoMostrar);
+		}
+
+		if (deseadosSuscripciones.Count > 0)
+		{
+			deseadosSuscripciones.Remove(juegoMostrar);
+		}
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	#region Ordenar
+
+	private async void OrdenarReseñasPorcentaje()
+	{
+		if (deseadosGestor != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasPorcentaje ??= "0")).ThenBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasPorcentaje ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}
+
+				if (deseadosBundles != null)
+				{
+					if (deseadosBundles.Count > 0)
+					{
+						deseadosBundles = deseadosBundles.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasPorcentaje ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}
+
+				if (deseadosSuscripciones != null)
+				{
+					if (deseadosSuscripciones.Count > 0)
+					{
+						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasPorcentaje ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}			
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 0;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	private async void OrdenarReseñasCantidad()
+	{
+		if (deseadosGestor != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosBundles != null)
+				{
+					if (deseadosBundles.Count > 0)
+					{
+						deseadosBundles = deseadosBundles.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosSuscripciones != null)
+				{
+					if (deseadosSuscripciones.Count > 0)
+					{
+						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+					}
+				}		
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 1;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	private async void OrdenarNombreAZ()
+	{
+		if (deseadosGestor != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderBy(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosBundles != null)
+				{
+					if (deseadosBundles.Count > 0)
+					{
+						deseadosBundles = deseadosBundles.AsParallel().OrderBy(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosSuscripciones != null)
+				{
+					if (deseadosSuscripciones.Count > 0)
+					{
+						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderBy(x => x.Nombre).ToList();
+					}
+				}	
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 2;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	private async void OrdenarNombreZA()
+	{
+		if (deseadosGestor != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosBundles != null)
+				{
+					if (deseadosBundles.Count > 0)
+					{
+						deseadosBundles = deseadosBundles.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+					}
+				}
+				
+				if (deseadosSuscripciones != null)
+				{
+					if (deseadosSuscripciones.Count > 0)
+					{
+						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+					}
+				}			
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 5;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	private async void OrdenarPrecio()
+	{
+		if (deseadosGestor != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
+					}
+				}		
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 3;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	private async void OrdenarDescuento()
+	{
+		if (deseadosOfertas != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
+					}
+				}		
+			}
+
+			if (usuario != null)
+			{
+				usuario.WishlistSort = 4;
+
+				if (string.IsNullOrEmpty(otroUsuario) == true)
+				{
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch { }
+				}
+			}
+		}
+	}
+
+	#endregion
+
+	#region Opciones
+
+	private List<JuegoDeseadoMostrar> Filtros(bool historico)
+	{
+		List<JuegoDeseadoMostrar> juegosFiltrados = new List<JuegoDeseadoMostrar>();
+
+		foreach (var juego in deseadosGestor)
+		{
+			bool historico2 = false;
+
+			if (historico == true)
+			{
+				if (juego.Historico == true)
+				{
+					historico2 = true;
+				}
+			}
+			else
+			{
+				historico2 = true;
+			}
+
+			if (historico2 == true)
+			{
+				bool buscador = false;
+
+				if (string.IsNullOrEmpty(textoBuscador) == false)
+				{
+					if (Herramientas.Buscador.LimpiarNombre(juego.Nombre, true).Contains(Herramientas.Buscador.LimpiarNombre(textoBuscador, true)))
+					{
+						buscador = true;
+					}
+					else
+					{
+						buscador = false;
+					}
+				}
+				else
+				{
+					buscador = true;
+				}
+
+				bool minimoDescuento2 = false;
+
+				if (juego.Precio.Descuento >= minimoDescuento)
+				{
+					minimoDescuento2 = true;
+				}
+
+				bool maximoPrecio2 = false;
+
+				if (juego.Precio.Precio <= maximoPrecio)
+				{
+					maximoPrecio2 = true;
+				}
+
+				if (buscador == true && minimoDescuento2 == true && maximoPrecio2 == true)
+				{
+					juegosFiltrados.Add(juego);
+				}
+			}
+		}
+
+		return juegosFiltrados;
+	}
+
+	private void ElegirOrdenamiento()
+	{
+		if (usuario.WishlistSort == 0)
+		{
+			OrdenarReseñasPorcentaje();
+		}
+		else if (usuario.WishlistSort == 1)
+		{
+			OrdenarReseñasCantidad();
+		}
+		else if (usuario.WishlistSort == 2)
+		{
+			OrdenarNombreAZ();
+		}
+		else if (usuario.WishlistSort == 5)
+		{
+			OrdenarNombreZA();
+		}
+		else if (usuario.WishlistSort == 3)
+		{
+			OrdenarPrecio();
+		}
+		else if (usuario.WishlistSort == 4)
+		{
+			OrdenarDescuento();
+		}
+	}
+
+	private void TextoCambiaBusqueda(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			textoBuscador = texto.Value.ToString().Trim();
+		}
+		else
+		{
+			textoBuscador = null;
+		}
+
+		ElegirOrdenamiento();
+	}
+
+	private int? minimoDescuento = 1;
+
+	private async void CambiarMinimoDescuento(ChangeEventArgs e)
+	{
+		minimoDescuento = int.Parse(e.Value.ToString());
+
+		if (minimoDescuento != 1)
+		{
+			minimoDescuento = minimoDescuento - 1;
+		}
+
+		usuario.WishlistOption3 = minimoDescuento;
+
+		try
+		{
+			await UserManager.UpdateAsync(usuario);
+		}
+		catch { }
+
+		ElegirOrdenamiento();
+	}
+
+	private decimal? maximoPrecio = 90;
+
+	private async void CambiarMaximoPrecio(ChangeEventArgs e)
+	{
+		maximoPrecio = decimal.Parse(e.Value.ToString());
+
+		usuario.WishlistOption4 = maximoPrecio;
+
+		try
+		{
+			await UserManager.UpdateAsync(usuario);
+		}
+		catch { }
+
+		ElegirOrdenamiento();
+	}
+
+	private bool? estadoCompartir = false;
+
+	private async void CompartirDeseados()
+	{
+		if (estadoCompartir == false)
+		{
+			estadoCompartir = true;
+		}
+		else
+		{
+			estadoCompartir = false;
+		}
+
+		if (usuario != null)
+		{
+			usuario.WishlistPublic = estadoCompartir;
+
+			try
+			{
+				await UserManager.UpdateAsync(usuario);
+			}
+			catch { }
+		}
+	}
+
+	private string compartirNombre = string.Empty;
+	private string compartirEnlace = string.Empty;
+
+	private async void TextoCambiaDeseados(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			compartirNombre = texto.Value.ToString().Trim();
+		}
+
+		if (string.IsNullOrEmpty(compartirNombre) == false)
+		{
+			string existe = BaseDatos.Usuarios.Buscar.UsuarioDeseadosNickname(Herramientas.Buscador.LimpiarNombre(compartirNombre, true));
+
+			if (string.IsNullOrEmpty(existe) == true)
+			{
+				compartirEnlace = "https://pepeizqdeals.com/wishlist/" + Herramientas.Buscador.LimpiarNombre(compartirNombre, true) + "/";
+
+				usuario.WishlistNickname = Herramientas.Buscador.LimpiarNombre(compartirNombre, true);
+
+				try
+				{
+					await UserManager.UpdateAsync(usuario);
+				}
+				catch { }
+			}
+		}
+	}
+
+	private async Task DescargarJson()
+	{
+		if (deseadosGestor != null)
+		{
+			if (deseadosGestor.Count > 0)
+			{
+				List<JuegoDeseadoExportar> deseadosExportar = new List<JuegoDeseadoExportar>();
+
+				foreach (var deseadoGestor in deseadosGestor)
+				{
+					JuegoDeseadoExportar nuevoDeseadoExportar = new JuegoDeseadoExportar();
+					nuevoDeseadoExportar.Nombre = deseadoGestor.Nombre;
+					nuevoDeseadoExportar.Id = deseadoGestor.Id;
+					nuevoDeseadoExportar.IdSteam = deseadoGestor.IdSteam;
+					nuevoDeseadoExportar.IdGog = deseadoGestor.IdGog;
+					nuevoDeseadoExportar.SlugEpic = deseadoGestor.SlugEpic;
+					nuevoDeseadoExportar.DRM = deseadoGestor.DRM;
+
+					deseadosExportar.Add(nuevoDeseadoExportar);
+				}
+
+				string contenido = JsonSerializer.Serialize(deseadosExportar);
+
+				MemoryStream ficheroStream = new MemoryStream(Encoding.UTF8.GetBytes(contenido));
+
+				string ficheroNombre = "wishlist.json";
+
+				using var streamRef = new DotNetStreamReference(stream: ficheroStream);
+
+				await JavaScript.InvokeVoidAsync("downloadFileFromStream", ficheroNombre, streamRef);
+			}
+		}
+	}
+
+	private void OpcionesPestañas()
+	{
+		enseñarDescuentoMinimo = false;
+		enseñarPrecioMaximo = false;
+		enseñarCompartir = false;
+		enseñarExportar = false;
+	}
+
+	private bool enseñarDescuentoMinimo = false;
+
+	private void OpcionesDescuentoMinimo()
+	{
+		if (enseñarDescuentoMinimo == false)
+		{
+			OpcionesPestañas();
+
+			enseñarDescuentoMinimo = true;
+		}
+		else
+		{
+			enseñarDescuentoMinimo = false;
+		}
+	}
+
+	private bool enseñarPrecioMaximo = false;
+
+	private void OpcionesPrecioMaximo()
+	{
+		if (enseñarPrecioMaximo == false)
+		{
+			OpcionesPestañas();
+
+			enseñarPrecioMaximo = true;
+		}
+		else
+		{
+			enseñarPrecioMaximo = false;
+		}
+	}
+
+	private bool enseñarCompartir = false;
+
+	private void OpcionesCompartir()
+	{
+		if (enseñarCompartir == false)
+		{
+			OpcionesPestañas();
+
+			enseñarCompartir = true;
+		}
+		else
+		{
+			enseñarCompartir = false;
+		}
+	}
+
+	private bool enseñarExportar = false;
+
+	private void OpcionesExportar()
+	{
+		if (enseñarExportar == false)
+		{
+			OpcionesPestañas();
+
+			enseñarExportar = true;
+		}
+		else
+		{
+			enseñarExportar = false;
+		}
+	}
+
+	#endregion
+}

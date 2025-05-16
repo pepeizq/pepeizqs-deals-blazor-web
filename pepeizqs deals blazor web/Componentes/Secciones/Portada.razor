@@ -1,0 +1,1423 @@
+﻿@page "/"
+
+@rendermode InteractiveServer
+
+@using Juegos
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Data.SqlClient
+@using Microsoft.JSInterop
+@using Microsoft.VisualBasic
+@using Noticias
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
+@using pepeizqs_deals_web.Data
+@using System.Text.Json
+
+@inject IHttpContextAccessor contexto
+@inject UserManager<Usuario> UserManager
+@inject NavigationManager NavManager
+
+@{
+	#nullable disable
+
+	idioma = contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+
+	string titulo = "pepeizq's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
+	string enlace = "https://pepeizqdeals.com/";
+	string enlace2 = "https://pepeizqdeals.com/contact";
+	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+	string imagen2 = "https://pepeizqdeals.com/logo/logo6.png";
+
+	string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(descripcion, false).Split(' ');
+    List<string> keywordsLista = new List<string>();
+    keywordsLista.AddRange(keywordsEnBruto);
+
+    string keywords = "deals";
+
+    foreach (string keyword in keywordsLista)
+    {
+        if (keyword.Length > 3)
+        {
+            keywords = keywords + ", " + keyword;
+        }
+    }
+
+	<HeadContent>
+		<PageTitle>@titulo</PageTitle>
+
+		<meta name="og:title" content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="@keywords" />
+
+		<script type="application/ld+json">
+			{
+			  "@@context": "https://schema.org",
+			  "@@type": "BreadcrumbList",
+			  "itemListElement": [{
+				"@@type": "ListItem",
+				"position": 1,
+				"name": "Bundles",
+				"item": "https://pepeizqdeals.com/bundles"
+			  },{
+				"@@type": "ListItem",
+				"position": 2,
+				"name": "Historial Lows",
+				"item": "https://pepeizqdeals.com/historical-lows"
+			  },{
+				"@@type": "ListItem",
+				"position": 3,
+				"name": "Free",
+				"item": "https://pepeizqdeals.com/free"
+			  },{
+				"@@type": "ListItem",
+				"position": 4,
+				"name": "Subscriptions",
+				"item": "https://pepeizqdeals.com/subscriptions"
+			  },{
+				"@@type": "ListItem",
+				"position": 5,
+				"name": "Patreon",
+				"item": "https://pepeizqdeals.com/patreon"
+			  },{
+				"@@type": "ListItem",
+				"position": 6,
+				"name": "Compare",
+				"item": "https://pepeizqdeals.com/compare"
+			  },{
+				"@@type": "ListItem",
+				"position": 7,
+				"name": "API",
+				"item": "https://pepeizqdeals.com/api"
+			  },{
+				"@@type": "ListItem",
+				"position": 8,
+				"name": "Last Added",
+				"item": "https://pepeizqdeals.com/last-added"
+			  }]
+			}
+		</script>
+
+		<script type="application/ld+json">
+			@{
+				WebApplicationBuilder builder = WebApplication.CreateBuilder();
+				string? patreon = builder.Configuration.GetValue<string>("RedesSociales:Patreon");
+				string? discord = builder.Configuration.GetValue<string>("RedesSociales:Discord");
+				string? telegram = builder.Configuration.GetValue<string>("RedesSociales:Telegram");
+				string? twitter = builder.Configuration.GetValue<string>("RedesSociales:Twitter");
+				string? steam = builder.Configuration.GetValue<string>("RedesSociales:Steam");
+				string? bluesky = builder.Configuration.GetValue<string>("RedesSociales:Bluesky");
+
+				string seoJson = "{" + Environment.NewLine +
+					Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Organization" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "pepeizq's deals" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "description" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + descripcion + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + enlace + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "brand" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "pepeizq's apps" + Strings.ChrW(34) + "," + Environment.NewLine +
+					Strings.ChrW(34) + "logo" + Strings.ChrW(34) + ": {" + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ImageObject" + Strings.ChrW(34) + "," +
+					Strings.ChrW(34) + "logo" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + imagen2 + Strings.ChrW(34) + "," +
+					Strings.ChrW(34) + "caption" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "pepeizq's deals logo" + Strings.ChrW(34) + "} ," +
+					Strings.ChrW(34) + "contactPoint" + Strings.ChrW(34) + ": [{" + Environment.NewLine +
+					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ContactPoint" + Strings.ChrW(34) + "," +
+					Strings.ChrW(34) + "contactType" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "customer service" + Strings.ChrW(34) + "," +
+					Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + enlace2 + Strings.ChrW(34) + "," +
+					Strings.ChrW(34) + "availableLanguage" + Strings.ChrW(34) + ": [" + Strings.ChrW(34) + "English" + Strings.ChrW(34) + "," + Strings.ChrW(34) + "Spanish" + Strings.ChrW(34) + "]}]," + Environment.NewLine +
+					Strings.ChrW(34) + "sameAs" + Strings.ChrW(34) + ": [" + Strings.ChrW(34) + patreon + Strings.ChrW(34) + "," + Strings.ChrW(34) + discord + Strings.ChrW(34) + "," + Strings.ChrW(34) + telegram + Strings.ChrW(34) + "," + Strings.ChrW(34) + twitter + Strings.ChrW(34) + "," + Strings.ChrW(34) + steam + Strings.ChrW(34) + "," + Strings.ChrW(34) + bluesky + Strings.ChrW(34) + "]";
+
+				seoJson = seoJson + Environment.NewLine + "}";
+            }
+
+            @((MarkupString)seoJson)
+        </script>
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<style>
+	.destacado-fondo {
+		display: block;
+	}
+
+	.destacado-video {
+		display: none;
+	}
+
+	.destacado-mostrar:hover .destacado-fondo {
+		display: none;
+	}
+
+	.destacado-mostrar:hover .destacado-video {
+		display: block;
+	}
+
+	.destacados-galeria-cursor {
+		cursor: pointer;
+	}
+
+	.destacados-galeria-fila {
+		display: flex;
+		overflow: auto;
+	}
+
+	.destacados-galeria-fila:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+
+	.destacados-galeria-columna {
+		float: left;
+		width: 16.66%;
+		flex: 0 0 auto;
+		padding: 3px 3px 0px 3px;
+		aspect-ratio: 92/43;
+	}
+
+	.destacados-galeria-captura {
+		opacity: 0.3;
+		object-fit: cover;
+		overflow: hidden;
+		transition: transform .2s;
+		min-width: 100px;
+		min-height: 50px;
+		max-width: 100%;
+	}
+
+	.destacados-galeria-captura:hover {
+		opacity: 1;
+		transform: scale(1.01);
+	}
+
+	.destacado-hueco {
+		padding: 80px 60px 30px 60px;
+	}
+
+	.destacado-logo-medidas {
+		width: 16vw;
+		height: 8vw;
+		object-fit: contain;
+	}
+
+	.destacado-logo-alto {
+		height: 150px;
+	}
+
+	.destacado-precio-descuento {
+		padding: 12px 15px;
+		font-size: 22px;
+	}
+
+	.destacado-icono {
+		width: 40px;
+		height: 40px;
+	}
+
+	@@media (max-width: 800px) {
+		.destacado-hueco {
+			padding: 40px 30px 15px 30px;
+		}
+
+		.destacado-logo-medidas {
+			width: 16vw;
+			height: 8vw;
+		}
+
+		.destacado-logo-alto {
+			height: 100px;
+		}
+
+		.destacado-precio-descuento {
+			padding: 6px 8px;
+			font-size: 15px;
+		}
+
+		.destacado-icono {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	.destacado-progreso {
+		background-color: var(--fondoCodigo);
+		animation: barraProgreso 30s ease-in-out;
+	}
+
+	@@keyframes barraProgreso {
+	0% { width: 0; }
+	100% { width: 100%; }
+	}
+</style>
+
+<style>
+	.noticias-caja {
+		padding: 30px;
+	}
+
+	.noticia-enlaces {
+		flex-direction: row;
+	}
+
+	@@media (max-width: 800px) {
+		.noticias-caja {
+			padding: 15px;
+		}
+
+		.noticia-enlaces {
+			flex-direction: column;
+		}
+	}
+</style>
+
+<div style="display: flex; flex-direction: column; gap: 60px;">
+	@if (juegosDestacadosMostrar.Count > 0)
+	{
+        <div>
+			@if (juegoSeleccionado != null)
+			{
+				string colorSeleccionado = "var(--fondoOscuro)";
+
+				if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM) == true)
+				{
+					colorSeleccionado = "var(--fondoBien)";
+				}
+				else
+				{
+					if (Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
+					{
+						colorSeleccionado = "var(--fondoAlerta)";
+					}
+				}
+
+				<a href="/game/@juegoSeleccionado.IdMaestra.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juegoSeleccionado.Nombre)/" style="cursor: pointer; border: 0px; padding: 0px; display: block; width: 100%;">
+					<div style="position: relative; padding: 3px; background-color: @colorSeleccionado;">
+						<div class="destacado-mostrar" @onmouseover="@(e => EnseñarDestacadoVideo(e, juegoSeleccionado))">
+							@if (string.IsNullOrEmpty(videoDestacado) == false)
+							{
+								<div class="destacado-fondo">
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%;" alt="@juegoSeleccionado.Nombre">
+								</div>
+
+								<div class="destacado-video">
+									<video onloadedmetadata="this.muted=true" playsinline autoplay loop muted style="height: 100%; width: 100%; overflow: hidden; aspect-ratio: 3.14/1; object-fit: cover;">
+										<source src="@videoDestacado" type="video/mp4" />
+										<source src="@videoDestacado.Replace(".mp4", ".webm")" type="video/webm" />	
+									</video>
+								</div>
+							}
+							else
+							{
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%; aspect-ratio: 96/31;" alt="@juegoSeleccionado.Nombre">
+							}
+
+							<div style="position: absolute; left: 0; bottom: 0; background-image: linear-gradient(to bottom, rgba(255,0,0,0), @colorSeleccionado);
+										display: flex; align-items: end; justify-content: space-between; width: 100%;" class="destacado-hueco">
+
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(logoDestacado)" class="destacado-logo-medidas" alt="@juegoSeleccionado.Nombre">
+
+								<div style="display: flex; align-items: center; margin-bottom: 30px; color: var(--colorTexto);">
+									<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juegoSeleccionado.PrecioMinimosHistoricos[0].DRM), 40, 40)" style="margin-right: 20px;" alt="DRM" />
+
+									@{
+										string iconoTienda = string.Empty;
+										List<Tiendas2.Tienda> tiendas = Tiendas2.TiendasCargar.GenerarListado();
+
+										foreach (var tienda in tiendas)
+										{
+											if (tienda.Id == juegoSeleccionado.PrecioMinimosHistoricos[0].Tienda)
+											{
+												iconoTienda = tienda.ImagenIcono;
+												break;
+											}
+										}
+									}
+
+									<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda, 40, 40)" style="margin-right: 40px;" alt="Store" />
+
+									<div class="destacado-precio-descuento" style="background-color: darkgreen;">
+										@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
+									</div>
+									<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
+										@Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos[0].Precio)
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			}
+
+			<div class="destacados-galeria-fila">
+				@foreach (var destacado in juegosDestacadosMostrar)
+				{
+					bool mostrarBarra = false;
+					string opacidad = string.Empty;
+
+					if (juegoSeleccionado != null)
+					{
+						if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
+						{
+							opacidad = "opacity: 1;";
+							mostrarBarra = true;
+						}
+					}
+
+					string colorFondoDestacado = "background-color: var(--fondoOscuro);";
+
+					if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM) == true)
+					{
+						colorFondoDestacado = "background-color: var(--fondoBien);";
+					}
+					else
+					{
+						if (Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
+						{
+							colorFondoDestacado = "background-color: var(--fondoAlerta);";
+						}
+					}
+
+					<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="@colorFondoDestacado">
+						<img class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
+
+						@if (mostrarBarra == true)
+						{
+							<div style="height: 3px; width: 100%; background-color: transparent;">
+								<div class="destacado-progreso" style="height: 3px;" />
+							</div>
+						}
+					</div>
+				}
+			</div>
+		</div>
+	}
+
+	<div style="min-height: 50px;">
+		<div style="display: flex; align-items: center; gap: 30px; justify-content: space-around;">
+			<div class="caja-diseño" style="display: flex; align-items: center; gap: 30px; padding: 15px 25px; margin-bottom: 20px;">
+				<div>
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Index")
+				</div>
+
+				<div>
+					<RedesSociales idioma="@idioma"/>
+				</div>
+			</div>
+		</div>
+
+		@{
+			string noHayNoticiasEstilo = "max-width: 1000px; margin-left: auto; margin-right: auto;";
+
+			if (noticiasTresDias.Count > 0 && noticiasSemana.Count == 0)
+			{
+				noHayNoticiasEstilo = "";
+			}
+
+			if (noticiasSemana.Count > 0)
+			{
+				noHayNoticiasEstilo = "";
+			}
+
+			<div class="noticias-caja caja-diseño" style="display: flex; flex-direction: column; gap: 30px; @noHayNoticiasEstilo">
+				@if (noticiasTresDias.Count > 0 && noticiasSemana.Count == 0)
+				{
+					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")" style="margin-top: -30px;">
+						<Virtualize Context="noticia" Items="noticiasTresDias">
+							<ItemContent>
+								<CajaNoticia idioma="@idioma" noticia="@noticia" />
+							</ItemContent>
+						</Virtualize>
+					</div>
+				}
+
+				@if (noticiasSemana.Count > 0)
+				{
+					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")">
+						<Virtualize Context="noticia" Items="noticiasSemana">
+							<ItemContent>
+								<CajaNoticia idioma="@idioma" noticia="@noticia" />
+							</ItemContent>
+						</Virtualize>
+					</div>
+				}
+
+				<div class="noticia-enlaces" style="display: flex; align-items: center; gap: 40px; justify-content: center;">
+					@if (noticiasSemana.Count == 0)
+					{
+						<button class="boton-pequeño" @onclick="CargarNoticiasSemana" style="padding: 15px 30px; width: fit-content;">
+							<div>
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Index")
+							</div>
+						</button>
+					}
+					else
+					{
+						<button class="boton-pequeño" @onclick="CerrarNoticiasSemana" style="padding: 0px; width: fit-content; background-color: transparent;">
+							<div style="max-width: 22px; max-height: 22px;">
+								<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+									<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+								</svg>
+							</div>
+						</button>
+					}
+
+					<a class="boton-pequeño" style="padding: 15px 30px; width: fit-content;" href="/last-news">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Index")
+					</a>
+				</div>
+			</div>
+		}
+	</div>
+
+	@if (cargarForo == true)
+	{
+		if (postsUltimosForo.Count > 0)
+		{
+			<div style="min-height: 50px;">
+				<div style="display: flex; align-items: center; gap: 30px; justify-content: space-around; margin-bottom: 15px;">
+					<a href="/forum" style="font-size: 18px; text-decoration: none; color: var(--colorEnlace);">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Index") (@Herramientas.Idiomas.BuscarTexto(idioma, "Language" + idiomaForo.ToString(), "Forum"))
+					</a>
+				</div>
+
+				<div class="caja-diseño" style="max-width: 1000px; width: 100%; margin-left: auto; margin-right: auto; padding: 10px 20px;">
+					<Virtualize Context="post" Items="postsUltimosForo">
+						<ItemContent>
+							@{
+								Usuario? usuario = null;
+								DateTime fechaUsar = post.FechaCreacion;
+
+								if (string.IsNullOrEmpty(post.AutorIdUltimaRespuesta) == false)
+								{
+									usuario = UserManager.FindByIdAsync(post.AutorIdUltimaRespuesta).Result;
+									fechaUsar = post.FechaUltimaRespuesta;
+								}
+								else
+								{
+									usuario = UserManager.FindByIdAsync(post.AutorId).Result;
+								}
+
+								<button @onclick="@(e => AbrirPost(e, post.CategoriaId, post.Id, post.RespuestaId))" class="boton-pequeño" style="padding: 15px 20px; margin-top: 10px; margin-bottom: 10px;">
+									<div style="display: flex; align-items: center; gap: 20px;">
+										<div>
+											<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(usuario?.Avatar)" style="width: 26px; height: 26px;" alt="@usuario?.Nickname" />
+										</div>
+
+										<div style="width: 100%;">
+											@{
+												string contenido = post.Contenido;
+
+												if (contenido.Length > 40)
+												{
+													contenido = contenido.Remove(40, contenido.Length - 40) + "...";
+												}
+											}
+
+											@contenido
+										</div>
+
+										<div style="flex-shrink: 0;">
+											@Herramientas.Calculadora.DiferenciaTiempo(fechaUsar, idioma)
+										</div>
+									</div>
+								</button>
+							}                           
+						</ItemContent>
+					</Virtualize>
+				</div>
+			</div>
+		}
+		else
+		{
+			<div class="caja-diseño" style="display: flex; align-items: center; gap: 30px; justify-content: space-around; max-width: 1000px; width: 100%; margin-left: auto; margin-right: auto; padding: 20px;">
+				<a href="/forum" style="text-decoration: none; color: var(--colorEnlace);">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Index")
+				</a>
+			</div>
+		}
+	}
+
+	@if (juegosMinimosMostrar.Count > 0)
+	{
+		<div style="max-width: 1000px; width: 100vw; margin: auto;">
+			<div style="display: flex; font-size: 18px; align-items: center; gap: 30px; justify-content: center;">
+				<div style="display: flex; align-items: center; gap: 20px; justify-content: center; width: 100%;">
+					<a href="/historical-lows" style="text-decoration: none; color: var(--colorEnlace);">@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Index")</a>
+
+					<div class="tooltip2">
+						<div style="max-width: 16px; max-height: 16px;">
+							<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+								<path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+							</svg>
+						</div>
+
+						<div class="tooltip-abrir tooltip-derecha" style="padding: 20px; min-width: 400px; max-width: 600px;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Index")
+						</div>
+					</div>
+				</div>
+
+				<button class="boton-pequeño" @onclick="EnseñarFiltrado" style="width: fit-content; padding: 10px 15px; border: 0px; color: var(--colorTextoVisitado);">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "Filter", "Index")
+				</button>
+			</div>
+
+			<div style="display: flex; flex-direction: column; gap: 25px; margin-bottom: 25px; tab-index: -1;">
+				<Virtualize Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
+					<ItemContent>
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.Portada" />
+					</ItemContent>
+				</Virtualize>
+			</div>
+
+			@{
+				bool llegadoLimite = false;
+
+				if (cantidadJuegosMinimos > juegosMinimosMostrar.Count)
+				{
+					llegadoLimite = true;
+				}
+				else
+				{
+					if (usuarioLogeado == true)
+					{
+						if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+						{
+							if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
+							{
+								llegadoLimite = true;
+							}
+						}
+						else
+						{
+							if (cantidadJuegosMinimos > 450 && cantidadJuegosMinimos <= 500)
+							{
+								llegadoLimite = true;
+							}
+						}
+					}
+					else
+					{
+						if (cantidadJuegosMinimos > 150 && cantidadJuegosMinimos <= 200)
+						{
+							llegadoLimite = true;
+						}
+					}
+				}
+
+				<div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 30px;">
+					@if (llegadoLimite == false)
+					{
+						<button class="boton-pequeño" @onclick="CargarMasMinimos" style="width: fit-content; padding: 15px 30px;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Index")
+						</button>
+					}
+
+					<a class="boton-pequeño" href="/historical-lows" style="width: fit-content; padding: 15px 30px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Index")
+					</a>
+				</div>
+			}
+		</div>	
+	}
+
+</div>
+
+@if (mostrarFiltrado == true)
+{
+	<div class="opciones-panel">
+		<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); max-width: 800px; padding: 30px; margin: 20px auto; overflow-y: scroll; padding-right: 20px; scrollbar-color: var(--fondoCodigo) var(--fondoOscuro);">
+			<div style="display: flex; align-items: center; gap: 20px;">
+				<button class="boton-pequeño" @onclick="OcultarFiltrado" style="width: fit-content; padding: 10px 15px;">
+					<div style="max-width: 24px; max-height: 24px;">
+						<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+						</svg>
+					</div>
+				</button>
+
+				<div style="font-size: 20px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "Filter", "Index")
+				</div>
+			</div>
+
+			<hr style="margin-top: 30px;">
+
+			@if (usuarioLogeado == true)
+			{
+				<div style="display: flex; flex-direction: column; gap: 30px; margin-top: 30px;">
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div class="checkbox-caja">
+							<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+						</div>
+
+						<div style="padding-bottom: 5px;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
+						</div>
+					</div>
+
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div class="checkbox-caja">
+							<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
+						</div>
+
+						<div style="padding-bottom: 5px;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
+						</div>
+					</div>
+				</div>
+
+				<hr style="margin-top: 30px;">
+			}
+
+			<div style="margin-top: 30px;">
+				<div style="padding-bottom: 15px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption2", "Index")
+				</div>
+
+				<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
+					@foreach (var drm in drms)
+					{
+						string iconoDRM = string.Empty;
+						string nombreDRM = string.Empty;
+
+						foreach (var drm2 in JuegoDRM2.GenerarListado())
+						{
+							if (drm2.Id == drm.DRMId)
+							{
+								iconoDRM = drm2.Imagen;
+								nombreDRM = drm2.Nombre;
+							}
+						}
+
+						<div style="display: flex; align-items: center;" title="@nombreDRM">
+							<div class="checkbox-caja">
+								<input type="checkbox" class="checkbox-interior" checked="@drm.Checkbox" @onchange="@(e => EnseñarJuegosDRM(e, drm.DRMId))">
+							</div>
+
+							@if (drm.DRMId != JuegoDRM.DRMFree)
+							{
+								<div style="margin-left: 20px; padding-bottom: 10px;">
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoDRM)" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" loading="lazy" />
+								</div>
+							}
+							else
+							{
+								<div style="margin-left: 20px; padding-bottom: 5px;">
+									<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
+								</div>
+							}
+						</div>
+					}
+				</div>
+			</div>
+
+			<hr style="margin-top: 30px;">
+
+			<div style="margin-top: 30px;">
+				<div style="padding-bottom: 15px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3", "Index")
+				</div>
+
+				<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+					@foreach (var categoria in categorias)
+					{
+						string nombreCategoria = string.Empty;
+
+						if (categoria.Categoria == JuegoTipo.Game)
+						{
+							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.1", "Index");
+						}
+						else if (categoria.Categoria == JuegoTipo.DLC)
+						{
+							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.2", "Index");
+						}
+						else if (categoria.Categoria == JuegoTipo.Music)
+						{
+							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.3", "Index");
+						}
+						else if (categoria.Categoria == JuegoTipo.Software)
+						{
+							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.4", "Index");
+						}
+
+						<div style="display: flex; align-items: center;" title="@nombreCategoria">
+							<div class="checkbox-caja">
+								<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
+							</div>
+
+							<div style="margin-left: 15px; padding-bottom: 8px;">
+								<label style="font-size: 14px;">@nombreCategoria</label>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	private string idioma = string.Empty;
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	[Parameter]
+	public bool usuarioLogeado { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+	private string fondoDestacado = string.Empty;
+	private string logoDestacado = string.Empty;
+	private string videoDestacado = string.Empty;
+
+	private SqlConnection conexion = new SqlConnection();
+
+	private List<Noticias.Noticia> noticiasTresDias = new List<Noticias.Noticia>();
+	private List<Noticias.Noticia> noticiasSemana = new List<Noticias.Noticia>();
+
+	private bool cargarForo = true;
+	private List<BaseDatos.Foro.ForoPost> postsUltimosForo = new List<BaseDatos.Foro.ForoPost>();
+	private int idiomaForo = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			usuario = await UserManager.FindByIdAsync(usuarioId);
+
+			if (usuarioLogeado == true)
+			{
+				juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+
+				#region Filtrado
+
+				if (usuario.IndexOption1 == true)
+				{
+					ocultarJuegosUsuarioSteam = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioSteam = null;
+				}
+
+				if (usuario.IndexOption2 == true)
+				{
+					ocultarJuegosUsuarioGog = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioGog = null;
+				}
+
+				if (string.IsNullOrEmpty(usuario.IndexDRMs) == false)
+				{
+					drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(usuario.IndexDRMs);
+				}
+
+				if (string.IsNullOrEmpty(usuario.IndexCategories) == false)
+				{
+					categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(usuario.IndexCategories);
+				}
+
+				#endregion
+			}
+		}
+
+		//------------------------------------------------
+
+		conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			#region Destacados
+
+			juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
+
+			if (juegosDestacadosMostrar.Count > 0)
+			{
+				juegoSeleccionado = juegosDestacadosMostrar[0];
+				CambiarDestacadoImagenes();
+			}
+
+			CronometroDestacados();
+
+			#endregion
+
+			#region Noticias
+
+			try
+			{
+				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
+
+				if (usuarioLogeado == true)
+				{
+					int limiteTiempoNoticias = 300;
+
+					if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+					{
+						limiteTiempoNoticias = 60;
+					}
+
+					CronometroNoticias(limiteTiempoNoticias);
+				}
+			}
+			catch (Exception ex)
+			{
+				BaseDatos.Errores.Insertar.Mensaje("Portada Noticias", ex);
+			}
+
+			#endregion
+
+			#region Foro
+
+			if (usuarioLogeado == true)
+			{
+				if (usuario != null)
+				{
+					if (usuario.ForumIndex != null)
+					{
+						if (usuario.ForumIndex == false)
+						{
+							cargarForo = false;
+						}
+					}
+				}
+			}
+
+			if (cargarForo == true)
+			{
+				idiomaForo = 0;
+
+				foreach (var codigo in Herramientas.Idiomas.ListadoIdiomasGenerar()[1].Codigos)
+				{
+					if (codigo == idioma)
+					{
+						idiomaForo = 1;
+					}
+				}
+
+				postsUltimosForo = BaseDatos.Foro.Buscar.UltimosPostsTodoForo(idiomaForo, 5, conexion);
+			}
+
+			#endregion
+
+			#region Minimos
+
+			Filtros();
+
+			if (usuarioLogeado == true)
+			{
+				int limiteTiempoMinimos = 300;
+
+				if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+				{
+					limiteTiempoMinimos = 60;
+				}
+
+				CronometroMinimos(limiteTiempoMinimos);
+			}
+
+			#endregion
+		}
+	}
+
+	private void EnseñarDestacadoVideo(EventArgs args, Juegos.Juego juegoDestacado)
+	{
+		videoDestacado = null;
+
+		if (juegoSeleccionado.Media != null)
+		{
+			if (juegoSeleccionado.Media.Videos != null)
+			{
+				if (juegoSeleccionado.Media.Videos.Count > 0)
+				{
+					videoDestacado = juegoSeleccionado.Media.Videos[0].Micro;
+				}
+			}
+		}
+	}
+
+	#region Destacados
+
+	private List<Juegos.Juego> juegosDestacadosMostrar = new List<Juegos.Juego>();
+	private Juegos.Juego juegoSeleccionado = new Juegos.Juego();
+	private PeriodicTimer cronometro = null;
+	private int cronometroContador = 0;
+	private int cronometroLimite = 30;
+
+	private void CambiarJuegoDestacado(MouseEventArgs args, Juegos.Juego nuevoJuego)
+	{
+		juegoSeleccionado = nuevoJuego;
+		CambiarDestacadoImagenes();
+
+		cronometroContador = 0;
+		cronometro.Dispose();
+		CronometroDestacados();
+	}
+
+	private void CambiarDestacadoImagenes()
+	{
+		fondoDestacado = juegoSeleccionado.Imagenes.Library_1920x620;
+		logoDestacado = juegoSeleccionado.Imagenes.Logo;
+		videoDestacado = null;
+	}
+
+	private async void CronometroDestacados()
+	{
+		cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometro.WaitForNextTickAsync())
+		{
+			cronometroContador += 1;
+
+			if (cronometroContador == cronometroLimite || juegosDestacadosMostrar.Count == 0)
+			{
+				bool tomarSiguiente = false;
+
+				int i = 0;
+				foreach (var destacado in juegosDestacadosMostrar)
+				{
+					if (tomarSiguiente == true)
+					{
+						juegoSeleccionado = destacado;
+						CambiarDestacadoImagenes();
+						break;
+					}
+
+					if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
+					{
+						tomarSiguiente = true;
+					}
+
+					i += 1;
+				}
+
+				if (i == juegosDestacadosMostrar.Count)
+				{
+					juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
+
+					if (juegosDestacadosMostrar.Count > 0)
+					{
+						juegoSeleccionado = juegosDestacadosMostrar[0];
+						CambiarDestacadoImagenes();
+					}
+				}
+
+				cronometroContador = 0;
+			}
+
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	#endregion
+
+	#region Minimos Lista
+
+	private int cantidadJuegosMinimos = 100;
+
+	private void GenerarListaMinimos()
+	{
+		try
+		{
+			List<string> categoriasNumeros = new List<string>();
+
+			if (categorias != null)
+			{
+				if (categorias.Count > 0)
+				{
+					foreach (var categoria in categorias)
+					{
+						if (categoria.Estado == true)
+						{
+							categoriasNumeros.Add(Convert.ChangeType(categoria.Categoria, categoria.Categoria.GetTypeCode()).ToString());
+						}
+					}
+				}
+			}
+
+			List<string> drmsNumeros = new List<string>();
+
+			if (drms != null)
+			{
+				if (drms.Count > 0)
+				{
+					foreach (var drm in drms)
+					{
+						if (drm.Estado == true)
+						{
+							drmsNumeros.Add(Convert.ChangeType(drm.DRMId, drm.DRMId.GetTypeCode()).ToString());
+						}
+					}
+				}
+			}
+
+			juegosMinimosGestor = BaseDatos.Portada.Buscar.UltimosMinimos(cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+		}
+		catch (Exception ex)
+		{
+			BaseDatos.Errores.Insertar.Mensaje("Portada Minimos", ex);
+		}
+	}
+
+	private void CargarMasMinimos()
+	{
+		cantidadJuegosMinimos += 50;
+
+		Filtros();
+	}
+
+	private PeriodicTimer cronometroMinimos = null;
+	private int cronometroMinimosContador = 0;
+
+	private async void CronometroMinimos(int limite)
+	{
+		cronometroMinimos = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometroMinimos.WaitForNextTickAsync())
+		{
+			cronometroMinimosContador += 1;
+
+			if (cronometroMinimosContador >= limite)
+			{
+				Filtros();
+
+				cronometroMinimosContador = 0;
+			}
+
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	#endregion
+
+	#region Minimos Filtrado
+
+	private List<Juegos.Juego> juegosMinimosGestor = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosMinimosMostrar = new List<Juegos.Juego>();
+
+	private void Filtros()
+	{
+		GenerarListaMinimos();
+
+		if (juegosMinimosGestor != null)
+		{
+			if (juegosMinimosGestor.Count > 0)
+			{
+				juegosMinimosMostrar.Clear();
+
+				foreach (var juego in juegosMinimosGestor)
+				{
+					bool ocultar = false;
+
+					if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
+					{
+						if (ocultarJuegosUsuarioSteam == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.Steam)
+						{
+							foreach (var juegoUsuario in juegosUsuario.Steam)
+							{
+								if (juego.IdSteam.ToString() == juegoUsuario)
+								{
+									ocultar = true;
+									break;
+								}
+							}
+						}
+					}
+
+					if (string.IsNullOrEmpty(ocultarJuegosUsuarioGog) == false)
+					{
+						if (ocultarJuegosUsuarioGog == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.GOG)
+						{
+							foreach (var juegoUsuario in juegosUsuario.Gog)
+							{
+								if (juego.IdGog.ToString() == juegoUsuario)
+								{
+									ocultar = true;
+									break;
+								}
+							}
+						}
+					}
+
+					if (ocultar == false)
+					{
+						juegosMinimosMostrar.Add(juego);
+					}
+				}
+			}
+		}
+
+		if (juegosMinimosMostrar != null)
+		{
+			if (juegosMinimosMostrar.Count > 0)
+			{
+				juegosMinimosMostrar = juegosMinimosMostrar.OrderBy(j => j.PrecioMinimosHistoricos[0].FechaDetectado).Reverse().ToList();
+			}
+		}
+	}
+
+	private bool mostrarFiltrado = false;
+
+	private void EnseñarFiltrado()
+	{
+		mostrarFiltrado = true;
+	}
+
+	private void OcultarFiltrado()
+	{
+		mostrarFiltrado = false;
+	}
+
+	private string ocultarJuegosUsuarioSteam = null;
+	private string ocultarJuegosUsuarioGog = null;
+
+	private async void OcultarJuegosUsuarioSteam()
+	{
+		if (usuario != null)
+		{
+			if (usuario.IndexOption1 == true)
+			{
+				usuario.IndexOption1 = false;
+				ocultarJuegosUsuarioSteam = null;
+			}
+			else
+			{
+				usuario.IndexOption1 = true;
+				ocultarJuegosUsuarioSteam = "checked";
+			}
+
+			try
+			{
+				await UserManager.UpdateAsync(usuario);
+			}
+			catch { }
+
+			Filtros();
+		}
+	}
+
+	private async void OcultarJuegosUsuarioGog()
+	{
+		if (usuario != null)
+		{
+			if (usuario.IndexOption2 == true)
+			{
+				usuario.IndexOption2 = false;
+				ocultarJuegosUsuarioGog = null;
+			}
+			else
+			{
+				usuario.IndexOption2 = true;
+				ocultarJuegosUsuarioGog = "checked";
+			}
+
+			try
+			{
+				await UserManager.UpdateAsync(usuario);
+			}
+			catch { }
+
+			Filtros();
+		}
+	}
+
+	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
+	{
+		foreach (var drm in drms)
+		{
+			if (drm.DRMId == drmElegido)
+			{
+				if (drm.Checkbox == null)
+				{
+					drm.Checkbox = "checked";
+					drm.Estado = true;
+				}
+				else
+				{
+					drm.Checkbox = null;
+					drm.Estado = false;
+				}
+			}
+		}
+
+		if (usuario != null)
+		{
+			usuario.IndexDRMs = JsonSerializer.Serialize(drms);
+
+			try
+			{
+				await UserManager.UpdateAsync(usuario);
+			}
+			catch { }
+		}
+
+		Filtros();
+	}
+
+	private List<MostrarJuegoDRM> drms = CrearListaDRMs();
+
+	public class MostrarJuegoDRM
+	{
+		public bool Estado { get; set; }
+		public string Checkbox { get; set; }
+		public JuegoDRM DRMId { get; set; }
+	}
+
+	private static List<MostrarJuegoDRM> CrearListaDRMs()
+	{
+		List<MostrarJuegoDRM> nuevaLista = new List<MostrarJuegoDRM>();
+
+		foreach (var drm in JuegoDRM2.GenerarListado())
+		{
+			MostrarJuegoDRM nuevoDRM = new MostrarJuegoDRM();
+			nuevoDRM.Estado = false;
+			nuevoDRM.Checkbox = null;
+			nuevoDRM.DRMId = drm.Id;
+
+			if (nuevoDRM.DRMId == JuegoDRM.Steam || nuevoDRM.DRMId == JuegoDRM.GOG || nuevoDRM.DRMId == JuegoDRM.Ubisoft || nuevoDRM.DRMId == JuegoDRM.EA)
+			{
+				nuevoDRM.Estado = true;
+				nuevoDRM.Checkbox = "checked";
+			}
+
+			nuevaLista.Add(nuevoDRM);
+		}
+
+		return nuevaLista;
+	}
+
+	private async void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
+	{
+		foreach (var categoria in categorias)
+		{
+			if (categoria.Categoria == categoriaElegida)
+			{
+				if (categoria.Checkbox == null)
+				{
+					categoria.Checkbox = "checked";
+					categoria.Estado = true;
+				}
+				else
+				{
+					categoria.Checkbox = null;
+					categoria.Estado = false;
+				}
+			}
+		}
+
+		if (usuario != null)
+		{
+			usuario.IndexCategories = JsonSerializer.Serialize(categorias);
+
+			try
+			{
+				await UserManager.UpdateAsync(usuario);
+			}
+			catch { }
+		}
+
+		Filtros();
+	}
+
+	private List<MostrarJuegoCategoria> categorias = CrearListaCategorias();
+
+	public class MostrarJuegoCategoria
+	{
+		public bool Estado { get; set; }
+		public string Checkbox { get; set; }
+		public JuegoTipo Categoria { get; set; }
+	}
+
+	private static List<MostrarJuegoCategoria> CrearListaCategorias()
+	{
+		List<MostrarJuegoCategoria> nuevaLista = new List<MostrarJuegoCategoria>();
+
+		foreach (var categoria in JuegoTipos.CargarListado())
+		{
+			if (categoria != JuegoTipo.Bundle)
+			{
+				MostrarJuegoCategoria nuevaTienda = new MostrarJuegoCategoria();
+				nuevaTienda.Estado = true;
+				nuevaTienda.Checkbox = "checked";
+				nuevaTienda.Categoria = categoria;
+
+				nuevaLista.Add(nuevaTienda);
+			}
+		}
+
+		return nuevaLista;
+	}
+
+	#endregion
+
+	#region Noticias
+
+	private PeriodicTimer cronometroNoticias = null;
+	private int cronometroNoticiasContador = 0;
+
+	private void CargarNoticiasSemana()
+	{
+		noticiasSemana = BaseDatos.Noticias.Buscar.Actuales(conexion, 7);
+	}
+
+	private void CerrarNoticiasSemana()
+	{
+		noticiasSemana.Clear();
+	}
+
+	private async void CronometroNoticias(int limite)
+	{
+		cronometroNoticias = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometroNoticias.WaitForNextTickAsync())
+		{
+			cronometroNoticiasContador += 1;
+
+			if (cronometroNoticiasContador >= limite)
+			{
+				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
+
+				cronometroNoticiasContador = 0;
+			}
+
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	#endregion
+
+	#region Foro
+
+	private void AbrirPost(MouseEventArgs e, int categoria, int postId, int respuestaId)
+	{
+		int postId2 = postId;
+		string añadirRespuesta = string.Empty;
+
+		if (respuestaId > 0)
+		{
+			postId2 = respuestaId;
+
+			int respuestaId2 = postId;
+			añadirRespuesta = "#message-" + respuestaId2.ToString();
+		}
+
+        NavManager.NavigateTo("/forum/" + categoria.ToString() + "/" + postId2.ToString() + añadirRespuesta, true);
+    }
+
+	#endregion
+}

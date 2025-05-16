@@ -1,0 +1,20 @@
+{
+  "name": "pepeizq's deals",
+  "short_name": "pepeizq's deals",
+  "icons": [
+    {
+      "src": "/favicons/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicons/android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "theme_color": "#002033",
+  "background_color": "#002033",
+  "display": "standalone"
+}

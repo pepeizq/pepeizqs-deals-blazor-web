@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-namespace pepeizqs_deals_blazor_web.Components.Account
+namespace pepeizqs_deals_blazor_web.Componentes.Account
 {
     internal sealed class IdentityRedirectManager(NavigationManager navigationManager)
     {

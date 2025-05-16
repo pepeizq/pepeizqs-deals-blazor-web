@@ -1,0 +1,156 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Patreon") + " • pepeizq's deals";
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Patreon");
+	string enlace = "https://pepeizqdeals.com/patreon";
+	string imagen = "https://pepeizqdeals.com/logo/logoentradapatreon.webp";
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="patreon, help, source, code" />
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+<div style="max-width: 1200px; margin: auto;">
+	<h1 style="font-size: 23px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Patreon")
+	</h1>
+
+	<hr>
+
+	<div class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Patreon")
+		</div>
+
+		<div>
+			@{
+				WebApplicationBuilder builder = WebApplication.CreateBuilder();
+				string? patreonEnlace = builder.Configuration.GetValue<string>("RedesSociales:Patreon");
+			}
+
+			<a href="@patreonEnlace">@patreonEnlace</a>
+		</div>
+	</div>
+
+	<div style="font-size: 18px; margin-top: 50px; margin-bottom: 15px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Patreon")
+	</div>
+
+	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+		<div class="caja-diseño" style="padding: 30px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Patreon")
+			</div>
+
+			<hr />
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Patreon")
+			</div>
+		</div>
+
+		<div class="caja-diseño" style="padding: 30px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Patreon")
+			</div>
+
+			<hr />
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Patreon")
+			</div>
+		</div>
+
+		<div class="caja-diseño" style="padding: 30px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Patreon")
+			</div>
+
+			<hr />
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Patreon")
+			</div>
+		</div>
+
+		<div class="caja-diseño" style="padding: 30px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Patreon")
+			</div>
+
+			<hr />
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Patreon")
+			</div>
+		</div>
+	</div>
+
+	@if (noticias.Count > 0)
+	{
+		<div style="font-size: 18px; margin-top: 50px; margin-bottom: 15px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Patreon")
+		</div>
+
+		<div class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 15px;">
+			@foreach (var noticia in noticias)
+			{
+				<div>
+					<a href="/news/@noticia.Id/">@noticia.FechaEmpieza.Day/@noticia.FechaEmpieza.Month/@noticia.FechaEmpieza.Year • @Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs)</a>
+				</div>
+			}
+		</div>
+	}
+</div>
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private bool usuarioPatreon = false;
+
+	List<Noticias.Noticia> noticias = new List<Noticias.Noticia>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		usuario = await UserManager.FindByIdAsync(usuarioId);
+
+		if (usuario != null)
+		{
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+		}
+
+		noticias = BaseDatos.Noticias.Buscar.Ultimas(10, Noticias.NoticiaTipo.Patreon);
+	}
+}

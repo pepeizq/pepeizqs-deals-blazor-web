@@ -1,0 +1,449 @@
+﻿@using APIs.Steam
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.JSInterop
+@using Microsoft.VisualBasic
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JavaScript
+
+@{
+	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Bundle");
+	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Bundle");
+	string enlace = "https://pepeizqdeals.com/bundles/";
+	string imagen = string.Empty;
+	string keywords = "bundles";
+
+	if (bundlesActuales != null)
+	{
+		if (bundlesActuales.Count > 0)
+		{
+			if (bundlesActuales.Count == 1)
+			{
+				titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "Bundle"), bundlesActuales.Count.ToString());
+			}
+			else if (bundlesActuales.Count > 1)
+			{
+				titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String17", "Bundle"), bundlesActuales.Count.ToString());
+			}
+
+			foreach (var bundleActual in bundlesActuales)
+			{
+				if (keywords.Contains(bundleActual.NombreTienda.ToLower()) == false)
+				{
+					keywords = keywords + ", " + bundleActual.NombreTienda.ToLower();
+				}
+			}
+		}
+		else if (bundlesActuales.Count == 0)
+		{
+			titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "Bundle");
+		}
+	}	
+
+    titulo = titulo + " • pepeizq's deals";
+
+	<HeadContent>
+		<meta name="og:title" Content="@titulo" />
+		<meta name="description" content="@descripcion" />
+		<meta name="og:description" content="@descripcion" />
+		<meta name="og:url" content="@enlace" />
+		<meta name="og:image" content="@imagen" />
+		<meta name="og:site_name" content="pepeizq's deals" />
+		<meta name="og:type" content="website" />
+		<meta name="robots" content="index, follow" />
+		<meta name="keywords" content="@keywords" />
+
+		@if (bundlesActuales != null)
+		{
+			<script type="application/ld+json">
+				@{
+					string seoJson = "{" + Environment.NewLine +
+						Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ItemList" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "PC Game Bundles" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "numberOfItems" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundlesActuales.Count.ToString() + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "itemListOrder" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Descending" + Strings.ChrW(34) + "," + Environment.NewLine +
+						Strings.ChrW(34) + "itemListElement" + Strings.ChrW(34) + ": [";
+
+					int i = 0;
+					while (i < bundlesActuales.Count)
+					{
+						if (i != 0)
+						{
+							seoJson = seoJson + ",";
+						}
+
+						seoJson = seoJson + "{" + Environment.NewLine +
+							Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ListItem" + Strings.ChrW(34) + "," + Environment.NewLine +
+							Strings.ChrW(34) + "position" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + (i + 1).ToString() + Strings.ChrW(34) + "," + Environment.NewLine +
+							Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundlesActuales[i].NombreBundle + Strings.ChrW(34) + "," + Environment.NewLine +
+							Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://pepeizqdeals.com/bundle/" + bundlesActuales[i].Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundlesActuales[i].NombreBundle) + "/" + Strings.ChrW(34) + "," + Environment.NewLine +
+							Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundlesActuales[i].ImagenBundle + Strings.ChrW(34) + "}";
+
+						i += 1;
+					}
+
+					seoJson = seoJson + "]" + Environment.NewLine + "}";
+				}
+
+				@((MarkupString)seoJson)
+			</script>
+		}	
+
+		<link rel="canonical" href="@enlace" />
+	</HeadContent>
+}
+
+<script>
+	function moverScroll(id) {
+		const yOffset = -30;
+		const element = document.getElementById(id);
+		const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+		window.scrollTo({ top: y, behavior: 'smooth' });
+	}
+</script>
+
+<style>
+	.caja-diseño {
+		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
+		border: 2px solid var(--fondoOscuro);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+		border-radius: 5px;
+	}
+</style>
+
+<style>
+	.bundles-grid {
+		gap: 40px;
+	}
+
+	@@media (max-width: 800px) {
+		.bundles-grid {
+			gap: 20px;
+		}
+	}
+</style>
+
+@if (bundlesActuales != null)
+{
+	if (bundlesActuales.Count > 0)
+	{
+		if (mostrarBundleSeleccionado == false)
+		{
+			<h1 style="font-size: 23px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Bundle")
+			</h1>
+
+			<hr>
+
+			<div class="bundles-grid caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-items: center; margin-bottom: 70px; padding: 30px;">
+				@foreach (var bundle in bundlesActuales)
+				{
+					<button @onclick="@(e => SeleccionarBundle(e, bundle))" class="boton-pequeño" style="padding: 0px;">
+						<div style="width: 100%; text-align: center; padding: 2px;">
+							@if (bundle.Tipo == Bundles2.BundleTipo.HumbleBundle)
+							{
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenNoticia, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
+							}
+							else
+							{
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenBundle, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
+							}
+
+							<div style="margin-top: 10px; margin-bottom: 5px; text-align: center;">
+								@MostrarFecha(bundle.FechaEmpieza, bundle.FechaTermina)
+							</div>
+						</div>
+					</button>
+				}		
+			</div>
+		}
+		else
+		{
+			@if (bundleSeleccionado != null)
+			{
+				<div style="margin-bottom: 40px; position: -webkit-sticky; position: sticky; top: 70px; z-index: 3; overflow: hidden;">
+					<div class="caja-diseño" style="padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
+						<button @onclick="@(e => CerrarBundle(e))" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
+							<div style="max-width: 24px; max-height: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+									<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+								</svg>
+							</div>
+						</button>
+
+						<div style="display: flex; align-items: center; flex-direction: row;">
+							<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" style="width: auto;" target="_blank">
+								<div style="height: 60px; padding-left: 40px; padding-right: 20px;">
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleSeleccionado.Tipo).ImagenTienda)" style="height: 100%;" alt="@bundleSeleccionado.NombreBundle" />
+								</div>
+							</a>
+
+							<div style="padding-left: 20px; padding-right: 20px;">
+								<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="background-color: transparent; padding: 0px; font-size: 20px; margin-bottom: 10px;" target="_blank">
+									@bundleSeleccionado.NombreBundle
+								</a>
+
+								<div style="display: flex; align-items: center; gap: 20px; flex-direction: row; font-size: 14px;">
+									<a href="/bundle/@bundleSeleccionado.Id/@Herramientas.EnlaceAdaptador.Nombre(bundleSeleccionado.NombreBundle)/" class="boton-pequeño" style="padding: 0px; width: fit-content; background-color: transparent;">
+										<div style="max-width: 20px; max-height: 20px;">
+											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+												<path d="M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z" />
+											</svg>
+										</div>
+									</a>
+
+									@MostrarFecha(bundleSeleccionado.FechaEmpieza, bundleSeleccionado.FechaTermina)
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Bundle")
+					</a>
+				</div>		
+
+				<Bundle bundleId="@bundleSeleccionado.Id" idioma="@idioma" usuarioId="@usuarioId" tipo="@Bundle.Tipo.Bundles" />
+			}
+		}
+	}
+
+}
+
+@if (mostrarBundleSeleccionado == false)
+{
+	<div id="bundles-archivo" style="font-size: 23px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Bundle")
+	</div>
+
+	<div style="display: flex; align-items: start; margin-top: 10px;">
+		@foreach (var año in años)
+		{
+			<div style="margin-right: 15px;">
+				<button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
+					@año
+				</button>
+
+				@if (añoSeleccionado == año)
+				{
+					<div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
+					</div>
+
+					<div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
+						@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+						{
+							List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+							foreach (var bundlePasado in bundlesPasados)
+							{
+								if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
+								{
+									bundlesAño.Add(bundlePasado);
+								}
+							}
+
+							if (bundlesAño.Count > 0)
+							{
+								<div style="margin-right: 15px; font-size: 14px;">
+									<a onclick="moverScroll('pasado-@bundleTipo.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
+										<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenIcono)" style="width: 22px; height: 22px;" alt="Store"/> (@bundlesAño.Count.ToString())
+									</a>
+								</div>
+							}
+						}
+					</div>
+				}
+			</div>
+		}
+	</div>
+
+	<div style="margin-top: 55px;">
+		@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+		{
+			List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+			foreach (var bundlePasado in bundlesPasados)
+			{
+				if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
+				{
+					bundlesAño.Add(bundlePasado);
+				}
+			}
+
+			if (bundlesAño.Count > 0)
+			{
+				<hr>
+
+				<div id="pasado-@bundleTipo.ToString()" style="display: flex; align-items: start;">
+					<div class="perfil" style="width: 20%;">
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenTienda)" alt="Store"/>
+					</div>
+
+					<div class="perfil" style="width: 80%;">
+						@{
+							int i = 1;
+							while (i < 13)
+							{
+								List<Bundles2.Bundle> bundlesMensual = new List<Bundles2.Bundle>();
+
+								foreach (var bundle in bundlesAño)
+								{
+									if (bundle.FechaEmpieza.Month == i)
+									{
+										bundlesMensual.Add(bundle);
+									}
+								}
+
+								if (bundlesMensual.Count > 0)
+								{
+									bundlesMensual = bundlesMensual.OrderBy(x => x.NombreBundle).ToList();
+
+									<label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
+
+									<ul>
+										@foreach (var bundleMensual in bundlesMensual)
+										{
+											<li>
+												<a @onclick="@(e => SeleccionarBundle(e, bundleMensual))" class="enlace-falso">
+													@bundleMensual.NombreBundle
+												</a>
+											</li>
+										}
+									</ul>
+								}
+
+								i += 1;
+							}
+						}
+					</div>
+				</div>
+			}
+		}
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	private Usuario usuario = new Usuario();
+	private bool usuarioPatreon = false;
+
+	private List<Bundles2.Bundle> bundlesActuales = new List<Bundles2.Bundle>();
+	private List<Bundles2.Bundle> bundlesPasados = new List<Bundles2.Bundle>();
+	private Bundles2.Bundle bundleSeleccionado = new Bundles2.Bundle();
+	private bool mostrarBundleSeleccionado = false;
+
+	private List<string> años = new List<string>();
+	private string añoSeleccionado = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			usuario = await UserManager.FindByIdAsync(usuarioId);
+
+			if (usuario != null)
+			{
+				usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+			}
+		}
+
+		//--------------------------------------------------------------------
+
+		DateTime arranque = new DateTime(2010, 1, 1);
+
+		int i = 0;
+		while (i < 100)
+		{
+			if (arranque.Year != DateTime.Now.Year)
+			{
+				años.Add(arranque.Year.ToString());
+				arranque = arranque.AddYears(1);
+			}
+			i += 1;
+		}
+
+		años.Add(DateTime.Now.Year.ToString());
+		años.Reverse();
+
+		//--------------------------------------------------------------------
+
+		if (bundlesActuales.Count == 0)
+		{
+			bundlesActuales = BaseDatos.Bundles.Buscar.Actuales();
+		}
+
+		if (bundlesActuales.Count > 0)
+		{
+			bundleSeleccionado = bundlesActuales[0];
+		}
+	}
+
+	private void CambiarAño(MouseEventArgs e, string nuevoAño)
+	{
+		añoSeleccionado = nuevoAño;
+
+		bundlesPasados = BaseDatos.Bundles.Buscar.Año(añoSeleccionado);
+	}
+
+	private string MostrarFecha(DateTime fechaEmpieza, DateTime fechaTermina)
+	{
+		if (fechaTermina.Year > 2022)
+		{
+			TimeSpan diferenciaTiempo = fechaTermina.Subtract(DateTime.Now);
+
+			if (diferenciaTiempo.Days > 1)
+			{
+				return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Bundle"), diferenciaTiempo.Days);
+			}
+			else if (diferenciaTiempo.Days == 1)
+			{
+				return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Bundle"), diferenciaTiempo.Days);
+			}
+			else if (diferenciaTiempo.Days == 0 && diferenciaTiempo.Minutes > 0)
+			{
+				return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Bundle"), diferenciaTiempo.Days);
+			}
+		}
+
+		return Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Bundle") + " • " + fechaEmpieza.Day.ToString() + "/" + fechaEmpieza.Month.ToString() + "/" + fechaEmpieza.Year.ToString() + " • " + fechaTermina.Day.ToString() + "/" + fechaTermina.Month.ToString() + "/" + fechaTermina.Year.ToString();
+	}
+
+	private async void SeleccionarBundle(MouseEventArgs e, Bundles2.Bundle nuevoBundle)
+	{
+		bundleSeleccionado = nuevoBundle;
+
+		foreach (var juego in bundleSeleccionado.Juegos)
+		{
+			if (string.IsNullOrEmpty(juego.JuegoId) == false)
+			{
+				juego.Juego = BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
+			}		
+		}
+
+		mostrarBundleSeleccionado = true;
+
+		await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
+	}
+
+	private async void CerrarBundle(MouseEventArgs e)
+	{
+		mostrarBundleSeleccionado = false;
+
+		await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
+	}
+}

@@ -11,6 +11,7 @@
 
 @inject UserManager<Usuario> UserManager
 @inject SignInManager<Usuario> SignInManager
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <style>
     .buscador-panel {
@@ -89,15 +90,16 @@
         </button>
 
         <div class="botones-superiores">
-            @if (usuarioLogeado == true)
-            {
-                if (ubicacionEnlace.Contains("/wishlist") == false)
-                {
-                    <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                    </a>
-                }
-            }
+            <AuthorizeView>
+                <Authorized>
+                    @if (ubicacionEnlace.Contains("/wishlist") == false)
+                    {
+                        <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                        </a>
+                    }
+                </Authorized>
+            </AuthorizeView>
 
             @if (ubicacionEnlace.Contains("/historical-lows") == false)
             {
@@ -273,9 +275,9 @@
     }
 </div>
 
-@if (usuarioLogeado == true)
-{
-    <div style="display: flex; align-items: center; flex: 1 auto 1;">
+ <AuthorizeView>
+    <Authorized>
+        <div style="display: flex; align-items: center; flex: 1 auto 1;">
         <div class="menu-dropdown">
             <div style="display: flex; align-items: center; font-size: 14px; cursor: pointer; gap: 15px;">
                 @if (string.IsNullOrEmpty(usuario?.Avatar) == true)
@@ -319,19 +321,19 @@
             </div>
         </div>
     </div>
-}
-else
-{
-    <div style="display: flex; align-items: center; flex: 1 auto 1;">
-        <a href="/account/login" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-            @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
-        </a>
+    </Authorized>
+    <NotAuthorized>
+        <div style="display: flex; align-items: center; flex: 1 auto 1;">
+            <a href="/account/login" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+            </a>
 
-        <a href="/account/register" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-            @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
-        </a>
-    </div>
-}
+            <a href="/account/register" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+            </a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
 
@@ -342,7 +344,7 @@ else
 
     [Parameter]
     public Usuario usuario { get; set; }
-    private bool usuarioLogeado = false;
+
     private bool usuarioPatreon = false;
     private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
 
@@ -357,7 +359,6 @@ else
     {
         if (usuario != null)
         {
-            usuarioLogeado = true;
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
             juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
 
@@ -441,7 +442,7 @@ else
 
             using (conexion)
             {
-                resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 50, false, -1, usuarioLogeado);
+                resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 50, false, -1);
 
                 if (resultadosMostrar.Count > 0)
                 {

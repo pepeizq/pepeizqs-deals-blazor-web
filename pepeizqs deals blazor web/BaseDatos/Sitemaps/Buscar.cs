@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BaseDatos.Sitemaps
@@ -196,7 +197,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 									{
-										fecha = DateTime.Parse(lector.GetString(2));
+										fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture);
 									}
 								}
 							}
@@ -284,7 +285,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 									{
-										fecha = DateTime.Parse(lector.GetString(2));
+										fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture);
 									}
 								}
 							}
@@ -372,7 +373,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 									{
-										fecha = DateTime.Parse(lector.GetString(2));
+										fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture);
 									}
 								}
 							}
@@ -460,7 +461,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 									{
-										fecha = DateTime.Parse(lector.GetString(2));
+										fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture);
 									}
 								}
 							}
@@ -548,7 +549,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 									{
-										fecha = DateTime.Parse(lector.GetString(2));
+										fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture);
 									}
 								}
 							}

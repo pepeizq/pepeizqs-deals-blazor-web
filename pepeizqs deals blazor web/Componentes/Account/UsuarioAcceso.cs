@@ -3,7 +3,7 @@ using pepeizqs_deals_web.Data;
 
 namespace pepeizqs_deals_blazor_web.Componentes.Account
 {
-    internal sealed class IdentityUserAccessor(UserManager<Usuario> userManager, IdentityRedirectManager redirectManager)
+    internal sealed class UsuarioAcceso(UserManager<Usuario> userManager, IdentityRedirectManager redirectManager)
     {
         public async Task<Usuario> GetRequiredUserAsync(HttpContext contexto)
         {

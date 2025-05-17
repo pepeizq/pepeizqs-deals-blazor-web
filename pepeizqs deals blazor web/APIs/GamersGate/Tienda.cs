@@ -4,6 +4,7 @@ using Herramientas;
 using Juegos;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Net;
 using System.Xml.Serialization;
 
@@ -92,7 +93,7 @@ namespace APIs.GamersGate
 
 									if (juego.Fecha != null)
 									{
-										DateTime fechaTermina = DateTime.Parse(juego.Fecha);
+										DateTime fechaTermina = DateTime.Parse(juego.Fecha, CultureInfo.InvariantCulture);
 										oferta.FechaTermina = fechaTermina;
 									}
 

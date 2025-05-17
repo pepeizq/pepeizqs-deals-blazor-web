@@ -2,6 +2,7 @@
 
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Text.Json;
 
 namespace BaseDatos.Tiendas
@@ -71,7 +72,7 @@ namespace BaseDatos.Tiendas
 								{
 									bool actualizarAPI = false;
 
-									DateTime fechaComprobacion = DateTime.Parse(lector.GetString(6));
+									DateTime fechaComprobacion = DateTime.Parse(lector.GetString(6), CultureInfo.InvariantCulture);
 
 									if (DateTime.Now.Subtract(fechaComprobacion) > TimeSpan.FromDays(91))
 									{

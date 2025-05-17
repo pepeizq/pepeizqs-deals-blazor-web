@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 
 namespace BaseDatos.Usuarios
 {
@@ -85,7 +86,7 @@ namespace BaseDatos.Usuarios
                             AvatarSteam = lector.GetString(3),
                             BundleMensaje = lector.GetString(4),
                             CantidadMensaje = lector.GetString(5),
-                            FechaMensaje = DateTime.Parse(lector.GetString(6)),
+                            FechaMensaje = DateTime.Parse(lector.GetString(6), CultureInfo.InvariantCulture),
                             NicknameSteam = lector.GetString(7),
                             Aprobado = lector.GetString(8)
 						};

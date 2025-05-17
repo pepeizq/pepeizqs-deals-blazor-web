@@ -18,8 +18,6 @@
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder();
     string codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
-
-
 }
 
 <!DOCTYPE html>
@@ -44,7 +42,7 @@
     <meta name="theme-color" content="#007272" />
 
     <ImportMap />
-    <HeadOutlet />   
+    <HeadOutlet @rendermode="renderizacion" />
 </head>
 
 <body class="cuerpo" id="cuerpazo" style="margin: 0px;">
@@ -57,7 +55,7 @@
     </header>
 
     <main id="cuerpazo" role="main" class="cuerpo-ancho cuerpo-espacio">
-        <Routes />
+        <Routes @rendermode="renderizacion" />
     </main>
 
     <footer class="pie">
@@ -148,13 +146,18 @@
 
     #nullable disable
 
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private IComponentRenderMode renderizacion => HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;
+
     public string idioma = "en";
 
     public Usuario usuario = null;
 
     protected async override Task OnInitializedAsync()
     {
-        usuario = await UserManager.GetUserAsync(contexto?.HttpContext.User);
+        usuario = await UserManager.GetUserAsync(HttpContext.User);
 
         if (usuario != null)
         {

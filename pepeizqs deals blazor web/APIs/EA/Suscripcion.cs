@@ -3,6 +3,7 @@
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Text.Json;
 
 namespace APIs.EA
@@ -87,7 +88,7 @@ namespace APIs.EA
 									{
 										try
 										{
-											DateTime fecha = DateTime.Parse(juego.Suscripcion.FechaAcaba);
+											DateTime fecha = DateTime.Parse(juego.Suscripcion.FechaAcaba, CultureInfo.InvariantCulture);
 
 											if (fecha > DateTime.Now)
 											{
@@ -123,7 +124,7 @@ namespace APIs.EA
 										{
 											try
 											{
-												DateTime fecha = DateTime.Parse(juego.SuscripcionPremium.FechaAcaba);
+												DateTime fecha = DateTime.Parse(juego.SuscripcionPremium.FechaAcaba, CultureInfo.InvariantCulture);
 
 												if (fecha > DateTime.Now)
 												{

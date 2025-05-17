@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Text.Json;
 
 namespace BaseDatos.Sorteos
@@ -47,7 +48,7 @@ namespace BaseDatos.Sorteos
                             }
                         }
 
-                        sorteo.FechaTermina = DateTime.Parse(lector.GetString(5));
+                        sorteo.FechaTermina = DateTime.Parse(lector.GetString(5), CultureInfo.InvariantCulture);
 
                         if (lector.IsDBNull(6) == false)
                         {
@@ -99,7 +100,7 @@ namespace BaseDatos.Sorteos
                                 }
                             }
 
-                            sorteo.FechaTermina = DateTime.Parse(lector.GetString(5));
+                            sorteo.FechaTermina = DateTime.Parse(lector.GetString(5), CultureInfo.InvariantCulture);
 
                             if (lector.IsDBNull(6) == false)
                             {
@@ -150,7 +151,7 @@ namespace BaseDatos.Sorteos
 
 						try
                         {
-							sorteo.FechaTermina = DateTime.Parse(lector.GetString(5));
+							sorteo.FechaTermina = DateTime.Parse(lector.GetString(5), CultureInfo.InvariantCulture);
 						}
                         catch { }
 						

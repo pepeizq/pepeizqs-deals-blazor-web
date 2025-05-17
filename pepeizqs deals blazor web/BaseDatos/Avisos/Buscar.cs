@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 
 namespace BaseDatos.Avisos
 {
@@ -46,7 +47,7 @@ namespace BaseDatos.Avisos
 								Aviso aviso = new Aviso
 								{
 									Mensaje = lector.GetString(1),
-									Fecha = DateTime.Parse(lector.GetString(2)),
+									Fecha = DateTime.Parse(lector.GetString(2), CultureInfo.InvariantCulture),
 									Enlace = lector.GetString(3)
 								};
 

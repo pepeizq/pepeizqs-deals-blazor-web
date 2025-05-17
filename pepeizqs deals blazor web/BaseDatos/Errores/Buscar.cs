@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 
 namespace BaseDatos.Errores
 {
@@ -35,7 +36,7 @@ namespace BaseDatos.Errores
                             Error error = new Error
                             {
                                 Mensaje = lector.GetString(1),
-                                Fecha = DateTime.Parse(lector.GetString(3)),
+                                Fecha = DateTime.Parse(lector.GetString(3), CultureInfo.InvariantCulture),
                                 Seccion = lector.GetString(4)
                             };
 

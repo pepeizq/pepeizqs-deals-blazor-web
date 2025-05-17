@@ -3,6 +3,7 @@
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
+using System.Globalization;
 using System.Text.Json;
 
 namespace BaseDatos.Juegos
@@ -132,7 +133,7 @@ namespace BaseDatos.Juegos
                 {
                     if (string.IsNullOrEmpty(lector.GetString(11)) == false)
                     {
-                        juego.FechaSteamAPIComprobacion = DateTime.Parse(lector.GetString(11));
+                        juego.FechaSteamAPIComprobacion = DateTime.Parse(lector.GetString(11), CultureInfo.InvariantCulture);
                     }
                 }
             }

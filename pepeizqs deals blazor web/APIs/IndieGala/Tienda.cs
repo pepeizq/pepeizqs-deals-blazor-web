@@ -6,6 +6,7 @@
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
@@ -127,7 +128,7 @@ namespace APIs.IndieGala
 											{
 												if (juego.Fecha != "None")
 												{
-													DateTime fechaTermina = DateTime.Parse(juego.Fecha);
+													DateTime fechaTermina = DateTime.Parse(juego.Fecha, CultureInfo.InvariantCulture);
 													oferta.FechaTermina = fechaTermina;
 												}
 											}

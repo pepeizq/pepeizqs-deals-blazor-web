@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
@@ -12,28 +13,39 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
 });
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<UsuarioAcceso>();
 builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-builder.Services.AddAuthorization();
+{
+	options.DefaultScheme = IdentityConstants.ApplicationScheme;
+	options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+	.AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<pepeizqs_deals_webContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<Usuario>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<pepeizqs_deals_webContext>()
+builder.Services.AddIdentityCore<Usuario>(opciones =>
+{
+	opciones.SignIn.RequireConfirmedAccount = false;
+	opciones.Lockout.MaxFailedAccessAttempts = 15;
+	opciones.Lockout.AllowedForNewUsers = true;
+	opciones.User.RequireUniqueEmail = true;
+})
+	.AddEntityFrameworkStores<pepeizqs_deals_webContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
+
+
+
+
 
 #region Optimizador
 
@@ -65,13 +77,12 @@ else
 
 app.UseHttpsRedirection();
 
-
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode(opciones =>
 {
-	opciones.DisableWebSocketCompression = true;
+	//opciones.DisableWebSocketCompression = true;
 });
 
 #region Optimizador (Despues Compresion)
@@ -79,6 +90,8 @@ app.MapRazorComponents<App>().AddInteractiveServerRenderMode(opciones =>
 app.UseWebOptimizer();
 
 #endregion
+
+
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

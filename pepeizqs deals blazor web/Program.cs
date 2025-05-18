@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
@@ -24,10 +25,17 @@ builder.Services.AddAuthentication(options =>
 })
 	.AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<pepeizqs_deals_webContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones =>
+{
+	opciones.UseSqlServer(conexionTexto, opciones2 =>
+	{
+		opciones2.CommandTimeout(30);
+	});
+	opciones.EnableSensitiveDataLogging();
+});
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<Usuario>(opciones =>

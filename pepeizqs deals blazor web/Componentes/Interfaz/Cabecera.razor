@@ -10,8 +10,6 @@
 @inherits Juegos.Juego
 
 @inject UserManager<Usuario> UserManager
-@inject SignInManager<Usuario> SignInManager
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <style>
     .buscador-panel {
@@ -342,7 +340,6 @@
     [Parameter]
     public string idioma { get; set; }
 
-    [Parameter]
     public Usuario usuario { get; set; }
 
     private bool usuarioPatreon = false;
@@ -351,12 +348,17 @@
     [Parameter]
     public string ubicacionEnlace { get; set; }
 
+    [CascadingParameter]
+    private Task<AuthenticationState> Proveedor { get; set; }
+
     private SqlConnection conexion = new SqlConnection();
 
     private string adminMensaje = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        usuario = await UserManager.GetUserAsync((await Proveedor).User);
+
         if (usuario != null)
         {
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);

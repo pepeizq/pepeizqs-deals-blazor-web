@@ -14,14 +14,14 @@
 @using pepeizqs_deals_web.Data
 @using System.Text.Json
 
-@inject IHttpContextAccessor contexto
+@inject IHttpContextAccessor Contexto
 @inject UserManager<Usuario> UserManager
 @inject NavigationManager NavManager
 
 @{
 	#nullable disable
 
-	idioma = contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+	idioma = Contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 
 	string titulo = "pepeizq's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
@@ -587,9 +587,9 @@
 				}
 				else
 				{
-					if (usuarioLogeado == true)
+					if (usuario != null)
 					{
-						if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+						if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario?.Id) == true)
 						{
 							if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
 							{
@@ -651,32 +651,33 @@
 
 			<hr style="margin-top: 30px;">
 
-			@if (usuarioLogeado == true)
-			{
-				<div style="display: flex; flex-direction: column; gap: 30px; margin-top: 30px;">
-					<div style="display: flex; align-items: center; gap: 20px;">
-						<div class="checkbox-caja">
-							<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+			<AuthorizeView>
+				<Authorized>
+					<div style="display: flex; flex-direction: column; gap: 30px; margin-top: 30px;">
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div class="checkbox-caja">
+								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+							</div>
+
+							<div style="padding-bottom: 5px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
+							</div>
 						</div>
 
-						<div style="padding-bottom: 5px;">
-							@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div class="checkbox-caja">
+								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
+							</div>
+
+							<div style="padding-bottom: 5px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
+							</div>
 						</div>
 					</div>
 
-					<div style="display: flex; align-items: center; gap: 20px;">
-						<div class="checkbox-caja">
-							<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
-						</div>
-
-						<div style="padding-bottom: 5px;">
-							@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
-						</div>
-					</div>
-				</div>
-
-				<hr style="margin-top: 30px;">
-			}
+					<hr style="margin-top: 30px;">
+				</Authorized>
+			</AuthorizeView>
 
 			<div style="margin-top: 30px;">
 				<div style="padding-bottom: 15px;">
@@ -769,15 +770,12 @@
 
 	#nullable disable
 
+	[CascadingParameter]
+    private Task<AuthenticationState> Proveedor { get; set; }
+
 	private string idioma = string.Empty;
 
-	[Parameter]
-	public string usuarioId { get; set; }
-
-	[Parameter]
-	public bool usuarioLogeado { get; set; }
-
-	private Usuario usuario = new Usuario();
+	private Usuario usuario = null;
 	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
 
 	private string fondoDestacado = string.Empty;
@@ -795,46 +793,43 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (string.IsNullOrEmpty(usuarioId) == false)
+		usuario = await UserManager.GetUserAsync((await Proveedor).User);
+
+		if (usuario != null)
 		{
-			usuario = await UserManager.FindByIdAsync(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
 
-			if (usuarioLogeado == true)
+			#region Filtrado
+
+			if (usuario.IndexOption1 == true)
 			{
-				juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
-
-				#region Filtrado
-
-				if (usuario.IndexOption1 == true)
-				{
-					ocultarJuegosUsuarioSteam = "checked";
-				}
-				else
-				{
-					ocultarJuegosUsuarioSteam = null;
-				}
-
-				if (usuario.IndexOption2 == true)
-				{
-					ocultarJuegosUsuarioGog = "checked";
-				}
-				else
-				{
-					ocultarJuegosUsuarioGog = null;
-				}
-
-				if (string.IsNullOrEmpty(usuario.IndexDRMs) == false)
-				{
-					drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(usuario.IndexDRMs);
-				}
-
-				if (string.IsNullOrEmpty(usuario.IndexCategories) == false)
-				{
-					categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(usuario.IndexCategories);
-				}
-
-				#endregion
+				ocultarJuegosUsuarioSteam = "checked";
 			}
+			else
+			{
+				ocultarJuegosUsuarioSteam = null;
+			}
+
+			if (usuario.IndexOption2 == true)
+			{
+				ocultarJuegosUsuarioGog = "checked";
+			}
+			else
+			{
+				ocultarJuegosUsuarioGog = null;
+			}
+
+			if (string.IsNullOrEmpty(usuario.IndexDRMs) == false)
+			{
+				drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(usuario.IndexDRMs);
+			}
+
+			if (string.IsNullOrEmpty(usuario.IndexCategories) == false)
+			{
+				categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(usuario.IndexCategories);
+			}
+
+			#endregion
 		}
 
 		//------------------------------------------------
@@ -863,11 +858,11 @@
 			{
 				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
 
-				if (usuarioLogeado == true)
+				if (usuario != null)
 				{
 					int limiteTiempoNoticias = 300;
 
-					if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+					if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
 					{
 						limiteTiempoNoticias = 60;
 					}
@@ -884,16 +879,13 @@
 
 			#region Foro
 
-			if (usuarioLogeado == true)
+			if (usuario != null)
 			{
-				if (usuario != null)
+				if (usuario.ForumIndex != null)
 				{
-					if (usuario.ForumIndex != null)
+					if (usuario.ForumIndex == false)
 					{
-						if (usuario.ForumIndex == false)
-						{
-							cargarForo = false;
-						}
+						cargarForo = false;
 					}
 				}
 			}
@@ -919,11 +911,11 @@
 
 			Filtros();
 
-			if (usuarioLogeado == true)
+			if (usuario != null)
 			{
 				int limiteTiempoMinimos = 300;
 
-				if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+				if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
 				{
 					limiteTiempoMinimos = 60;
 				}

@@ -7,14 +7,19 @@ namespace pepeizqs_deals_blazor_web.Componentes.Account
     {
         public async Task<Usuario> GetRequiredUserAsync(HttpContext contexto)
         {
-            Usuario? usuario = await userManager.GetUserAsync(contexto.User);
-
-            if (usuario is null)
+            if (contexto != null)
             {
-                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(contexto.User)}'.", contexto);
-            }
+				Usuario? usuario = await userManager.GetUserAsync(contexto.User);
 
-            return usuario;
-        }
+				if (usuario is null)
+				{
+					redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(contexto.User)}'.", contexto);
+				}
+
+				return usuario;
+			}
+
+            return null!;
+		}
     }
 }

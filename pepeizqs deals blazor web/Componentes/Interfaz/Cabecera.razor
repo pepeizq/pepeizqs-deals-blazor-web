@@ -1,15 +1,17 @@
-﻿@rendermode InteractiveServer 
+﻿@rendermode InteractiveAuto
 
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
+@using pepeizqs_deals_blazor_web.Componentes.Account
 @using pepeizqs_deals_web.Data
 
 @inherits Juegos.Juego
 
 @inject UserManager<Usuario> UserManager
+@inject UsuarioAcceso UserAccessor
 
 <style>
     .buscador-panel {
@@ -337,9 +339,13 @@
 
     #nullable disable
 
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
     [Parameter]
     public string idioma { get; set; }
 
+    [Parameter]
     public Usuario usuario { get; set; }
 
     private bool usuarioPatreon = false;
@@ -348,16 +354,13 @@
     [Parameter]
     public string ubicacionEnlace { get; set; }
 
-    [CascadingParameter]
-    private Task<AuthenticationState> Proveedor { get; set; }
-
     private SqlConnection conexion = new SqlConnection();
 
     private string adminMensaje = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        usuario = await UserManager.GetUserAsync((await Proveedor).User);
+        // usuario = await UserManager.GetUserAsync(HttpContext.User);
 
         if (usuario != null)
         {

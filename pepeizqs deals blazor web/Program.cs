@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
+using pepeizqs_deals_blazor_web.Componentes.Cuenta;
 using pepeizqs_deals_web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,14 +29,13 @@ builder.Services.AddAuthentication(options =>
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones =>
-{
+builder.Services.AddDbContextFactory<pepeizqs_deals_webContext>(opciones => {
 	opciones.UseSqlServer(conexionTexto, opciones2 =>
 	{
 		opciones2.CommandTimeout(30);
 	});
 	opciones.EnableSensitiveDataLogging();
-});
+}, ServiceLifetime.Transient);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -50,10 +51,6 @@ builder.Services.AddIdentityCore<Usuario>(opciones =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
-
-
-
-
 
 #region Optimizador
 

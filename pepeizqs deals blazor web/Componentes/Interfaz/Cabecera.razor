@@ -1,4 +1,4 @@
-﻿@rendermode InteractiveAuto
+﻿@rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
@@ -9,9 +9,6 @@
 @using pepeizqs_deals_web.Data
 
 @inherits Juegos.Juego
-
-@inject UserManager<Usuario> UserManager
-@inject UsuarioAcceso UserAccessor
 
 <style>
     .buscador-panel {
@@ -72,12 +69,44 @@
 
 <div style="display: flex; align-items: center; gap: 10px; flex: 1 1 auto;">
 
-    @if (BaseDatos.Usuarios.Buscar.RolDios(usuario?.Id) == true && ubicacionEnlace.Contains("/admin") == false)
-    {
-        <a class="texto-cabecera boton-superior" href="/admin" style="font-size: 15px;">
-            @adminMensaje
-        </a>
-    }
+    <AuthorizeView>
+        <Authorized>
+            @if (string.IsNullOrEmpty(usuarioId) == false)
+            {
+                if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true && ubicacionEnlace.Contains("/admin") == false)
+                {
+                    adminMensaje = "Admin";
+
+                    if (conexion == null)
+                    {
+                        conexion = Herramientas.BaseDatos.Conectar();
+                    }
+                    else
+                    {
+                        if (conexion.State != System.Data.ConnectionState.Open)
+                        {
+                            conexion = Herramientas.BaseDatos.Conectar();
+                        }
+                    }
+
+                    using (conexion)
+                    {
+                        int nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
+                        int nuevosCorreosApps = int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion));
+
+                        if (nuevosCorreosDeals > 0 || nuevosCorreosApps > 0)
+                        {
+                            adminMensaje = adminMensaje + " - Correo Nuevo";
+                        }
+                    }
+
+                    <a class="texto-cabecera boton-superior" href="/admin" style="font-size: 15px;">
+                        @adminMensaje
+                    </a>
+                }
+            }
+        </Authorized>
+    </AuthorizeView>
 
     @if (enseñarBuscador == false)
     {
@@ -154,15 +183,16 @@
                 </div>
 
                 <div class="menu-dropdown-contenido">
-                    @if (usuario != null)
-                    {
-                        if (ubicacionEnlace.Contains("/wishlist") == false)
-                        {
-                            <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                            </a>
-                        }
-                    }
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (ubicacionEnlace.Contains("/wishlist") == false)
+                            {
+                                <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                                </a>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
 
                     @if (ubicacionEnlace.Contains("/historical-lows") == false)
                     {
@@ -232,7 +262,7 @@
                                 }
                                 else
                                 {
-                                    usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, juego, Juegos.JuegoDRM.NoEspecificado);
+                                    usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
 
                                     if (usuarioTieneDeseado == true)
                                     {
@@ -278,49 +308,48 @@
  <AuthorizeView>
     <Authorized>
         <div style="display: flex; align-items: center; flex: 1 auto 1;">
-        <div class="menu-dropdown">
-            <div style="display: flex; align-items: center; font-size: 14px; cursor: pointer; gap: 15px;">
-                @if (string.IsNullOrEmpty(usuario?.Avatar) == true)
-                {
-                    <div>@usuario?.Email</div>
-                }
-                else
-                {
-                    @if (usuario?.Avatar.ToLower().Contains(".jpg") == true || usuario?.Avatar.ToLower().Contains(".jpeg") == true || usuario?.Avatar.ToLower().Contains(".png") == true || usuario?.Avatar.ToLower().Contains(".webp") == true)
+            <div class="menu-dropdown">
+                <div style="display: flex; align-items: center; font-size: 14px; cursor: pointer; gap: 15px;">
+                    @if (opcionesCabecera != null)
                     {
-                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(usuario?.Avatar)" style="max-height: 32px; max-width: 32px;" title="@usuario?.Nickname"/>
+                        if (string.IsNullOrEmpty(opcionesCabecera.Avatar) == true)
+                        {
+                            <div>@opcionesCabecera.Email</div>
+                        }
+                        else
+                        {
+                            @if (opcionesCabecera.Avatar.ToLower().Contains(".jpg") == true || 
+                                opcionesCabecera.Avatar.ToLower().Contains(".jpeg") == true || 
+                                opcionesCabecera.Avatar.ToLower().Contains(".png") == true || 
+                                opcionesCabecera.Avatar.ToLower().Contains(".webp") == true)
+                            {
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(opcionesCabecera.Avatar)" style="max-height: 32px; max-width: 32px;" title="@opcionesCabecera.Nickname"/>
+                            }
+                            else
+                            {
+                                <div>@opcionesCabecera.Email</div>
+                            }
+                        }
                     }
-                    else
-                    {
-                        <div>@usuario?.Email</div>
-                    }
-                }
 
-                @if (usuarioPatreon == true)
-                {
-                    <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 0px 10px; height: 32px;">
-                        @usuario?.PatreonCoins.ToString()
+                    <div style="max-width: 10px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                        </svg>
                     </div>
-                }
+                </div>
 
-                <div style="max-width: 10px;">
-                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                        <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                    </svg>
+                <div class="menu-dropdown-contenido" style="right: -10px;">
+                    <a href="/account" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
+                    </a>
+
+                    <a href="/account/logout" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
+                    </a>
                 </div>
             </div>
-
-            <div class="menu-dropdown-contenido" style="right: -10px;">
-                <a href="/account" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
-                </a>
-
-                <a href="/account/logout" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
-                </a>
-            </div>
         </div>
-    </div>
     </Authorized>
     <NotAuthorized>
         <div style="display: flex; align-items: center; flex: 1 auto 1;">
@@ -339,17 +368,16 @@
 
     #nullable disable
 
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
     [Parameter]
     public string idioma { get; set; }
 
     [Parameter]
-    public Usuario usuario { get; set; }
+    public string usuarioId { get; set; }
 
+    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+    private Usuario deseadosUsuario = null;
     private bool usuarioPatreon = false;
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+    private Usuario opcionesCabecera = null;
 
     [Parameter]
     public string ubicacionEnlace { get; set; }
@@ -358,42 +386,14 @@
 
     private string adminMensaje = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        // usuario = await UserManager.GetUserAsync(HttpContext.User);
-
-        if (usuario != null)
+        if (string.IsNullOrEmpty(usuarioId) == false)
         {
-            usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
-
-            if (BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
-            {
-                adminMensaje = "Admin";
-
-                if (conexion == null)
-                {
-                    conexion = Herramientas.BaseDatos.Conectar();
-                }
-                else
-                {
-                    if (conexion.State != System.Data.ConnectionState.Open)
-                    {
-                        conexion = Herramientas.BaseDatos.Conectar();
-                    }
-                }
-
-                using (conexion)
-                {
-                    int nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
-                    int nuevosCorreosApps = int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion));
-
-                    if (nuevosCorreosDeals > 0 || nuevosCorreosApps > 0)
-                    {
-                        adminMensaje = adminMensaje + " - Correo Nuevo";
-                    }
-                }
-            }
+            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+            opcionesCabecera = BaseDatos.Usuarios.Buscar.OpcionesCabecera(usuarioId);
         }
     }
 

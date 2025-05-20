@@ -34,7 +34,8 @@ namespace Herramientas
 			"Lighthouse",
 			"Chrome-Lighthouse",
 			"SeznamBot",
-			"Ecosia"];
+			"Ecosia",
+			"Owler"];
 
 		public static bool EsBotVerificado(string userAgent)
 		{

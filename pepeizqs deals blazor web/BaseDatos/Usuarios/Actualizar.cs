@@ -7,52 +7,6 @@ namespace BaseDatos.Usuarios
 {
     public static class Actualizar
     {
-        public static void Claves(SqlConnection conexion, string usuarioId, Clave nuevaClave)
-        {
-            List<Clave> claves = new List<Clave>();
-
-            string busqueda = "SELECT * FROM AspNetUsers WHERE Id=@Id";
-
-            using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-            {
-                comando.Parameters.AddWithValue("@Id", usuarioId);
-
-                using (SqlDataReader lector = comando.ExecuteReader())
-                {
-                    while (lector.Read())
-                    {
-                        if (lector.IsDBNull(24) == false)
-                        {
-                            if (string.IsNullOrEmpty(lector.GetString(24)) == false)
-                            {
-                                claves = JsonSerializer.Deserialize<List<Clave>>(lector.GetString(24));
-                            }
-                        }
-                    }
-                }
-            }
-
-            claves.Add(nuevaClave);
-
-            string sqlActualizar = "UPDATE AspNetUsers " +
-                    "SET Keys=@Keys WHERE Id=@Id";
-
-            using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
-            {
-                comando.Parameters.AddWithValue("@Id", usuarioId);
-                comando.Parameters.AddWithValue("@Keys", JsonSerializer.Serialize(claves));
-
-                try
-                {
-                    comando.ExecuteNonQuery();
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
         public static void PatreonComprobacion(string correoBuscar, DateTime fechaActualizar, SqlConnection conexion = null)
         {
             if (conexion == null)
@@ -174,6 +128,70 @@ namespace BaseDatos.Usuarios
 			}
 
 			return true;
+		}
+
+		public static void OpcionBooleana(string variable, bool valor, string usuarioId, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlActualizar = "UPDATE AspNetUsers " +
+				"SET " + variable + "=@Valor WHERE Id=@Id";
+
+			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+			{
+				comando.Parameters.AddWithValue("@Id", usuarioId);
+				comando.Parameters.AddWithValue("@Valor", valor);
+				
+				try
+				{
+					comando.ExecuteNonQuery();
+				}
+				catch
+				{
+				}
+			}
+		}
+
+		public static void OpcionTexto(string variable, string valor, string usuarioId, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlActualizar = "UPDATE AspNetUsers " +
+				"SET " + variable + "=@Valor WHERE Id=@Id";
+
+			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+			{
+				comando.Parameters.AddWithValue("@Id", usuarioId);
+				comando.Parameters.AddWithValue("@Valor", valor);
+
+				try
+				{
+					comando.ExecuteNonQuery();
+				}
+				catch
+				{
+				}
+			}
 		}
 	}
 

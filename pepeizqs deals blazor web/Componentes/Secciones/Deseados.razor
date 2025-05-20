@@ -1153,7 +1153,7 @@
 
 		if (juego != null)
 		{
-			await Herramientas.Deseados.CambiarEstado(null, UserManager, usuario, juego, false, drm);
+			Herramientas.Deseados.CambiarEstado(null, usuario.Id, juego, false, drm);
 		}
 
 		if (deseadosOfertas.Count > 0)

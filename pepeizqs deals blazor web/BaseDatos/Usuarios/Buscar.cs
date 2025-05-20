@@ -3,6 +3,7 @@
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using pepeizqs_deals_web.Data;
 
 namespace BaseDatos.Usuarios
 {
@@ -38,6 +39,368 @@ namespace BaseDatos.Usuarios
 
 			return false;
 		}
+
+		public static string IdiomaSobreescribir(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT LanguageOverride FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetString(0);
+							}
+						}
+					}
+				}
+			}
+
+			return "en";
+		}
+
+		public static string IdiomaJuegos(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT LanguageGames FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetString(0);
+							}
+						}
+					}
+				}
+			}
+
+			return "en";
+		}
+
+		public static Usuario JuegosTiene(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario juegos = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT SteamGames, GogGames, AmazonGames, EpicGames, UbisoftGames, EaGames FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								juegos.SteamGames = lector.GetString(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								juegos.GogGames = lector.GetString(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								juegos.AmazonGames = lector.GetString(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								juegos.EpicGames = lector.GetString(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								juegos.UbisoftGames = lector.GetString(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								juegos.EaGames = lector.GetString(5);
+							}
+						}
+					}
+				}
+
+				return juegos;
+			}
+
+			return null;
+		}
+
+		public static DateTime? FechaPatreon(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT PatreonLastCheck FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetDateTime(0);
+							}
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
+		public static Usuario DeseadosTiene(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario deseados = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT SteamWishlist, Wishlist, GogWishlist FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								deseados.SteamWishlist = lector.GetString(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								deseados.Wishlist = lector.GetString(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								deseados.GogWishlist = lector.GetString(2);
+							}
+						}
+					}
+				}
+
+				return deseados;
+			}
+
+			return null;
+		}
+
+		public static Usuario OpcionesCabecera(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario opciones = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT Avatar, Email, Nickname, PatreonCoins FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								opciones.Avatar = lector.GetString(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								opciones.Email = lector.GetString(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								opciones.Nickname = lector.GetString(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.PatreonCoins = lector.GetInt32(3);
+							}
+						}
+					}
+				}
+
+				return opciones;
+			}
+
+			return null;
+		}
+
+		public static Usuario OpcionesPortada(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario opciones = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT IndexOption1, IndexOption2, IndexDRMs, IndexCategories, ForumIndex FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								opciones.IndexOption1 = lector.GetBoolean(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								opciones.IndexOption2 = lector.GetBoolean(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								opciones.IndexDRMs = lector.GetString(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.IndexCategories = lector.GetString(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								opciones.ForumIndex = lector.GetBoolean(4);
+							}
+						}
+					}
+				}
+
+				return opciones;
+			}
+
+			return null;
+		}
+
+
+
+
+
+
+
+
+
+
 
 		public static bool UsuarioTieneJuego(string usuarioId, int juegoId, JuegoDRM drm, SqlConnection conexion = null)
 		{
@@ -332,44 +695,6 @@ namespace BaseDatos.Usuarios
 			return false;
 		}
 
-		public static string UsuarioIdioma(string usuarioId, SqlConnection conexion = null)
-		{
-			if (string.IsNullOrEmpty(usuarioId) == false)
-			{
-				if (conexion == null)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-				else
-				{
-					if (conexion.State != System.Data.ConnectionState.Open)
-					{
-						conexion = Herramientas.BaseDatos.Conectar();
-					}
-				}
-
-				string busqueda = "SELECT * FROM AspNetUsers WHERE Id=@Id";
-
-				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-				{
-					comando.Parameters.AddWithValue("@Id", usuarioId);
-
-					using (SqlDataReader lector = comando.ExecuteReader())
-					{
-						if (lector.Read() == true)
-						{
-							if (lector.IsDBNull(lector.GetOrdinal("Language")) == false)
-							{
-								return lector.GetString(lector.GetOrdinal("Language"));
-							}
-						}
-					}
-				}
-			}
-			
-			return "en";
-		}
-
 		public static string UsuarioDeseadosNickname(string otroUsuario, SqlConnection conexion = null)
 		{
 			if (conexion == null)
@@ -403,46 +728,6 @@ namespace BaseDatos.Usuarios
 			}
 
 			return null;
-		}
-
-		public static List<NotificacionSuscripcion> TodosUsuariosNotificacionesPush(SqlConnection conexion = null)
-		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
-			List<NotificacionSuscripcion> usuarios = new List<NotificacionSuscripcion>();
-
-			string busqueda = "SELECT * FROM usuariosNotificaciones";
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read())
-					{
-						NotificacionSuscripcion usuario = new NotificacionSuscripcion();
-						usuario.UserId = lector.GetString(0);
-						usuario.NotificationSubscriptionId = lector.GetInt32(1);
-						usuario.Url = lector.GetString(2);
-						usuario.P256dh = lector.GetString(3);
-						usuario.Auth = lector.GetString(4);
-						usuario.UserAgent = lector.GetString(5);
-
-						usuarios.Add(usuario);
-					}
-				}
-			}
-
-			return usuarios;
 		}
 
 		public static NotificacionSuscripcion UnUsuarioNotificacionesPush(string usuarioId, SqlConnection conexion = null)

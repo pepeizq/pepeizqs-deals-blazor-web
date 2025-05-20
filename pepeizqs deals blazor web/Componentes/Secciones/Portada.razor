@@ -1,8 +1,5 @@
 ﻿@page "/"
 
-@attribute [StreamRendering]
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
-
 @using Juegos
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
@@ -15,14 +12,12 @@
 @using pepeizqs_deals_web.Data
 @using System.Text.Json
 
-@* @inject IHttpContextAccessor Contexto *@
+@inject IHttpContextAccessor Contexto
 @inject UserManager<Usuario> UserManager
 @inject NavigationManager NavManager
 
 @{
 	#nullable disable
-
-	// idioma = Contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 
 	string titulo = "pepeizq's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
@@ -293,7 +288,7 @@
 				}
 				else
 				{
-					if (Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
+					if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
 					{
 						colorSeleccionado = "var(--fondoAlerta)";
 					}
@@ -380,7 +375,7 @@
 					}
 					else
 					{
-						if (Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
+						if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
 						{
 							colorFondoDestacado = "background-color: var(--fondoAlerta);";
 						}
@@ -571,10 +566,10 @@
 				</button>
 			</div>
 
-			<div style="display: flex; flex-direction: column; gap: 25px; margin-bottom: 25px; tab-index: -1;">
+			<div style="display: flex; flex-direction: column; gap: 25px; margin-bottom: 25px;">
 				<Virtualize Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
 					<ItemContent>
-						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.Portada" />
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Portada" />
 					</ItemContent>
 				</Virtualize>
 			</div>
@@ -588,30 +583,30 @@
 				}
 				else
 				{
-					if (usuario != null)
-					{
-						if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario?.Id) == true)
-						{
-							if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
+					<AuthorizeView>
+						<Authorized>
+							@if (usuarioPatreon == true || usuarioAdmin == true)
+							{
+								if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
+								{
+									llegadoLimite = true;
+								}
+							}
+							else
+							{
+								if (cantidadJuegosMinimos > 450 && cantidadJuegosMinimos <= 500)
+								{
+									llegadoLimite = true;
+								}
+							}
+						</Authorized>
+						<NotAuthorized>
+							@if (cantidadJuegosMinimos > 150 && cantidadJuegosMinimos <= 200)
 							{
 								llegadoLimite = true;
 							}
-						}
-						else
-						{
-							if (cantidadJuegosMinimos > 450 && cantidadJuegosMinimos <= 500)
-							{
-								llegadoLimite = true;
-							}
-						}
-					}
-					else
-					{
-						if (cantidadJuegosMinimos > 150 && cantidadJuegosMinimos <= 200)
-						{
-							llegadoLimite = true;
-						}
-					}
+						</NotAuthorized>
+					</AuthorizeView>
 				}
 
 				<div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 30px;">
@@ -771,13 +766,13 @@
 
 	#nullable disable
 
-	[CascadingParameter]
-    private Task<AuthenticationState> Proveedor { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-	private string idioma = string.Empty;
-
-	private Usuario usuario = null;
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+	private Usuario deseadosUsuario = null;
+	private bool usuarioPatreon = false;
+	private bool usuarioAdmin = false;
 
 	private string fondoDestacado = string.Empty;
 	private string logoDestacado = string.Empty;
@@ -792,45 +787,64 @@
 	private List<BaseDatos.Foro.ForoPost> postsUltimosForo = new List<BaseDatos.Foro.ForoPost>();
 	private int idiomaForo = 0;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		// usuario = await UserManager.GetUserAsync((await Proveedor).User);
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
-		if (usuario != null)
+		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 
-			#region Filtrado
+			Usuario opciones = BaseDatos.Usuarios.Buscar.OpcionesPortada(usuarioId);
 
-			if (usuario.IndexOption1 == true)
+			if (opciones != null)
 			{
-				ocultarJuegosUsuarioSteam = "checked";
-			}
-			else
-			{
-				ocultarJuegosUsuarioSteam = null;
-			}
+				#region Filtrado
 
-			if (usuario.IndexOption2 == true)
-			{
-				ocultarJuegosUsuarioGog = "checked";
-			}
-			else
-			{
-				ocultarJuegosUsuarioGog = null;
-			}
+				if (opciones.IndexOption1 == true)
+				{
+					ocultarJuegosUsuarioSteam = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioSteam = null;
+				}
 
-			if (string.IsNullOrEmpty(usuario.IndexDRMs) == false)
-			{
-				drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(usuario.IndexDRMs);
-			}
+				if (opciones.IndexOption2 == true)
+				{
+					ocultarJuegosUsuarioGog = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioGog = null;
+				}
 
-			if (string.IsNullOrEmpty(usuario.IndexCategories) == false)
-			{
-				categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(usuario.IndexCategories);
-			}
+				if (string.IsNullOrEmpty(opciones.IndexDRMs) == false)
+				{
+					drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(opciones.IndexDRMs);
+				}
 
-			#endregion
+				if (string.IsNullOrEmpty(opciones.IndexCategories) == false)
+				{
+					categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(opciones.IndexCategories);
+				}
+
+				#endregion
+
+				if (opciones.ForumIndex == true)
+				{
+					cargarForo = true;
+				}
+				else
+				{
+					cargarForo = false;
+				}
+			}
 		}
 
 		//------------------------------------------------
@@ -859,11 +873,11 @@
 			{
 				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
 
-				if (usuario != null)
+				if (string.IsNullOrEmpty(usuarioId) == false)
 				{
 					int limiteTiempoNoticias = 300;
 
-					if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
+					if (usuarioPatreon == true || usuarioAdmin == true)
 					{
 						limiteTiempoNoticias = 60;
 					}
@@ -879,17 +893,6 @@
 			#endregion
 
 			#region Foro
-
-			if (usuario != null)
-			{
-				if (usuario.ForumIndex != null)
-				{
-					if (usuario.ForumIndex == false)
-					{
-						cargarForo = false;
-					}
-				}
-			}
 
 			if (cargarForo == true)
 			{
@@ -912,11 +915,11 @@
 
 			Filtros();
 
-			if (usuario != null)
+			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
 				int limiteTiempoMinimos = 300;
 
-				if (Herramientas.Patreon.VerificarActivo(usuario?.PatreonLastCheck) || global::BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
+				if (usuarioPatreon == true || usuarioAdmin == true)
 				{
 					limiteTiempoMinimos = 60;
 				}
@@ -1179,57 +1182,61 @@
 	private string ocultarJuegosUsuarioSteam = null;
 	private string ocultarJuegosUsuarioGog = null;
 
-	private async void OcultarJuegosUsuarioSteam()
+	private void OcultarJuegosUsuarioSteam()
 	{
-		if (usuario != null)
+		bool valor = false;
+
+		if (ocultarJuegosUsuarioSteam == "checked")
 		{
-			if (usuario.IndexOption1 == true)
-			{
-				usuario.IndexOption1 = false;
-				ocultarJuegosUsuarioSteam = null;
-			}
-			else
-			{
-				usuario.IndexOption1 = true;
-				ocultarJuegosUsuarioSteam = "checked";
-			}
-
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
-
-			Filtros();
+			ocultarJuegosUsuarioSteam = null;
 		}
+		else
+		{
+			ocultarJuegosUsuarioSteam = "checked";
+		}
+
+		if (ocultarJuegosUsuarioSteam == "checked")
+		{
+			valor = true;
+		}
+		else if (ocultarJuegosUsuarioSteam == null)
+		{
+			valor = false;
+		}
+
+		BaseDatos.Usuarios.Actualizar.OpcionBooleana("IndexOption1", valor, usuarioId, conexion);
+
+		Filtros();
 	}
 
-	private async void OcultarJuegosUsuarioGog()
+	private void OcultarJuegosUsuarioGog()
 	{
-		if (usuario != null)
+		bool valor = false;
+
+		if (ocultarJuegosUsuarioGog == "checked")
 		{
-			if (usuario.IndexOption2 == true)
-			{
-				usuario.IndexOption2 = false;
-				ocultarJuegosUsuarioGog = null;
-			}
-			else
-			{
-				usuario.IndexOption2 = true;
-				ocultarJuegosUsuarioGog = "checked";
-			}
-
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
-
-			Filtros();
+			ocultarJuegosUsuarioGog = null;
 		}
+		else
+		{
+			ocultarJuegosUsuarioGog = "checked";
+		}
+
+		if (ocultarJuegosUsuarioGog == "checked")
+		{
+			valor = true;
+		}
+		else if (ocultarJuegosUsuarioGog == null)
+		{
+			valor = false;
+		}
+
+		BaseDatos.Usuarios.Actualizar.OpcionBooleana("IndexOption2", valor, usuarioId, conexion);
+
+		Filtros();
 	}
 
-	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
+	private void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
 	{
 		foreach (var drm in drms)
 		{
@@ -1248,16 +1255,7 @@
 			}
 		}
 
-		if (usuario != null)
-		{
-			usuario.IndexDRMs = JsonSerializer.Serialize(drms);
-
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
-		}
+		BaseDatos.Usuarios.Actualizar.OpcionTexto("IndexDRMs", JsonSerializer.Serialize(drms), usuarioId, conexion);
 
 		Filtros();
 	}
@@ -1294,7 +1292,7 @@
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
+	private void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
 	{
 		foreach (var categoria in categorias)
 		{
@@ -1313,16 +1311,7 @@
 			}
 		}
 
-		if (usuario != null)
-		{
-			usuario.IndexCategories = JsonSerializer.Serialize(categorias);
-
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
-		}
+		BaseDatos.Usuarios.Actualizar.OpcionTexto("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
 
 		Filtros();
 	}

@@ -1,13 +1,14 @@
-﻿@using APIs.Steam
+﻿@page "/bundle/{bundleId:int}/{bundleNombre?}/"
+
+@using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.JSInterop
 @using Microsoft.VisualBasic
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 @using pepeizqs_deals_web.Data
 
-@inject UserManager<Usuario> UserManager
-@inject SignInManager<Usuario> SignInManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
 @if (bundle != null)
@@ -121,15 +122,6 @@
 		history.pushState(null, '', url);
 	}
 </script>
-
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
 
 <style>
 	.bundle-tabla {
@@ -351,9 +343,9 @@
 							
 							if (mostrar == true)
 							{
-								<pepeizqs_deals_web.Pages.Componentes.Interfaz.CajaJuego 
+								<CajaJuego 
 									idioma="@idioma" juego="juego.Juego" drmBundle="juego.DRM" dlcsBundle="juego.DLCs" juegosUsuario="@juegosUsuario" idBundle="@bundleId"
-									tipo="Interfaz.CajaJuego.Tipo.Bundle" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosGog="@usuario?.GogWishlist" usuarioDeseadosWeb="@usuario?.Wishlist"/>
+									tipo="Interfaz.CajaJuego.Tipo.Bundle" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" />
 							}
 						}
 					</div>
@@ -374,26 +366,39 @@
 
 	#nullable disable
 
-	[Parameter]
-	public string idioma { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-	[Parameter]
-	public string usuarioId { get; set; }
-
-	private Usuario usuario = new Usuario();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+	private Usuario deseadosUsuario = null;
 	private bool usuarioPatreon = false;
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
 
 	[Parameter]
 	public int bundleId { get; set; }
+
+	[Parameter]
+	public string bundleNombre { get; set; }
 
 	[Parameter]
 	public Tipo tipo { get; set; } = Tipo.Bundle;
 
     public Bundles2.Bundle bundle = null;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+		}
+
+		//------------------------------------------------------------
+
 		bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
 
 		if (bundle != null)
@@ -412,16 +417,6 @@
 					}
 				}
 			}
-		}
-
-		//------------------------------------------------------------
-
-		usuario = await UserManager.FindByIdAsync(usuarioId);
-
-		if (usuario != null)
-		{
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
-			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
 		}
 	}
 

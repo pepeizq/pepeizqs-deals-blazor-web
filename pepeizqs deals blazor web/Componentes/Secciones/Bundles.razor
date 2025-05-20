@@ -1,4 +1,6 @@
-﻿@using APIs.Steam
+﻿@page "/bundles"
+
+@using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
@@ -6,9 +8,7 @@
 @using Microsoft.VisualBasic
 @using pepeizqs_deals_web.Data
 
-@inject UserManager<Usuario> UserManager
-@inject SignInManager<Usuario> SignInManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
 @{
@@ -110,15 +110,6 @@
 </script>
 
 <style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
-
-<style>
 	.bundles-grid {
 		gap: 40px;
 	}
@@ -210,7 +201,7 @@
 					</a>
 				</div>		
 
-				<Bundle bundleId="@bundleSeleccionado.Id" idioma="@idioma" usuarioId="@usuarioId" tipo="@Bundle.Tipo.Bundles" />
+				<Bundle bundleId="@bundleSeleccionado.Id" tipo="@Bundle.Tipo.Bundles" />
 			}
 		}
 	}
@@ -333,13 +324,9 @@
 
 	#nullable disable
 
-	[Parameter]
-	public string idioma { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-	[Parameter]
-	public string usuarioId { get; set; }
-
-	private Usuario usuario = new Usuario();
 	private bool usuarioPatreon = false;
 
 	private List<Bundles2.Bundle> bundlesActuales = new List<Bundles2.Bundle>();
@@ -350,16 +337,15 @@
 	private List<string> años = new List<string>();
 	private string añoSeleccionado = string.Empty;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			usuario = await UserManager.FindByIdAsync(usuarioId);
-
-			if (usuario != null)
-			{
-				usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
-			}
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 		}
 
 		//--------------------------------------------------------------------

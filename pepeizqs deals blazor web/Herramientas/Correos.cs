@@ -320,7 +320,7 @@ namespace Herramientas
 
 		public static void EnviarNuevoMinimo(string usuarioId, Juego juego, JuegoPrecio precio, string correoHacia)
 		{
-			string idioma = global::BaseDatos.Usuarios.Buscar.UsuarioIdioma(usuarioId);
+			string idioma = global::BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
 
 			if (string.IsNullOrEmpty(idioma) == true)
 			{

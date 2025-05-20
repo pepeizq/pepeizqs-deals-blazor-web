@@ -4,21 +4,6 @@
 @using pepeizqs_deals_blazor_web.Componentes.Account
 @using pepeizqs_deals_web.Data
 
-@inject IHttpContextAccessor Contexto
-@inject UserManager<Usuario> UserManager
-@inject UsuarioAcceso UserAccessor
-
-@{
-#nullable disable
-
-    // idioma = Contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-    // string userAgent = Contexto?.HttpContext?.Request.Headers.UserAgent.ToString();
-    string enlace = Contexto?.HttpContext?.Request.Path.ToString();
-
-    WebApplicationBuilder builder = WebApplication.CreateBuilder();
-    string codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
-}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,20 +26,20 @@
     <meta name="theme-color" content="#007272" />
 
     <ImportMap />
-    <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+    <HeadOutlet @rendermode="renderizacion" />
 </head>
 
 <body class="cuerpo" id="cuerpazo" style="margin: 0px;">
     <header style="height: var(--alturaCabecera); background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px;">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" style="padding: 0px;">
             <div class="cabecera-poner">
-                <Cabecera idioma="@idioma" usuario="@usuario" ubicacionEnlace="@enlace" />
+                <Cabecera idioma="@idioma" usuarioId="@usuarioId" ubicacionEnlace="@enlace" />
             </div>
         </nav>
     </header>
 
     <main id="cuerpazo" role="main" class="cuerpo-ancho cuerpo-espacio">
-        <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+        <Routes @rendermode="renderizacion" />
     </main>
 
     <footer class="pie">
@@ -143,27 +128,33 @@
 
 @code {
 
-#nullable disable
+    #nullable disable
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
     private IComponentRenderMode renderizacion => HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;
 
-    public string idioma = "en";
+    private string idioma = "en";
+    private string usuarioId = null;
+    private string enlace = null;
+    private string codigoFuente = null;
 
-    public Usuario usuario = null;
-
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        usuario = await UserManager.GetUserAsync(HttpContext.User);
-
-        if (usuario != null)
+        if (HttpContext != null)
         {
-            if (string.IsNullOrEmpty(usuario.LanguageOverride) == false)
-            {
-                idioma = usuario.LanguageOverride;
-            }
+            idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+            usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+            enlace = HttpContext.Request.Path.ToString();
         }
+
+        if (string.IsNullOrEmpty(usuarioId) == false)
+        {
+            idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+        }
+
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
     }
 }

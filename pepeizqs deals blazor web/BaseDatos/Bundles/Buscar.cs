@@ -2,6 +2,7 @@
 
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace BaseDatos.Bundles
 {
@@ -17,8 +18,8 @@ namespace BaseDatos.Bundles
                 NombreTienda = lector.GetString(3),
                 ImagenBundle = lector.GetString(4),
                 Enlace = lector.GetString(5),
-                FechaEmpieza = Convert.ToDateTime(lector.GetString(6)),
-                FechaTermina = Convert.ToDateTime(lector.GetString(7))
+                FechaEmpieza = Convert.ToDateTime(lector.GetString(6), CultureInfo.InvariantCulture),
+                FechaTermina = Convert.ToDateTime(lector.GetString(7), CultureInfo.InvariantCulture)
             };
 
 			if (lector.IsDBNull(8) == false)

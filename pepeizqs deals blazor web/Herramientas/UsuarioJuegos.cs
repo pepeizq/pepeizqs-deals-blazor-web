@@ -7,6 +7,45 @@ namespace Herramientas
 {
 	public static class UsuarioJuegos
 	{
+		public static UsuarioListadosJuegos Cargar(string usuarioId)
+		{
+			Usuario usuario = global::BaseDatos.Usuarios.Buscar.JuegosTiene(usuarioId);
+
+			UsuarioListadosJuegos listados = new UsuarioListadosJuegos();
+
+			if (string.IsNullOrEmpty(usuario.SteamGames) == false)
+			{
+				listados.Steam = Herramientas.Listados.Generar(usuario.SteamGames);
+			}
+
+			if (string.IsNullOrEmpty(usuario.GogGames) == false)
+			{
+				listados.Gog = Herramientas.Listados.Generar(usuario.GogGames);
+			}
+
+			if (string.IsNullOrEmpty(usuario.AmazonGames) == false)
+			{
+				listados.Amazon = Herramientas.Listados.Generar(usuario.AmazonGames);
+			}
+
+			if (string.IsNullOrEmpty(usuario.EpicGames) == false)
+			{
+				listados.Epic = Herramientas.Listados.Generar(usuario.EpicGames);
+			}
+
+			if (string.IsNullOrEmpty(usuario.UbisoftGames) == false)
+			{
+				listados.Ubisoft = Herramientas.Listados.Generar(usuario.UbisoftGames);
+			}
+
+			if (string.IsNullOrEmpty(usuario.EaGames) == false)
+			{
+				listados.Ea = Herramientas.Listados.Generar(usuario.EaGames);
+			}
+
+			return listados;
+		}
+
 		public static UsuarioListadosJuegos Cargar(Usuario usuario)
 		{
 			UsuarioListadosJuegos listados = new UsuarioListadosJuegos();

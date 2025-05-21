@@ -388,7 +388,7 @@ namespace Herramientas
 					}
 				}
 
-				global::BaseDatos.Usuarios.Actualizar.OpcionTexto("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
+				global::BaseDatos.Usuarios.Actualizar.Opcion("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
 			}
 			else
 			{
@@ -410,7 +410,7 @@ namespace Herramientas
 					deseados.RemoveAt(posicion);
 				}
 
-				global::BaseDatos.Usuarios.Actualizar.OpcionTexto("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
+				global::BaseDatos.Usuarios.Actualizar.Opcion("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
 
 				if (usuarioTieneDesea != null)
 				{

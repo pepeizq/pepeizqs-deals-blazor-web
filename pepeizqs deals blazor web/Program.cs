@@ -1,8 +1,12 @@
 using ApexCharts;
+using Autofac.Core;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
@@ -54,10 +58,10 @@ builder.Services.AddScoped<UsuarioAcceso>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(opciones =>
 {
-	options.DefaultScheme = IdentityConstants.ApplicationScheme;
-	options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+	opciones.DefaultScheme = IdentityConstants.ApplicationScheme;
+	opciones.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
 	.AddIdentityCookies();
 
@@ -69,6 +73,7 @@ builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones => {
 		opciones2.CommandTimeout(30);
 	});
 	opciones.EnableSensitiveDataLogging();
+	opciones.EnableDetailedErrors();
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -84,18 +89,27 @@ builder.Services.AddIdentityCore<Usuario>(opciones =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory())).SetDefaultKeyLifetime(TimeSpan.FromDays(30));
-
-builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
-
-builder.Services.AddAuthentication().AddCookie();
 builder.Services.ConfigureApplicationCookie(opciones =>
 {
+	opciones.AccessDeniedPath = "/";
 	opciones.Cookie.Name = "cookiePepeizq";
 	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
 	opciones.LoginPath = "/account/login";
-	opciones.SlidingExpiration = true;
 });
+
+builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
+
+#region Redireccionador
+
+builder.Services.AddControllersWithViews().AddMvcOptions(opciones =>
+	opciones.Filters.Add(
+		new ResponseCacheAttribute
+		{
+			NoStore = true,
+			Location = ResponseCacheLocation.None
+		}));
+
+#endregion
 
 #region Linea Grafico
 
@@ -114,6 +128,17 @@ builder.Services.AddApexCharts(e =>
 
 #endregion
 
+#region Mejora velocidad carga
+
+builder.Services.AddHsts(opciones =>
+{
+	opciones.Preload = true;
+	opciones.IncludeSubDomains = true;
+	opciones.MaxAge = TimeSpan.FromDays(730);
+});
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -123,9 +148,10 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+	app.UseDeveloperExceptionPage();
+	//app.UseExceptionHandler("/Error", createScopeForErrors: true);
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -147,6 +173,12 @@ app.UseResponseCompression();
 #region Optimizador (Despues Compresion)
 
 app.UseWebOptimizer();
+
+#endregion
+
+#region Redireccionador
+
+app.MapControllers();
 
 #endregion
 

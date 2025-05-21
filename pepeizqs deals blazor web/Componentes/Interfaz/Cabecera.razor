@@ -119,16 +119,15 @@
         </button>
 
         <div class="botones-superiores">
-            <AuthorizeView>
-                <Authorized>
-                    @if (ubicacionEnlace.Contains("/wishlist") == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                        </a>
-                    }
-                </Authorized>
-            </AuthorizeView>
+            @if (string.IsNullOrEmpty(usuarioId) == false)
+            {
+                if (ubicacionEnlace.Contains("/wishlist") == false)
+                {
+                    <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                    </a>
+                }
+            }
 
             @if (ubicacionEnlace.Contains("/historical-lows") == false)
             {
@@ -158,12 +157,12 @@
                 </a>
             }
 
-            @if (ubicacionEnlace.Contains("/forum") == false)
+            @* @if (ubicacionEnlace.Contains("/forum") == false)
             {
                 <a class="texto-cabecera boton-superior" href="/forum" style="font-size: 15px;">
                     @Herramientas.Idiomas.BuscarTexto(idioma, "Forum", "Header")
                 </a>
-            }
+            } *@
 
             <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" title="@Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")">
                 <div style="width: 22px; height: 22px;">
@@ -183,16 +182,15 @@
                 </div>
 
                 <div class="menu-dropdown-contenido">
-                    <AuthorizeView>
-                        <Authorized>
-                            @if (ubicacionEnlace.Contains("/wishlist") == false)
-                            {
-                                <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                                </a>
-                            }
-                        </Authorized>
-                    </AuthorizeView>
+                    @if (string.IsNullOrEmpty(usuarioId) == false)
+                    {
+                        if (ubicacionEnlace.Contains("/wishlist") == false)
+                        {
+                            <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                            </a>
+                        }
+                    }   
 
                     @if (ubicacionEnlace.Contains("/historical-lows") == false)
                     {
@@ -222,12 +220,12 @@
                         </a>
                     }
 
-                    @if (ubicacionEnlace.Contains("/forum") == false)
+                    @* @if (ubicacionEnlace.Contains("/forum") == false)
                     {
                         <a class="texto-cabecera boton-superior" href="/forum" style="font-size: 15px;">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "Forum", "Header")
                         </a>
-                    }
+                    } *@
                 </div>
             </div>
         </div>

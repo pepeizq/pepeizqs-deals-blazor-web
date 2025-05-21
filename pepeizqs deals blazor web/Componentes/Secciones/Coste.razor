@@ -1,4 +1,8 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@page "/cost-web"
+
+@using Microsoft.AspNetCore.Components.Web
+
+@inject IHttpContextAccessor Contexto
 
 @{
 	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "CostWeb") + " • pepeizq's deals";
@@ -21,6 +25,8 @@
 	}
 
 	<HeadContent>
+		<PageTitle>@titulo</PageTitle>
+
 		<meta name="og:title" Content="@titulo" />
 		<meta name="description" content="@descripcion" />
 		<meta name="og:description" content="@descripcion" />
@@ -34,15 +40,6 @@
 		<link rel="canonical" href="@enlace" />
 	</HeadContent>
 }
-
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
 
 <div style="display: flex; flex-direction: column; gap: 20px;">
 	<div class="caja-diseño" style="padding: 30px;">
@@ -212,9 +209,19 @@
 
 	#nullable disable
 
-	[Parameter]
-	public string idioma { get; set; }
-
 	public double saldo = -14.49;
 
+	private string idioma = "en";
+	private string usuarioId = null;
+
+	protected override void OnInitialized()
+	{
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+		}
+	}
 }

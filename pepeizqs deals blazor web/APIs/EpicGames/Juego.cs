@@ -97,7 +97,7 @@ namespace APIs.EpicGames
 
                     if (ids != null)
                     {
-                        if (string.IsNullOrEmpty(ids.Datos.Mapping.Mapping2.SandboxId) == false)
+                        if (string.IsNullOrEmpty(ids.Datos?.Mapping?.Mapping2?.SandboxId) == false)
                         {
 							JuegoEpicGames juegoEpicGames = new JuegoEpicGames();
 
@@ -275,7 +275,7 @@ namespace APIs.EpicGames
 
 					if (ids != null)
 					{
-						if (string.IsNullOrEmpty(ids.Datos.Mapping.Mapping2.SandboxId) == false)
+						if (string.IsNullOrEmpty(ids.Datos?.Mapping?.Mapping2?.SandboxId) == false)
 						{
 							string sandboxId = ids.Datos.Mapping.Mapping2.SandboxId;
 

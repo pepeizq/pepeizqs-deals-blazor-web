@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Componentes\Secciones\Minimos.razor~RFf76502.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor-ApexCharts" Version="6.0.0" />
     <PackageReference Include="Discord.Net" Version="3.17.4" />
     <PackageReference Include="ImageProcessor" Version="2.9.0" />
@@ -41,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Componentes\Admin\" />
     <Folder Include="Herramientas\Ficheros\NewFolder\" />
   </ItemGroup>
 

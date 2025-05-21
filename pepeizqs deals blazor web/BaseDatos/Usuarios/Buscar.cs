@@ -392,7 +392,174 @@ namespace BaseDatos.Usuarios
 			return null;
 		}
 
+		public static Usuario OpcionesDeseados(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario opciones = new Usuario();
 
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT WishlistPublic, WishlistNickname, WishlistSort, WishlistOption3, WishlistOption4 FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								opciones.WishlistPublic = lector.GetBoolean(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								opciones.WishlistNickname = lector.GetString(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								opciones.WishlistSort = lector.GetInt32(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.WishlistOption3 = lector.GetInt32(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								opciones.WishlistOption4 = lector.GetDecimal(4);
+							}
+						}
+					}
+				}
+
+				return opciones;
+			}
+
+			return null;
+		}
+
+		public static Usuario OpcionesMinimos(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario opciones = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT HistoricalLowsOption1, HistoricalLowsOption4, HistoricalLowsOption2, HistoricalLowsOption3, HistoricalLowsDRMs, HistoricalLowsStores, HistoricalLowsCategories FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								opciones.HistoricalLowsOption1 = lector.GetBoolean(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								opciones.HistoricalLowsOption4 = lector.GetBoolean(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								opciones.HistoricalLowsOption2 = lector.GetInt32(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.HistoricalLowsOption3 = lector.GetDecimal(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								opciones.HistoricalLowsDRMs = lector.GetString(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								opciones.HistoricalLowsStores = lector.GetString(5);
+							}
+
+							if (lector.IsDBNull(6) == false)
+							{
+								opciones.HistoricalLowsCategories = lector.GetString(6);
+							}
+						}
+					}
+				}
+
+				return opciones;
+			}
+
+			return null;
+		}
+
+		public static string UsuarioDeseadosNickname(string otroUsuario, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string busqueda = "SELECT Id FROM AspNetUsers WHERE WishlistPublic='true' AND WishlistNickname=@WishlistNickname";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				comando.Parameters.AddWithValue("@WishlistNickname", otroUsuario);
+
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							return lector.GetString(0);
+						}
+					}
+				}
+			}
+
+			return null;
+		}
 
 
 
@@ -693,41 +860,6 @@ namespace BaseDatos.Usuarios
 			}
 
 			return false;
-		}
-
-		public static string UsuarioDeseadosNickname(string otroUsuario, SqlConnection conexion = null)
-		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
-			string busqueda = "SELECT Id FROM AspNetUsers WHERE WishlistPublic='true' AND WishlistNickname=@WishlistNickname";
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				comando.Parameters.AddWithValue("@WishlistNickname", otroUsuario);
-
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read())
-					{
-						if (lector.IsDBNull(lector.GetOrdinal("Id")) == false)
-						{
-							return lector.GetString(lector.GetOrdinal("Id"));
-						}
-					}
-				}
-			}
-
-			return null;
 		}
 
 		public static NotificacionSuscripcion UnUsuarioNotificacionesPush(string usuarioId, SqlConnection conexion = null)

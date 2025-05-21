@@ -135,7 +135,13 @@
 	}
 	else
 	{
-		drmUsar = juego.PrecioMinimosHistoricos[0].DRM;
+		if (juego.PrecioMinimosHistoricos != null)
+		{
+			if (juego.PrecioMinimosHistoricos.Count > 0)
+			{
+				drmUsar = juego.PrecioMinimosHistoricos[0].DRM;
+			}
+		}	
 	}
 
 	bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego, drmUsar);

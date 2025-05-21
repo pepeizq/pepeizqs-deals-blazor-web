@@ -1,4 +1,6 @@
-﻿@using APIs.Steam
+﻿@page "/historical-lows/"
+
+@using APIs.Steam
 @using BaseDatos.Juegos
 @using Juegos
 @using Microsoft.AspNetCore.Components.Web
@@ -11,8 +13,7 @@
 @using System.Text.Json
 @using Tiendas2
 
-@inject UserManager<Usuario> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
 @{
@@ -22,6 +23,8 @@
 	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
 
 	<HeadContent>
+        <PageTitle>@titulo</PageTitle>
+
 		<meta name="og:title" content="@titulo" />
 		<meta name="description" content="@descripcion" />
 		<meta name="og:description" content="@descripcion" />
@@ -35,15 +38,6 @@
 		<link rel="canonical" href="@enlace" />
 	</HeadContent>
 }
-
-<style>
-    .caja-diseño {
-        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-        border: 2px solid var(--fondoOscuro);
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-        border-radius: 5px;
-    }
-</style>
 
 <style>
 	.cargando {
@@ -152,7 +146,7 @@ else
 
 					<div style="display: flex; flex-direction: column; gap: 10px;">
 						<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
-							@if (usuarioLogeado == true)
+							@if (string.IsNullOrEmpty(usuarioId) == false)
 							{
 								<button class="boton-pequeño" @onclick="OpcionesOcultar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 									<div style="display: flex; align-items: center; gap: 10px;">
@@ -524,7 +518,7 @@ else
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -25px;">
 				<Virtualize Context="juego" Items="juegosMostrar" ItemSize="107">
 					<ItemContent>
-						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
 					</ItemContent>
 				</Virtualize>
 			</div>
@@ -536,24 +530,19 @@ else
 
 	#nullable disable
 
-	[Parameter]
-	public string idioma { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-	[Parameter]
-	public string usuarioId { get; set; }
-
-	[Parameter]
-	public bool usuarioLogeado { get; set; }
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+	private Usuario deseadosUsuario = null;
+	private bool usuarioPatreon = false;
+	private Usuario opcionesMinimos = null;
 
 	[Parameter]
 	public string drmEscrito { get; set; }
 
 	[Parameter]
 	public string tiendaEscrita { get; set; }
-
-	private Usuario usuario = new Usuario();
-	private bool usuarioPatreon = false;
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
 
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosMostrar = new List<Juegos.Juego>();
@@ -564,84 +553,91 @@ else
 
 	private bool cargado = false;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		usuario = await UserManager.FindByIdAsync(usuarioId);
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
-		if (usuario != null && usuarioLogeado == true)
+		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+			opcionesMinimos = BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
 
-			#region Filtrado
+			if (opcionesMinimos != null)
+			{
+				#region Filtrado
 
-			if (usuario.HistoricalLowsOption1 == true)
-			{
-				ocultarJuegosUsuarioSteam = "checked";
-			}
-			else
-			{
-				ocultarJuegosUsuarioSteam = null;
-			}
+				if (opcionesMinimos.HistoricalLowsOption1 == true)
+				{
+					ocultarJuegosUsuarioSteam = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioSteam = null;
+				}
 
-			if (usuario.HistoricalLowsOption4 == true)
-			{
-				ocultarJuegosUsuarioGog = "checked";
-			}
-			else
-			{
-				ocultarJuegosUsuarioGog = null;
-			}
+				if (opcionesMinimos.HistoricalLowsOption4 == true)
+				{
+					ocultarJuegosUsuarioGog = "checked";
+				}
+				else
+				{
+					ocultarJuegosUsuarioGog = null;
+				}
 
-			if (usuario.HistoricalLowsOption2 == null)
-			{
-				minimoDescuento = 1;
-			}
-			else
-			{
-				if (usuario.HistoricalLowsOption2 == 0 || usuario.HistoricalLowsOption2 == null)
+				if (opcionesMinimos.HistoricalLowsOption2 == null)
 				{
 					minimoDescuento = 1;
 				}
-				else if (usuario.HistoricalLowsOption2 > 0)
+				else
 				{
-					minimoDescuento = usuario.HistoricalLowsOption2;
+					if (opcionesMinimos.HistoricalLowsOption2 == 0 || opcionesMinimos.HistoricalLowsOption2 == null)
+					{
+						minimoDescuento = 1;
+					}
+					else if (opcionesMinimos.HistoricalLowsOption2 > 0)
+					{
+						minimoDescuento = opcionesMinimos.HistoricalLowsOption2;
+					}
 				}
-			}
 
-			if (usuario.HistoricalLowsOption3 == null)
-			{
-				maximoPrecio = 90;
-			}
-			else
-			{
-				if (usuario.HistoricalLowsOption3 == 0 || usuario.HistoricalLowsOption3 == null)
+				if (opcionesMinimos.HistoricalLowsOption3 == null)
 				{
 					maximoPrecio = 90;
 				}
-				else if (usuario.HistoricalLowsOption3 > 0)
+				else
 				{
-					maximoPrecio = usuario.HistoricalLowsOption3;
+					if (opcionesMinimos.HistoricalLowsOption3 == 0 || opcionesMinimos.HistoricalLowsOption3 == null)
+					{
+						maximoPrecio = 90;
+					}
+					else if (opcionesMinimos.HistoricalLowsOption3 > 0)
+					{
+						maximoPrecio = opcionesMinimos.HistoricalLowsOption3;
+					}
 				}
-			}
 
-			if (string.IsNullOrEmpty(usuario.HistoricalLowsDRMs) == false)
-			{
-				drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(usuario.HistoricalLowsDRMs);
-			}
+				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsDRMs) == false)
+				{
+					drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(opcionesMinimos.HistoricalLowsDRMs);
+				}
 
-			if (string.IsNullOrEmpty(usuario.HistoricalLowsStores) == false)
-			{
-				tiendas = JsonSerializer.Deserialize<List<MostrarJuegoTienda>>(usuario.HistoricalLowsStores);
-				tiendas = GenerarListaTiendas(tiendas);
-			}
+				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsStores) == false)
+				{
+					tiendas = JsonSerializer.Deserialize<List<MostrarJuegoTienda>>(opcionesMinimos.HistoricalLowsStores);
+					tiendas = GenerarListaTiendas(tiendas);
+				}
 
-			if (string.IsNullOrEmpty(usuario.HistoricalLowsCategories) == false)
-			{
-				categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(usuario.HistoricalLowsCategories);
-			}
+				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsCategories) == false)
+				{
+					categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(opcionesMinimos.HistoricalLowsCategories);
+				}
 
-			#endregion
+				#endregion
+			}
 		}
 
 		//--------------------------------------------------------------------
@@ -655,38 +651,38 @@ else
 
 		if (juegosGestor.Count > 0)
 		{
-			if (usuario == null)
+			if (opcionesMinimos == null)
 			{
 				OrdenarReseñasCantidad();
 			}
 			else
 			{
-				if (usuario.HistoricalLowsSort == null)
+				if (opcionesMinimos.HistoricalLowsSort == null)
 				{
-					usuario.HistoricalLowsSort = 1;
+					opcionesMinimos.HistoricalLowsSort = 1;
 				}
 
-				if (usuario.HistoricalLowsSort == 0)
+				if (opcionesMinimos.HistoricalLowsSort == 0)
 				{
 					OrdenarReseñasPorcentaje();
 				}
-				else if (usuario.HistoricalLowsSort == 1)
+				else if (opcionesMinimos.HistoricalLowsSort == 1)
 				{
 					OrdenarReseñasCantidad();
 				}
-				else if (usuario.HistoricalLowsSort == 2)
+				else if (opcionesMinimos.HistoricalLowsSort == 2)
 				{
 					OrdenarNombreAZ();
 				}
-				else if (usuario.HistoricalLowsSort == 3)
+				else if (opcionesMinimos.HistoricalLowsSort == 3)
 				{
 					OrdenarNombreZA();
 				}
-				else if (usuario.HistoricalLowsSort == 4)
+				else if (opcionesMinimos.HistoricalLowsSort == 4)
 				{
 					OrdenarPrecio();
 				}
-				else if (usuario.HistoricalLowsSort == 5)
+				else if (opcionesMinimos.HistoricalLowsSort == 5)
 				{
 					OrdenarDescuento();
 				}
@@ -696,7 +692,7 @@ else
 
 	#region Ordenar
 
-	private async void OrdenarReseñasPorcentaje()
+	private void OrdenarReseñasPorcentaje()
 	{
 		if (juegosGestor != null)
 		{
@@ -709,20 +705,16 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => int.Parse(x.Analisis.Porcentaje.Replace("%", null))).ThenBy(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 0;
+				opcionesMinimos.HistoricalLowsSort = 0;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
 			}
 		}
 	}
 
-	private async void OrdenarReseñasCantidad()
+	private void OrdenarReseñasCantidad()
 	{
 		if (juegosGestor != null)
 		{
@@ -735,20 +727,16 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 1;
+				opcionesMinimos.HistoricalLowsSort = 1;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
 			}
 		}
 	}
 
-	private async void OrdenarNombreAZ()
+	private void OrdenarNombreAZ()
 	{
 		if (juegosGestor != null)
 		{
@@ -761,20 +749,16 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderBy(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 2;
+				opcionesMinimos.HistoricalLowsSort = 2;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
 			}
 		}
 	}
 
-	private async void OrdenarNombreZA()
+	private void OrdenarNombreZA()
 	{
 		if (juegosGestor != null)
 		{
@@ -787,20 +771,16 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 3;
+				opcionesMinimos.HistoricalLowsSort = 3;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
 			}
 		}
 	}
 
-	private async void OrdenarPrecio()
+	private void OrdenarPrecio()
 	{
 		if (juegosGestor != null)
 		{
@@ -813,20 +793,16 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderBy(x => x.PrecioMinimosHistoricos[0].Precio).ThenBy(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 4;
+				opcionesMinimos.HistoricalLowsSort = 4;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
 			}
 		}
 	}
 
-	private async void OrdenarDescuento()
+	private void OrdenarDescuento()
 	{
 		if (juegosGestor != null)
 		{
@@ -839,15 +815,11 @@ else
 				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => x.PrecioMinimosHistoricos[0].Descuento).ThenBy(x => x.Nombre).ToList();
 			}
 
-			if (usuario != null)
+			if (opcionesMinimos != null)
 			{
-				usuario.HistoricalLowsSort = 5;
+				opcionesMinimos.HistoricalLowsSort = 5;
 
-				try
-				{
-					await UserManager.UpdateAsync(usuario);
-				}
-				catch { }
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
 			}
 		}
 	}
@@ -1109,26 +1081,22 @@ else
 
 	private string ocultarJuegosUsuarioSteam = null;
 
-	private async void OcultarJuegosUsuarioSteam()
+	private void OcultarJuegosUsuarioSteam()
 	{
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			if (usuario.HistoricalLowsOption1 == true)
+			if (opcionesMinimos.HistoricalLowsOption1 == true)
 			{
-				usuario.HistoricalLowsOption1 = false;
+				opcionesMinimos.HistoricalLowsOption1 = false;
 				ocultarJuegosUsuarioSteam = null;
 			}
 			else
 			{
-				usuario.HistoricalLowsOption1 = true;
+				opcionesMinimos.HistoricalLowsOption1 = true;
 				ocultarJuegosUsuarioSteam = "checked";
 			}
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+            BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
 
 			ElegirOrdenamiento();
 		}
@@ -1136,26 +1104,22 @@ else
 
 	private string ocultarJuegosUsuarioGog = null;
 
-	private async void OcultarJuegosUsuarioGog()
+	private void OcultarJuegosUsuarioGog()
 	{
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			if (usuario.HistoricalLowsOption4 == true)
+			if (opcionesMinimos.HistoricalLowsOption4 == true)
 			{
-				usuario.HistoricalLowsOption4 = false;
+				opcionesMinimos.HistoricalLowsOption4 = false;
 				ocultarJuegosUsuarioGog = null;
 			}
 			else
 			{
-				usuario.HistoricalLowsOption4 = true;
+				opcionesMinimos.HistoricalLowsOption4 = true;
 				ocultarJuegosUsuarioGog = "checked";
 			}
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption4", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
 
 			ElegirOrdenamiento();
 		}
@@ -1163,7 +1127,7 @@ else
 
 	private int? minimoDescuento = 1;
 
-	private async void CambiarMinimoDescuento(ChangeEventArgs e)
+	private void CambiarMinimoDescuento(ChangeEventArgs e)
 	{
 		minimoDescuento = int.Parse(e.Value.ToString());
 
@@ -1172,15 +1136,11 @@ else
 			minimoDescuento = minimoDescuento - 1;
 		}
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsOption2 = minimoDescuento;
+			opcionesMinimos.HistoricalLowsOption2 = minimoDescuento;
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption2", (int)opcionesMinimos.HistoricalLowsOption2, usuarioId);
 		}
 
 		ElegirOrdenamiento();
@@ -1188,25 +1148,21 @@ else
 
 	private decimal? maximoPrecio = 90;
 
-	private async void CambiarMaximoPrecio(ChangeEventArgs e)
+	private void CambiarMaximoPrecio(ChangeEventArgs e)
 	{
 		maximoPrecio = decimal.Parse(e.Value.ToString());
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsOption3 = maximoPrecio;
+			opcionesMinimos.HistoricalLowsOption3 = maximoPrecio;
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption3", (decimal)opcionesMinimos.HistoricalLowsOption3, usuarioId);
 		}
 
 		ElegirOrdenamiento();
 	}
 
-	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
+	private void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
 	{
 		foreach (var drm in drms)
 		{
@@ -1225,15 +1181,11 @@ else
 			}
 		}
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsDRMs = JsonSerializer.Serialize(drms);
+			opcionesMinimos.HistoricalLowsDRMs = JsonSerializer.Serialize(drms);
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsDRMs", opcionesMinimos.HistoricalLowsDRMs, usuarioId);
 		}
 
 		ElegirOrdenamiento();
@@ -1271,7 +1223,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
+	private void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
 	{
 		foreach (var tienda in tiendas)
 		{
@@ -1290,15 +1242,11 @@ else
 			}
 		}
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsStores = JsonSerializer.Serialize(tiendas);
+			opcionesMinimos.HistoricalLowsStores = JsonSerializer.Serialize(tiendas);
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsStores", opcionesMinimos.HistoricalLowsStores, usuarioId);
 		}
 
 		ElegirOrdenamiento();
@@ -1342,7 +1290,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
+	private void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
 	{
 		foreach (var categoria in categorias)
 		{
@@ -1361,15 +1309,11 @@ else
 			}
 		}
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsCategories = JsonSerializer.Serialize(categorias);
+			opcionesMinimos.HistoricalLowsCategories = JsonSerializer.Serialize(categorias);
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch { }
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsCategories", opcionesMinimos.HistoricalLowsCategories, usuarioId);
 		}
 
 		ElegirOrdenamiento();
@@ -1404,7 +1348,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
+	private void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
 	{
 		foreach (var steamdeck in deck)
 		{
@@ -1423,18 +1367,11 @@ else
 			}
 		}
 
-		if (usuario != null)
+		if (opcionesMinimos != null)
 		{
-			usuario.HistoricalLowsSteamDeck = JsonSerializer.Serialize(deck);
+			opcionesMinimos.HistoricalLowsSteamDeck = JsonSerializer.Serialize(deck);
 
-			try
-			{
-				await UserManager.UpdateAsync(usuario);
-			}
-			catch (Exception ex)
-			{
-				BaseDatos.Errores.Insertar.Mensaje("Guardar Usuario Minimos", ex);
-			}
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSteamDeck", opcionesMinimos.HistoricalLowsSteamDeck, usuarioId);
 		}
 
 		ElegirOrdenamiento();

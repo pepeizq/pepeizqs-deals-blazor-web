@@ -13,7 +13,6 @@
 @using System.Text.Json
 
 @inject IHttpContextAccessor Contexto
-@inject UserManager<Usuario> UserManager
 @inject NavigationManager NavManager
 
 @{
@@ -472,7 +471,7 @@
 			</div>
 		}
 	</div>
-
+@* 
 	@if (cargarForo == true)
 	{
 		if (postsUltimosForo.Count > 0)
@@ -539,7 +538,7 @@
 				</a>
 			</div>
 		}
-	}
+	} *@
 
 	@if (juegosMinimosMostrar.Count > 0)
 	{
@@ -583,30 +582,30 @@
 				}
 				else
 				{
-					<AuthorizeView>
-						<Authorized>
-							@if (usuarioPatreon == true || usuarioAdmin == true)
-							{
-								if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
-								{
-									llegadoLimite = true;
-								}
-							}
-							else
-							{
-								if (cantidadJuegosMinimos > 450 && cantidadJuegosMinimos <= 500)
-								{
-									llegadoLimite = true;
-								}
-							}
-						</Authorized>
-						<NotAuthorized>
-							@if (cantidadJuegosMinimos > 150 && cantidadJuegosMinimos <= 200)
+					if (string.IsNullOrEmpty(usuarioId) == false)
+					{
+						if (usuarioPatreon == true || usuarioAdmin == true)
+						{
+							if (cantidadJuegosMinimos > 950 && cantidadJuegosMinimos <= 1000)
 							{
 								llegadoLimite = true;
 							}
-						</NotAuthorized>
-					</AuthorizeView>
+						}
+						else
+						{
+							if (cantidadJuegosMinimos > 450 && cantidadJuegosMinimos <= 500)
+							{
+								llegadoLimite = true;
+							}
+						}
+					}
+					else
+					{
+						if (cantidadJuegosMinimos > 150 && cantidadJuegosMinimos <= 200)
+						{
+							llegadoLimite = true;
+						}
+					}
 				}
 
 				<div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 30px;">
@@ -1204,7 +1203,7 @@
 			valor = false;
 		}
 
-		BaseDatos.Usuarios.Actualizar.OpcionBooleana("IndexOption1", valor, usuarioId, conexion);
+		BaseDatos.Usuarios.Actualizar.Opcion("IndexOption1", valor, usuarioId, conexion);
 
 		Filtros();
 	}
@@ -1231,7 +1230,7 @@
 			valor = false;
 		}
 
-		BaseDatos.Usuarios.Actualizar.OpcionBooleana("IndexOption2", valor, usuarioId, conexion);
+		BaseDatos.Usuarios.Actualizar.Opcion("IndexOption2", valor, usuarioId, conexion);
 
 		Filtros();
 	}
@@ -1255,7 +1254,7 @@
 			}
 		}
 
-		BaseDatos.Usuarios.Actualizar.OpcionTexto("IndexDRMs", JsonSerializer.Serialize(drms), usuarioId, conexion);
+		BaseDatos.Usuarios.Actualizar.Opcion("IndexDRMs", JsonSerializer.Serialize(drms), usuarioId, conexion);
 
 		Filtros();
 	}
@@ -1311,7 +1310,7 @@
 			}
 		}
 
-		BaseDatos.Usuarios.Actualizar.OpcionTexto("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
+		BaseDatos.Usuarios.Actualizar.Opcion("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
 
 		Filtros();
 	}

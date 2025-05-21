@@ -1,4 +1,6 @@
-﻿@using APIs.Steam
+﻿@page "/curator/{slug}/"
+
+@using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
@@ -6,8 +8,7 @@
 @using pepeizqs_deals_web.Data
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
-@inject UserManager<Usuario> UserManager
-@inject SignInManager<Usuario> SignInManager
+@inject IHttpContextAccessor Contexto
 
 @if (curator != null)
 {
@@ -41,6 +42,8 @@
 	}
 
 	<HeadContent>
+		<PageTitle>@titulo</PageTitle>
+
 		<meta name="og:title" Content="@titulo" />
 
 		@if (string.IsNullOrEmpty(descripcion) == false)
@@ -139,7 +142,7 @@
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; width: 100%;">
 							@foreach (var destacado in juegosDestacados)
 							{
-								<CajaJuego idioma="@idioma" juego="@destacado" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorDestacado" />
+								<CajaJuego idioma="@idioma" juego="@destacado" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorDestacado" />
 							}
 						</div>
 					</div>
@@ -244,7 +247,7 @@
 						<div style="display: flex; flex-direction: column; gap: 20px;">
 							<Virtualize Context="juego" Items="juegosCuratorMostrar" ItemSize="107" OverscanCount="6">
 								<ItemContent>
-									<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@usuario?.SteamWishlist" usuarioDeseadosWeb="@usuario?.Wishlist" usuarioDeseadosGog="@usuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorLista" />
+									<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorLista" />
 								</ItemContent>
 							</Virtualize>
 						</div>
@@ -259,18 +262,15 @@
 
 	#nullable disable
 
-	[Parameter]
-	public string idioma { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-	[Parameter]
-	public string usuarioId { get; set; }
-
-	[Parameter]
-	public int curatorIdSteam { get; set; }
-
-	private Usuario usuario = new Usuario();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+	private Usuario deseadosUsuario = null;
 	private bool usuarioPatreon = false;
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+
+	[Parameter]
+	public string slug { get; set; }
 
 	private BaseDatos.Curators.Curator curator = null;
 	private List<Juegos.Juego> juegosCurator = new List<Juegos.Juego>();
@@ -285,15 +285,18 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		usuario = await UserManager.FindByIdAsync(usuarioId);
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
-		if (usuario != null)
+		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 		}
 
-		curator = BaseDatos.Curators.Buscar.Uno(curatorIdSteam);
+		curator = BaseDatos.Curators.Buscar.Uno(slug);
 
 		if (curator != null)
 		{

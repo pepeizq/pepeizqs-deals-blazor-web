@@ -1,12 +1,12 @@
-﻿@using APIs.Steam
+﻿@page "/free/"
+
+@using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.VisualBasic
 @using pepeizqs_deals_web.Data
 
-@inject UserManager<Usuario> UserManager
-@inject SignInManager<Usuario> SignInManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 
 @{
     string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Free") + " • pepeizq's deals";
@@ -104,6 +104,8 @@
     }
 
     <HeadContent>
+        <PageTitle>@titulo</PageTitle>
+
         <meta name="og:title" Content="@titulo" />
         <meta name="description" content="@descripcion" />
         <meta name="og:description" content="@descripcion" />
@@ -191,15 +193,6 @@
     }
 </script>
 
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
-
 @if (juegosActuales.Count > 0)
 {
 	<h1 style="font-size: 23px;">
@@ -222,7 +215,7 @@
             }
             else
             {
-                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(usuario?.SteamWishlist, usuario?.Wishlist, usuario?.GogWishlist, juego.Juego, juego.DRM);
+                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego.Juego, juego.DRM);
 
                 if (usuarioTieneDeseado == true)
                 {
@@ -444,15 +437,12 @@
 
     #nullable disable
 
-    [Parameter]
-    public string idioma { get; set; }
+	private string idioma = "en";
+	private string usuarioId = null;
 
-    [Parameter]
-    public string usuarioId { get; set; }
-
-    private Usuario usuario = new Usuario();
-    private bool usuarioPatreon = false;
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = new Herramientas.UsuarioListadosJuegos();
+	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+	private Usuario deseadosUsuario = null;
+	private bool usuarioPatreon = false;
 
     private List<Juegos.JuegoGratis> juegosActuales = new List<Juegos.JuegoGratis>();
     private List<Gratis2.GratisComponente> gratisPasados = new List<Gratis2.GratisComponente>();
@@ -460,15 +450,18 @@
     private List<string> años = new List<string>();
     private string añoSeleccionado = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        usuario = await UserManager.FindByIdAsync(usuarioId);
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
-        if (usuario != null)
-        {
-            usuarioPatreon = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuario);
-        }
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+		}
 
         //--------------------------------------------------------------------
 

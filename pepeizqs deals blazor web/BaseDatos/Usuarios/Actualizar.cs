@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using Microsoft.Data.SqlClient;
-using System.Text.Json;
 
 namespace BaseDatos.Usuarios
 {
@@ -130,7 +129,7 @@ namespace BaseDatos.Usuarios
 			return true;
 		}
 
-		public static void OpcionBooleana(string variable, bool valor, string usuarioId, SqlConnection conexion = null)
+		public static void Opcion(string variable, bool valor, string usuarioId, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -162,7 +161,71 @@ namespace BaseDatos.Usuarios
 			}
 		}
 
-		public static void OpcionTexto(string variable, string valor, string usuarioId, SqlConnection conexion = null)
+		public static void Opcion(string variable, string valor, string usuarioId, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlActualizar = "UPDATE AspNetUsers " +
+				"SET " + variable + "=@Valor WHERE Id=@Id";
+
+			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+			{
+				comando.Parameters.AddWithValue("@Id", usuarioId);
+				comando.Parameters.AddWithValue("@Valor", valor);
+
+				try
+				{
+					comando.ExecuteNonQuery();
+				}
+				catch
+				{
+				}
+			}
+		}
+
+		public static void Opcion(string variable, int valor, string usuarioId, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlActualizar = "UPDATE AspNetUsers " +
+				"SET " + variable + "=@Valor WHERE Id=@Id";
+
+			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+			{
+				comando.Parameters.AddWithValue("@Id", usuarioId);
+				comando.Parameters.AddWithValue("@Valor", valor);
+
+				try
+				{
+					comando.ExecuteNonQuery();
+				}
+				catch
+				{
+				}
+			}
+		}
+
+		public static void Opcion(string variable, decimal valor, string usuarioId, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{

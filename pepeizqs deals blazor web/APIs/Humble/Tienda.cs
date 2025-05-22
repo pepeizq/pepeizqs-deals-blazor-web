@@ -13,6 +13,7 @@
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -132,7 +133,7 @@ namespace APIs.Humble
 		{
 			await Task.Delay(1000);
 
-			BaseDatos.Admin.Actualizar.Tiendas(Tienda.Generar().Id, DateTime.Now, 0, conexion);
+			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
 			DateTime fechaRecopilado = new DateTime();
 			List<HumbleJuego> juegos = new List<HumbleJuego>();
@@ -158,10 +159,7 @@ namespace APIs.Humble
 
 						if (lector.IsDBNull(2) == false)
 						{
-							if (string.IsNullOrEmpty(lector.GetString(2)) == false)
-							{
-								fechaRecopilado = DateTime.Parse(lector.GetString(2));
-							}
+							fechaRecopilado = lector.GetDateTime(2);
 						}
 					}
 				}

@@ -1,0 +1,428 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Data.SqlClient
+@using pepeizqs_deals_web.Data
+
+@if (noticia != null)
+{
+	<div style="padding: 20px; background: var(--fondoCuerpo); border: 1px solid var(--fondoBotonPequeño); margin-bottom: 40px;">
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 100%;">
+				Admin Editar • @noticia.TituloEs
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: start; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right; margin-top: 5px;">
+				Titulo EN
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaTituloEn(e))" class="entrada-texto" rows="1">@textoTituloEn</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: start; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right; margin-top: 5px;">
+				Titulo ES
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaTituloEs(e))" class="entrada-texto" rows="1">@textoTituloEs</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: start; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right; margin-top: 5px;">
+				Imagen
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaImagen(e))" class="entrada-texto" rows="1">@textoImagen</textarea>
+				<img src="@textoImagen" style="margin-top: 10px; max-height: 150px;"/>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: start; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right; margin-top: 5px;">
+				Tipo
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaTipo(e))" class="entrada-texto" rows="1">@textoTipo</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Enlace
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaEnlace(e))" class="entrada-texto" rows="1">@textoEnlace</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Fecha Termina
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaFechaTermina(e))" class="entrada-texto" rows="1">@textoFechaTermina</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Contenido EN
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaContenidoEn(e))" class="entrada-texto" rows="10">@textoContenidoEn</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Contenido ES
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaContenidoEs(e))" class="entrada-texto" rows="10">@textoContenidoEs</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Bundle Id
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaBundleId(e))" class="entrada-texto" rows="1">@textoBundleId</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Gratis Ids
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaGratisIds(e))" class="entrada-texto" rows="1">@textoGratisIds</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Suscripciones Ids
+			</div>
+
+			<div style="width: 85%;">
+				<textarea @onchange="(e => TextoCambiaSuscripcionesIds(e))" class="entrada-texto" rows="1">@textoSuscripcionesIds</textarea>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Correo de Prueba
+			</div>
+
+			<div style="width: 85%;">
+				<button @onclick="(e => EnviarCorreoPrueba(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					Enviar
+				</button>
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 20px;">
+			<div style="width: 15%; padding-right: 20px; text-align: right;">
+				Redes Sociales
+			</div>
+
+			<div style="width: 85%; display: flex; align-items: center; gap: 20px;">
+				<button @onclick="(e => EnviarTwitter(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					Twitter
+				</button>
+
+				<button @onclick="(e => EnviarBlueSky(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					BlueSky
+				</button>
+
+				<button @onclick="(e => EnviarTelegram(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					Telegram
+				</button>
+
+				<button @onclick="(e => EnviarDiscord(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					Discord
+				</button>
+
+				<button @onclick="(e => EnviarNotificacionesPush(e))" class="boton-pequeño" style="width: auto; padding: 10px 20px;">
+					Notificaciones Push
+				</button>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public int noticiaId { get; set; }
+
+	public global::Noticias.Noticia noticia = new global::Noticias.Noticia();
+
+	protected override void OnInitialized()
+	{
+		noticia = BaseDatos.Noticias.Buscar.UnaNoticia(noticiaId);
+
+		if (noticia != null)
+		{
+			textoTituloEn = noticia.TituloEn;
+			textoTituloEs = noticia.TituloEs;
+			textoImagen = noticia.Imagen;
+			textoTipo = (int)noticia.Tipo;
+			textoEnlace = noticia.Enlace;
+			textoFechaTermina = noticia.FechaTermina.ToString();
+			textoContenidoEn = noticia.ContenidoEn;
+			textoContenidoEs = noticia.ContenidoEs;
+			textoBundleId = noticia.BundleId.ToString();
+			textoGratisIds = noticia.GratisIds;
+			textoSuscripcionesIds = noticia.SuscripcionesIds;
+		}
+	}
+
+	private string textoTituloEn = string.Empty;
+
+	private void TextoCambiaTituloEn(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoTituloEn = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.TituloEn(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private string textoTituloEs = string.Empty;
+
+	private void TextoCambiaTituloEs(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoTituloEs = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.TituloEs(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private string textoImagen = string.Empty;
+
+	private void TextoCambiaImagen(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoImagen = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.Imagen(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private int textoTipo = 0;
+
+	private void TextoCambiaTipo(ChangeEventArgs texto)
+	{
+		string nuevoTexto = texto.Value.ToString().Trim();
+		textoTipo = int.Parse(nuevoTexto);
+
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			BaseDatos.Noticias.Actualizar.Tipo(noticiaId.ToString(), nuevoTexto, conexion);
+		}
+	}
+
+	private string textoEnlace = string.Empty;
+
+	private void TextoCambiaEnlace(ChangeEventArgs texto)
+	{
+		string nuevoTexto = texto.Value.ToString().Trim();
+		textoEnlace = nuevoTexto;
+
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			BaseDatos.Noticias.Actualizar.Enlace(noticiaId.ToString(), nuevoTexto, conexion);
+		}
+	}
+
+	private string textoFechaTermina = string.Empty;
+
+	private void TextoCambiaFechaTermina(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoFechaTermina = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.FechaTermina(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private string textoContenidoEn = string.Empty;
+
+	private void TextoCambiaContenidoEn(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoContenidoEn = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.ContenidoEn(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private string textoContenidoEs = string.Empty;
+
+	private void TextoCambiaContenidoEs(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+			textoContenidoEs = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Noticias.Actualizar.ContenidoEs(noticiaId.ToString(), nuevoTexto, conexion);
+			}
+		}
+	}
+
+	private string textoBundleId = string.Empty;
+
+	private void TextoCambiaBundleId(ChangeEventArgs texto)
+	{
+		string nuevoTexto = texto.Value.ToString().Trim();
+		textoBundleId = nuevoTexto;
+
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			BaseDatos.Noticias.Actualizar.BundleId(noticiaId.ToString(), nuevoTexto, conexion);
+		}
+	}
+
+	private string textoGratisIds = string.Empty;
+
+	private void TextoCambiaGratisIds(ChangeEventArgs texto)
+	{
+		string nuevoTexto = texto.Value.ToString().Trim();
+		textoGratisIds = nuevoTexto;
+
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			BaseDatos.Noticias.Actualizar.GratisIds(noticiaId.ToString(), nuevoTexto, conexion);
+		}
+	}
+
+	private string textoSuscripcionesIds = string.Empty;
+
+	private void TextoCambiaSuscripcionesIds(ChangeEventArgs texto)
+	{
+		string nuevoTexto = texto.Value.ToString().Trim();
+		textoSuscripcionesIds = nuevoTexto;
+
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			BaseDatos.Noticias.Actualizar.SuscripcionesIds(noticiaId.ToString(), nuevoTexto, conexion);
+		}
+	}
+
+	private void EnviarCorreoPrueba(MouseEventArgs e)
+	{
+		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+		using (conexion)
+		{
+			Herramientas.Correos.EnviarNuevaNoticia(noticia, "pepeizq@msn.com", conexion, "es-ES");
+		}
+	}
+
+	private async void EnviarTwitter(MouseEventArgs e)
+	{
+		await Herramientas.RedesSociales.Twitter.Twitear(noticia);
+	}
+
+	private async void EnviarBlueSky(MouseEventArgs e)
+	{
+		await Herramientas.RedesSociales.Bluesky.Postear(noticia);
+	}
+
+	private async void EnviarTelegram(MouseEventArgs e)
+	{
+		await Herramientas.RedesSociales.Telegram.Postear(noticia);
+	}
+
+	private async void EnviarDiscord(MouseEventArgs e)
+	{
+		await Herramientas.RedesSociales.Discord.Postear(noticia);
+	}
+
+	private async void EnviarNotificacionesPush(MouseEventArgs e)
+	{
+		List<Usuario> usuarios = BaseDatos.Usuarios.Buscar.UsuariosIdioma();
+
+		if (usuarios != null)
+		{
+			if (usuarios.Count > 0)
+			{
+				foreach (var usuario in usuarios)
+				{
+					await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticia, usuario.Language);
+				}
+			}
+		}
+	}
+}

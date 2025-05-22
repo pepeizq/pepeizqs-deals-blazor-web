@@ -664,6 +664,7 @@ namespace BaseDatos.Juegos
 
 				juego.Caracteristicas = nuevoJuego.Caracteristicas;
 				juego.Deck = nuevoJuego.Deck;
+				juego.SteamOS = nuevoJuego.SteamOS;
 
 				juego.Media = nuevoJuego.Media;
 				juego.Categorias = nuevoJuego.Categorias;
@@ -731,7 +732,7 @@ namespace BaseDatos.Juegos
 				using (conexion)
 				{
 					string sqlActualizar = "UPDATE juegos " +
-										"SET nombre=@nombre, imagenes=@imagenes, caracteristicas=@caracteristicas, media=@media, nombreCodigo=@nombreCodigo, categorias=@categorias, etiquetas=@etiquetas, fechaSteamAPIComprobacion=@fechaSteamAPIComprobacion, idiomas=@idiomas, deck=@deck" + añadirAnalisis + " WHERE id=@id";
+										"SET nombre=@nombre, imagenes=@imagenes, caracteristicas=@caracteristicas, media=@media, nombreCodigo=@nombreCodigo, categorias=@categorias, etiquetas=@etiquetas, fechaSteamAPIComprobacion=@fechaSteamAPIComprobacion, idiomas=@idiomas, deck=@deck, steamOS=@steamOS" + añadirAnalisis + " WHERE id=@id";
 
 					using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 					{
@@ -746,6 +747,7 @@ namespace BaseDatos.Juegos
 						comando.Parameters.AddWithValue("@fechaSteamAPIComprobacion", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffff"));
 						comando.Parameters.AddWithValue("@idiomas", JsonSerializer.Serialize(juego.Idiomas));
 						comando.Parameters.AddWithValue("@deck", juego.Deck);
+						comando.Parameters.AddWithValue("@steamOS", juego.SteamOS);
 
 						if (string.IsNullOrEmpty(añadirAnalisis) == false)
 						{
@@ -1037,7 +1039,7 @@ namespace BaseDatos.Juegos
 			using (conexion)
 			{
 				string sqlActualizar = "UPDATE juegos " +
-					"SET deck=@deck, deckTokens=@deckTokens, deckComprobacion=@deckComprobacion WHERE id=@id";
+					"SET deck=@deck, deckTokens=@deckTokens, deckComprobacion=@deckComprobacion, steamOS=@steamOS, steamOSTokens=@steamOSTokens WHERE id=@id";
 
 				using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 				{
@@ -1045,6 +1047,8 @@ namespace BaseDatos.Juegos
 					comando.Parameters.AddWithValue("@deck", juego.Deck);
 					comando.Parameters.AddWithValue("@deckTokens", JsonSerializer.Serialize(juego.DeckTokens));
 					comando.Parameters.AddWithValue("@deckComprobacion", juego.DeckComprobacion);
+					comando.Parameters.AddWithValue("@steamOS", juego.SteamOS);
+					comando.Parameters.AddWithValue("@steamOSTokens", JsonSerializer.Serialize(juego.SteamOSTokens));
 
 					comando.ExecuteNonQuery();
 					try

@@ -561,9 +561,202 @@ namespace BaseDatos.Usuarios
 			return null;
 		}
 
+		public static List<Usuario> UsuariosIdioma(SqlConnection conexion = null)
+		{
+			List<Usuario> usuarios = new List<Usuario>();
 
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
 
+			string busqueda = "SELECT Id, Language FROM AspNetUsers";
 
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false)
+						{
+							Usuario usuario = new Usuario
+							{
+								Id = lector.GetString(0),
+								Language = lector.GetString(1)
+							};
+
+							usuarios.Add(usuario);
+						}
+					}
+				}
+			}
+
+			return usuarios;
+		}
+
+		public static List<Usuario> UsuariosNotificacionesCorreo(SqlConnection conexion = null)
+		{
+			List<Usuario> usuarios = new List<Usuario>();
+
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string busqueda = "SELECT Id, NotificationBundles, NotificationFree, NotificationSubscriptions, NotificationOthers, Email, Language FROM AspNetUsers";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							bool añadir = false;
+
+							Usuario usuario = new Usuario
+							{
+								Id = lector.GetString(0)
+							};
+
+							if (lector.IsDBNull(1) == false)
+							{
+								añadir = true;
+								usuario.NotificationBundles = lector.GetBoolean(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								añadir = true;
+								usuario.NotificationFree = lector.GetBoolean(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								añadir = true;
+								usuario.NotificationSubscriptions = lector.GetBoolean(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								añadir = true;
+								usuario.NotificationOthers = lector.GetBoolean(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								añadir = true;
+								usuario.Email = lector.GetString(5);
+							}
+
+							if (lector.IsDBNull(6) == false)
+							{
+								añadir = true;
+								usuario.Language = lector.GetString(6);
+							}
+
+							if (añadir == true)
+							{
+								usuarios.Add(usuario);
+							}
+						}
+					}
+				}
+			}
+
+			return usuarios;
+		}
+
+		public static List<Usuario> UsuariosNotificacionesPush(SqlConnection conexion = null)
+		{
+			List<Usuario> usuarios = new List<Usuario>();
+
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string busqueda = "SELECT Id, NotificationPushBundles, NotificationPushFree, NotificationPushSubscriptions, NotificationPushOthers, Language FROM AspNetUsers";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							bool añadir = false;
+
+							Usuario usuario = new Usuario
+							{
+								Id = lector.GetString(0)
+							};
+
+							if (lector.IsDBNull(1) == false)
+							{
+								añadir = true;
+								usuario.NotificationPushBundles = lector.GetBoolean(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								añadir = true;
+								usuario.NotificationPushFree = lector.GetBoolean(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								añadir = true;
+								usuario.NotificationPushSubscriptions = lector.GetBoolean(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								añadir = true;
+								usuario.NotificationPushOthers = lector.GetBoolean(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								añadir = true;
+								usuario.Language = lector.GetString(5);
+							}
+
+							if (añadir == true)
+							{
+								usuarios.Add(usuario);
+							}
+						}
+					}
+				}
+			}
+
+			return usuarios;
+		}
 
 
 

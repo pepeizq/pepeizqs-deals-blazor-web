@@ -109,6 +109,11 @@
 
 @if (noticia != null)
 {
+	if (usuarioAdmin == true)
+	{
+		<pepeizqs_deals_blazor_web.Componentes.Admin.Noticia idioma="@idioma" noticiaId="@noticia.Id" />
+	}
+
 	<div>
 		<img class="juego-fondo" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondo, 1536, 496)" alt="Background" loading="lazy" />
 
@@ -371,6 +376,7 @@
 	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
 	private Usuario deseadosUsuario = null;
 	private bool usuarioPatreon = false;
+	private bool usuarioAdmin = false;
 
 	[Parameter]
 	public int id { get; set; }
@@ -406,6 +412,7 @@
 			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
 			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
 
 		if (id > 0)

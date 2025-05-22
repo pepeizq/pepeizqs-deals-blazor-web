@@ -86,6 +86,8 @@
 		}
 		
 		<HeadContent>
+            <PageTitle>@titulo</PageTitle>
+
 			<meta name="og:title" Content="@titulo" />
 			<meta name="description" content="@descripcion" />
 			<meta name="og:description" content="@descripcion" />
@@ -139,6 +141,11 @@
 {
 	if (tipo == Tipo.Bundle)
 	{
+		if (usuarioAdmin == true)
+		{
+			<pepeizqs_deals_blazor_web.Componentes.Admin.Bundle idioma="@idioma" bundleId="@bundle.Id" />
+		}
+
 		<div style="margin-bottom: 40px; position: -webkit-sticky; position: sticky; top: 70px; z-index: 3; overflow: hidden;">
 			<div class="caja-diseño" style="padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
 				<div style="display: flex; align-items: center; flex-direction: row;">
@@ -372,6 +379,7 @@
 	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
 	private Usuario deseadosUsuario = null;
 	private bool usuarioPatreon = false;
+	private bool usuarioAdmin = false;
 
 	[Parameter]
 	public int bundleId { get; set; }
@@ -395,6 +403,7 @@
 			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
 			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
 
 		//------------------------------------------------------------

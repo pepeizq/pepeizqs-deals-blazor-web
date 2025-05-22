@@ -45,6 +45,8 @@ namespace Juegos
 		public JuegoDeck Deck { get; set; }
 		public List<JuegoDeckToken> DeckTokens { get; set; }
 		public DateTime? DeckComprobacion { get; set; }
+		public JuegoSteamOS SteamOS { get; set; }
+		public List<JuegoDeckToken> SteamOSTokens { get; set; }
 		public List<JuegoHistorico> Historicos { get; set; }
 		public JuegoGalaxyGOG GalaxyGOG { get; set; }
 		public JuegoCantidadJugadoresSteam CantidadJugadores { get; set; }
@@ -313,6 +315,14 @@ namespace Juegos
 	{
 		public int Tipo { get; set; }
 		public string Mensaje { get; set; }
+	}
+
+	public enum JuegoSteamOS
+	{
+		Desconocido,
+		NoSoportado,
+		Jugable,
+		Verificado
 	}
 
 	//-------------------------------------------------------

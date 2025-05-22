@@ -1,0 +1,1357 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Data.SqlClient
+@using System.Text.Json
+@using global::Juegos
+@using pepeizqs_deals_web.Data;
+
+<div style="padding: 20px; background: var(--fondoCuerpo); border: 1px solid var(--fondoBotonPequeño); margin-bottom: 50px;">
+	<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+		<div>
+			Admin Editar • @juego.Nombre
+		</div>
+
+		<div style="display: flex; align-items: center; gap: 20px">
+			<a href="/api/game/@juego.Id" target="_blank" style="text-decoration: none;">
+				Api Web
+			</a>
+
+			@if (juego.IdSteam > 0)
+			{
+				WebApplicationBuilder builder = WebApplication.CreateBuilder();
+				string claveExtension = builder.Configuration.GetValue<string>("Extension:Clave");
+
+				<a href="/extension/steam2/@juego.IdSteam/@claveExtension" target="_blank" style="text-decoration: none;">
+					Api Extension
+				</a>
+
+				<a href="@APIs.Steam.Juego.EnlaceAPI(juego.IdSteam.ToString())" target="_blank" style="text-decoration: none;">
+					Api Steam
+				</a>
+			}
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: start; gap: 20px;">
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 1))" class="boton-pequeño" style="padding: 10px 15px;">
+				Imagenes
+			</button>
+
+			@if (pestañaMostrar == 1)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 2))" class="boton-pequeño" style="padding: 10px 15px;">
+				Precios
+			</button>
+
+			@if (pestañaMostrar == 2)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 3))" class="boton-pequeño" style="padding: 10px 15px;">
+				Bundles
+			</button>
+
+			@if (pestañaMostrar == 3)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 4))" class="boton-pequeño" style="padding: 10px 15px;">
+				Gratis
+			</button>
+
+			@if (pestañaMostrar == 4)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 5))" class="boton-pequeño" style="padding: 10px 15px;">
+				Suscripciones
+			</button>
+
+			@if (pestañaMostrar == 5)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 6))" class="boton-pequeño" style="padding: 10px 15px;">
+				Datos
+			</button>
+
+			@if (pestañaMostrar == 6)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 7))" class="boton-pequeño" style="padding: 10px 15px;">
+				Deseados
+			</button>
+
+			@if (pestañaMostrar == 7)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+
+		<div style="width: auto;">
+			<button @onclick="(e => MostrarPestaña(e, 8))" class="boton-pequeño" style="padding: 10px 15px;">
+				Históricos
+			</button>
+
+			@if (pestañaMostrar == 8)
+			{
+				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				</div>
+			}
+		</div>
+	</div>
+
+	@if (pestañaMostrar > 0)
+	{
+		<hr />
+
+		if (pestañaMostrar == 1)
+		{
+			<div style="display: flex; align-items: start; gap: 40px;">
+				<div style="width: 20%;">
+					<button @onclick="(e => MostrarPestañaImagenes(e, 1))" class="boton-pequeño" style="padding: 10px 15px;">
+						Capsule_231x87
+					</button>
+
+					<button @onclick="(e => MostrarPestañaImagenes(e, 2))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
+						Header_460x215
+					</button>
+
+					<button @onclick="(e => MostrarPestañaImagenes(e, 3))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
+						Library_600x900
+					</button>
+
+					<button @onclick="(e => MostrarPestañaImagenes(e, 4))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
+						Library_1920x620
+					</button>
+
+					<button @onclick="(e => MostrarPestañaImagenes(e, 5))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
+						Logo
+					</button>
+
+					<div style="margin-top: 20px; margin-left: 10px;">
+						<a target="_blank" href="https://www.steamgriddb.com/search/grids?term=@juego.Nombre">
+							Abrir SteamGridDB
+						</a>
+					</div>
+
+				</div>
+
+				<div style="width: 80%;">
+					<label style="margin-bottom: 10px;">Imagen Origen:</label>
+
+					<input type="text" @oninput="TextoCambiaImagenOrigen" class="entrada-texto" style="margin-bottom: 20px;" value="@imagenOrigen" />
+					<img src="@imagenOrigen" style="max-width: 300px; max-height: 300px;" />
+				</div>
+			</div>
+		}
+		else if (pestañaMostrar == 2)
+		{
+			<div style="display: flex; align-items: start; gap: 40px;">
+				<div style="width: 20%;">
+					<button @onclick="(e => MostrarPestañaPrecios(e, 1))" class="boton-pequeño" style="padding: 10px 15px;">
+						Actuales
+					</button>
+
+					<button @onclick="(e => MostrarPestañaPrecios(e, 2))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
+						Historicos
+					</button>
+				</div>
+
+				<div style="width: 80%;">
+					<textarea @onchange="(e => TextoCambiaPrecios(e))" class="entrada-texto" rows="16">@textoPrecios</textarea>
+				</div>
+			</div>
+		}
+		else if (pestañaMostrar == 3)
+		{
+			<textarea @onchange="(e => TextoCambiaBundles(e))" class="entrada-texto" rows="16">@textoBundles</textarea>
+		}
+		else if (pestañaMostrar == 4)
+		{
+			<textarea @onchange="(e => TextoCambiaGratis(e))" class="entrada-texto" rows="16">@textoGratis</textarea>
+		}
+		else if (pestañaMostrar == 5)
+		{
+			<textarea @onchange="(e => TextoCambiaSuscripciones(e))" class="entrada-texto" rows="16">@textoSuscripciones</textarea>
+		}
+		else if (pestañaMostrar == 6)
+		{
+			<div style="display: flex; flex-direction: column; gap: 20px;">
+				@if (juego.Tipo == global::Juegos.JuegoTipo.DLC)
+				{
+					<div style="display: flex; align-items: center; gap: 20px; background: color-mix(in srgb, var(--fondoDlc) 50%, transparent); border: 1px solid var(--fondoBotonPequeño); padding: 20px 40px;">
+						<div>
+							Juego Maestro
+						</div>
+
+						<div style="min-width: 200px; width: fit-content;">
+							<input type="text" @oninput="TextoCambiaDlcMaestro" class="entrada-texto" value="@textoDlcMaestro" />
+						</div>
+
+						<button @onclick="(async () => await ActualizarSteamApi())" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
+							Buscar
+						</button>
+					</div>
+				}
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; justify-items: left; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div>
+							FreeToPlay
+						</div>
+						<div class="checkbox-caja" style="height: 24px;">
+							<input type="checkbox" class="checkbox-interior" checked="@textoF2P" @onchange="@(e => TextoCambiaF2P(e))">
+						</div>
+					</div>
+
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div>
+							Mayor Edad
+						</div>
+						<div class="checkbox-caja" style="height: 24px;">
+							<input type="checkbox" class="checkbox-interior" checked="@textoEdad" @onchange="@(e => TextoCambiaEdad(e))">
+						</div>
+					</div>
+
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div>
+							Tipo	
+						</div>
+
+						<div class="menu-dropdown" style="width: fit-content;">
+							<button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 20px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+								<div style="color: var(--colorEnlace); margin-right: 5px;">
+									@if (tipo == "0")
+									{
+										<div>
+											Juego
+										</div>
+									}
+
+									@if (tipo == "1")
+									{
+										<div>
+											DLC
+										</div>
+									}
+
+									@if (tipo == "2")
+									{
+										<div>
+											Bundle
+										</div>
+									}
+
+									@if (tipo == "3")
+									{
+										<div>
+											Banda Sonora
+										</div>
+									}
+
+									@if (tipo == "4")
+									{
+										<div>
+											Software
+										</div>
+									}
+								</div>
+
+								<div style="max-width: 16px; max-height: 16px;">
+									<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+										<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+									</svg>
+								</div>
+							</button>
+
+							<div>
+								@{
+									string tipoJuego = "0";
+									string tipoDlc = "1";
+									string tipoBundle = "2";
+									string tipoBandaSonora = "3";
+									string tipoSoftware = "4";
+								}
+
+								<div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+									<button @onclick="(e => ActualizarTipo(e, tipoJuego))" class="texto-cabecera menu-dropdown-item" style="text-align: left; width: 100%; border: 0px;">
+										Juego
+									</button>
+									<button @onclick="(e => ActualizarTipo(e, tipoDlc))" class="texto-cabecera menu-dropdown-item" style="text-align: left; width: 100%; border: 0px;">
+										DLC
+									</button>
+									<button @onclick="(e => ActualizarTipo(e, tipoBundle))" class="texto-cabecera menu-dropdown-item" style="text-align: left; width: 100%; border: 0px;">
+										Bundle
+									</button>
+									<button @onclick="(e => ActualizarTipo(e, tipoBandaSonora))" class="texto-cabecera menu-dropdown-item" style="text-align: left; width: 100%; border: 0px;">
+										Banda Sonora
+									</button>
+									<button @onclick="(e => ActualizarTipo(e, tipoSoftware))" class="texto-cabecera menu-dropdown-item" style="text-align: left; width: 100%; border: 0px;">
+										Software
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div style="display: flex; align-items: center; gap: 20px;">
+						<div>
+							Ocultar Portada
+						</div>
+						<div class="checkbox-caja" style="height: 24px;">
+							<input type="checkbox" class="checkbox-interior" checked="@textoOcultarPortada" @onchange="@(e => TextoCambiaOcultarPortada(e))">
+						</div>
+					</div>
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@APIs.Steam.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								Steam
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Id
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaIdSteam" class="entrada-texto" value="@idSteam" />
+							</div>
+						</div>
+					</div>
+
+					@if (string.IsNullOrEmpty(idSteam) == false)
+					{
+						<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+							<button @onclick="(async () => await ActualizarSteamApi())" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
+								Actualizar API
+							</button>
+
+							<label>@Herramientas.Calculadora.DiferenciaTiempo(juego.FechaSteamAPIComprobacion, "es")</label>
+
+							@if (juego.Tipo == JuegoTipo.Game)
+							{
+								<button @onclick="(async () => await ActualizarDeckSteamApi())" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
+									Actualizar Deck
+								</button>
+
+								<label>@Herramientas.Calculadora.DiferenciaTiempo(juego.DeckComprobacion, "es")</label>
+							}
+						</div>
+					}
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@APIs.GOG.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								GOG
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Id
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaIdGOG" class="entrada-texto" value="@idGOG" />
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Slug
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaSlugGOG" class="entrada-texto" value="@slugGOG" />
+							</div>
+						</div>
+					</div>
+
+					@if (string.IsNullOrEmpty(idGOG) == false)
+					{
+						<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+							<button @onclick="(async () => await ActualizarGogApi())" class="boton-pequeño" style="padding: 10px 15px; width: auto;">
+								Actualizar API
+							</button>
+
+							@if (juego.GalaxyGOG != null)
+							{
+								<label>@Herramientas.Calculadora.DiferenciaTiempo(juego.GalaxyGOG.Fecha, "es")</label>
+							}
+						</div>
+					}
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@APIs.EpicGames.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								Epic Games
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Slug
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaSlugEpic" class="entrada-texto" value="@slugEpic" />
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Exe
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaExeEpic" class="entrada-texto" value="@exeEpic" />
+							</div>
+						</div>
+					</div>
+
+					@if (string.IsNullOrEmpty(slugEpic) == false)
+					{
+						<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+							<button @onclick="(async () => await ActualizarEpicGamesApi())" class="boton-pequeño" style="padding: 10px 15px; width: auto;">
+								Actualizar API
+							</button>
+
+							@if (juego.EpicGames != null)
+							{
+								<label>@Herramientas.Calculadora.DiferenciaTiempo(juego.EpicGames.Fecha, "es")</label>
+							}
+						</div>
+					}
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@APIs.Xbox.Suscripcion.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								Xbox
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Id
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaIdXbox" class="entrada-texto" value="@idXbox" />
+							</div>
+						</div>
+					</div>
+
+					@if (string.IsNullOrEmpty(idXbox) == false)
+					{
+						<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+							<button @onclick="(async () => await ActualizarXboxApi())" class="boton-pequeño" style="padding: 10px 15px; width: auto;">
+								Actualizar API
+							</button>
+
+							@if (juego.Xbox != null)
+							{
+								<label>@Herramientas.Calculadora.DiferenciaTiempo(juego.Xbox.Fecha, "es")</label>
+							}
+						</div>
+					}
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@Plataformas2.PlataformasCargar.GenerarListado()[0].ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								Amazon Games
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Id
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaIdAmazon" class="entrada-texto" value="@idAmazon" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+					<div style="display: flex; align-items: center; gap: 30px;">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<img src="@APIs.Ubisoft.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
+
+							<div>
+								Ubisoft
+							</div>
+						</div>
+
+						<div style="display: flex; align-items: center; gap: 20px;">
+							<div>
+								Exe
+							</div>
+							<div style="width: fit-content;">
+								<input type="text" @oninput="TextoCambiaIdAmazon" class="entrada-texto" value="@idAmazon" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		else if (pestañaMostrar == 7)
+		{
+			<textarea @onchange="(e => TextoCambiaDeseados(e))" class="entrada-texto" rows="16">@textoDeseados</textarea>
+		}
+		else if (pestañaMostrar == 8)
+		{
+			<textarea @onchange="(e => TextoCambiaHistoricos(e))" class="entrada-texto" rows="16">@textoHistoricos</textarea>
+		}
+	}
+</div>
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public global::Juegos.Juego juego { get; set; }
+
+	private string idSteam = string.Empty;
+	private string idGOG = string.Empty;
+	private string slugGOG = string.Empty;
+	private string slugEpic = string.Empty;
+	private string exeEpic = string.Empty;
+	private string idXbox = string.Empty;
+	private string idAmazon = string.Empty;
+	private string exeUbisoft = string.Empty;
+
+	protected override void OnInitialized()
+	{
+		if (juego.Bundles != null)
+		{
+			textoBundles = JsonSerializer.Serialize(juego.Bundles);
+		}
+
+		if (juego.Gratis != null)
+		{
+			textoGratis = JsonSerializer.Serialize(juego.Gratis);
+		}
+
+		if (juego.Suscripciones != null)
+		{
+			textoSuscripciones = JsonSerializer.Serialize(juego.Suscripciones);
+		}
+
+		if (juego.Tipo == global::Juegos.JuegoTipo.DLC)
+		{
+			textoDlcMaestro = juego.Maestro;
+		}
+
+		if (juego.IdSteam > 0)
+		{
+			idSteam = juego.IdSteam.ToString();
+		}	
+
+		if (juego.IdGog > 0)
+		{
+			idGOG = juego.IdGog.ToString();
+		}
+
+		if (string.IsNullOrEmpty(juego.SlugGOG) == false)
+		{
+			slugGOG = juego.SlugGOG;
+		}
+
+		if (string.IsNullOrEmpty(juego.SlugEpic) == false)
+		{
+			slugEpic = juego.SlugEpic;
+		}
+
+		if (string.IsNullOrEmpty(juego.ExeEpic) == false)
+		{
+			exeEpic = juego.ExeEpic;
+		}
+
+		if (string.IsNullOrEmpty(juego.IdXbox) == false)
+		{
+			idXbox = juego.IdXbox;
+		}
+
+		if (string.IsNullOrEmpty(juego.IdAmazon) == false)
+		{
+			idAmazon = juego.IdAmazon;
+		}
+
+		if (string.IsNullOrEmpty(juego.ExeUbisoft) == false)
+		{
+			exeUbisoft = juego.ExeUbisoft;
+		}
+
+		if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
+		{
+			textoF2P = Convert.ToBoolean(juego.FreeToPlay);
+		}
+
+		if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+		{
+			textoEdad = Convert.ToBoolean(juego.MayorEdad);
+		}
+
+		textoOcultarPortada = juego.OcultarPortada;
+
+		tipo = juego.Tipo.ToString();
+
+		var tipos = global::Juegos.JuegoTipos.CargarListado();
+
+		int i = 0;
+		foreach (var tipo2 in tipos)
+		{
+			if (tipo2.ToString() == tipo)
+			{
+				tipo = i.ToString();
+				break;
+			}
+			i += 1;
+		}
+
+		if (juego.UsuariosInteresados != null)
+		{
+			textoDeseados = JsonSerializer.Serialize(juego.UsuariosInteresados);
+		}
+
+		if (juego.Historicos != null)
+		{
+			textoHistoricos = JsonSerializer.Serialize(juego.Historicos);
+		}
+	}
+
+	private int pestañaMostrar = 0;
+
+	private void MostrarPestaña(MouseEventArgs e, int nuevaPestaña)
+	{
+		if (nuevaPestaña == pestañaMostrar)
+		{
+			pestañaMostrar = 0;
+		}
+		else
+		{
+			pestañaMostrar = nuevaPestaña;
+		}
+	}
+
+	#region Imagenes
+
+	private int pestañaMostrarImagenes = 0;
+	private string imagenOrigen = string.Empty;
+
+	private void MostrarPestañaImagenes(MouseEventArgs e, int pestañaImagenes)
+	{
+		pestañaMostrarImagenes = pestañaImagenes;
+
+		if (pestañaMostrarImagenes == 1)
+		{
+			imagenOrigen = juego.Imagenes.Capsule_231x87;
+		}
+		else if (pestañaMostrarImagenes == 2)
+		{
+			imagenOrigen = juego.Imagenes.Header_460x215;
+		}
+		else if (pestañaMostrarImagenes == 3)
+		{
+			imagenOrigen = juego.Imagenes.Library_600x900;
+		}
+		else if (pestañaMostrarImagenes == 4)
+		{
+			imagenOrigen = juego.Imagenes.Library_1920x620;
+		}
+		else if (pestañaMostrarImagenes == 5)
+		{
+			imagenOrigen = juego.Imagenes.Logo;
+		}
+	}
+
+	private void TextoCambiaImagenOrigen(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			imagenOrigen = nuevoTexto;
+
+			if (pestañaMostrarImagenes == 1)
+			{			
+				juego.Imagenes.Capsule_231x87 = nuevoTexto;
+			}
+			else if (pestañaMostrarImagenes == 2)
+			{
+				juego.Imagenes.Header_460x215 = nuevoTexto;
+			}
+			else if (pestañaMostrarImagenes == 3)
+			{
+				juego.Imagenes.Library_600x900 = nuevoTexto;
+			}
+			else if (pestañaMostrarImagenes == 4)
+			{
+				juego.Imagenes.Library_1920x620 = nuevoTexto;
+			}
+			else if (pestañaMostrarImagenes == 5)
+			{
+				juego.Imagenes.Logo = nuevoTexto;
+			}
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Juegos.Actualizar.Imagenes(juego, conexion);
+			}
+		}		
+	}
+
+	#endregion
+
+	#region Precios
+
+	private int pestañaMostrarPrecios = 0;
+	private string textoPrecios = string.Empty;
+
+	private void MostrarPestañaPrecios(MouseEventArgs e, int pestañaImagenes)
+	{
+		pestañaMostrarPrecios = pestañaImagenes;
+
+		if (pestañaMostrarPrecios == 1)
+		{
+			if (juego.PrecioActualesTiendas != null)
+			{
+				textoPrecios = JsonSerializer.Serialize(juego.PrecioActualesTiendas);
+			}			
+		}
+		else if (pestañaMostrarPrecios == 2)
+		{
+			if (juego.PrecioMinimosHistoricos != null)
+			{
+				textoPrecios = JsonSerializer.Serialize(juego.PrecioMinimosHistoricos);
+			}			
+		}
+	}
+
+	private void TextoCambiaPrecios(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoPrecios = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				if (pestañaMostrarPrecios == 1)
+				{
+					juego.PrecioActualesTiendas = JsonSerializer.Deserialize<List<global::Juegos.JuegoPrecio>>(textoPrecios);
+					BaseDatos.Juegos.Actualizar.PreciosActuales(juego, conexion);
+				}
+				else if (pestañaMostrarPrecios == 2)
+				{
+					juego.PrecioMinimosHistoricos = JsonSerializer.Deserialize<List<global::Juegos.JuegoPrecio>>(textoPrecios);
+					BaseDatos.Juegos.Actualizar.PreciosHistoricos(juego, conexion);
+				}				
+			}
+		}
+	}
+
+	#endregion
+
+	#region Bundles
+
+	private string textoBundles = string.Empty;
+
+	private void TextoCambiaBundles(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoBundles = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Bundles = JsonSerializer.Deserialize<List<global::Juegos.JuegoBundle>>(textoBundles);
+				BaseDatos.Juegos.Actualizar.Bundles(juego, conexion);
+			}
+		}
+		else
+		{
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Bundles = null;
+				BaseDatos.Juegos.Actualizar.Bundles(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+
+	#region Gratis
+
+	private string textoGratis = string.Empty;
+
+	private void TextoCambiaGratis(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoGratis = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Gratis = JsonSerializer.Deserialize<List<global::Juegos.JuegoGratis>>(textoGratis);
+				BaseDatos.Juegos.Actualizar.Gratis(juego, conexion);
+			}
+		}
+		else
+		{
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Gratis = null;
+				BaseDatos.Juegos.Actualizar.Gratis(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+
+	#region Suscripciones
+
+	private string textoSuscripciones = string.Empty;
+
+	private void TextoCambiaSuscripciones(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoSuscripciones = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Suscripciones = JsonSerializer.Deserialize<List<global::Juegos.JuegoSuscripcion>>(textoSuscripciones);
+				BaseDatos.Juegos.Actualizar.Suscripciones(juego, conexion);
+			}
+		}
+		else
+		{
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Suscripciones = null;
+				BaseDatos.Juegos.Actualizar.Suscripciones(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+
+	#region Datos
+
+	private string textoDlcMaestro = string.Empty;
+
+	private async Task BuscarDlcMaestro()
+	{
+		global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
+
+		if (nuevoJuego != null)
+		{
+			textoDlcMaestro = nuevoJuego.Maestro;
+
+			if (string.IsNullOrEmpty(textoDlcMaestro) == false)
+			{
+				SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+				using (conexion)
+				{
+					juego.Maestro = textoDlcMaestro;
+					BaseDatos.Juegos.Actualizar.DlcMaestro(juego, conexion);
+				}
+			}
+		}
+	}
+
+	private void TextoCambiaDlcMaestro(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoDlcMaestro = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.Maestro = textoDlcMaestro;
+				BaseDatos.Juegos.Actualizar.DlcMaestro(juego, conexion);
+			}
+		}
+	}
+
+	private bool textoF2P = false;
+
+	private void TextoCambiaF2P(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoF2P = Convert.ToBoolean(nuevoTexto);
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.FreeToPlay = textoF2P.ToString();
+				BaseDatos.Juegos.Actualizar.FreeToPlay(juego, conexion);
+			}
+		}
+	}
+
+	private bool textoEdad = false;
+
+	private void TextoCambiaEdad(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoEdad = Convert.ToBoolean(nuevoTexto);
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.MayorEdad = textoEdad.ToString();
+				BaseDatos.Juegos.Actualizar.MayorEdad(juego, conexion);
+			}
+		}
+	}
+
+	private bool textoOcultarPortada = false;
+
+	private void TextoCambiaOcultarPortada(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoOcultarPortada = Convert.ToBoolean(nuevoTexto);
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.OcultarPortada = textoOcultarPortada;
+				BaseDatos.Juegos.Actualizar.OcultarPortada(juego, conexion);
+			}
+		}
+	}
+
+	private async void TextoCambiaIdSteam(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				idSteam = APIs.Steam.Juego.LimpiarID(texto.Value.ToString());
+
+				juego.IdSteam = int.Parse(idSteam);
+
+				BaseDatos.Juegos.Actualizar.IdSteam(juego, conexion);
+
+				await ActualizarSteamApi();
+			}
+		}
+	}
+
+	private void TextoCambiaIdGOG(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			idGOG = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.IdGog = int.Parse(idGOG);
+				BaseDatos.Juegos.Actualizar.IdGOG(juego, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaSlugGOG(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			slugGOG = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.SlugGOG = slugGOG;
+				BaseDatos.Juegos.Actualizar.SlugGOG(juego, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaSlugEpic(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			slugEpic = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.SlugEpic = slugEpic;
+				BaseDatos.Juegos.Actualizar.SlugEpic(juego, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaExeEpic(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			exeEpic = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.ExeEpic = exeEpic;
+				BaseDatos.Juegos.Actualizar.ExeEpic(juego, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaIdXbox(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			idXbox = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.IdXbox = idXbox;
+				BaseDatos.Juegos.Actualizar.IdXbox(juego.Id, idXbox, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaIdAmazon(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			idAmazon = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.IdAmazon = idAmazon;
+				BaseDatos.Pendientes.Actualizar.PlataformaAmazon(idAmazon, juego.Id, conexion);
+			}
+		}
+	}
+
+	private void TextoCambiaExeUbisoft(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			exeUbisoft = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				juego.ExeUbisoft = exeUbisoft;
+				BaseDatos.Juegos.Actualizar.ExeUbisoft(juego, conexion);
+			}
+		}
+	}
+
+	private async Task ActualizarSteamApi()
+	{
+		global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
+
+		if (nuevoJuego != null)
+		{
+			BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
+
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task ActualizarDeckSteamApi()
+	{
+		APIs.Steam.SteamDeckAPI deckAPI = await APIs.Steam.Juego.CargarDatosDeck(juego.IdSteam);
+		bool vacio = true;
+
+		if (deckAPI != null)
+		{
+			if (deckAPI.Datos != null)
+			{
+				if (deckAPI.Datos.Resultado != null)
+				{
+					juego.Deck = (JuegoDeck)int.Parse(deckAPI.Datos.Resultado.ToString());
+					juego.DeckComprobacion = DateTime.Now;
+
+					if (deckAPI.Datos.Tokens != null)
+					{
+						if (deckAPI.Datos.Tokens.Count > 0)
+						{
+							List<JuegoDeckToken> tokens = new List<JuegoDeckToken>();
+
+							foreach (var token in deckAPI.Datos.Tokens)
+							{
+								if (string.IsNullOrEmpty(token.Token) == false)
+								{
+									JuegoDeckToken nuevoToken = new JuegoDeckToken();
+									nuevoToken.Tipo = int.Parse(token.Tipo.ToString());
+									nuevoToken.Mensaje = token.Token;
+
+									tokens.Add(nuevoToken);
+								}
+							}
+
+							juego.DeckTokens = tokens;
+						}
+					}
+
+					juego.SteamOS = (JuegoSteamOS)int.Parse(deckAPI.Datos.SteamOSResultado.ToString());
+
+					if (deckAPI.Datos.SteamOSTokens != null)
+					{
+						if (deckAPI.Datos.SteamOSTokens.Count > 0)
+						{
+							List<JuegoDeckToken> tokens = new List<JuegoDeckToken>();
+
+							foreach (var token in deckAPI.Datos.SteamOSTokens)
+							{
+								if (string.IsNullOrEmpty(token.Token) == false)
+								{
+									JuegoDeckToken nuevoToken = new JuegoDeckToken();
+									nuevoToken.Tipo = int.Parse(token.Tipo.ToString());
+									nuevoToken.Mensaje = token.Token;
+
+									tokens.Add(nuevoToken);
+								}
+							}
+
+							juego.SteamOSTokens = tokens;
+						}
+					}
+
+					vacio = false;
+					global::BaseDatos.Juegos.Actualizar.Deck(juego);
+				}
+			}
+		}
+
+		if (vacio == true)
+		{
+			juego.DeckComprobacion = DateTime.Now;
+			global::BaseDatos.Juegos.Actualizar.DeckVacio(juego);
+		}
+	}
+
+	private async Task ActualizarGogApi()
+	{
+		juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
+		juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
+
+		global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+	}
+
+	private async Task ActualizarEpicGamesApi()
+	{
+		juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
+		juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
+
+		global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
+	}
+
+	private async Task ActualizarXboxApi()
+	{
+		juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
+		juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
+
+		global::BaseDatos.Juegos.Actualizar.Xbox(juego);
+	}
+
+	private string tipo = string.Empty;
+
+	private void ActualizarTipo(MouseEventArgs e, string nuevoTipo)
+	{
+		if (string.IsNullOrEmpty(nuevoTipo) == false)
+		{
+			tipo = nuevoTipo;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				if (nuevoTipo == "0")
+				{
+					juego.Tipo = global::Juegos.JuegoTipo.Game;
+				}
+				else if (nuevoTipo == "1")
+				{
+					juego.Tipo = global::Juegos.JuegoTipo.DLC;
+				}
+				else if (nuevoTipo == "2")
+				{
+					juego.Tipo = global::Juegos.JuegoTipo.Bundle;
+				}
+				else if (nuevoTipo == "3")
+				{
+					juego.Tipo = global::Juegos.JuegoTipo.Music;
+				}
+				else if (nuevoTipo == "4")
+				{
+					juego.Tipo = global::Juegos.JuegoTipo.Software;
+				}
+
+				BaseDatos.Juegos.Actualizar.Tipo(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+
+	#region Deseados
+
+	private string textoDeseados = string.Empty;
+
+	private void TextoCambiaDeseados(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoDeseados = nuevoTexto;
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Juegos.Actualizar.Deseados(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+
+	#region Historicos
+
+	private string textoHistoricos = string.Empty;
+
+	private void TextoCambiaHistoricos(ChangeEventArgs texto)
+	{
+		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
+		{
+			string nuevoTexto = texto.Value.ToString().Trim();
+
+			textoHistoricos = nuevoTexto;
+			juego.Historicos = JsonSerializer.Deserialize<List<global::Juegos.JuegoHistorico>>(textoHistoricos);
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Juegos.Actualizar.Historicos(juego, conexion);
+			}
+		}
+	}
+
+	#endregion
+}

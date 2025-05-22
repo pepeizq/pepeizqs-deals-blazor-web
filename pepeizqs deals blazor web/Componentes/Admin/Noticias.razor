@@ -1,0 +1,923 @@
+﻿@using Bundles2
+@using Gratis2
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Data.SqlClient
+@using Microsoft.JSInterop
+@using Microsoft.VisualBasic
+@using Suscripciones2
+@using global::Noticias
+@using pepeizqs_deals_web.Data
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
+    <div class="opciones-combobox" style="width: 33%;">
+        <select @onchange="@(e => CambiarNoticiaTipo(e))">
+            @foreach (NoticiaMostrar mostrar in NoticiasCargar.CargarNoticiasMostrar())
+            {
+                if (mostrar.Mostrar == true)
+                {
+                    <option value="@mostrar.Tipo">@mostrar.Tipo</option>
+                } 
+            }
+        </select>
+    </div>
+</div>
+
+@if (noticiaTipoSeleccionada == NoticiaTipo.Bundles.ToString())
+{
+    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+        <div class="opciones-combobox" style="width: 33%;">
+            <select @onchange="@(e => CambiarBundleNoticias(e))">
+                @foreach (Bundles2.Bundle bundle in BundlesCargar.GenerarListado())
+                {
+                    <option value="@bundle.Tipo">@bundle.NombreTienda</option>
+                }
+            </select>
+        </div>
+
+        @if (bundleSeleccionadoNoticias != null)
+        {
+            <div style="margin-top: 20px;">
+                @foreach (var bundle in BaseDatos.Bundles.Buscar.UnTipo(bundleSeleccionadoNoticias, Herramientas.Tiempo.Actual))
+                {
+                    <button @onclick="@(e => ClickearBundleNoticias(e, bundle.Id))" class="boton-pequeño" style="margin: 10px 0px;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@BundlesCargar.DevolverBundle(bundle.Tipo).ImagenTienda" style="width: 12%; margin: 10px;" />
+                            <div style="margin-left: 20px;">@bundle.NombreBundle</div>
+                        </div>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    @if (bundleSeleccionadoNoticias != null)
+    {
+        <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+            <div>
+                <label style="margin-left: 10px; margin-bottom: 10px;">Bundle Id:</label>
+                <input type="text" class="entrada-texto" value="@noticia.BundleId" />
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label style="margin-left: 10px; margin-bottom: 10px;">Juegos:</label>
+                <input type="text" class="entrada-texto" value="@noticia.Juegos" />
+            </div>
+        </div>
+    }
+}
+else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis.ToString())
+{
+    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+        <div class="opciones-combobox" style="margin-top: 10px; width: 33%;">
+            <select @onchange="@(e => CambiarGratisNoticias(e))">
+                @foreach (Gratis2.Gratis gratis in GratisCargar.GenerarListado())
+                {
+                    <option value="@gratis.Tipo">@gratis.Nombre</option>
+                }
+            </select>
+        </div>
+
+        @if (gratisSeleccionadoNoticias != null)
+        {
+            <div style="margin-top: 20px;">
+                @foreach (var gratis in BaseDatos.Gratis.Buscar.UnTipo(gratisSeleccionadoNoticias, Herramientas.Tiempo.Actual).OrderBy(x => x.FechaEmpieza).Reverse().ToList())
+                {
+                    <button @onclick="@(e => ClickearGratisJuegoNoticias(e, gratis.JuegoId, gratis.Id))" class="boton-pequeño" style="margin: 10px 0px;">
+                        <div style="display: flex; align-items: center;">
+                            @if (noticia.Juegos != null)
+                            {
+                                @if (noticia.Juegos.Contains(gratis.JuegoId.ToString()) == true)
+                                {
+                                    <div style="margin-left: 10px; margin-right: 20px;">
+                                        <div style="max-width: 20px; max-height: 20px;">
+                                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                                <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            <img src="@GratisCargar.DevolverGratis(gratis.Tipo).ImagenLogo" style="width: 12%; margin: 10px;" />
+                            <div>@gratis.Nombre</div>
+                        </div>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    @if (gratisSeleccionadoNoticias != null)
+    {
+        <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+            <div>
+                <label style="margin-left: 10px; margin-bottom: 10px;">Gratis Ids:</label>
+                <input type="text" class="entrada-texto" value="@noticia.GratisIds" />
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label style="margin-left: 10px; margin-bottom: 10px;">Juegos:</label>
+                <input type="text" class="entrada-texto" value="@noticia.Juegos" />
+            </div>
+        </div>
+    }
+}
+else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
+{
+    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+        <div class="opciones-combobox" style="margin-top: 10px; width: 33%;">
+            <select @onchange="@(e => CambiarSuscripcion(e))">
+                @foreach (Suscripcion suscripcion in SuscripcionesCargar.GenerarListado())
+                {
+                    if (suscripcion.AdminInteractuar == true)
+                    {
+                        <option value="@suscripcion.Id">@suscripcion.Nombre</option>
+                    }
+                }
+            </select>
+        </div>
+
+        @if (suscripcionSeleccionadaNoticias != null)
+        {
+            <div style="margin-top: 20px;">
+                @foreach (var suscripcion in BaseDatos.Suscripciones.Buscar.UnTipo(suscripcionSeleccionadaNoticias, Herramientas.Tiempo.Actual).OrderBy(x => x.FechaEmpieza).Reverse().ToList())
+                {
+                    <button @onclick="@(e => ClickearSuscripcionJuego(e, suscripcion.JuegoId, suscripcion.Id))" class="boton-pequeño" style="margin: 10px 0px;">
+                        <div style="display: flex; align-items: center;">
+                            @if (noticia.Juegos != null)
+                            {
+                                @if (noticia.Juegos.Contains(suscripcion.JuegoId.ToString()) == true)
+                                {
+                                    <div style="margin-left: 10px; margin-right: 20px;">
+                                        <div style="max-width: 20px; max-height: 20px;">
+                                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                                <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            <img src="@SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).ImagenLogo" style="width: 12%; margin: 10px;" />
+                            <div style="margin-left: 20px;">@suscripcion.Nombre</div>
+                        </div>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    @if (suscripcionSeleccionadaNoticias != null)
+    {
+        <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+            <div>
+                <label style="margin-left: 10px; margin-bottom: 10px;">Suscripciones Ids:</label>
+                <input type="text" class="entrada-texto" value="@noticia.SuscripcionesIds" />
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label style="margin-left: 10px; margin-bottom: 10px;">Juegos:</label>
+                <input type="text" class="entrada-texto" value="@noticia.Juegos" />
+            </div>
+        </div>
+    }
+}
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+    <div>
+        <label style="margin-left: 10px; margin-bottom: 10px;">Título EN:</label>
+        <input type="text" @onchange="@(e => CambiarTituloEnNoticias(e))" class="entrada-texto" value="@noticia.TituloEn" />
+    </div>
+
+    <div style="margin-top: 20px;">
+        <label style="margin-left: 10px; margin-bottom: 10px;">Título ES:</label>
+        <input type="text" @onchange="@(e => CambiarTituloEsNoticias(e))" class="entrada-texto" value="@noticia.TituloEs" />
+    </div>
+</div>
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+    <div>
+        <label style="margin-left: 10px; margin-bottom: 10px;">Imagen Noticia:</label>
+        <input @onchange="@(e => CambiarImagenNoticia(e))" class="entrada-texto" value="@noticia.Imagen">
+
+        @if (string.IsNullOrEmpty(noticia.Imagen) == false)
+        {
+            <div style="margin-top: 10px;">
+                <img src="@noticia.Imagen" style="max-width: 300px; max-height: 300px;" />
+            </div>
+        }
+    </div>
+</div>
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+    <div>
+        <label style="margin-left: 10px; margin-bottom: 10px;">Fecha Termina:</label>
+        <input type="datetime-local" @onchange="@(e => CambiarFechaNoticias(e))" class="entrada-texto" style="width: 33%; min-width: 100px;" value="@noticia.Fecha.ToString("yyyy-MM-dd HH:mm:ss")">
+    </div>
+
+    <div style="margin-top: 20px;">
+        <label style="margin-left: 10px; margin-bottom: 10px;">Enlace:</label>
+        <input type="text" class="entrada-texto" value="@noticia.Enlace" />
+    </div>
+</div>
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <label>Contenido EN:</label>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button @onclick="@(e => EditorDiv(e, noticia, "en"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">div</div>
+                </div>
+            </button>
+
+            <button @onclick="@(e => EditorUl(e, noticia, "en"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">ul</div>
+                </div>
+            </button>
+
+            <button @onclick="@(e => EditorEnlace(e, noticia, "en"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">a href</div>
+                </div>
+            </button>
+        </div>
+
+        <textarea class="entrada-texto" rows="8" @bind="noticia.ContenidoEn" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" />
+    </div>
+
+    @if (string.IsNullOrEmpty(noticia.ContenidoEn) == false)
+    {
+        <div>
+            @((MarkupString)noticia.ContenidoEn)
+        </div>
+    }
+</div>
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <label>Contenido ES:</label>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button @onclick="@(e => EditorDiv(e, noticia, "es"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">div</div>
+                </div>
+            </button>
+
+            <button @onclick="@(e => EditorUl(e, noticia, "es"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">ul</div>
+                </div>
+            </button>
+
+            <button @onclick="@(e => EditorEnlace(e, noticia, "es"))" class="boton-expandir" style="background-color: var(--fondoBotonPequeño); color: var(--colorTexto); text-decoration: none; border: 0px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px;">
+                    <div style="font-size: 14px;">a href</div>
+                </div>
+            </button>
+        </div>
+
+        <textarea class="entrada-texto" rows="8" @bind="noticia.ContenidoEs" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" />
+    </div>
+
+    @if (string.IsNullOrEmpty(noticia.ContenidoEs) == false)
+    {
+        <div>
+            @((MarkupString)noticia.ContenidoEs)
+        </div>
+    }
+</div>
+
+<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px; display: flex; flex-direction: column; gap: 30px;">
+    @if (enviandoNoticia == false)
+    {
+        <button @onclick="@(e => AñadirNoticia(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">
+            Añadir Noticia
+        </button>
+    }
+    else
+    {
+        <div>
+            Enviando Noticia...
+        </div>
+    }
+
+    @if (idNoticiaEnviada > 0)
+    {
+        <a href="/news/@idNoticiaEnviada/">/news/@idNoticiaEnviada/</a>
+
+        <div>
+            <div>
+                Redes Sociales
+            </div>
+
+            <hr/>
+
+            <div style="display: flex; align-items: center; gap: 40px;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="max-width: 24px; max-height: 24px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" /></svg>
+                    </div> 
+            
+                    @if (enviandoTwitter == true)
+                    {
+                        <div style="max-width: 24px; max-height: 24px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z"/></svg>
+                        </div>
+                    }
+                    else
+                    {
+                        if (enviadoTwitter == true)
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="max-width: 24px; max-height: 24px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M111.8 62.2C170.2 105.9 233 194.7 256 242.4c23-47.6 85.8-136.4 144.2-180.2c42.1-31.6 110.3-56 110.3 21.8c0 15.5-8.9 130.5-14.1 149.2C478.2 298 412 314.6 353.1 304.5c102.9 17.5 129.1 75.5 72.5 133.5c-107.4 110.2-154.3-27.6-166.3-62.9l0 0c-1.7-4.9-2.6-7.8-3.3-7.8s-1.6 3-3.3 7.8l0 0c-12 35.3-59 173.1-166.3 62.9c-56.5-58-30.4-116 72.5-133.5C100 314.6 33.8 298 15.7 233.1C10.4 214.4 1.5 99.4 1.5 83.9c0-77.8 68.2-53.4 110.3-21.8z" /></svg>
+                    </div>
+            
+                    @if (enviandoBluesky == true)
+                    {
+                        <div style="max-width: 24px; max-height: 24px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z"/></svg>
+                        </div>
+                    }
+                    else
+                    {
+                        if (enviadoBluesky == true)
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="max-width: 24px; max-height: 24px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M248 8C111 8 0 119 0 256S111 504 248 504 496 393 496 256 385 8 248 8zM363 176.7c-3.7 39.2-19.9 134.4-28.1 178.3-3.5 18.6-10.3 24.8-16.9 25.4-14.4 1.3-25.3-9.5-39.3-18.7-21.8-14.3-34.2-23.2-55.3-37.2-24.5-16.1-8.6-25 5.3-39.5 3.7-3.8 67.1-61.5 68.3-66.7 .2-.7 .3-3.1-1.2-4.4s-3.6-.8-5.1-.5q-3.3 .7-104.6 69.1-14.8 10.2-26.9 9.9c-8.9-.2-25.9-5-38.6-9.1-15.5-5-27.9-7.7-26.8-16.3q.8-6.7 18.5-13.7 108.4-47.2 144.6-62.3c68.9-28.6 83.2-33.6 92.5-33.8 2.1 0 6.6 .5 9.6 2.9a10.5 10.5 0 0 1 3.5 6.7A43.8 43.8 0 0 1 363 176.7z" /></svg>
+                    </div>
+            
+                    @if (enviandoTelegram == true)
+                    {
+                        <div style="max-width: 24px; max-height: 24px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z"/></svg>
+                        </div>
+                    }
+                    else
+                    {
+                        if (enviadoTelegram == true)
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="max-width: 24px; max-height: 24px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M524.5 69.8a1.5 1.5 0 0 0 -.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0 -1.9 .9 337.5 337.5 0 0 0 -14.9 30.6 447.8 447.8 0 0 0 -134.4 0 309.5 309.5 0 0 0 -15.1-30.6 1.9 1.9 0 0 0 -1.9-.9A483.7 483.7 0 0 0 116.1 69.1a1.7 1.7 0 0 0 -.8 .7C39.1 183.7 18.2 294.7 28.4 404.4a2 2 0 0 0 .8 1.4A487.7 487.7 0 0 0 176 479.9a1.9 1.9 0 0 0 2.1-.7A348.2 348.2 0 0 0 208.1 430.4a1.9 1.9 0 0 0 -1-2.6 321.2 321.2 0 0 1 -45.9-21.9 1.9 1.9 0 0 1 -.2-3.1c3.1-2.3 6.2-4.7 9.1-7.1a1.8 1.8 0 0 1 1.9-.3c96.2 43.9 200.4 43.9 295.5 0a1.8 1.8 0 0 1 1.9 .2c2.9 2.4 6 4.9 9.1 7.2a1.9 1.9 0 0 1 -.2 3.1 301.4 301.4 0 0 1 -45.9 21.8 1.9 1.9 0 0 0 -1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1 .7A486 486 0 0 0 610.7 405.7a1.9 1.9 0 0 0 .8-1.4C623.7 277.6 590.9 167.5 524.5 69.8zM222.5 337.6c-29 0-52.8-26.6-52.8-59.2S193.1 219.1 222.5 219.1c29.7 0 53.3 26.8 52.8 59.2C275.3 311 251.9 337.6 222.5 337.6zm195.4 0c-29 0-52.8-26.6-52.8-59.2S388.4 219.1 417.9 219.1c29.7 0 53.3 26.8 52.8 59.2C470.7 311 447.5 337.6 417.9 337.6z" /></svg>
+                    </div>
+            
+                    @if (enviandoDiscord == true)
+                    {
+                        <div style="max-width: 24px; max-height: 24px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z"/></svg>
+                        </div>
+                    }
+                    else
+                    {
+                        if (enviadoDiscord == true)
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="max-width: 24px; max-height: 24px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (abrirEnlace == true)
+{
+    <div class="opciones-panel">
+        <div style="width: 900px; background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; overflow-y: scroll; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; align-items: start; gap: 40px;">
+                <button @onclick="@(e => EnlaceCerrar(e))" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
+                    <div style="max-width: 24px; max-height: 24px;">
+                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                        </svg>
+                    </div>
+                </button>
+
+                <div style="width: 100%;">
+                    <label style="margin: 10px;">Juegos Buscador:</label>
+                    <input type="text" @oninput="TextoCambiaBuscadorJuegoEnlace" class="entrada-texto" style="margin-bottom: 20px;" />
+
+                    @if (juegosBuscadorEnlace != null)
+                    {
+                        @if (juegosBuscadorEnlace.Count > 0)
+                        {
+                            <div>
+                                @foreach (var juego in juegosBuscadorEnlace)
+                                {
+                                    <div class="perfil-flexible-centrado perfil-espacio-top">
+                                        <button @onclick="@(e => SeleccionarJuegoAñadirEnlace(e, juego.Id.ToString(), juego.Nombre))" class="boton-pequeño">
+                                            <div class="perfil-flexible-centrado">
+                                                <div style="width: 12%;">
+                                                    <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />
+                                                </div>
+
+                                                <div style="width: 88%; padding-left: 15px; padding-right: 15px;">
+                                                    @juego.Id - @juego.Nombre
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+
+                    <label style="margin: 10px;">Enlace:</label>
+
+                    <input class="entrada-texto" @bind="contenidoEnlace">
+
+                    <hr />
+
+                    <button @onclick="@(e => EnlaceAñadir(e))" class="boton-pequeño" style="width: 120px; text-align: center; padding: 10px 20px;">
+                        Añadir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    #nullable disable
+
+    private SqlConnection conexion = new SqlConnection();
+
+    private string noticiaTipoSeleccionada = null;
+
+    private string bundleSeleccionadoNoticias = null;
+    private string gratisSeleccionadoNoticias = null;
+    private string suscripcionSeleccionadaNoticias = null;
+
+    private Plantilla noticia = new Plantilla();
+
+    private bool enviandoNoticia = false;
+    private int idNoticiaEnviada = 0;
+
+    private bool enviandoTwitter = false;
+    private bool enviadoTwitter = false;
+    private bool enviandoBluesky = false;
+    private bool enviadoBluesky = false;
+    private bool enviandoTelegram = false;
+    private bool enviadoTelegram = false;
+    private bool enviandoDiscord = false;
+    private bool enviadoDiscord = false;
+
+    protected override void OnInitialized()
+    {
+        noticiaTipoSeleccionada = NoticiaTipo.Bundles.ToString();
+    }
+
+    private void CambiarNoticiaTipo(ChangeEventArgs texto)
+    {
+        if (conexion.State != System.Data.ConnectionState.Open)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
+        }
+
+        using (conexion)
+        {
+            noticia = new Plantilla();
+            noticia.Fecha = DateTime.Now;
+
+            noticiaTipoSeleccionada = texto.Value.ToString();
+
+            //-------------------------------------------------------
+
+            if (noticiaTipoSeleccionada == NoticiaTipo.Bundles.ToString())
+            {
+                bundleSeleccionadoNoticias = BundlesCargar.GenerarListado()[1].Id.ToString();
+            }
+            else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis.ToString())
+            {
+                gratisSeleccionadoNoticias = GratisCargar.GenerarListado()[0].Tipo.ToString();
+            }
+            else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
+            {
+                suscripcionSeleccionadaNoticias = SuscripcionesCargar.GenerarListado()[0].Id.ToString();
+            }
+            else if (noticiaTipoSeleccionada == NoticiaTipo.Web.ToString())
+            {
+                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+                noticia.Fecha = DateTime.Now.AddDays(7);
+            }
+            else if (noticiaTipoSeleccionada == NoticiaTipo.Patreon.ToString())
+            {
+                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentradapatreon.webp";
+                noticia.Fecha = DateTime.Now.AddDays(7);
+            }
+        }
+    }
+
+    private void CambiarTituloEnNoticias(ChangeEventArgs texto)
+    {
+        noticia.TituloEn = texto.Value.ToString();
+    }
+
+    private void CambiarTituloEsNoticias(ChangeEventArgs texto)
+    {
+        noticia.TituloEs = texto.Value.ToString();
+    }
+
+    private void CambiarImagenNoticia(ChangeEventArgs texto)
+    {
+        noticia.Imagen = texto.Value.ToString();
+    }
+
+    private void CambiarFechaNoticias(ChangeEventArgs texto)
+    {
+        noticia.Fecha = Convert.ToDateTime(texto.Value.ToString());
+    }
+
+    private async Task AñadirNoticia(MouseEventArgs e)
+    {
+        enviandoNoticia = true;
+
+        if (conexion.State != System.Data.ConnectionState.Open)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
+        }
+
+        if (conexion.State == System.Data.ConnectionState.Open)
+        {
+            using (conexion)
+            {
+                global::Noticias.Noticia noticiaAñadir = new global::Noticias.Noticia();
+
+                noticiaAñadir.TituloEn = noticia.TituloEn;
+                noticiaAñadir.TituloEs = noticia.TituloEs;
+                noticiaAñadir.Imagen = noticia.Imagen;
+                noticiaAñadir.ContenidoEn = noticia.ContenidoEn;
+                noticiaAñadir.ContenidoEs = noticia.ContenidoEs;
+                noticiaAñadir.Juegos = noticia.Juegos;
+                noticiaAñadir.FechaEmpieza = DateTime.Now;
+                noticiaAñadir.FechaTermina = noticia.Fecha;
+                noticiaAñadir.Enlace = noticia.Enlace;
+
+                if (noticiaTipoSeleccionada == NoticiaTipo.Bundles.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Bundles;
+                    noticiaAñadir.BundleTipo = BundlesCargar.DevolverBundle(bundleSeleccionadoNoticias).Tipo;
+                    noticiaAñadir.BundleId = int.Parse(noticia.BundleId);
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Gratis;
+                    noticiaAñadir.GratisTipo = GratisCargar.DevolverGratis(gratisSeleccionadoNoticias).Tipo;
+                    noticiaAñadir.GratisIds = noticia.GratisIds;
+
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Suscripciones;
+                    noticiaAñadir.SuscripcionTipo = SuscripcionesCargar.DevolverSuscripcion(suscripcionSeleccionadaNoticias).Id;
+                    noticiaAñadir.SuscripcionesIds = noticia.SuscripcionesIds;
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Rumores.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Rumores;
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Web.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Web;
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Patreon.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Patreon;
+                }
+
+                int id = BaseDatos.Noticias.Insertar.Ejecutar(noticiaAñadir);
+                noticiaAñadir.Id = id;
+
+                idNoticiaEnviada = id;
+
+                foreach (var usuario in BaseDatos.Usuarios.Buscar.UsuariosNotificacionesCorreo())
+                {
+                    try
+                    {
+                        if (usuario.NotificationBundles == true && noticiaAñadir.Tipo == NoticiaTipo.Bundles)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+
+                        if (usuario.NotificationFree == true && noticiaAñadir.Tipo == NoticiaTipo.Gratis)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+
+                        if (usuario.NotificationSubscriptions == true && noticiaAñadir.Tipo == NoticiaTipo.Suscripciones)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+
+                        if (usuario.NotificationOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Noticia", ex);
+                    }
+                }
+
+                enviandoTwitter = true;
+
+                try
+                {
+                    enviadoTwitter = await Herramientas.RedesSociales.Twitter.Twitear(noticiaAñadir);
+                }
+                catch (Exception ex)
+                {
+                    BaseDatos.Errores.Insertar.Mensaje("Enviar Twitter Noticia", ex);
+                }
+
+                enviandoTwitter = false;
+
+                enviandoBluesky = true;
+
+                try
+                {
+                    enviadoBluesky = await Herramientas.RedesSociales.Bluesky.Postear(noticiaAñadir);
+                }
+                catch (Exception ex)
+                {
+                    BaseDatos.Errores.Insertar.Mensaje("Enviar BlueSky Noticia", ex);
+                }
+
+                enviandoBluesky = false;
+
+                enviandoTelegram = true;
+
+                try
+                {
+                    enviadoTelegram = await Herramientas.RedesSociales.Telegram.Postear(noticiaAñadir);
+                }
+                catch (Exception ex)
+                {
+                    BaseDatos.Errores.Insertar.Mensaje("Enviar Telegram Noticia", ex);
+                }
+
+                enviandoTelegram = false;
+
+                enviandoDiscord = true;
+
+                try
+                {
+                    enviadoDiscord = await Herramientas.RedesSociales.Discord.Postear(noticiaAñadir);
+                }
+                catch (Exception ex)
+                {
+                    BaseDatos.Errores.Insertar.Mensaje("Enviar Discord Noticia", ex);
+                }
+
+                enviandoDiscord = false;
+
+                foreach (var usuario in BaseDatos.Usuarios.Buscar.UsuariosNotificacionesPush())
+                {
+                    try
+                    {
+                        if (usuario.NotificationPushBundles == true && noticiaAñadir.Tipo == NoticiaTipo.Bundles)
+                        {
+                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
+                        }
+
+                        if (usuario.NotificationPushFree == true && noticiaAñadir.Tipo == NoticiaTipo.Gratis)
+                        {
+                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
+                        }
+
+                        if (usuario.NotificationPushSubscriptions == true && noticiaAñadir.Tipo == NoticiaTipo.Suscripciones)
+                        {
+                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
+                        }
+
+                        if (usuario.NotificationPushOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
+                        {
+                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BaseDatos.Errores.Insertar.Mensaje("Enviar Notificaciones Push Noticia", ex);
+                    }
+                }
+
+                noticia = new Plantilla();
+
+                bundleSeleccionadoNoticias = null;
+                gratisSeleccionadoNoticias = null;
+                suscripcionSeleccionadaNoticias = null;
+            }
+        }
+
+        enviandoNoticia = false;
+    }
+
+    private void CambiarBundleNoticias(ChangeEventArgs texto)
+    {
+        bundleSeleccionadoNoticias = texto.Value.ToString();
+    }
+
+    private void ClickearBundleNoticias(MouseEventArgs e, int bundleId)
+    {
+        noticia = Plantillas.Bundles(bundleId);
+    }
+
+    private void CambiarGratisNoticias(ChangeEventArgs texto)
+    {
+        gratisSeleccionadoNoticias = texto.Value.ToString();
+    }
+
+    private void ClickearGratisJuegoNoticias(MouseEventArgs e, int juegoId, int id)
+    {
+        noticia = Plantillas.Gratis(noticia, juegoId, id, gratisSeleccionadoNoticias);
+    }
+
+    private void CambiarSuscripcion(ChangeEventArgs texto)
+    {
+        suscripcionSeleccionadaNoticias = texto.Value.ToString();
+    }
+
+    private void ClickearSuscripcionJuego(MouseEventArgs e, int juegoId, int id)
+    {
+        noticia = Plantillas.Suscripciones(noticia, juegoId, id, suscripcionSeleccionadaNoticias);
+    }
+
+    #region Editor
+
+    private void EditorDiv(MouseEventArgs e, Plantilla textoDondeAñadir, string idioma)
+    {
+        if (idioma == "en")
+        {
+            bool yaExiste = false;
+
+            if (string.IsNullOrEmpty(textoDondeAñadir.ContenidoEn) == false)
+            {
+                if (textoDondeAñadir.ContenidoEn.Contains("<div>") == true)
+                {
+                    yaExiste = true;
+                }
+            }
+
+            if (yaExiste == false)
+            {
+                textoDondeAñadir.ContenidoEn = textoDondeAñadir.ContenidoEn + "<div>" + Environment.NewLine + Environment.NewLine + "</div>";
+            }
+            else
+            {
+                textoDondeAñadir.ContenidoEn = textoDondeAñadir.ContenidoEn + @"<div style=""margin-top: 10px;"">" + Environment.NewLine + Environment.NewLine + "</div>";
+            }
+        }
+
+        if (idioma == "es")
+        {
+            bool yaExiste = false;
+
+            if (string.IsNullOrEmpty(textoDondeAñadir.ContenidoEs) == false)
+            {
+                if (textoDondeAñadir.ContenidoEs.Contains("<div>") == true)
+                {
+                    yaExiste = true;
+                }
+            }
+
+            if (yaExiste == false)
+            {
+                textoDondeAñadir.ContenidoEs = textoDondeAñadir.ContenidoEs + @"<div>" + Environment.NewLine + Environment.NewLine + "</div>";
+            }
+            else
+            {
+                textoDondeAñadir.ContenidoEs = textoDondeAñadir.ContenidoEs + @"<div style=""margin-top: 10px;"">" + Environment.NewLine + Environment.NewLine + "</div>";
+            }
+        }       
+    }
+
+    private void EditorUl(MouseEventArgs e, Plantilla textoDondeAñadir, string idioma)
+    {
+        if (idioma == "en")
+        {
+            textoDondeAñadir.ContenidoEn = textoDondeAñadir.ContenidoEn + "<ul>" + Environment.NewLine + "<li>" + Environment.NewLine + Environment.NewLine + "</li>" + Environment.NewLine + "</ul>";
+        }
+
+        if (idioma == "es")
+        {
+            textoDondeAñadir.ContenidoEs = textoDondeAñadir.ContenidoEs + "<ul>" + Environment.NewLine + "<li>" + Environment.NewLine + Environment.NewLine + "</li>" + Environment.NewLine + "</ul>";
+        }
+    }
+
+    private bool abrirEnlace = false;
+    private string contenidoEnlace = string.Empty;
+    private string tituloEnlace = string.Empty;
+    private Plantilla plantillaEnlace = null;
+    private string idiomaEnlace = null;
+
+    private void EditorEnlace(MouseEventArgs e, Plantilla textoDondeAñadir, string idioma)
+    {
+        abrirEnlace = true;
+
+        plantillaEnlace = textoDondeAñadir;
+        idiomaEnlace = idioma;
+    }
+
+    private void EnlaceCerrar(MouseEventArgs e)
+    {
+        abrirEnlace = false;
+    }
+
+
+    private List<global::Juegos.Juego> juegosBuscadorEnlace = new List<global::Juegos.Juego>();
+
+    private void TextoCambiaBuscadorJuegoEnlace(ChangeEventArgs texto)
+    {
+        if (texto.Value.ToString().Trim().Length > 1)
+        {
+            juegosBuscadorEnlace = BaseDatos.Juegos.Buscar.Nombre(texto.Value.ToString().Trim());
+        }
+        else
+        {
+            juegosBuscadorEnlace = new List<global::Juegos.Juego>();
+        }
+    }
+
+    private void SeleccionarJuegoAñadirEnlace(MouseEventArgs e, string id, string nombre)
+    {
+        contenidoEnlace = "https://pepeizqdeals.com/game/" + id + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/";
+        tituloEnlace = nombre;
+        juegosBuscadorEnlace = new List<global::Juegos.Juego>();
+    }
+
+    private void EnlaceAñadir(MouseEventArgs e)
+    {
+        if (plantillaEnlace != null && string.IsNullOrEmpty(idiomaEnlace) == false)
+        {
+            if (idiomaEnlace == "en")
+            {
+                plantillaEnlace.ContenidoEn = plantillaEnlace.ContenidoEn + "<a href=" + Strings.ChrW(34) + contenidoEnlace + Strings.ChrW(34) + " target=" + Strings.ChrW(34) + "_blank" + Strings.ChrW(34) + ">" + tituloEnlace + "</a>";
+            }
+
+            if (idiomaEnlace == "es")
+            {
+                plantillaEnlace.ContenidoEs = plantillaEnlace.ContenidoEs + "<a href=" + Strings.ChrW(34) + contenidoEnlace + Strings.ChrW(34) + " target=" + Strings.ChrW(34) + "_blank" + Strings.ChrW(34) + ">" + tituloEnlace + "</a>";
+            }
+        }
+
+        abrirEnlace = false;
+    }
+
+    #endregion
+}

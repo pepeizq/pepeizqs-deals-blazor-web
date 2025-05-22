@@ -35,12 +35,12 @@ namespace BaseDatos.Noticias
 
 			if (lector.IsDBNull(5) == false)
 			{
-				noticia.FechaEmpieza = DateTime.Parse(lector.GetString(5), CultureInfo.InvariantCulture);
+				noticia.FechaEmpieza = lector.GetDateTime(5);
 			}
 
 			if (lector.IsDBNull(6) == false)
 			{
-				noticia.FechaTermina = DateTime.Parse(lector.GetString(6), CultureInfo.InvariantCulture);
+				noticia.FechaTermina = lector.GetDateTime(6);
 			}
 
 			if (lector.IsDBNull(7) == false)

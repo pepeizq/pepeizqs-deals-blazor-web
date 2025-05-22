@@ -472,6 +472,27 @@ namespace BaseDatos.Juegos
 			}
 			catch { }
 
+			try
+			{
+				if (lector.IsDBNull(41) == false)
+				{
+					juego.SteamOS = Enum.Parse<JuegoSteamOS>(lector.GetInt32(41).ToString());
+				}
+			}
+			catch { }
+
+			try
+			{
+				if (lector.IsDBNull(42) == false)
+				{
+					if (string.IsNullOrEmpty(lector.GetString(42)) == false)
+					{
+						juego.SteamOSTokens = JsonSerializer.Deserialize<List<JuegoDeckToken>>(lector.GetString(42));
+					}
+				}
+			}
+			catch { }
+
 			return juego;
 		}
 

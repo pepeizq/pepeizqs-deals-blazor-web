@@ -18,6 +18,7 @@
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
+@inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
 
 @if (juego != null)
@@ -316,6 +317,11 @@
 
 @if (juego != null)
 {
+    if (usuarioAdmin == true)
+    {
+        <pepeizqs_deals_blazor_web.Componentes.Admin.Juego idioma="@idioma" juego="@juego"/>
+    }
+
     <div>
         @if (juego.Imagenes != null)
         {
@@ -688,19 +694,24 @@
                         {
                             Juegos.Juego juegoMaestro = global::BaseDatos.Juegos.Buscar.UnJuego(juego.Maestro);
 
-                            <a href="/game/@juego.Maestro/@Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre)/" style="text-decoration: none;">
-                                <div class="boton-expandir" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: color-mix(in srgb, var(--fondoOscuro), var(--fondoDlc) 70%); color: var(--colorTextoDlc); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
-                                    <div style="max-width: 26px; opacity: 0.5;">
-                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                            <path d="M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM127 297c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l71 71L232 120c0-13.3 10.7-24 24-24s24 10.7 24 24l0 214.1 71-71c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L273 409c-9.4 9.4-24.6 9.4-33.9 0L127 297z"/>
-                                        </svg>
-                                    </div>
+                            if (juegoMaestro != null)
+                            {
+                                string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
+                               
+                                <button @onclick="(e => AbrirEnlace(e, enlaceMaestro))" style="text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
+                                    <div class="boton-expandir" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: color-mix(in srgb, var(--fondoOscuro), var(--fondoDlc) 70%); color: var(--colorTextoDlc); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
+                                        <div style="max-width: 26px; opacity: 0.5;">
+                                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                <path d="M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM127 297c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l71 71L232 120c0-13.3 10.7-24 24-24s24 10.7 24 24l0 214.1 71-71c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L273 409c-9.4 9.4-24.6 9.4-33.9 0L127 297z"/>
+                                            </svg>
+                                        </div>
 
-                                    <div style="width: 100%;">
-                                        @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), juegoMaestro.Nombre)
+                                        <div style="width: 100%;">
+                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), juegoMaestro.Nombre)
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
+                                </button>
+                            }
                         }
                     }
 
@@ -1283,7 +1294,7 @@
                                                                 if (drm.Id == JuegoDRM.GOG && juego.Tipo == JuegoTipo.Game)
                                                                 {
                                                                     <div style="display: flex; align-items: center; justify-content: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String87", "Game")">
-                                                                        <img src="@APIs.GOG.Streaming.Generar().ImagenIcono" style="max-width: 22px; max-height: 22px;" />
+                                                                        <img src="@APIs.GOG.Streaming.Generar().ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Amazon Luna"/>
                                                                     </div>
                                                                 }
                                                             }
@@ -2435,23 +2446,23 @@
                             @if (juego.IdSteam > 0)
                             {
                                 <a href="https://steamdb.info/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="SteamDB" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp")" style="width: 30px; height: 30px;" loading="lazy"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="steamdb"/>
                                 </a>
                                 <a href="https://protondb.com/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="ProtonDB" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp")" style="width: 30px; height: 30px;" loading="lazy" />
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="protondb"/>
                                 </a>
                                 <a href="https://pcgamingwiki.com/api/appid.php?appid=@juego.IdSteam" target="_blank" class="boton-pequeño" title="PCGamingWiki" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp")" style="width: 30px; height: 30px;" loading="lazy" />
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="pcgamingwiki"/>
                                 </a>
                                 <a href="https://isthereanydeal.com/steam/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="IsThereAnyDeal" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp")" style="width: 30px; height: 30px;" loading="lazy" />
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
                                 </a>
                             }
 
                             @if (juego.IdGog > 0)
                             {
                                 <a href="https://www.gogdb.org/product/@juego.IdGog" target="_blank" class="boton-pequeño" title="GOG Database" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp")" style="width: 30px; height: 30px;" loading="lazy" />
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
                                 </a>
                             }
                         </div>
@@ -2849,7 +2860,11 @@
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <Virtualize Context="dlc" Items="dlcs" ItemSize="107">
                             <ItemContent>
-                                <a href="/game/@dlc.Id/@Herramientas.EnlaceAdaptador.Nombre(dlc.Nombre)/" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px;">
+                                @{
+                                    string enlaceDLC = "/game/" + dlc.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(dlc.Nombre) + "/";
+                                }
+
+                                <button @onclick="(e => AbrirEnlace(e, enlaceDLC))" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
                                     <div class="boton-expandir" style="background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoDlc) 30%); display: flex; align-items: center; gap: 20px;">
                                         <div>
                                             <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(dlc.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@dlc.Nombre" loading="lazy" />
@@ -2860,7 +2875,7 @@
                                             <div style="margin-top: 10px; font-size: 14px;">@PrecioMinimoActual(dlc, idioma)</div>
                                         </div>
                                     </div>
-                                </a>
+                                </button>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -5774,6 +5789,15 @@
     {
         enseñarRV = false;
     }
+
+    #endregion
+
+    #region DLCs
+
+    private void AbrirEnlace(MouseEventArgs e, string enlace)
+	{
+        NavManager.NavigateTo(enlace, true);
+	}
 
     #endregion
 }

@@ -112,6 +112,15 @@ namespace BaseDatos.Juegos
 				añadirDeck2 = ", @deck";
 			}
 
+			string añadirSteamOS1 = null;
+			string añadirSteamOS2 = null;
+
+			if (juego.SteamOS != JuegoSteamOS.Desconocido)
+			{
+				añadirSteamOS1 = ", steamOS";
+				añadirSteamOS2 = ", @steamOS";
+			}
+
 			string añadirIdMaestra1 = null;
 			string añadirIdMaestra2 = null;
 
@@ -131,8 +140,8 @@ namespace BaseDatos.Juegos
 			}
 
 			string sqlAñadir = "INSERT INTO " + tabla + " " +
-					"(idSteam, idGog, nombre, tipo, fechaSteamAPIComprobacion, imagenes, precioMinimosHistoricos, precioActualesTiendas, analisis, caracteristicas, media, nombreCodigo, categorias" + añadirBundles1 + añadirGratis1 + añadirSuscripciones1 + añadirMaestro1 + añadirF2P1 + añadirMayorEdad1 + añadirEtiquetas1 + añadirIdiomas1 + añadirDeck1 + añadirIdMaestra1 + añadirOcultarPortada1 + ") VALUES " +
-					"(@idSteam, @idGog, @nombre, @tipo, @fechaSteamAPIComprobacion, @imagenes, @precioMinimosHistoricos, @precioActualesTiendas, @analisis, @caracteristicas, @media, @nombreCodigo, @categorias" + añadirBundles2 + añadirGratis2 + añadirSuscripciones2 + añadirMaestro2 + añadirF2P2 + añadirMayorEdad2 + añadirEtiquetas2 + añadirIdiomas2 + añadirDeck2 + añadirIdMaestra2 + añadirOcultarPortada2 + ") ";
+					"(idSteam, idGog, nombre, tipo, fechaSteamAPIComprobacion, imagenes, precioMinimosHistoricos, precioActualesTiendas, analisis, caracteristicas, media, nombreCodigo, categorias" + añadirBundles1 + añadirGratis1 + añadirSuscripciones1 + añadirMaestro1 + añadirF2P1 + añadirMayorEdad1 + añadirEtiquetas1 + añadirIdiomas1 + añadirDeck1 + añadirSteamOS1 + añadirIdMaestra1 + añadirOcultarPortada1 + ") VALUES " +
+					"(@idSteam, @idGog, @nombre, @tipo, @fechaSteamAPIComprobacion, @imagenes, @precioMinimosHistoricos, @precioActualesTiendas, @analisis, @caracteristicas, @media, @nombreCodigo, @categorias" + añadirBundles2 + añadirGratis2 + añadirSuscripciones2 + añadirMaestro2 + añadirF2P2 + añadirMayorEdad2 + añadirEtiquetas2 + añadirIdiomas2 + añadirDeck2 + añadirSteamOS2 + añadirIdMaestra2 + añadirOcultarPortada2 + ") ";
 
 			if (noExiste == true)
 			{
@@ -207,6 +216,11 @@ namespace BaseDatos.Juegos
 				if (juego.Deck != JuegoDeck.Desconocido)
 				{
 					comando.Parameters.AddWithValue("@deck", juego.Deck);
+				}
+
+				if (juego.SteamOS != JuegoSteamOS.Desconocido)
+				{
+					comando.Parameters.AddWithValue("@steamOS", juego.SteamOS);
 				}
 
 				if (tabla == "seccionMinimos")

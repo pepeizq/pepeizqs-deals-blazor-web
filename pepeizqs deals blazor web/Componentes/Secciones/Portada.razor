@@ -14,6 +14,8 @@
 
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
+@inject PersistentComponentState ApplicationState
+@implements IDisposable
 
 @{
 	#nullable disable
@@ -435,7 +437,7 @@
 
 				@if (noticiasSemana.Count > 0)
 				{
-					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")">
+					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")" style="margin-top: -30px;">
 						<Virtualize Context="noticia" Items="noticiasSemana">
 							<ItemContent>
 								<CajaNoticia idioma="@idioma" noticia="@noticia" />
@@ -765,6 +767,8 @@
 
 	#nullable disable
 
+	private PersistingComponentStateSubscription? persistingSubscription;
+
 	private string idioma = "en";
 	private string usuarioId = null;
 
@@ -854,7 +858,14 @@
 		{
 			#region Destacados
 
-			juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
+			if (!ApplicationState.TryTakeFromJson<List<Juegos.Juego>>("juegosGuardados", out var juegosGuardados))
+			{
+				juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
+			}
+			else
+			{
+				juegosDestacadosMostrar = juegosGuardados;
+			}
 
 			if (juegosDestacadosMostrar.Count > 0)
 			{
@@ -928,7 +939,15 @@
 
 			#endregion
 		}
+
+		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
+        {
+            ApplicationState.PersistAsJson("juegosGuardados", juegosDestacadosMostrar);
+            return Task.CompletedTask;
+        });
 	}
+
+	public void Dispose() => persistingSubscription?.Dispose();
 
 	private void EnseñarDestacadoVideo(EventArgs args, Juegos.Juego juegoDestacado)
 	{

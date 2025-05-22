@@ -45,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Componentes\Admin\" />
     <Folder Include="Herramientas\Ficheros\NewFolder\" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Herramientas;
 using Microsoft.Data.SqlClient;
 using System.Globalization;
 using Tiendas2;
@@ -265,6 +266,39 @@ namespace BaseDatos.Admin
 			}
 
 			return true;
+		}
+
+		public static int CantidadErrores(SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string seleccionarTarea = "SELECT COUNT(*) FROM errores";
+
+			using (SqlCommand comando = new SqlCommand(seleccionarTarea, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					if (lector.Read() == true)
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							return lector.GetInt32(0);
+						}
+					}
+				}
+			}
+
+			return 0;
 		}
 	}
 

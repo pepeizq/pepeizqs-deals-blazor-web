@@ -1,8 +1,10 @@
 using ApexCharts;
 using Autofac.Core;
+using Herramientas;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,9 @@ using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_blazor_web.Componentes.Cuenta;
 using pepeizqs_deals_web.Data;
+using System.Globalization;
 using System.IO.Compression;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +60,7 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<UsuarioAcceso>();
 builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(opciones =>
 {
@@ -67,13 +71,25 @@ builder.Services.AddAuthentication(opciones =>
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones => {
+builder.Services.AddDbContextPool<pepeizqs_deals_webContext>(opciones => {
 	opciones.UseSqlServer(conexionTexto, opciones2 =>
 	{
 		opciones2.CommandTimeout(30);
 	});
 	opciones.EnableSensitiveDataLogging();
 	opciones.EnableDetailedErrors();
+});
+
+builder.Services.ConfigureApplicationCookie(opciones =>
+{
+	opciones.AccessDeniedPath = "/";
+	opciones.Cookie.Name = "cookiePepeizq";
+	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
+	opciones.LoginPath = "/account/login";
+	opciones.LogoutPath = "/account/logout";
+	opciones.SlidingExpiration = true;
+	opciones.Cookie.HttpOnly = true;
+	opciones.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -89,15 +105,130 @@ builder.Services.AddIdentityCore<Usuario>(opciones =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(opciones =>
+builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
+
+#region Tareas
+
+builder.Services.Configure<HostOptions>(opciones =>
 {
-	opciones.AccessDeniedPath = "/";
-	opciones.Cookie.Name = "cookiePepeizq";
-	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
-	opciones.LoginPath = "/account/login";
+	opciones.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
 });
 
-builder.Services.AddSingleton<IEmailSender<Usuario>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<Tareas.Mantenimiento>();
+builder.Services.AddSingleton<Tareas.Minimos>();
+builder.Services.AddSingleton<Tareas.Pings>();
+builder.Services.AddSingleton<Tareas.CorreosEnviar>();
+builder.Services.AddSingleton<Tareas.Divisas>();
+builder.Services.AddSingleton<Tareas.CorreosDeals>();
+builder.Services.AddSingleton<Tareas.CorreosApps>();
+builder.Services.AddSingleton<Tareas.Pendientes>();
+builder.Services.AddSingleton<Tareas.Patreon>();
+
+builder.Services.AddSingleton<Tareas.Tiendas.Steam>();
+builder.Services.AddSingleton<Tareas.Tiendas.HumbleStore>();
+builder.Services.AddSingleton<Tareas.Tiendas.GOG>();
+builder.Services.AddSingleton<Tareas.Tiendas.Fanatical>();
+builder.Services.AddSingleton<Tareas.Tiendas.GreenManGaming>();
+builder.Services.AddSingleton<Tareas.Tiendas.GreenManGamingGold>();
+builder.Services.AddSingleton<Tareas.Tiendas.Gamersgate>();
+builder.Services.AddSingleton<Tareas.Tiendas.GamesplanetUk>();
+builder.Services.AddSingleton<Tareas.Tiendas.GamesplanetFr>();
+builder.Services.AddSingleton<Tareas.Tiendas.GamesplanetDe>();
+builder.Services.AddSingleton<Tareas.Tiendas.GamesplanetUs>();
+builder.Services.AddSingleton<Tareas.Tiendas.WinGameStore>();
+builder.Services.AddSingleton<Tareas.Tiendas.IndieGala>();
+builder.Services.AddSingleton<Tareas.Tiendas.GameBillet>();
+//builder.Services.AddSingleton<Tareas.Tiendas._2Game>();
+builder.Services.AddSingleton<Tareas.Tiendas.DLGamer>();
+builder.Services.AddSingleton<Tareas.Tiendas.Voidu>();
+builder.Services.AddSingleton<Tareas.Tiendas.JoyBuggy>();
+builder.Services.AddSingleton<Tareas.Tiendas.Battlenet>();
+//builder.Services.AddSingleton<Tareas.Tiendas.EA>();
+builder.Services.AddSingleton<Tareas.Tiendas.EpicGames>();
+builder.Services.AddSingleton<Tareas.Tiendas.Ubisoft>();
+builder.Services.AddSingleton<Tareas.Tiendas.Playsum>();
+//builder.Services.AddSingleton<Tareas.Tiendas.Allyouplay>();
+builder.Services.AddSingleton<Tareas.Tiendas.PlanetPlay>();
+
+//builder.Services.AddSingleton<Tareas.Suscripciones.EAPlay>();
+builder.Services.AddSingleton<Tareas.Suscripciones.XboxGamePass>();
+builder.Services.AddSingleton<Tareas.Suscripciones.UbisoftPlusClassics>();
+builder.Services.AddSingleton<Tareas.Suscripciones.UbisoftPlusPremium>();
+builder.Services.AddSingleton<Tareas.Suscripciones.AmazonLunaPlus>();
+
+builder.Services.AddSingleton<Tareas.Streaming.GeforceNOW>();
+builder.Services.AddSingleton<Tareas.Streaming.AmazonLuna>();
+
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Mantenimiento>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Minimos>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Pings>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.CorreosEnviar>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Divisas>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.CorreosDeals>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.CorreosApps>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Pendientes>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Patreon>());
+
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Steam>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.HumbleStore>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GOG>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Fanatical>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GreenManGaming>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GreenManGamingGold>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Gamersgate>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GamesplanetUk>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GamesplanetFr>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GamesplanetDe>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GamesplanetUs>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.WinGameStore>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.IndieGala>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.GameBillet>());
+//builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas._2Game>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.DLGamer>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Voidu>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.JoyBuggy>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Battlenet>());
+//builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.EA>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.EpicGames>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Ubisoft>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Playsum>());
+//builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Allyouplay>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.PlanetPlay>());
+
+//builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.EAPlay>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.XboxGamePass>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.UbisoftPlusClassics>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.UbisoftPlusPremium>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.AmazonLunaPlus>());
+
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.GeforceNOW>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.AmazonLuna>());
+
+#endregion
+
+#region Decompilador
+
+builder.Services.AddHttpClient<IDecompiladores, Decompiladores2>()
+	.ConfigurePrimaryHttpMessageHandler(() =>
+		new HttpClientHandler
+		{
+			AutomaticDecompression = System.Net.DecompressionMethods.GZip,
+			MaxConnectionsPerServer = 50
+		});
+
+builder.Services.AddSingleton<IDecompiladores, Decompiladores2>();
+
+#endregion
+
+#region CORS necesario para extension navegador
+
+builder.Services.AddCors(policy => {
+	policy.AddPolicy("Extension", builder =>
+		builder.WithOrigins("https://*:5001/").SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyOrigin()
+	);
+});
+
+#endregion
 
 #region Redireccionador
 
@@ -108,6 +239,51 @@ builder.Services.AddControllersWithViews().AddMvcOptions(opciones =>
 			NoStore = true,
 			Location = ResponseCacheLocation.None
 		}));
+
+#endregion
+
+#region Antibots
+
+builder.Services.AddRateLimiter(opciones =>
+{
+	opciones.OnRejected = (contexto, _) =>
+	{
+		if (contexto.Lease.TryGetMetadata(MetadataName.RetryAfter, out var reintento))
+		{
+			contexto.HttpContext.Response.Headers.RetryAfter = ((int)reintento.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
+		}
+
+		contexto.HttpContext.Response.WriteAsync(@"Your IP is blocked.
+
+If you are a human with blood running through your veins, contact admin@pepeizqdeals.com to remove your block.
+
+If you're a bot, sorry but I'm in the resistance with John Connor.");
+
+		return new ValueTask();
+	};
+
+	opciones.GlobalLimiter = PartitionedRateLimiter.CreateChained(
+		PartitionedRateLimiter.Create<HttpContext, string>(contexto =>
+		{
+			if (BloqueosIps.EstaBloqueada(contexto.Connection?.RemoteIpAddress?.ToString()) == true)
+			{
+				return RateLimitPartition.GetFixedWindowLimiter(
+					partitionKey: contexto.Request.Headers.Host.ToString(),
+					factory: partition => new FixedWindowRateLimiterOptions
+					{
+						AutoReplenishment = false,
+						PermitLimit = 1,
+						QueueLimit = 1,
+						Window = TimeSpan.FromHours(24)
+					});
+			}
+			else
+			{
+				return RateLimitPartition.GetNoLimiter("");
+			}
+		})
+	);
+});
 
 #endregion
 
@@ -136,6 +312,12 @@ builder.Services.AddHsts(opciones =>
 	opciones.IncludeSubDomains = true;
 	opciones.MaxAge = TimeSpan.FromDays(730);
 });
+
+#endregion
+
+#region Tiempo Token Enlaces Correos 
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opciones => opciones.TokenLifespan = TimeSpan.FromHours(3));
 
 #endregion
 
@@ -176,13 +358,23 @@ app.UseWebOptimizer();
 
 #endregion
 
+#region CORS necesario para extension navegador web
+
+app.UseCors("Extension");
+
+#endregion
+
 #region Redireccionador
 
 app.MapControllers();
 
 #endregion
 
-app.UseAuthentication();
+#region Antibots
+
+app.UseRateLimiter();
+
+#endregion
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

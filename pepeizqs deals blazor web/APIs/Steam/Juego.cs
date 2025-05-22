@@ -50,6 +50,7 @@ namespace APIs.Steam
 						List<string> categorias = new List<string>();
 						List<string> etiquetas = new List<string>();
 						Juegos.JuegoDeck deck = Juegos.JuegoDeck.Desconocido;
+						Juegos.JuegoSteamOS steamOS = Juegos.JuegoSteamOS.Desconocido;
 						bool freeToPlay = false;
 						List<Juegos.JuegoIdioma> idiomas = new List<Juegos.JuegoIdioma>();
 						Juegos.JuegoPrecio precio = null;
@@ -310,6 +311,11 @@ namespace APIs.Steam
 							if (datos2.Respuesta.Juegos[0].Plataformas.Deck > 0)
 							{
 								deck = (Juegos.JuegoDeck)datos2.Respuesta.Juegos[0].Plataformas.Deck;
+							}
+
+							if (datos2.Respuesta.Juegos[0].Plataformas.SteamOS > 0)
+							{
+								steamOS = (Juegos.JuegoSteamOS)datos2.Respuesta.Juegos[0].Plataformas.SteamOS;
 							}
 
 							if (datos2.Respuesta.Juegos[0].Plataformas.RV != null)
@@ -651,6 +657,7 @@ namespace APIs.Steam
 						else
 						{
 							juego.Deck = deck;
+							juego.SteamOS = steamOS;
 						}
 
 						if (categorias.Count > 0)
@@ -1114,6 +1121,9 @@ namespace APIs.Steam
 		[JsonPropertyName("steam_deck_compat_category")]
 		public int Deck { get; set; }
 
+		[JsonPropertyName("steam_os_compat_category")]
+		public int SteamOS { get; set; }
+
 		[JsonPropertyName("vr_support")]
 		public SteamJuegoAPI2JuegoPlataformasRV RV { get; set; }
 	}
@@ -1267,6 +1277,12 @@ namespace APIs.Steam
 
 		[JsonPropertyName("resolved_items")]
 		public List<SteamDeckAPIToken> Tokens { get; set; }
+
+		[JsonPropertyName("steamos_resolved_category")]
+		public object SteamOSResultado { get; set; }
+
+		[JsonPropertyName("steamos_resolved_items")]
+		public List<SteamDeckAPIToken> SteamOSTokens { get; set; }
 	}
 
 	public class SteamDeckAPIToken

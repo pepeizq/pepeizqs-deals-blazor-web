@@ -36,7 +36,6 @@ namespace BaseDatos.Errores
                             Error error = new Error
                             {
                                 Mensaje = lector.GetString(1),
-                                Fecha = DateTime.Parse(lector.GetString(3), CultureInfo.InvariantCulture),
                                 Seccion = lector.GetString(4)
                             };
 
@@ -47,6 +46,18 @@ namespace BaseDatos.Errores
                                     error.Stacktrace = lector.GetString(2);
                                 }
                             }
+
+                            try
+                            {
+                                if (lector.IsDBNull(3) == false)
+                                {
+									if (string.IsNullOrEmpty(lector.GetString(3)) == false)
+                                    {
+										error.Fecha = DateTime.Parse(lector.GetString(3));
+									}										
+								}
+							}
+                            catch { }
 
                             if (lector.IsDBNull(5) == false)
                             {

@@ -38,6 +38,7 @@
   "Mail5": "Change Email",
   "Mail6": "Verification email sent. Please check your email.",
   "Mail7": "Confirmation link to change email sent. Please check your email.",
+  "Mail8": "The new email you want to use is already assigned to another account.",
   "NotificationsMail1": "Wishlist",
   "NotificationsMail2": "You will be notified by email when a game on your wishlist reaches a new historical low price.",
   "NotificationsMail3": "Bundles",

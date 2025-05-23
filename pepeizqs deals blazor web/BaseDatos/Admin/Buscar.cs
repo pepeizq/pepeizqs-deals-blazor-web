@@ -55,7 +55,7 @@ namespace BaseDatos.Admin
 				}
 			}
 
-			string seleccionarTarea = "SELECT * FROM adminTiendas WHERE id=@id";
+			string seleccionarTarea = "SELECT fecha FROM adminTiendas WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(seleccionarTarea, conexion))
 			{
@@ -65,7 +65,7 @@ namespace BaseDatos.Admin
 				{
 					if (lector.Read() == true)
 					{
-						DateTime ultimaComprobacion = DateTime.Parse(lector.GetString(1), CultureInfo.InvariantCulture);
+						DateTime ultimaComprobacion = lector.GetDateTime(0);
 
 						if ((DateTime.Now - ultimaComprobacion) > tiempo)
 						{
@@ -105,7 +105,7 @@ namespace BaseDatos.Admin
 						AdminTarea tienda = new AdminTarea
 						{
 							Id = lector.GetString(0),
-							Fecha = DateTime.Parse(lector.GetString(1), CultureInfo.InvariantCulture)
+							Fecha = lector.GetDateTime(1)
 						};
 
 						bool añadir = true;
@@ -215,7 +215,7 @@ namespace BaseDatos.Admin
 								AdminTarea tarea = new AdminTarea
 								{
 									Id = lector.GetString(0),
-									Fecha = DateTime.Parse(lector.GetString(1), CultureInfo.InvariantCulture),
+									Fecha = lector.GetDateTime(1),
 									Cantidad = lector.GetInt32(2),
 									Valor1 = lector.GetInt32(3),
 									Valor2 = lector.GetInt32(4)
@@ -245,7 +245,7 @@ namespace BaseDatos.Admin
 				}
 			}
 
-			string seleccionarTarea = "SELECT * FROM adminTareas WHERE id=@id";
+			string seleccionarTarea = "SELECT fecha FROM adminTareas WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(seleccionarTarea, conexion))
 			{
@@ -255,7 +255,7 @@ namespace BaseDatos.Admin
 				{
 					if (lector.Read() == true)
 					{
-						DateTime ultimaComprobacion = DateTime.Parse(lector.GetString(1), CultureInfo.InvariantCulture);
+						DateTime ultimaComprobacion = lector.GetDateTime(0);
 
 						if ((DateTime.Now - ultimaComprobacion) < tiempo)
 						{

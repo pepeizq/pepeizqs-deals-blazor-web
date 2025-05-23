@@ -252,7 +252,7 @@ ORDER BY NEWID()";
 					}
 				}
 
-				string busqueda = @"SELECT DISTINCT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha FROM seccionMinimos 
+				string busqueda = @"SELECT DISTINCT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog FROM seccionMinimos 
                                     WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis AND CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) > DATEADD(day, -7, CAST(GETDATE() AS date)) @categoria @drm
                                     ORDER BY Fecha DESC";
 
@@ -341,6 +341,11 @@ ORDER BY NEWID()";
 							if (lector.IsDBNull(8) == false)
 							{
 								juego.IdSteam = lector.GetInt32(8);
+							}
+
+							if (lector.IsDBNull(10) == false)
+							{
+								juego.IdGog = lector.GetInt32(10);
 							}
 
 							resultados.Add(juego);

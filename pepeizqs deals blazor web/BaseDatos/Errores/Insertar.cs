@@ -46,7 +46,14 @@ namespace BaseDatos.Errores
             
             if (reiniciar == true)
             {
-				Environment.Exit(1);
+				WebApplicationBuilder builder = WebApplication.CreateBuilder();
+				string piscinaApp = builder.Configuration.GetValue<string>("PoolWeb:Contenido");
+				string piscinaUsada = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+
+				if (piscinaApp != piscinaUsada)
+                {
+					Environment.Exit(1);
+				}
 			}  
         }
 

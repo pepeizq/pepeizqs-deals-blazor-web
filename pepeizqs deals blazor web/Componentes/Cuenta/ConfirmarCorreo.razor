@@ -1,0 +1,72 @@
+﻿@page "/account/confirm-email"
+
+@using System.Text
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using pepeizqs_deals_blazor_web.Componentes.Account.Shared
+@using pepeizqs_deals_blazor_web.Componentes.Account
+@using pepeizqs_deals_web.Data
+
+@inject IHttpContextAccessor Contexto
+@inject UserManager<Usuario> UserManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ConfirmPassword")</PageTitle>
+
+<div style="max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h1 style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ConfirmPassword")</h1>
+    <hr />
+    <div class="caja-diseño" style="padding: 20px;">
+        @mensaje
+    </div>
+</div>
+
+@code {
+
+    #nullable disable
+
+    private string idioma = "en";
+
+    private string mensaje = null;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string UserId { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string Code { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+
+        if (UserId is null || Code is null)
+        {
+            RedirectManager.RedirectTo("");
+        }
+
+        Usuario usuario = await UserManager.FindByIdAsync(UserId);
+
+        if (usuario is null)
+        {
+            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            mensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "ConfirmPassword"), UserId);
+        }
+        else
+        {
+            string codigo = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
+            IdentityResult resultado = await UserManager.ConfirmEmailAsync(usuario, codigo);
+
+            if (resultado.Succeeded == true)
+            {
+                mensaje = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "ConfirmPassword");
+            }
+            else
+            {
+                mensaje = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "ConfirmPassword");
+            }
+        }
+    }
+}

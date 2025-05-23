@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
@@ -65,9 +66,12 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddAuthentication(opciones =>
 {
 	opciones.DefaultScheme = IdentityConstants.ApplicationScheme;
-	opciones.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+	opciones.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
 })
 	.AddIdentityCookies();
+
+builder.Services.AddAuthorization();
+
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -318,6 +322,16 @@ builder.Services.AddHsts(opciones =>
 #region Tiempo Token Enlaces Correos 
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opciones => opciones.TokenLifespan = TimeSpan.FromHours(3));
+
+#endregion
+
+#region Acceder Usuario en Codigo y RSS
+
+builder.Services.AddControllers(opciones =>
+{
+	opciones.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+});
+builder.Services.AddHttpContextAccessor();
 
 #endregion
 

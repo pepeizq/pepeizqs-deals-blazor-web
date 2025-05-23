@@ -1,0 +1,78 @@
+﻿@page "/account/confirm-email-change"
+
+@using System.Text
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using pepeizqs_deals_blazor_web.Componentes.Account
+@using pepeizqs_deals_web.Data
+
+@inject IHttpContextAccessor Contexto
+@inject UserManager<Usuario> UserManager
+@inject SignInManager<Usuario> SignInManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ConfirmPassword")</PageTitle>
+
+<div style="max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h1 style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ConfirmPassword")</h1>
+    <hr/>
+    <div class="caja-diseño" style="padding: 20px;">
+        @mensaje
+    </div>
+</div>
+
+@code {
+
+    #nullable disable
+
+    private string idioma = "en";
+
+    private string mensaje = null;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string UserId { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string Email { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string Code { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+
+        if (UserId is null || Email is null || Code is null)
+        {
+            RedirectManager.RedirectToWithStatus("account/login", "Error: Invalid email change confirmation link.", HttpContext);
+        }
+
+        var user = await UserManager.FindByIdAsync(UserId);
+        if (user is null)
+        {
+            mensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "ConfirmPassword"), "1x1");
+            return;
+        }
+
+        var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
+        var result = await UserManager.ChangeEmailAsync(user, Email, code);
+        if (!result.Succeeded)
+        {
+            mensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "ConfirmPassword"), "1x2");
+            return;
+        }
+
+        var setUserNameResult = await UserManager.SetUserNameAsync(user, Email);
+        if (!setUserNameResult.Succeeded)
+        {
+            mensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "ConfirmPassword"), "1x3");
+            return;
+        }
+
+        await SignInManager.RefreshSignInAsync(user);
+        mensaje = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ConfirmPassword");
+    }
+}

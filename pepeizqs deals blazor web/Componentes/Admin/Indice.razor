@@ -1,5 +1,7 @@
 ﻿@page "/admin/"
 
+@rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
@@ -184,8 +186,13 @@
             {
                 ActualizarMensajeErrores(BaseDatos.Admin.Buscar.CantidadErrores(conexion));
 
-                ActualizarMensajeCorreos(int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion)), int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion)));
-                ActualizarMensajeDLCs(global::BaseDatos.Juegos.Buscar.DLCs(null, conexion).Count);
+                nuevosPendientesCantidad = int.Parse(BaseDatos.Admin.Buscar.Dato("pendientes", conexion));
+                nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
+                nuevosCorreosApps = int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion));
+                nuevosDLCsCantidad = global::BaseDatos.Juegos.Buscar.DLCs(null, conexion).Count;
+
+                ActualizarMensajeCorreos(nuevosCorreosDeals, nuevosCorreosApps);
+                ActualizarMensajeDLCs(nuevosDLCsCantidad);
             }
         }
         else

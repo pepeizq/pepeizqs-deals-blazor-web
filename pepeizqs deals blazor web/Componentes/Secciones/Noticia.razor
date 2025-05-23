@@ -378,6 +378,9 @@
 	private bool usuarioPatreon = false;
 	private bool usuarioAdmin = false;
 
+	[SupplyParameterFromQuery]
+	private string Language { get; set; }
+
 	[Parameter]
 	public int id { get; set; }
 
@@ -415,6 +418,11 @@
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
 
+		if (string.IsNullOrEmpty(Language) == false)
+		{
+			idioma = Language;
+        }
+
 		if (id > 0)
 		{
 			noticia = BaseDatos.Noticias.Buscar.UnaNoticia(id);
@@ -446,11 +454,11 @@
 				{
 					if (juegos.Count == 1)
 					{
-						if (juegos[0].Media.Videos != null)
+						if (juegos[0].Media?.Videos != null)
 						{
-							if (juegos[0].Media.Videos.Count > 0)
+							if (juegos[0].Media?.Videos.Count > 0)
 							{
-								video = juegos[0].Media.Videos[0].Enlace;
+								video = juegos[0].Media?.Videos[0].Enlace;
 							}
 						}
 					}

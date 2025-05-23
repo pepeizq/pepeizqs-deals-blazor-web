@@ -3,6 +3,7 @@
 @using Microsoft.JSInterop
 @using Microsoft.VisualBasic
 
+@inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
 
 <style>
@@ -205,7 +206,7 @@
 				<div>
 					@tooltip.Nombre
 				</div>
-
+			
 				@if (tipo == Tipo.Portada || tipo == Tipo.MinimosHistoricos)
 				{
 					<div style="display: flex; align-items: center; padding: 5px; text-align: left; justify-content: left;">
@@ -222,7 +223,7 @@
 								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(tooltip.ReviewsIcono)" style="width: 20px; height: 20px;" alt="Reviews" loading="lazy" />
 							</div>
 						}
-
+			
 						<div style="margin-right: 15px; background-color: darkgreen; padding: 5px 10px;">
 							@descuento
 						</div>
@@ -452,7 +453,7 @@
 
 		@if (tipo == Tipo.Bundle)
 		{
-			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
+			<button @onclick="(e => AbrirEnlace(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="padding: 0px; position: relative;">
 					@{
 						bool añadirNuevo = false;
@@ -536,7 +537,7 @@
 						}
 					</div>
 				</div>
-			</a>
+			</button>
 		}
 
 		@if (tipo == Tipo.Noticia)
@@ -705,4 +706,9 @@
 	}
 
 	#endregion
+
+	private void AbrirEnlace(MouseEventArgs e, string enlace)
+	{
+        NavManager.NavigateTo(enlace, true);
+	}
 }

@@ -75,7 +75,7 @@
         <Authorized>
             @if (string.IsNullOrEmpty(usuarioId) == false)
             {
-                if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true && ubicacionEnlace.Contains("/admin") == false)
+                if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
                 {
                     adminMensaje = "Admin";
 
@@ -123,41 +123,26 @@
         <div class="botones-superiores">
             @if (string.IsNullOrEmpty(usuarioId) == false)
             {
-                if (ubicacionEnlace.Contains("/wishlist") == false)
-                {
-                    <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                    </a>
-                }
-            }
-
-            @if (ubicacionEnlace.Contains("/historical-lows") == false)
-            {
-                <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+                <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
                 </a>
             }
 
-            @if (ubicacionEnlace.Contains("/bundles") == false)
-            {
-                <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
-                </a>
-            }
+            <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+            </a>
 
-            @if (ubicacionEnlace.Contains("/free") == false)
-            {
-                <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
-                </a>
-            }
+            <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+            </a>
 
-            @if (ubicacionEnlace.Contains("/subscriptions") == false)
-            {
-                <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
-                </a>
-            }
+            <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+            </a>
+
+            <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+            </a>
 
             @* @if (ubicacionEnlace.Contains("/forum") == false)
             {
@@ -186,41 +171,26 @@
                 <div class="menu-dropdown-contenido">
                     @if (string.IsNullOrEmpty(usuarioId) == false)
                     {
-                        if (ubicacionEnlace.Contains("/wishlist") == false)
-                        {
-                            <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                            </a>
-                        }
+                        <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                        </a>
                     }   
 
-                    @if (ubicacionEnlace.Contains("/historical-lows") == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
-                        </a>
-                    }
+                    <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+                    </a>
 
-                    @if (ubicacionEnlace.Contains("/bundles") == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
-                        </a>
-                    }
+                    <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+                    </a>
 
-                    @if (ubicacionEnlace.Contains("/free") == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
-                        </a>
-                    }
+                    <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+                    </a>
 
-                    @if (ubicacionEnlace.Contains("/subscriptions") == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
-                        </a>
-                    }
+                    <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+                    </a>
 
                     @* @if (ubicacionEnlace.Contains("/forum") == false)
                     {
@@ -378,9 +348,6 @@
     private Usuario deseadosUsuario = null;
     private bool usuarioPatreon = false;
     private Usuario opcionesCabecera = null;
-
-    [Parameter]
-    public string ubicacionEnlace { get; set; }
 
     private SqlConnection conexion = new SqlConnection();
 

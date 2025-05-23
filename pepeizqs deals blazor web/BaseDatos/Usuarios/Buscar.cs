@@ -526,6 +526,83 @@ namespace BaseDatos.Usuarios
 			return null;
 		}
 
+		public static Usuario OpcionesCuenta(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				Usuario opciones = new Usuario();
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT EmailConfirmed, PatreonCoins, SteamAccountLastCheck, GogAccountLastCheck, AmazonLastImport, EpicGamesLastImport, UbisoftLastImport, EaLastImport FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								opciones.EmailConfirmed = lector.GetBoolean(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								opciones.PatreonCoins = lector.GetInt32(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								opciones.SteamAccountLastCheck = lector.GetString(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.GogAccountLastCheck = lector.GetDateTime(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								opciones.AmazonLastImport = lector.GetDateTime(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								opciones.EpicGamesLastImport = lector.GetDateTime(5);
+							}
+
+							if (lector.IsDBNull(6) == false)
+							{
+								opciones.UbisoftLastImport = lector.GetDateTime(6);
+							}
+
+							if (lector.IsDBNull(7) == false)
+							{
+								opciones.EaLastImport = lector.GetDateTime(7);
+							}
+						}
+					}
+				}
+
+				return opciones;
+			}
+
+			return null;
+		}
+
 		public static string UsuarioDeseadosNickname(string otroUsuario, SqlConnection conexion = null)
 		{
 			if (conexion == null)
@@ -758,7 +835,43 @@ namespace BaseDatos.Usuarios
 			return usuarios;
 		}
 
+		public static bool CorreoYaUsado(string correo, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(correo) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
 
+				string busqueda = "SELECT Id FROM AspNetUsers WHERE Email=@Email";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Email", correo);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
+		}
 
 
 

@@ -4,5 +4,6 @@
   "String3": "Fehler beim Bestätigen Ihrer E-Mail. ",
   "String4": "E-Mail-Änderung bestätigen",
   "String5": "Ihre E-Mail-Änderung wurde korrekt durchgeführt.",
-  "String6": "Fehler beim Ändern Ihrer E-Mail-Adresse. "
+  "String6": "Fehler Ändern Ihrer E-Mail ({0}), bitte wenden Sie sich an admin@pepeizqdeals.com.",
+  "String7": "Benutzer nicht mit ID gefunden: {0}"
 }

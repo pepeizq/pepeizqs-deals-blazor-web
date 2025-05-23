@@ -1,22 +1,22 @@
-﻿@using Microsoft.AspNetCore.Components.Web;
+﻿@page "/account/reset-password/"
+
+@using Microsoft.AspNetCore.Components.Web;
 @using Microsoft.AspNetCore.Identity;
 @using Microsoft.AspNetCore.WebUtilities;
 @using pepeizqs_deals_web.Data;
 @using System.Text;
 
+@inject IHttpContextAccessor Contexto
 @inject UserManager<Usuario> UserManager
 
-<style>
-    .caja-diseño {
-        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-        border: 2px solid var(--fondoOscuro);
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-        border-radius: 5px;
-    }
-</style>
-
-@if (codigo != null)
+@if (string.IsNullOrEmpty(Code) == false)
 {
+    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ResetPassword") + " • pepeizq's deals";
+
+    <HeadContent>
+        <PageTitle>@titulo</PageTitle>
+    </HeadContent>
+
     <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
         <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ResetPassword")</div>
 
@@ -47,9 +47,9 @@
                     </div>
                 }
 
-                <div class="perfil-flexible-izquierda" style="margin-top: 30px;">
-                    <button @onclick="ResetearContraseña" class="boton" style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ResetPassword")</button>
-                </div>
+                <button @onclick="ResetearContraseña" class="boton-pequeño" style="margin-top: 30px; text-align: center; font-size: 20px; padding: 15px 20px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ResetPassword")
+                </button>
 
                 @if (string.IsNullOrEmpty(mensajeExito) == false)
                 {
@@ -73,11 +73,10 @@
 
     #nullable disable
 
-    [Parameter]
-    public string idioma { get; set; }
+    private string idioma = "en";
 
-    [Parameter]
-    public string codigo { get; set; }
+    [SupplyParameterFromQuery]
+    private string Code { get; set; }
 
     private string correo = string.Empty;
     private string contraseñaNueva1 = string.Empty;
@@ -88,6 +87,11 @@
 
     private string mensajeExito = string.Empty;
     private string mensajeError = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+    }
 
     private void CambiarCorreo(ChangeEventArgs texto)
     {
@@ -167,7 +171,7 @@
 
             if (usuario != null)
             {
-                IdentityResult resultado = UserManager.ResetPasswordAsync(usuario, codigo, contraseñaNueva1).Result;
+                IdentityResult resultado = UserManager.ResetPasswordAsync(usuario, Code, contraseñaNueva1).Result;
 
                 if (resultado.Succeeded == true)
                 {

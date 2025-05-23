@@ -4,5 +4,6 @@
   "String3": "Error confirming your email. Contact with admin@pepeizqdeals.com.",
   "String4": "Confirm Email Change",
   "String5": "Your email change has been done correctly.",
-  "String6": "Error changing your email. Contact with admin@pepeizqdeals.com."
+  "String6": "Error changing your email ({0}). Contact with admin@pepeizqdeals.com.",
+  "String7": "User not found with ID: {0}"
 }

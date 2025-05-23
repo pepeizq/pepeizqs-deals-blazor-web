@@ -1,19 +1,22 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@page "/account/"
+
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using global::Juegos
 @using pepeizqs_deals_web.Data
 
-@inject UserManager<Usuario> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
+@{
+    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Account") + " • pepeizq's deals";
+}
+
+<HeadContent>
+    <PageTitle>@titulo</PageTitle>
+</HeadContent>
 
 <style>
     .boton-pestañas {
@@ -174,13 +177,13 @@
             </button>
         </div>
 
-        @if (usuario.EmailConfirmed == true)
+        @if (opcionesCuenta.EmailConfirmed == true)
         {
             int? monedas = 0;
 
-            if (usuario.PatreonCoins != null)
+            if (opcionesCuenta.PatreonCoins != null)
             {
-                monedas = usuario.PatreonCoins;
+                monedas = opcionesCuenta.PatreonCoins;
             }
 
             <label style="font-size: 20px; margin-top: 40px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Account") (@monedas)</label>
@@ -306,10 +309,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.Steam)
                             </div>
 
-                            @if (string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
+                            @if (string.IsNullOrEmpty(opcionesCuenta.SteamAccountLastCheck) == false)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Account") @Herramientas.Calculadora.DiferenciaTiempo(Convert.ToDateTime(usuario.SteamAccountLastCheck), idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Account") @Herramientas.Calculadora.DiferenciaTiempo(Convert.ToDateTime(opcionesCuenta.SteamAccountLastCheck), idioma)
                                 </div>
                             }
                         </div>
@@ -325,10 +328,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.GOG)
                             </div>
 
-                            @if (usuario.GogAccountLastCheck != null)
+                            @if (opcionesCuenta.GogAccountLastCheck != null)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Account") @Herramientas.Calculadora.DiferenciaTiempo(usuario.GogAccountLastCheck, idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Account") @Herramientas.Calculadora.DiferenciaTiempo(opcionesCuenta.GogAccountLastCheck, idioma)
                                 </div>
                             }
                         </div>
@@ -344,10 +347,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.Amazon)
                             </div>
 
-                            @if (usuario.AmazonLastImport != null)
+                            @if (opcionesCuenta.AmazonLastImport != null)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(usuario.AmazonLastImport, idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(opcionesCuenta.AmazonLastImport, idioma)
                                 </div>
                             }
                         </div>
@@ -363,10 +366,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.Epic)
                             </div>
 
-                            @if (usuario.EpicGamesLastImport != null)
+                            @if (opcionesCuenta.EpicGamesLastImport != null)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(usuario.EpicGamesLastImport, idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(opcionesCuenta.EpicGamesLastImport, idioma)
                                 </div>
                             }
                         </div>
@@ -382,10 +385,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.Ubisoft)
                             </div>
 
-                            @if (usuario.UbisoftLastImport != null)
+                            @if (opcionesCuenta.UbisoftLastImport != null)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(usuario.UbisoftLastImport, idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(opcionesCuenta.UbisoftLastImport, idioma)
                                 </div>
                             }
                         </div>
@@ -401,10 +404,10 @@
                                 @JuegoDRM2.DevolverDRM(JuegoDRM.EA)
                             </div>
 
-                            @if (usuario.EaLastImport != null)
+                            @if (opcionesCuenta.EaLastImport != null)
                             {
                                 <div style="font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(usuario.EaLastImport, idioma)
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Account") @Herramientas.Calculadora.DiferenciaTiempo(opcionesCuenta.EaLastImport, idioma)
                                 </div>
                             }
                         </div>
@@ -441,12 +444,12 @@ else
         <div style="width: 100%;">
             @if (mostrarCorreo == true)
             {
-                <Correo idioma="@idioma" />
+                <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Correo idioma="@idioma" />
             }
 
             @if (mostrarContraseña == true)
             {
-                <CambioContrasena idioma="@idioma" />
+                <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.CambioContrasena idioma="@idioma" />
             }
 
             @if (mostrarDatosPersonales == true)
@@ -471,12 +474,12 @@ else
 
             @if (mostrarTienda == true)
             {
-                <pepeizqs_deals_web.Pages.Componentes.Cuenta.Pepecoins.Tienda idioma="@idioma" usuarioId="@usuario.Id"/>
+                <pepeizqs_deals_web.Pages.Componentes.Cuenta.Pepecoins.Tienda idioma="@idioma" usuarioId="@usuarioId"/>
             }
 
             @if (mostrarHistorial == true)
             {
-                <pepeizqs_deals_web.Pages.Componentes.Cuenta.Pepecoins.Historial idioma="@idioma" usuarioId="@usuario.Id"/>
+                <pepeizqs_deals_web.Pages.Componentes.Cuenta.Pepecoins.Historial idioma="@idioma" usuarioId="@usuarioId"/>
             }
 
             @if (mostrarPatreon == true)
@@ -531,23 +534,26 @@ else
 
     #nullable disable
 
-    [Parameter]
-    public string idioma { get; set; }
+    private string idioma = "en";
+    private string usuarioId = null;
+    private string userAgent = null;
 
-    [Parameter]
-    public string userAgent { get; set; }
-
-    [Parameter]
-    public bool adminLogeado { get; set; }
-
-    private Usuario usuario = new Usuario();
+    private Usuario opcionesCuenta = null;
 
     private bool enseñarOpcion = false;
     private string tituloOpcion = string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    protected override void OnInitialized()
+	{
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+        userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+            opcionesCuenta = BaseDatos.Usuarios.Buscar.OpcionesCuenta(usuarioId);
+        }
     }
 
     private void CerrarPestañas()

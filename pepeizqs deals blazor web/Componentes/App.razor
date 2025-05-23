@@ -33,7 +33,7 @@
     <header style="height: var(--alturaCabecera); background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px;">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" style="padding: 0px;">
             <div class="cabecera-poner">
-                <Cabecera idioma="@idioma" usuarioId="@usuarioId" ubicacionEnlace="@enlace" />
+                <Cabecera idioma="@idioma" usuarioId="@usuarioId"/>
             </div>
         </nav>
     </header>
@@ -79,7 +79,7 @@
                 </div>
 
                 <div style="padding: 0px 80px; display: flex; flex-direction: column; gap: 30px;">
-                    <component type="typeof(Componentes.Interfaz.RedesSociales)" render-mode="ServerPrerendered" param-idioma="idioma" />
+                    <RedesSociales idioma="@idioma"/>
                 </div>
 
                 <div>

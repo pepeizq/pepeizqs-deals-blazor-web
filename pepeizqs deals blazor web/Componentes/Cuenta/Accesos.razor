@@ -1,15 +1,8 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Components.Web
 
 @inject NavigationManager NavManager
-
-<style>
-    .caja-diseño {
-        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-        border: 2px solid var(--fondoOscuro);
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-        border-radius: 5px;
-    }
-</style>
 
 <style>
     .boton-accesos {
@@ -72,16 +65,16 @@
 
     private void AbrirLogin(MouseEventArgs e)
     {
-        NavManager.NavigateTo("/account/login", true, false);
+        NavManager.NavigateTo("/account/login/", true, false);
     }
 
     private void AbrirRegistro(MouseEventArgs e)
     {
-        NavManager.NavigateTo("/account/register", true, false);
+        NavManager.NavigateTo("/account/register/", true, false);
     }
 
     private void AbrirContraseñaOlvidada(MouseEventArgs e)
     {
-        NavManager.NavigateTo("/account/forgotpassword", true, false);
+        NavManager.NavigateTo("/account/forgot-password/", true, false);
     }
 }

@@ -9,25 +9,24 @@
 @using pepeizqs_deals_blazor_web.Componentes.Account.Shared
 @using pepeizqs_deals_web.Data
 
-@inject IHttpContextAccessor contexto
+@inject IHttpContextAccessor Contexto
 @inject SignInManager<Usuario> SignInManager
-@inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
 @{
-	#nullable disable
-
-	string idioma = contexto?.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Login") + " • pepeizq's deals";
 }
 
-<PageTitle>@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Login")</PageTitle>
+<HeadContent>
+    <PageTitle>@titulo</PageTitle>
+</HeadContent>
 
 <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
-    @if (string.IsNullOrEmpty(errorMessage) == false)
+    @if (string.IsNullOrEmpty(mensajeError) == false)
     {
         <div style="margin-bottom: 20px; background-color: var(--fondoPeligro); padding: 15px 20px;">
-            @errorMessage
+            @mensajeError
         </div>
     }
 
@@ -74,7 +73,13 @@
 <Accesos idioma="@idioma" mostrarLogin="false" />
 
 @code {
-    private string? errorMessage;
+
+    #nullable disable
+
+    private string idioma = "en";
+    private string usuarioId = null;
+
+    private string mensajeError = string.Empty;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -83,22 +88,30 @@
     private InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    private string ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (contexto.HttpContext != null)
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+        usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
+        if (string.IsNullOrEmpty(usuarioId) == false)
         {
-            if (HttpMethods.IsGet(contexto.HttpContext.Request.Method))
+            idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+        }
+
+        if (Contexto.HttpContext != null)
+        {
+            if (HttpMethods.IsGet(Contexto.HttpContext.Request.Method))
             {
-                await contexto.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                await Contexto.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             }
         } 
     }
 
     public async Task LoginUser()
     {
-        SignInResult? resultado = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        SignInResult resultado = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         
         if (resultado.Succeeded)
         {
@@ -106,7 +119,7 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            mensajeError = "Error: Invalid login attempt.";
         }
     }
 

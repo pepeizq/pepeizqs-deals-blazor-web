@@ -6,16 +6,7 @@
 @using System.Text.Encodings.Web
 
 @inject UserManager<Usuario> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
-
-<style>
-    .caja-diseño {
-        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-        border: 2px solid var(--fondoOscuro);
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-        border-radius: 5px;
-    }
-</style>
+@inject IHttpContextAccessor Contexto
 
 @if (usuario != null)
 {
@@ -64,6 +55,13 @@
                     @Herramientas.Idiomas.BuscarTexto(idioma, "Mail7", "Account")
                 </div>
             }
+
+            @if (correoYaUsado == true)
+            {
+                <div style="margin-bottom: 20px; background-color: var(--fondoPeligro); padding: 15px 20px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Mail8", "Account")
+                </div>
+            }
         </div>
     </div>
 }
@@ -83,10 +81,11 @@
     private bool correoConfirmado = false;
     private bool correoConfirmadoEnviado = false;
     private bool correoCambioEnviado = false;
+    private bool correoYaUsado = false;
 
     protected override async Task OnInitializedAsync()
     {
-        usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 
         if (usuario != null)
         {
@@ -105,7 +104,7 @@
             string codigo = await UserManager.GenerateEmailConfirmationTokenAsync(usuario);
             codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
 
-            string enlaceFinal = "https://pepeizqdeals.com/Account/ConfirmEmail?userId=" + usuarioId + "&code=" + codigo;
+            string enlaceFinal = "https://pepeizqdeals.com/account/confirm-email?userId=" + usuarioId + "&code=" + codigo;
 
             Herramientas.Correos.EnviarConfirmacionCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correo);
             correoConfirmadoEnviado = true;
@@ -124,15 +123,23 @@
             if (string.IsNullOrEmpty(correoNuevo) == false)
             {
                 correoCambioEnviado = false;
+                correoYaUsado = false;
 
-                string usuarioId = await UserManager.GetUserIdAsync(usuario);
-                string codigo = await UserManager.GenerateChangeEmailTokenAsync(usuario, correoNuevo);
-                codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
+                if (BaseDatos.Usuarios.Buscar.CorreoYaUsado(correoNuevo) == false)
+                {
+                    string usuarioId = await UserManager.GetUserIdAsync(usuario);
+                    string codigo = await UserManager.GenerateChangeEmailTokenAsync(usuario, correoNuevo);
+                    codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
 
-                string enlaceFinal = "https://pepeizqdeals.com/Account/ConfirmEmailChange?userId=" + usuarioId + "&email=" + correoNuevo + "&code=" + codigo;
+                    string enlaceFinal = "https://pepeizqdeals.com/account/confirm-email-change?userId=" + usuarioId + "&email=" + correoNuevo + "&code=" + codigo;
 
-                Herramientas.Correos.EnviarCambioCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correoNuevo);
-                correoCambioEnviado = true;
+                    Herramientas.Correos.EnviarCambioCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correoNuevo);
+                    correoCambioEnviado = true;
+                }
+                else
+                {
+                    correoYaUsado = true;
+                }
             }
         }      
     }

@@ -4,5 +4,6 @@
   "String3": "Errore nella conferma della tua email. ",
   "String4": "Conferma la modifica dell'e-mail",
   "String5": "La tua modifica dell'email è stata eseguita correttamente.",
-  "String6": "Errore durante la modifica della tua email. "
+  "String6": "Errore Modifica della tua email ({0}), si prega di contattare con admin@pepeizqdeals.com.",
+  "String7": "Utente non trovato con ID: {0}"
 }

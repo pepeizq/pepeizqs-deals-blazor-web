@@ -26,7 +26,7 @@ namespace BaseDatos.Admin
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 			{
 				comando.Parameters.AddWithValue("@id", tienda);
-				comando.Parameters.AddWithValue("@fecha", fecha.ToString());
+				comando.Parameters.AddWithValue("@fecha", fecha);
 				comando.Parameters.AddWithValue("@mensaje", cantidad);
 
 				SqlDataReader lector = comando.ExecuteReader();
@@ -88,7 +88,7 @@ namespace BaseDatos.Admin
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 			{
 				comando.Parameters.AddWithValue("@id", id);
-				comando.Parameters.AddWithValue("@fecha", fecha.ToString());
+				comando.Parameters.AddWithValue("@fecha", fecha);
 
 				try
 				{

@@ -5,15 +5,11 @@
 //https://www.humblebundle.com/api/v1/subscriptions/humble_monthly/history?from_product=july_2020_choice
 //https://www.humblebundle.com/store/api/lookup?products[]=sonic-mania&request=1
 
-//https://scrapfly.io/
-//https://www.zenrows.com
-
 #nullable disable
 
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
-using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;

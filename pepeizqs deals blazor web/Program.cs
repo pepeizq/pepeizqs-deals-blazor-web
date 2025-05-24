@@ -1,12 +1,5 @@
 using ApexCharts;
-using Autofac.Core;
 using Herramientas;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
@@ -14,7 +7,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
-using pepeizqs_deals_blazor_web.Componentes.Cuenta;
 using pepeizqs_deals_web.Data;
 using System.Globalization;
 using System.IO.Compression;
@@ -53,6 +45,13 @@ builder.Services.AddWebOptimizer(opciones => {
 
 #endregion
 
+//builder.Services.AddServerSideBlazor();
+
+//builder.Services.AddAntiforgery(options =>
+//{  
+//	options.Cookie.Expiration = TimeSpan.FromDays(30);
+//});
+
 builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
 {
 	opciones.DetailedErrors = true;
@@ -66,16 +65,16 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddAuthentication(opciones =>
 {
 	opciones.DefaultScheme = IdentityConstants.ApplicationScheme;
-	opciones.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-})
-	.AddIdentityCookies();
+	opciones.DefaultSignInScheme = IdentityConstants.BearerScheme;
+	opciones.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+}).AddIdentityCookies();
 
 builder.Services.AddAuthorization();
 
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContextPool<pepeizqs_deals_webContext>(opciones => {
+builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones => {
 	opciones.UseSqlServer(conexionTexto, opciones2 =>
 	{
 		opciones2.CommandTimeout(30);
@@ -84,17 +83,17 @@ builder.Services.AddDbContextPool<pepeizqs_deals_webContext>(opciones => {
 	opciones.EnableDetailedErrors();
 });
 
-builder.Services.ConfigureApplicationCookie(opciones =>
-{
-	opciones.AccessDeniedPath = "/";
-	opciones.Cookie.Name = "cookiePepeizq";
-	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
-	opciones.LoginPath = "/account/login";
-	opciones.LogoutPath = "/account/logout";
-	opciones.SlidingExpiration = true;
-	opciones.Cookie.HttpOnly = true;
-	opciones.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
+//builder.Services.ConfigureApplicationCookie(opciones =>
+//{
+//	opciones.AccessDeniedPath = "/";
+//	opciones.Cookie.Name = "cookiePepeizq";
+//	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
+//	opciones.LoginPath = "/account/login";
+//	opciones.LogoutPath = "/account/logout";
+//	opciones.SlidingExpiration = true;
+//	opciones.Cookie.HttpOnly = true;
+//	opciones.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -153,6 +152,7 @@ builder.Services.AddSingleton<Tareas.Tiendas.Ubisoft>();
 builder.Services.AddSingleton<Tareas.Tiendas.Playsum>();
 //builder.Services.AddSingleton<Tareas.Tiendas.Allyouplay>();
 builder.Services.AddSingleton<Tareas.Tiendas.PlanetPlay>();
+builder.Services.AddSingleton<Tareas.Tiendas.Nexus>();
 
 //builder.Services.AddSingleton<Tareas.Suscripciones.EAPlay>();
 builder.Services.AddSingleton<Tareas.Suscripciones.XboxGamePass>();
@@ -198,6 +198,7 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Playsum>());
 //builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Allyouplay>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.PlanetPlay>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Nexus>());
 
 //builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.EAPlay>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.XboxGamePass>());
@@ -351,6 +352,9 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseAntiforgery();
 

@@ -1,5 +1,7 @@
 ﻿@page "/account/register"
 
+@rendermode InteractiveServer
+
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
@@ -22,35 +24,49 @@
     <PageTitle>@titulo</PageTitle>
 </HeadContent>
 
-<h1>Register</h1>
-
 <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
-    <div class="col-lg-6">
-        <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="Input.Email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.Password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.ConfirmPassword">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </EditForm>
-    </div>
+    @if (string.IsNullOrEmpty(mensajeError) == false)
+    {
+        <div style="margin-bottom: 20px; background-color: var(--fondoPeligro); padding: 15px 20px;">
+            @mensajeError
+        </div>
+    }
+
+    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegistrarUsuario" FormName="register">
+        <DataAnnotationsValidator />
+        <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Register")</div>
+        <hr />
+        <ValidationSummary class="texto-peligro-entrada" role="alert" />
+        <div style="margin-bottom: 20px;">
+            <label for="Input.Email" class="texto-info-entrada">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Register")
+            </label>
+
+            <InputText @bind-Value="Input.Email" id="Input.Email" class="entrada-texto" autocomplete="username" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Register")" />
+            <ValidationMessage For="() => Input.Email" class="texto-peligro-entrada" />
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="Input.Password" class="texto-info-entrada">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Register")
+            </label>
+            <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
+            <ValidationMessage For="() => Input.Password" class="texto-peligro-entrada" />
+        </div>
+        <div style="margin-bottom: 30px;">
+            <label for="Input.ConfirmPassword" class="texto-info-entrada">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Register")
+            </label>
+            <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
+            <ValidationMessage For="() => Input.ConfirmPassword" class="texto-peligro-entrada" />
+        </div>
+
+        <button type="submit" class="boton-pequeño" style="text-align: center; font-size: 20px; padding: 15px 20px;">
+            @Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Register")
+        </button>
+    </EditForm>
 </div>
+
+<Accesos idioma="@idioma" mostrarRegistro="false" />
 
 @code {
 
@@ -66,16 +82,16 @@
     [SupplyParameterFromQuery]
     private string ReturnUrl { get; set; }
 
-    private string Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private string mensajeError => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
     protected override void OnInitialized()
     {
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
     }
 
-    public async Task RegisterUser(EditContext editContext)
+    public async Task RegistrarUsuario(EditContext editContext)
     {
-        var user = CreateUser();
+        var user = CrearUsuario();
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -97,7 +113,7 @@
 
         await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
-        if (UserManager.Options.SignIn.RequireConfirmedAccount)
+        if (UserManager.Options.SignIn.RequireConfirmedAccount == true)
         {
             NavManager.NavigateTo("/account");
         }
@@ -106,7 +122,7 @@
         NavManager.NavigateTo(ReturnUrl);
     }
 
-    private Usuario CreateUser()
+    private Usuario CrearUsuario()
     {
         try
         {

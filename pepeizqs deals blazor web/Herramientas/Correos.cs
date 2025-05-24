@@ -18,7 +18,7 @@ namespace Herramientas
 			try
 			{
                 string titulo = noticia.TituloEn;
-                string enlace = "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
+                string enlace = "https://pepeizqdeals.com/link/news/" + noticia.Id.ToString() + "/";
 				string contenido = noticia.ContenidoEn;
 
 				if (string.IsNullOrEmpty(idioma) == false)
@@ -26,7 +26,6 @@ namespace Herramientas
 					if (Herramientas.Idiomas.ComprobarIdiomaUso("es", idioma) == true)
 					{
 						titulo = noticia.TituloEs;
-                        enlace = "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
 						contenido = noticia.ContenidoEs;
 					}
 				}

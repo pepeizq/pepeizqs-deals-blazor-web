@@ -134,6 +134,41 @@ namespace BaseDatos.Noticias
 			return null;
 		}
 
+		public static string UnaNoticiaEnlace(int id, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string busqueda = "SELECT enlace FROM noticias WHERE id=@id";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				comando.Parameters.AddWithValue("@id", id);
+
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							return lector.GetString(0);
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
 		public static Noticia Ultimo(SqlConnection conexion = null)
 		{
 			if (conexion == null)

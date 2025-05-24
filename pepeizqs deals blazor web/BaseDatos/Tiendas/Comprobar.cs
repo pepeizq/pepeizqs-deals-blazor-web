@@ -229,7 +229,7 @@ namespace BaseDatos.Tiendas
 							}
 							catch (Exception ex)
 							{
-								BaseDatos.Errores.Insertar.Mensaje("API Steam", ex);
+								BaseDatos.Errores.Insertar.Mensaje("API Steam " + juego.IdSteam.ToString(), ex);
 							}
 
 							if (nuevoJuego != null)

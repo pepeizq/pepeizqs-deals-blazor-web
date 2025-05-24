@@ -776,6 +776,8 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
     private void ClickearBundleNoticias(MouseEventArgs e, int bundleId)
     {
         noticia = Plantillas.Bundles(bundleId);
+
+        noticia.Enlace = BaseDatos.Bundles.Buscar.UnBundle(bundleId).Enlace;
     }
 
     private void CambiarGratisNoticias(ChangeEventArgs texto)
@@ -786,6 +788,18 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
     private void ClickearGratisJuegoNoticias(MouseEventArgs e, int juegoId, int id)
     {
         noticia = Plantillas.Gratis(noticia, juegoId, id, gratisSeleccionadoNoticias);
+
+        if (string.IsNullOrEmpty(noticia.GratisIds) == false)
+        {
+            List<string> cantidadIds = new List<string>();
+            string[] datosPartidos = noticia.GratisIds.Split(',');
+            cantidadIds.AddRange(datosPartidos);
+
+            if (cantidadIds.Count == 1)
+            {
+                noticia.Enlace = BaseDatos.Gratis.Buscar.UnGratis(cantidadIds[0]).Enlace;
+            }
+        }
     }
 
     private void CambiarSuscripcion(ChangeEventArgs texto)

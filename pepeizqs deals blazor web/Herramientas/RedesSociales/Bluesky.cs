@@ -19,20 +19,13 @@ namespace Herramientas.RedesSociales
 				
 				string enlace = string.Empty;
 
-				if (string.IsNullOrEmpty(noticia.Enlace) == false)
+				if (noticia.Id == 0)
 				{
-					enlace = noticia.Enlace;
+					enlace = "/link/news/" + noticia.IdMaestra.ToString() + "/";
 				}
 				else
 				{
-					if (noticia.Id == 0)
-					{
-						enlace = "/news/" + noticia.IdMaestra.ToString() + "/";
-					}
-					else
-					{
-						enlace = "/news/" + noticia.Id.ToString() + "/";
-					}
+					enlace = "/link/news/" + noticia.Id.ToString() + "/";
 				}
 
 				if (string.IsNullOrEmpty(enlace) == false)

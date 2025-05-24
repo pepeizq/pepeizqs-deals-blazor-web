@@ -35,7 +35,8 @@ namespace Tiendas2
 				APIs.Ubisoft.Tienda.Generar(),
 				APIs.Playsum.Tienda.Generar(),
 				APIs.PlanetPlay.Tienda.Generar(),
-				APIs.EA.Tienda.Generar()
+				APIs.EA.Tienda.Generar(),
+				APIs.Nexus.Tienda.Generar()
 			};
 
 			return tiendas;
@@ -147,6 +148,10 @@ namespace Tiendas2
 				{
 					await APIs.PlanetPlay.Tienda.BuscarOfertas(conexion, decompilador);
 				}
+				else if (id == APIs.Nexus.Tienda.Generar().Id)
+				{
+					await APIs.Nexus.Tienda.BuscarOfertas(conexion, decompilador);
+				}
 			}
         }
 
@@ -251,6 +256,10 @@ namespace Tiendas2
 			else if (id == APIs.PlanetPlay.Tienda.Generar().Id)
 			{
 				await APIs.PlanetPlay.Tienda.BuscarOfertas(conexion, decompilador);
+			}
+			else if (id == APIs.Nexus.Tienda.Generar().Id)
+			{
+				await APIs.Nexus.Tienda.BuscarOfertas(conexion, decompilador);
 			}
 		}
     }

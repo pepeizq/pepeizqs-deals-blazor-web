@@ -32,10 +32,21 @@ namespace Herramientas
 
 				try
 				{
+					string enlace = string.Empty;
+
+					if (noticia.Id == 0)
+					{
+						enlace = "/link/news/" + noticia.IdMaestra.ToString() + "/";
+					}
+					else
+					{
+						enlace = "/link/news/" + noticia.Id.ToString() + "/";
+					}
+
 					var payload = JsonSerializer.Serialize(new
 					{
 						message = titulo,
-						url = $"/news/{noticia.Id.ToString()}/"
+						url = enlace
 					});
 
 					await webPushCliente.SendNotificationAsync(suscripcion, payload, vapidDetalles);

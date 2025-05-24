@@ -8,18 +8,9 @@
 
 @inject UserManager<Usuario> UserManager
 @inject SignInManager<Usuario> SignInManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 @inject NavigationManager NavManager
-
-<style>
-    .caja-diseño {
-        background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-        border: 2px solid var(--fondoOscuro);
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-        border-radius: 5px;
-    }
-</style>
 
 <div class="caja-diseño" style="padding: 40px;">
     <div style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "PersonalData1", "Account")</div>
@@ -86,7 +77,7 @@
 
     protected override async void OnInitialized()
     {
-        usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 
         enseñarAvisoBorrado1 = false;
         enseñarAvisoBorrado2 = false;

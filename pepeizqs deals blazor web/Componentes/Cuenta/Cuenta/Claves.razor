@@ -4,16 +4,7 @@
 @using pepeizqs_deals_web.Data;
 
 @inject UserManager<Usuario> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
-
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
+@inject IHttpContextAccessor Contexto
 
 <div class="caja-diseño" style="padding: 40px;">
 	@if (usuario.EmailConfirmed == true)
@@ -66,6 +57,6 @@
 
 	protected override async void OnInitialized()
 	{
-		usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+		usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 	}
 }

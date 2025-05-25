@@ -1,10 +1,8 @@
-﻿@using pepeizqs_deals_blazor_web.Componentes.Account.Shared
-
-<Router AppAssembly="typeof(Program).Assembly">
+﻿<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout)">
             <NotAuthorized>
-                <RedirectToLogin />
+                <pepeizqs_deals_blazor_web.Componentes.Cuenta.RedireccionLogin />
             </NotAuthorized>
         </AuthorizeRouteView>
         @* <FocusOnNavigate RouteData="routeData" Selector="h1" /> *@

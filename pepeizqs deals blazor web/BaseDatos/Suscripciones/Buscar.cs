@@ -264,6 +264,38 @@ namespace BaseDatos.Suscripciones
 			return null;
 		}
 
+		public static JuegoSuscripcion UnJuegoId(int id, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string busqueda = "SELECT * FROM suscripciones WHERE id=@id";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				comando.Parameters.AddWithValue("@id", id);
+
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						return Cargar(lector);
+					}
+				}
+			}
+
+			return null;
+		}
+
 		public static List<JuegoSuscripcion> Ultimos(string cantidad)
 		{
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();

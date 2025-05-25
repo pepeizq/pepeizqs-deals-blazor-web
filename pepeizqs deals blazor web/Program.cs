@@ -40,17 +40,10 @@ builder.Services.AddWebOptimizer(opciones => {
 
 	}, "lib/bootstrap/dist/css/bootstrap.min.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css", "lib/font-awesome/css/all.css");
 
-	opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
+	//opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
 });
 
 #endregion
-
-//builder.Services.AddServerSideBlazor();
-
-//builder.Services.AddAntiforgery(options =>
-//{  
-//	options.Cookie.Expiration = TimeSpan.FromDays(30);
-//});
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
 {
@@ -65,12 +58,8 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddAuthentication(opciones =>
 {
 	opciones.DefaultScheme = IdentityConstants.ApplicationScheme;
-	opciones.DefaultSignInScheme = IdentityConstants.BearerScheme;
-	opciones.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+	opciones.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 }).AddIdentityCookies();
-
-builder.Services.AddAuthorization();
-
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -352,9 +341,6 @@ else
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-//app.UseAuthorization();
 
 app.UseAntiforgery();
 

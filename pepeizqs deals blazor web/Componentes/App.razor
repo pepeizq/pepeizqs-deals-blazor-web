@@ -142,23 +142,12 @@
     private string enlace = null;
     private string codigoFuente = null;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         if (HttpContext != null)
         {
-            Usuario usuario = await UserManager.GetUserAsync(HttpContext.User);
-
-            if (usuario != null)
-            {
-                idioma = usuario.Language;
-                usuarioId = usuario.Id;
-            }
-            else
-            {
-                idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-                usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-            }
-
+            idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+            usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             enlace = HttpContext.Request.Path.ToString();
         }
 
@@ -169,5 +158,16 @@
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (primerRender == true)
+        {
+            if (HttpContext != null)
+            {
+                usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+            }
+        }
     }
 }

@@ -319,7 +319,7 @@ namespace APIs.Steam
 												descuento = int.Parse(temp12.Trim());
 											}
 
-											if (descuento >= 0)
+											if (descuento > 0)
 											{
 												int int13 = temp4.IndexOf(Strings.ChrW(34) + "discount_final_price" + Strings.ChrW(34));
 												string temp13 = temp4.Remove(0, int13);

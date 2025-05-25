@@ -810,6 +810,29 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
     private void ClickearSuscripcionJuego(MouseEventArgs e, int juegoId, int id)
     {
         noticia = Plantillas.Suscripciones(noticia, juegoId, id, suscripcionSeleccionadaNoticias);
+
+         if (string.IsNullOrEmpty(noticia.SuscripcionesIds) == false)
+        {
+            List<string> cantidadIds = new List<string>();
+            string[] datosPartidos = noticia.SuscripcionesIds.Split(',');
+            cantidadIds.AddRange(datosPartidos);
+
+            if (cantidadIds.Count > 0)
+            {
+                string enlace = BaseDatos.Suscripciones.Buscar.UnJuegoId(int.Parse(cantidadIds[0])).Enlace;
+
+                foreach (var id2 in cantidadIds)
+                {
+                    if (BaseDatos.Suscripciones.Buscar.UnJuegoId(int.Parse(id2)).Enlace != enlace)
+                    {
+                        enlace = string.Empty;
+                        break;
+                    }
+                }
+
+                noticia.Enlace = enlace;
+            }
+        }
     }
 
     #region Editor

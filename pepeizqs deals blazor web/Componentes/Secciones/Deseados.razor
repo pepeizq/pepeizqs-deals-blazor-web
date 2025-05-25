@@ -1,5 +1,7 @@
 ﻿@page "/wishlist/{otroUsuario?}"
 
+@attribute [StreamRendering]
+
 @using APIs.Steam
 @using Juegos
 @using Microsoft.AspNetCore.Components.Web
@@ -1082,7 +1084,6 @@
 												precioReferencia = tempPrecio;
 												precioFinal = actual;
 												precioFinal.Precio = precioReferencia;
-												break;
 											}
 										}
 									}

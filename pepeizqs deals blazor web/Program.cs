@@ -1,5 +1,6 @@
 using ApexCharts;
 using Herramientas;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
@@ -10,6 +11,7 @@ using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_web.Data;
 using System.Globalization;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,7 +42,7 @@ builder.Services.AddWebOptimizer(opciones => {
 
 	}, "lib/bootstrap/dist/css/bootstrap.min.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css", "lib/font-awesome/css/all.css");
 
-	//opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
+	opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
 });
 
 #endregion
@@ -63,7 +65,7 @@ builder.Services.AddAuthentication(opciones =>
 
 var conexionTexto = builder.Configuration.GetConnectionString("pepeizqs_deals_webContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones => {
+builder.Services.AddDbContextPool<pepeizqs_deals_webContext>(opciones => {
 	opciones.UseSqlServer(conexionTexto, opciones2 =>
 	{
 		opciones2.CommandTimeout(30);
@@ -72,17 +74,18 @@ builder.Services.AddDbContext<pepeizqs_deals_webContext>(opciones => {
 	opciones.EnableDetailedErrors();
 });
 
-//builder.Services.ConfigureApplicationCookie(opciones =>
-//{
-//	opciones.AccessDeniedPath = "/";
-//	opciones.Cookie.Name = "cookiePepeizq";
-//	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
-//	opciones.LoginPath = "/account/login";
-//	opciones.LogoutPath = "/account/logout";
-//	opciones.SlidingExpiration = true;
-//	opciones.Cookie.HttpOnly = true;
-//	opciones.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//});
+builder.Services.ConfigureApplicationCookie(opciones =>
+{
+	opciones.AccessDeniedPath = "/";
+	opciones.Cookie.Name = "cookiePepeizq";
+	opciones.ExpireTimeSpan = TimeSpan.FromDays(30);
+	opciones.LoginPath = "/account/login";
+	opciones.LogoutPath = "/account/logout";
+	opciones.SlidingExpiration = true;
+	opciones.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
+builder.Services.AddDataProtection().PersistKeysToDbContext<pepeizqs_deals_webContext>().SetDefaultKeyLifetime(TimeSpan.FromDays(30));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -320,6 +323,10 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(opciones => opcio
 builder.Services.AddControllers(opciones =>
 {
 	opciones.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+}).AddJsonOptions(opciones2 =>
+{
+	opciones2.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+
 });
 builder.Services.AddHttpContextAccessor();
 

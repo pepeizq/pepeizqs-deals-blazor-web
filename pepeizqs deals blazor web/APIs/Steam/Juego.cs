@@ -701,9 +701,9 @@ namespace APIs.Steam
 			return null;
 		}
 
-		public static async Task<SteamDeckAPI> CargarDatosDeck(int id2)
+		public static async Task<SteamDeckAPI> CargarDatosDeck(int juegoId, int steamId)
 		{
-			string id = id2.ToString();
+			string id = steamId.ToString();
 
 			if (string.IsNullOrEmpty(id) == false)
 			{
@@ -719,7 +719,7 @@ namespace APIs.Steam
 					}
 					catch (Exception ex)
 					{
-						BaseDatos.Errores.Insertar.Mensaje("Deck API", ex);
+						BaseDatos.Errores.Insertar.Mensaje("Deck API " + juegoId.ToString(), ex);
 					}
 					
 					if (api != null)

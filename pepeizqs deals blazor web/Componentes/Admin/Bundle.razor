@@ -114,7 +114,7 @@
 
 	public Bundles2.Bundle bundle = new Bundles2.Bundle();
 
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
 		bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
 

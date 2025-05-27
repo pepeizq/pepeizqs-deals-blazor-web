@@ -212,7 +212,7 @@
             </div>
         </button>
 
-        <input type="text" @oninput="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="min-width: 50px; max-width: 400px; margin: 0 1px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
+        <input type="text" @oninput="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="min-width: 50px; max-width: 400px; margin: 0 1px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")"/>
 
         @if (encontroAlgo == true)
         {
@@ -249,7 +249,7 @@
                                     string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
                                 }
                                  
-                                <button @onclick="(e => AbrirEnlace(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+                                <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
                                     <div class="perfil-flexible-centrado">
                                         <div>
                                             <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, ancho, alto)" style="@imagen" />
@@ -265,7 +265,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </button>
+                                </a>
                             </div>
                         </ItemContent>
                     </Virtualize>
@@ -400,6 +400,8 @@
 
         if (cadenaBusqueda.Trim().Length > 3)
         {
+            resultadosMostrar.Clear();
+
             if (conexion == null)
             {
                 conexion = Herramientas.BaseDatos.Conectar();
@@ -432,10 +434,12 @@
         }
     }
 
-    private void AbrirEnlace(MouseEventArgs e, string enlace)
+    private void LimpiarBusqueda(MouseEventArgs e)
 	{
         cadenaBusqueda = string.Empty;
-        NavManager.NavigateTo(enlace, true);
+        resultadosMostrar.Clear();
+        encontroAlgo = false;
+        enseñarBuscador = false;
 	}
 
     #endregion

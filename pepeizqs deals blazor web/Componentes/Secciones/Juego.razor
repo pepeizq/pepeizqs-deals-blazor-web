@@ -1,4 +1,7 @@
-﻿@page "/game/{juegoId:int}/{juegoNombre?}/"
+﻿@page "/game/{juegoId:int}/"
+@page "/game/{juegoId:int}/{juegoNombre?}/"
+
+@attribute [StreamRendering]
 
 @using ApexCharts
 @using Bundles2
@@ -698,7 +701,7 @@
                             {
                                 string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
                                
-                                <button @onclick="(e => AbrirEnlace(e, enlaceMaestro))" style="text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
+                                <a href="@enlaceMaestro" style="text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
                                     <div class="boton-expandir" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: color-mix(in srgb, var(--fondoOscuro), var(--fondoDlc) 70%); color: var(--colorTextoDlc); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
                                         <div style="max-width: 26px; opacity: 0.5;">
                                             <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -710,7 +713,7 @@
                                             @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), juegoMaestro.Nombre)
                                         </div>
                                     </div>
-                                </button>
+                                </a>
                             }
                         }
                     }
@@ -2864,7 +2867,7 @@
                                     string enlaceDLC = "/game/" + dlc.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(dlc.Nombre) + "/";
                                 }
 
-                                <button @onclick="(e => AbrirEnlace(e, enlaceDLC))" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
+                                <a href="@enlaceDLC" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
                                     <div class="boton-expandir" style="background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoDlc) 30%); display: flex; align-items: center; gap: 20px;">
                                         <div>
                                             <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(dlc.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@dlc.Nombre" loading="lazy" />
@@ -2875,7 +2878,7 @@
                                             <div style="margin-top: 10px; font-size: 14px;">@PrecioMinimoActual(dlc, idioma)</div>
                                         </div>
                                     </div>
-                                </button>
+                                </a>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -3421,8 +3424,6 @@
 
     protected override void OnInitialized()
     {
-        NavManager.LocationChanged += OnLocationChanged;
-
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
         usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
         userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
@@ -3436,19 +3437,158 @@
             deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
             usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
-            
+
             string idiomaJuegoTemp = BaseDatos.Usuarios.Buscar.IdiomaJuegos(usuarioId);
 
             if (string.IsNullOrEmpty(idiomaJuegoTemp) == false)
             {
                 idiomaJuego = idiomaJuegoTemp;
             }
-        }
+        }      
+    }
 
+    protected override async Task OnParametersSetAsync()
+    {
         juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
+
+        mediaMostrar = null;
+        mediaMostrarPosicion = 0;
 
         if (juego != null)
         {
+            dlcs = global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
+
+            if (juego.Tipo == JuegoTipo.Game)
+            {
+                drmsGeforceNOW = global::BaseDatos.Streaming.Buscar.GeforceNOWDRMs(juego.Id);
+            }
+
+            if (juego.IdSteam > 0)
+            {
+                #region API
+
+                bool actualizarDatosAPI = false;
+
+                if (juego.FechaSteamAPIComprobacion + TimeSpan.FromDays(60) < DateTime.Now)
+                {
+                    actualizarDatosAPI = true;
+                }
+
+                if (juego.Categorias == null)
+                {
+                    actualizarDatosAPI = true;
+
+                    if (juego.Tipo == JuegoTipo.Music)
+                    {
+                        actualizarDatosAPI = false;
+                    }
+                }
+
+                if (juego.Media != null)
+                {
+                    if (juego.Media.Capturas2 == null)
+                    {
+                        actualizarDatosAPI = true;
+                    }                        
+                }
+
+                if (actualizarDatosAPI == true)
+                {
+                    global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
+
+                    if (nuevoJuego != null)
+                    {
+                        global::BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
+                    }
+                }
+
+                #endregion
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    #region Cantidad Jugadores
+
+                    bool actualizarCantidadJugadores = false;
+
+                    if (juego.CantidadJugadores == null)
+                    {
+                        actualizarCantidadJugadores = true;
+                    }
+                    else
+                    {
+                        if (juego.CantidadJugadores.Fecha.AddMinutes(5) < DateTime.Now)
+                        {
+                            actualizarCantidadJugadores = true;
+                        }
+                    }
+
+                    if (actualizarCantidadJugadores == true)
+                    {
+                        JuegoCantidadJugadoresSteam cantidadNueva = new JuegoCantidadJugadoresSteam();
+                        cantidadNueva.Cantidad = await APIs.Steam.Juego.CargarCantidadJugadores(juego.IdSteam.ToString());
+                        cantidadNueva.Fecha = DateTime.Now;
+
+                        juego.CantidadJugadores = cantidadNueva;
+
+                        global::BaseDatos.Juegos.Actualizar.CantidadJugadoresSteam(juego);
+                    }
+
+                    #endregion
+                }
+
+                #region Reseñas
+
+                if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+                {
+                    string idiomaSteam = "english";
+
+                    if (string.IsNullOrEmpty(idioma) == false)
+                    {
+                        foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
+                        {
+                            if (idioma2.SteamReseñas == true)
+                            {
+                                if (idioma2.Id.ToLower() == idioma.ToLower())
+                                {
+                                    idiomaSteam = idioma2.SteamAPI;
+                                }
+
+                                foreach (var codigo in idioma2.Codigos)
+                                {
+                                    if (codigo.ToLower() == idioma.ToLower())
+                                    {
+                                        idiomaSteam = idioma2.SteamAPI;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    idiomaAnalisis = idiomaSteam;
+
+                    if (global::BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
+                    {
+                        APIs.Steam.SteamAnalisisAPI analisis = await APIs.Steam.Juego.CargarDatosAnalisis(juego.IdSteam, idiomaSteam);
+
+                        if (analisis != null)
+                        {
+                            if (analisis.Analisis != null)
+                            {
+                                global::BaseDatos.Analisis.Insertar.Ejecutar(juego.Id, analisis.Sumario.TotalPositivas, analisis.Sumario.TotalNegativas, idiomaSteam, JsonSerializer.Serialize(analisis.Analisis));
+
+                                analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
+                    }
+                }
+
+                #endregion
+            }
+
             if (juego.Media != null)
             {
                 if (juego.Media.Videos != null)
@@ -3495,39 +3635,411 @@
                 }
             }	
 
+            if (juego.IdGog > 0)
+            {
+                if (juego.GalaxyGOG == null)
+                {
+                    juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
+                    juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
+
+                    global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+                }
+                else
+                {
+                    if (juego.GalaxyGOG.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
+                    {
+                        juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
+                        juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
+
+                        global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(juego.SlugEpic) == false)
+            {
+                if (juego.EpicGames == null)
+                {
+                    juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
+                    juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
+
+                    global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
+                }
+                else
+                {
+                    if (juego.EpicGames.Fecha + TimeSpan.FromDays(240) < DateTime.Now)
+                    {
+                        juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
+                        juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
+
+                        global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(juego.IdXbox) == false)
+            {
+                if (juego.Xbox == null)
+                {
+                    juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
+                    juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
+
+                    global::BaseDatos.Juegos.Actualizar.Xbox(juego);
+                }
+                else
+                {
+                    if (juego.Xbox.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
+                    {
+                        juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
+                        juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
+
+                        global::BaseDatos.Juegos.Actualizar.Xbox(juego);
+                    }
+                }
+            }
+
+            List<string> curatorsBuscar = new List<string>();
+
+            if (juego.Caracteristicas != null)
+            {
+                if (juego.Caracteristicas.Desarrolladores2 != null)
+                {
+                    if (juego.Caracteristicas.Desarrolladores2.Count > 0)
+                    {
+                        foreach (var desarrollador in juego.Caracteristicas.Desarrolladores2)
+                        {
+                            if (desarrollador.Id > 0)
+                            {
+                                bool añadir = true;
+
+                                if (curatorsBuscar.Count > 0)
+                                {
+                                    foreach (var curator in curatorsBuscar)
+                                    {
+                                        if (curator == desarrollador.Id.ToString())
+                                        {
+                                            añadir = false;
+                                            break;
+                                        }                                            
+                                    }
+                                }
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(desarrollador.Id.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Caracteristicas.Editores2 != null)
+                {
+                    if (juego.Caracteristicas.Editores2.Count > 0)
+                    {
+                        foreach (var editor in juego.Caracteristicas.Editores2)
+                        {
+                            if (editor.Id > 0)
+                            {
+                                bool añadir = true;
+
+                                if (curatorsBuscar.Count > 0)
+                                {
+                                    foreach (var curator in curatorsBuscar)
+                                    {
+                                        if (curator == editor.Id.ToString())
+                                        {
+                                            añadir = false;
+                                            break;
+                                        }                                            
+                                    }
+                                }
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(editor.Id.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Caracteristicas.Franquicias != null)
+                {
+                    if (juego.Caracteristicas.Franquicias.Count > 0)
+                    {
+                        foreach (var franquicia in juego.Caracteristicas.Franquicias)
+                        {
+                            if (franquicia.Id > 0)
+                            {
+                                bool añadir = true;
+
+                                if (curatorsBuscar.Count > 0)
+                                {
+                                    foreach (var curator in curatorsBuscar)
+                                    {
+                                        if (curator == franquicia.Id.ToString())
+                                        {
+                                            añadir = false;
+                                            break;
+                                        }                                            
+                                    }
+                                }
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(franquicia.Id.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (curatorsBuscar != null)
+            {
+                if (curatorsBuscar.Count > 0)
+                {
+                    curators.Clear();
+
+                    foreach (var curator in curatorsBuscar)
+                    {
+                        if (string.IsNullOrEmpty(curator) == false)
+                        {
+                            global::BaseDatos.Curators.Curator curator2 = global::BaseDatos.Curators.Buscar.Uno(int.Parse(curator));
+
+                            if (curator2 == null)
+                            {
+                                global::BaseDatos.Curators.Insertar.Ejecutar(await APIs.Steam.Curator.Extraer(curator));
+                            }
+                            else
+                            {
+                                if (curator2.Fecha == null)
+                                {
+                                    global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
+                                }
+                                else
+                                {
+                                    if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
+                                    {
+                                        global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
+                                    }
+                                }
+
+                                global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
+                                ficha.Curator = curator2;
+                                ficha.Posicion = 0;
+
+                                curators.Add(ficha);
+                            }
+                        }
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(usuarioId) == false)
             {
-                if (usuarioTieneDesea.Count == 0)
+                usuarioTieneDesea = new List<JuegoRazorUsuario>();
+
+                foreach (DRM drm in JuegoDRM2.GenerarListado())
                 {
-                    usuarioTieneDesea = new List<JuegoRazorUsuario>();
-
-                    foreach (DRM drm in JuegoDRM2.GenerarListado())
+                    if (drm.Id != JuegoDRM.NoEspecificado)
                     {
-                        if (drm.Id != JuegoDRM.NoEspecificado)
+                        if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
                         {
-                            if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+                            bool usuarioTieneDRM = false;
+
+                            if (drm.Id == JuegoDRM.Steam && juego.IdSteam > 0)
                             {
-                                bool usuarioTieneDRM = false;
+                                List<string> juegosSteam = juegosUsuario.Steam;
 
-                                if (drm.Id == JuegoDRM.Steam && juego.IdSteam > 0)
+                                if (juegosSteam != null)
                                 {
-                                    List<string> juegosSteam = juegosUsuario.Steam;
-
-                                    if (juegosSteam != null)
+                                    if (juegosSteam.Count > 0)
                                     {
-                                        if (juegosSteam.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Steam)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Steam)
+                                            foreach (var juegoUsuario in juegosSteam)
                                             {
-                                                foreach (var juegoUsuario in juegosSteam)
+                                                if (juegoUsuario == juego.IdSteam.ToString())
                                                 {
-                                                    if (juegoUsuario == juego.IdSteam.ToString())
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Steam;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (drm.Id == JuegoDRM.GOG && juego.IdGog > 0)
+                            {
+                                List<string> juegosGog = juegosUsuario.Gog;
+
+                                if (juegosGog != null)
+                                {
+                                    if (juegosGog.Count > 0)
+                                    {
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.GOG)
+                                        {
+                                            foreach (var juegoUsuario in juegosGog)
+                                            {
+                                                if (juegoUsuario == juego.IdGog.ToString())
+                                                {
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.GOG;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (drm.Id == JuegoDRM.Amazon && string.IsNullOrEmpty(juego.IdAmazon) == false)
+                            {
+                                List<string> juegosAmazon = juegosUsuario.Amazon;
+
+                                if (juegosAmazon != null)
+                                {
+                                    if (juegosAmazon.Count > 0)
+                                    {
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Amazon)
+                                        {
+                                            foreach (var juegoUsuario in juegosAmazon)
+                                            {
+                                                if (juegoUsuario == juego.IdAmazon.ToString())
+                                                {
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Amazon;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (drm.Id == JuegoDRM.Epic && string.IsNullOrEmpty(juego.ExeEpic) == false)
+                            {
+                                List<string> juegosEpic = juegosUsuario.Epic;
+
+                                if (juegosEpic != null)
+                                {
+                                    if (juegosEpic.Count > 0)
+                                    {
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Epic)
+                                        {
+                                            foreach (var juegoUsuario in juegosEpic)
+                                            {
+                                                if (juegoUsuario == juego.ExeEpic)
+                                                {
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Epic;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (drm.Id == JuegoDRM.Ubisoft && string.IsNullOrEmpty(juego.ExeUbisoft) == false)
+                            {
+                                List<string> juegosUbisoft = juegosUsuario.Ubisoft;
+
+                                if (juegosUbisoft != null)
+                                {
+                                    if (juegosUbisoft.Count > 0)
+                                    {
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Ubisoft)
+                                        {
+                                            foreach (var juegoUsuario in juegosUbisoft)
+                                            {
+                                                if (juegoUsuario == juego.ExeUbisoft)
+                                                {
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Ubisoft;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (drm.Id == JuegoDRM.EA && string.IsNullOrEmpty(juego.ExeEA) == false)
+                            {
+                                List<string> juegosEa = juegosUsuario.Ea;
+
+                                if (juegosEa != null)
+                                {
+                                    if (juegosEa.Count > 0)
+                                    {
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.EA)
+                                        {
+                                            foreach (var juegoUsuario in juegosEa)
+                                            {
+                                                if (juegoUsuario == juego.ExeEA)
+                                                {
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.EA;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (usuarioTieneDRM == false)
+                            {
+                                bool usuarioDeseaDRM = false;
+
+                                if (drm.Id == JuegoDRM.Steam)
+                                {
+                                    if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
+                                    {
+                                        List<string> deseadosSteam = Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
+
+                                        if (deseadosSteam.Count > 0)
+                                        {
+                                            foreach (var deseado in deseadosSteam)
+                                            {
+                                                if (juego.IdSteam > 0)
+                                                {
+                                                    if (juego.IdSteam == int.Parse(deseado) && drm.Id == Juegos.JuegoDRM.Steam)
                                                     {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Steam;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                        JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
+                                                        nuevoDeseadoUsuario.DRM = JuegoDRM.Steam;
+                                                        nuevoDeseadoUsuario.Desea = true;
+                                                        nuevoDeseadoUsuario.ImportadoDesea = true;
+                                                        usuarioTieneDesea.Add(nuevoDeseadoUsuario);
 
                                                         break;
                                                     }
@@ -3537,25 +4049,25 @@
                                     }
                                 }
 
-                                if (drm.Id == JuegoDRM.GOG && juego.IdGog > 0)
+                                if (drm.Id == JuegoDRM.GOG)
                                 {
-                                    List<string> juegosGog = juegosUsuario.Gog;
-
-                                    if (juegosGog != null)
+                                    if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
                                     {
-                                        if (juegosGog.Count > 0)
+                                        List<string> deseadosGog = Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
+
+                                        if (deseadosGog.Count > 0)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.GOG)
+                                            foreach (var deseado in deseadosGog)
                                             {
-                                                foreach (var juegoUsuario in juegosGog)
+                                                if (juego.IdGog > 0)
                                                 {
-                                                    if (juegoUsuario == juego.IdGog.ToString())
+                                                    if (juego.IdGog == int.Parse(deseado) && drm.Id == Juegos.JuegoDRM.GOG)
                                                     {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.GOG;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                        JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
+                                                        nuevoDeseadoUsuario.DRM = JuegoDRM.GOG;
+                                                        nuevoDeseadoUsuario.Desea = true;
+                                                        nuevoDeseadoUsuario.ImportadoDesea = true;
+                                                        usuarioTieneDesea.Add(nuevoDeseadoUsuario);
 
                                                         break;
                                                     }
@@ -3565,189 +4077,16 @@
                                     }
                                 }
 
-                                if (drm.Id == JuegoDRM.Amazon && string.IsNullOrEmpty(juego.IdAmazon) == false)
+                                if (usuarioDeseaDRM == false)
                                 {
-                                    List<string> juegosAmazon = juegosUsuario.Amazon;
+                                    bool deseadoWeb = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario?.Wishlist, juego, drm.Id);
 
-                                    if (juegosAmazon != null)
+                                    if (deseadoWeb == true)
                                     {
-                                        if (juegosAmazon.Count > 0)
-                                        {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Amazon)
-                                            {
-                                                foreach (var juegoUsuario in juegosAmazon)
-                                                {
-                                                    if (juegoUsuario == juego.IdAmazon.ToString())
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Amazon;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
-
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (drm.Id == JuegoDRM.Epic && string.IsNullOrEmpty(juego.ExeEpic) == false)
-                                {
-                                    List<string> juegosEpic = juegosUsuario.Epic;
-
-                                    if (juegosEpic != null)
-                                    {
-                                        if (juegosEpic.Count > 0)
-                                        {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Epic)
-                                            {
-                                                foreach (var juegoUsuario in juegosEpic)
-                                                {
-                                                    if (juegoUsuario == juego.ExeEpic)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Epic;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
-
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (drm.Id == JuegoDRM.Ubisoft && string.IsNullOrEmpty(juego.ExeUbisoft) == false)
-                                {
-                                    List<string> juegosUbisoft = juegosUsuario.Ubisoft;
-
-                                    if (juegosUbisoft != null)
-                                    {
-                                        if (juegosUbisoft.Count > 0)
-                                        {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Ubisoft)
-                                            {
-                                                foreach (var juegoUsuario in juegosUbisoft)
-                                                {
-                                                    if (juegoUsuario == juego.ExeUbisoft)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Ubisoft;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
-
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (drm.Id == JuegoDRM.EA && string.IsNullOrEmpty(juego.ExeEA) == false)
-                                {
-                                    List<string> juegosEa = juegosUsuario.Ea;
-
-                                    if (juegosEa != null)
-                                    {
-                                        if (juegosEa.Count > 0)
-                                        {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.EA)
-                                            {
-                                                foreach (var juegoUsuario in juegosEa)
-                                                {
-                                                    if (juegoUsuario == juego.ExeEA)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.EA;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
-
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (usuarioTieneDRM == false)
-                                {
-                                    bool usuarioDeseaDRM = false;
-
-                                    if (drm.Id == JuegoDRM.Steam)
-                                    {
-                                        if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
-                                        {
-                                            List<string> deseadosSteam = Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
-
-                                            if (deseadosSteam.Count > 0)
-                                            {
-                                                foreach (var deseado in deseadosSteam)
-                                                {
-                                                    if (juego.IdSteam > 0)
-                                                    {
-                                                        if (juego.IdSteam == int.Parse(deseado) && drm.Id == Juegos.JuegoDRM.Steam)
-                                                        {
-                                                            JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
-                                                            nuevoDeseadoUsuario.DRM = JuegoDRM.Steam;
-                                                            nuevoDeseadoUsuario.Desea = true;
-                                                            nuevoDeseadoUsuario.ImportadoDesea = true;
-                                                            usuarioTieneDesea.Add(nuevoDeseadoUsuario);
-
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (drm.Id == JuegoDRM.GOG)
-                                    {
-                                        if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
-                                        {
-                                            List<string> deseadosGog = Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
-
-                                            if (deseadosGog.Count > 0)
-                                            {
-                                                foreach (var deseado in deseadosGog)
-                                                {
-                                                    if (juego.IdGog > 0)
-                                                    {
-                                                        if (juego.IdGog == int.Parse(deseado) && drm.Id == Juegos.JuegoDRM.GOG)
-                                                        {
-                                                            JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
-                                                            nuevoDeseadoUsuario.DRM = JuegoDRM.GOG;
-                                                            nuevoDeseadoUsuario.Desea = true;
-                                                            nuevoDeseadoUsuario.ImportadoDesea = true;
-                                                            usuarioTieneDesea.Add(nuevoDeseadoUsuario);
-
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (usuarioDeseaDRM == false)
-                                    {
-                                        bool deseadoWeb = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario?.Wishlist, juego, drm.Id);
-
-                                        if (deseadoWeb == true)
-                                        {
-                                            JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
-                                            nuevoDeseadoUsuario.DRM = drm.Id;
-                                            nuevoDeseadoUsuario.Desea = true;
-                                            usuarioTieneDesea.Add(nuevoDeseadoUsuario);
-                                        }
+                                        JuegoRazorUsuario nuevoDeseadoUsuario = new JuegoRazorUsuario();
+                                        nuevoDeseadoUsuario.DRM = drm.Id;
+                                        nuevoDeseadoUsuario.Desea = true;
+                                        usuarioTieneDesea.Add(nuevoDeseadoUsuario);
                                     }
                                 }
                             }
@@ -3765,423 +4104,8 @@
             if (juego != null)
             {	
                 await JavaScript.InvokeVoidAsync("ChangeUrl", "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
-
-                dlcs = global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
-
-                if (juego.Tipo == JuegoTipo.Game)
-                {
-                    drmsGeforceNOW = global::BaseDatos.Streaming.Buscar.GeforceNOWDRMs(juego.Id);
-                }
-
-                if (juego.IdSteam > 0)
-                {
-                    #region API
-
-                    bool actualizarDatosAPI = false;
-
-                    if (juego.FechaSteamAPIComprobacion + TimeSpan.FromDays(60) < DateTime.Now)
-                    {
-                        actualizarDatosAPI = true;
-                    }
-
-                    if (juego.Categorias == null)
-                    {
-                        actualizarDatosAPI = true;
-
-                        if (juego.Tipo == JuegoTipo.Music)
-                        {
-                            actualizarDatosAPI = false;
-                        }
-                    }
-
-                    if (juego.Media != null)
-                    {
-                        if (juego.Media.Capturas2 == null)
-                        {
-                            actualizarDatosAPI = true;
-                        }                        
-                    }
-
-                    if (actualizarDatosAPI == true)
-                    {
-                        global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
-
-                        if (nuevoJuego != null)
-                        {
-                            global::BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
-                        }
-                    }
-
-                    #endregion
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        #region Cantidad Jugadores
-
-                        bool actualizarCantidadJugadores = false;
-
-                        if (juego.CantidadJugadores == null)
-                        {
-                            actualizarCantidadJugadores = true;
-                        }
-                        else
-                        {
-                            if (juego.CantidadJugadores.Fecha.AddMinutes(5) < DateTime.Now)
-                            {
-                                actualizarCantidadJugadores = true;
-                            }
-                        }
-
-                        if (actualizarCantidadJugadores == true)
-                        {
-                            JuegoCantidadJugadoresSteam cantidadNueva = new JuegoCantidadJugadoresSteam();
-                            cantidadNueva.Cantidad = await APIs.Steam.Juego.CargarCantidadJugadores(juego.IdSteam.ToString());
-                            cantidadNueva.Fecha = DateTime.Now;
-
-                            juego.CantidadJugadores = cantidadNueva;
-
-                            global::BaseDatos.Juegos.Actualizar.CantidadJugadoresSteam(juego);
-                        }
-
-                        #endregion
-
-                        #region Deck API
-
-                        bool actualizarDeckAPI = false;
-
-                        if (juego.DeckComprobacion == null)
-                        {
-                            actualizarDeckAPI = true;
-                        }
-                        else
-                        {
-                            if (juego.DeckComprobacion + TimeSpan.FromDays(180) < DateTime.Now)
-                            {
-                                actualizarDeckAPI = true;
-                            }
-                        }
-
-                        if (juego.DeckTokens == null)
-                        {
-                            actualizarDeckAPI = true;
-                        }
-
-                        if (actualizarDeckAPI == true)
-                        {
-                            APIs.Steam.SteamDeckAPI deckAPI = await APIs.Steam.Juego.CargarDatosDeck(juego.IdSteam);
-                            bool vacio = true;
-
-                            if (deckAPI != null)
-                            {
-                                if (deckAPI.Datos != null)
-                                {
-                                    if (deckAPI.Datos.Resultado != null)
-                                    {
-                                        juego.Deck = (JuegoDeck)int.Parse(deckAPI.Datos.Resultado.ToString());
-                                        juego.DeckComprobacion = DateTime.Now;
-
-                                        if (deckAPI.Datos.Tokens != null)
-                                        {
-                                            if (deckAPI.Datos.Tokens.Count > 0)
-                                            {
-                                                List<JuegoDeckToken> tokens = new List<JuegoDeckToken>();
-
-                                                foreach (var token in deckAPI.Datos.Tokens)
-                                                {
-                                                    if (string.IsNullOrEmpty(token.Token) == false)
-                                                    {
-                                                        JuegoDeckToken nuevoToken = new JuegoDeckToken();
-                                                        nuevoToken.Tipo = int.Parse(token.Tipo.ToString());
-                                                        nuevoToken.Mensaje = token.Token;
-
-                                                        tokens.Add(nuevoToken);
-                                                    }
-                                                }
-
-                                                juego.DeckTokens = tokens;
-                                            }
-                                        }
-
-                                        vacio = false;
-                                        global::BaseDatos.Juegos.Actualizar.Deck(juego);
-                                    }
-                                }
-                            }
-
-                            if (vacio == true)
-                            {
-                                juego.DeckComprobacion = DateTime.Now;
-                                global::BaseDatos.Juegos.Actualizar.DeckVacio(juego);
-                            }
-                        }
-
-                        #endregion
-                    }
-
-                    #region Reseñas
-
-                    if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
-                    {
-                        string idiomaSteam = "english";
-
-                        if (string.IsNullOrEmpty(idioma) == false)
-                        {
-                            foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
-                            {
-                                if (idioma2.SteamReseñas == true)
-                                {
-                                    if (idioma2.Id.ToLower() == idioma.ToLower())
-                                    {
-                                        idiomaSteam = idioma2.SteamAPI;
-                                    }
-
-                                    foreach (var codigo in idioma2.Codigos)
-                                    {
-                                        if (codigo.ToLower() == idioma.ToLower())
-                                        {
-                                            idiomaSteam = idioma2.SteamAPI;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        idiomaAnalisis = idiomaSteam;
-
-                        if (global::BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
-                        {
-                            APIs.Steam.SteamAnalisisAPI analisis = await APIs.Steam.Juego.CargarDatosAnalisis(juego.IdSteam, idiomaSteam);
-
-                            if (analisis != null)
-                            {
-                                if (analisis.Analisis != null)
-                                {
-                                    global::BaseDatos.Analisis.Insertar.Ejecutar(juego.Id, analisis.Sumario.TotalPositivas, analisis.Sumario.TotalNegativas, idiomaSteam, JsonSerializer.Serialize(analisis.Analisis));
-
-                                    analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
-                        }
-                    }
-
-                    #endregion
-                }
-
-                if (juego.IdGog > 0)
-                {
-                    if (juego.GalaxyGOG == null)
-                    {
-                        juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
-                        juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
-                    }
-                    else
-                    {
-                        if (juego.GalaxyGOG.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
-                        {
-                            juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
-                            juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
-
-                            global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
-                        }
-                    }
-                }
-
-                if (string.IsNullOrEmpty(juego.SlugEpic) == false)
-                {
-                    if (juego.EpicGames == null)
-                    {
-                        juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
-                        juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
-                    }
-                    else
-                    {
-                        if (juego.EpicGames.Fecha + TimeSpan.FromDays(240) < DateTime.Now)
-                        {
-                            juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
-                            juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
-
-                            global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
-                        }
-                    }
-                }
-
-                if (string.IsNullOrEmpty(juego.IdXbox) == false)
-                {
-                    if (juego.Xbox == null)
-                    {
-                        juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
-                        juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.Xbox(juego);
-                    }
-                    else
-                    {
-                        if (juego.Xbox.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
-                        {
-                            juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
-                            juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
-
-                            global::BaseDatos.Juegos.Actualizar.Xbox(juego);
-                        }
-                    }
-                }
-
-                List<string> curatorsBuscar = new List<string>();
-
-                if (juego.Caracteristicas != null)
-                {
-                    if (juego.Caracteristicas.Desarrolladores2 != null)
-                    {
-                        if (juego.Caracteristicas.Desarrolladores2.Count > 0)
-                        {
-                            foreach (var desarrollador in juego.Caracteristicas.Desarrolladores2)
-                            {
-                                if (desarrollador.Id > 0)
-                                {
-                                    bool añadir = true;
-
-                                    if (curatorsBuscar.Count > 0)
-                                    {
-                                        foreach (var curator in curatorsBuscar)
-                                        {
-                                            if (curator == desarrollador.Id.ToString())
-                                            {
-                                                añadir = false;
-                                                break;
-                                            }                                            
-                                        }
-                                    }
-
-                                    if (añadir == true)
-                                    {
-                                        curatorsBuscar.Add(desarrollador.Id.ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (juego.Caracteristicas.Editores2 != null)
-                    {
-                        if (juego.Caracteristicas.Editores2.Count > 0)
-                        {
-                            foreach (var editor in juego.Caracteristicas.Editores2)
-                            {
-                                if (editor.Id > 0)
-                                {
-                                    bool añadir = true;
-
-                                    if (curatorsBuscar.Count > 0)
-                                    {
-                                        foreach (var curator in curatorsBuscar)
-                                        {
-                                            if (curator == editor.Id.ToString())
-                                            {
-                                                añadir = false;
-                                                break;
-                                            }                                            
-                                        }
-                                    }
-
-                                    if (añadir == true)
-                                    {
-                                        curatorsBuscar.Add(editor.Id.ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (juego.Caracteristicas.Franquicias != null)
-                    {
-                        if (juego.Caracteristicas.Franquicias.Count > 0)
-                        {
-                            foreach (var franquicia in juego.Caracteristicas.Franquicias)
-                            {
-                                if (franquicia.Id > 0)
-                                {
-                                    bool añadir = true;
-
-                                    if (curatorsBuscar.Count > 0)
-                                    {
-                                        foreach (var curator in curatorsBuscar)
-                                        {
-                                            if (curator == franquicia.Id.ToString())
-                                            {
-                                                añadir = false;
-                                                break;
-                                            }                                            
-                                        }
-                                    }
-
-                                    if (añadir == true)
-                                    {
-                                        curatorsBuscar.Add(franquicia.Id.ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (curatorsBuscar != null)
-                {
-                    if (curatorsBuscar.Count > 0)
-                    {
-                        foreach (var curator in curatorsBuscar)
-                        {
-                            if (string.IsNullOrEmpty(curator) == false)
-                            {
-                                global::BaseDatos.Curators.Curator curator2 = global::BaseDatos.Curators.Buscar.Uno(int.Parse(curator));
-
-                                if (curator2 == null)
-                                {
-                                    global::BaseDatos.Curators.Insertar.Ejecutar(await APIs.Steam.Curator.Extraer(curator));
-                                }
-                                else
-                                {
-                                    if (curator2.Fecha == null)
-                                    {
-                                        global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
-                                    }
-                                    else
-                                    {
-                                        if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
-                                        {
-                                            global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
-                                        }
-                                    }
-
-                                    global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
-                                    ficha.Curator = curator2;
-                                    ficha.Posicion = 0;
-
-                                    curators.Add(ficha);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                await InvokeAsync(() =>
-                {
-                    StateHasChanged();
-                });
             }
         }
-    }
-
-    private async void OnLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        NavManager.NavigateTo(e.Location, true);
     }
 
     public static string LimpiarImagenJuego(string enlace)
@@ -5328,11 +5252,74 @@
 
     private bool enseñarDeck = false;
 
-    private void DeckEnseñar(MouseEventArgs e)
+    private async Task DeckEnseñar(MouseEventArgs e)
     {
         if (enseñarDeck == false)
         {
             enseñarDeck = true;
+
+            bool actualizarDeckAPI = false;
+
+            if (juego.DeckComprobacion == null)
+            {
+                actualizarDeckAPI = true;
+            }
+            else
+            {
+                if (juego.DeckComprobacion + TimeSpan.FromDays(180) < DateTime.Now)
+                {
+                    actualizarDeckAPI = true;
+                }
+            }
+
+            if (actualizarDeckAPI == true)
+            {
+                APIs.Steam.SteamDeckAPI deckAPI = await APIs.Steam.Juego.CargarDatosDeck(juego.Id, juego.IdSteam);
+                bool vacio = true;
+
+                if (deckAPI != null)
+                {
+                    if (deckAPI.Datos != null)
+                    {
+                        if (deckAPI.Datos.Resultado != null)
+                        {
+                            juego.Deck = (JuegoDeck)int.Parse(deckAPI.Datos.Resultado.ToString());
+                            juego.DeckComprobacion = DateTime.Now;
+
+                            if (deckAPI.Datos.Tokens != null)
+                            {
+                                if (deckAPI.Datos.Tokens.Count > 0)
+                                {
+                                    List<JuegoDeckToken> tokens = new List<JuegoDeckToken>();
+
+                                    foreach (var token in deckAPI.Datos.Tokens)
+                                    {
+                                        if (string.IsNullOrEmpty(token.Token) == false)
+                                        {
+                                            JuegoDeckToken nuevoToken = new JuegoDeckToken();
+                                            nuevoToken.Tipo = int.Parse(token.Tipo.ToString());
+                                            nuevoToken.Mensaje = token.Token;
+
+                                            tokens.Add(nuevoToken);
+                                        }
+                                    }
+
+                                    juego.DeckTokens = tokens;
+                                }
+                            }
+
+                            vacio = false;
+                            global::BaseDatos.Juegos.Actualizar.Deck(juego);
+                        }
+                    }
+                }
+
+                if (vacio == true)
+                {
+                    juego.DeckComprobacion = DateTime.Now;
+                    global::BaseDatos.Juegos.Actualizar.DeckVacio(juego);
+                }
+            }
         }
         else
         {
@@ -5796,15 +5783,6 @@
     {
         enseñarRV = false;
     }
-
-    #endregion
-
-    #region DLCs
-
-    private void AbrirEnlace(MouseEventArgs e, string enlace)
-	{
-        NavManager.NavigateTo(enlace, true);
-	}
 
     #endregion
 }

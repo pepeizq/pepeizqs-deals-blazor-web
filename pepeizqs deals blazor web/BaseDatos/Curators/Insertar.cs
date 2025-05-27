@@ -10,50 +10,60 @@ namespace BaseDatos.Curators
 	{
 		public static void Ejecutar(SteamCuratorAPI api, SqlConnection conexion = null)
 		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
 			if (api != null)
 			{
-				string sqlAñadir = "INSERT INTO curators " +
-					 "(idSteam, nombre, imagen, descripcion, slug, steamIds, web, fecha) VALUES " +
-					 "(@idSteam, @nombre, @imagen, @descripcion, @slug, @steamIds, @web, @fecha) ";
-
-				using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
+				if (string.IsNullOrEmpty(api.Nombre) == false || string.IsNullOrEmpty(api.Slug) == false)
 				{
-					comando.Parameters.AddWithValue("@idSteam", api.Id);
-					comando.Parameters.AddWithValue("@nombre", api.Nombre);
-					comando.Parameters.AddWithValue("@imagen", api.Imagen);
-					comando.Parameters.AddWithValue("@descripcion", api.Descripcion);
-					comando.Parameters.AddWithValue("@steamIds", JsonSerializer.Serialize(api.SteamIds));
-					comando.Parameters.AddWithValue("@web", JsonSerializer.Serialize(api.Web));
-					comando.Parameters.AddWithValue("@fecha", DateTime.Now);
-
-					if (string.IsNullOrEmpty(api.Slug) == false)
+					if (conexion == null)
 					{
-						comando.Parameters.AddWithValue("@slug", api.Slug);
+						conexion = Herramientas.BaseDatos.Conectar();
 					}
 					else
 					{
-						comando.Parameters.AddWithValue("@slug", Herramientas.EnlaceAdaptador.Nombre(api.Nombre));
+						if (conexion.State != System.Data.ConnectionState.Open)
+						{
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
 					}
 
-					try
+					string sqlAñadir = "INSERT INTO curators " +
+							 "(idSteam, nombre, imagen, descripcion, slug, steamIds, web, fecha) VALUES " +
+							 "(@idSteam, @nombre, @imagen, @descripcion, @slug, @steamIds, @web, @fecha) ";
+
+					string nombre = api.Nombre;
+
+					if (string.IsNullOrEmpty(nombre) == true)
 					{
-						comando.ExecuteNonQuery();
+						nombre = api.Slug;
 					}
-					catch (Exception ex)
+
+					using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
 					{
-						BaseDatos.Errores.Insertar.Mensaje("Insertar Curator", ex);
+						comando.Parameters.AddWithValue("@idSteam", api.Id);
+						comando.Parameters.AddWithValue("@nombre", nombre);
+						comando.Parameters.AddWithValue("@imagen", api.Imagen);
+						comando.Parameters.AddWithValue("@descripcion", api.Descripcion);
+						comando.Parameters.AddWithValue("@steamIds", JsonSerializer.Serialize(api.SteamIds));
+						comando.Parameters.AddWithValue("@web", JsonSerializer.Serialize(api.Web));
+						comando.Parameters.AddWithValue("@fecha", DateTime.Now);
+
+						if (string.IsNullOrEmpty(api.Slug) == false)
+						{
+							comando.Parameters.AddWithValue("@slug", api.Slug);
+						}
+						else
+						{
+							comando.Parameters.AddWithValue("@slug", Herramientas.EnlaceAdaptador.Nombre(api.Nombre));
+						}
+
+						try
+						{
+							comando.ExecuteNonQuery();
+						}
+						catch (Exception ex)
+						{
+							BaseDatos.Errores.Insertar.Mensaje("Insertar Curator", ex);
+						}
 					}
 				}
 			}

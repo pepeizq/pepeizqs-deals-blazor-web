@@ -196,7 +196,7 @@
 			{
 				string videoMostrar = tooltip.Video;
 
-				<video id="video-@idTooltip" onloadedmetadata="this.muted=true" playsinline autoplay loop muted style="width: 460px; height: 215px; object-fit: cover;">
+				<video @key="idTooltip" onloadedmetadata="this.muted=true" playsinline autoplay loop muted style="width: 460px; height: 215px; object-fit: cover;" preload="metadata">
 					<source src="@videoMostrar" type="video/mp4" />
 					<source src="@videoMostrar.Replace(".mp4", ".webm")" type="video/webm" />	
 				</video>
@@ -453,7 +453,7 @@
 
 		@if (tipo == Tipo.Bundle)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<a href="@enlace" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="padding: 0px; position: relative;">
 					@{
 						bool añadirNuevo = false;
@@ -537,7 +537,7 @@
 						}
 					</div>
 				</div>
-			</button>
+			</a>
 		}
 
 		@if (tipo == Tipo.Noticia)
@@ -706,9 +706,4 @@
 	}
 
 	#endregion
-
-	private void AbrirEnlace(MouseEventArgs e, string enlace)
-	{
-        NavManager.NavigateTo(enlace, true);
-	}
 }

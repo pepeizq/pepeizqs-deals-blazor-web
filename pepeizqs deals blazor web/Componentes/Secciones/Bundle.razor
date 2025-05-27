@@ -390,7 +390,7 @@
 	[Parameter]
 	public Tipo tipo { get; set; } = Tipo.Bundle;
 
-    public Bundles2.Bundle bundle = null;
+	public Bundles2.Bundle bundle = null;
 
 	protected override void OnInitialized()
 	{
@@ -405,9 +405,10 @@
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
+	}
 
-		//------------------------------------------------------------
-
+	protected override void OnParametersSet()
+	{
 		bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
 
 		if (bundle != null)

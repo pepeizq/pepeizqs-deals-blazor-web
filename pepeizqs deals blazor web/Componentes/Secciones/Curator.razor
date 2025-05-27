@@ -283,7 +283,7 @@
 	private List<Juegos.Juego> juegosCuratorBandasSonoras = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosCuratorSoftware = new List<Juegos.Juego>();
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
@@ -295,72 +295,77 @@
 			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 		}
+	}
 
-		curator = BaseDatos.Curators.Buscar.Uno(slug);
-
-		if (curator != null)
+	protected override async Task OnParametersSetAsync()
+	{
+		if (string.IsNullOrEmpty(slug) == false)
 		{
-			if (string.IsNullOrEmpty(curator.ImagenFondo) == true)
-			{
-				SteamCuratorAPIVanidad api = await APIs.Steam.Curator.ExtraerVanidad(curator.IdSteam.ToString());
+			curator = BaseDatos.Curators.Buscar.Uno(slug);
 
-				if (api != null)
+			if (curator != null)
+			{
+				if (string.IsNullOrEmpty(curator.ImagenFondo) == true)
 				{
-					if (string.IsNullOrEmpty(api.Imagen) == false)
+					SteamCuratorAPIVanidad api = await APIs.Steam.Curator.ExtraerVanidad(curator.IdSteam.ToString());
+
+					if (api != null)
 					{
-						BaseDatos.Curators.Actualizar.ImagenFondo(api.Imagen, curator.IdSteam);
-						curator.ImagenFondo = api.Imagen;
+						if (string.IsNullOrEmpty(api.Imagen) == false)
+						{
+							BaseDatos.Curators.Actualizar.ImagenFondo(api.Imagen, curator.IdSteam);
+							curator.ImagenFondo = api.Imagen;
+						}
 					}
 				}
-			}
 
-			if (curator.Fecha == null)
-			{
-				global::BaseDatos.Curators.Actualizar.Ejecutar(curator);
-			}
-			else
-			{
-				if (curator.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
+				if (curator.Fecha == null)
 				{
 					global::BaseDatos.Curators.Actualizar.Ejecutar(curator);
 				}
-			}
-
-			juegosCurator = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.SteamIds);
-
-			if (juegosCurator.Count > 0)
-			{
-				juegosCurator = juegosCurator.Where(x => x.Analisis != null).Where(x => x.Analisis.Cantidad != null).OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
-
-				juegosCuratorMostrar = juegosCurator;
-
-				foreach (var juegoCurator in juegosCurator)
+				else
 				{
-					if (juegoCurator.Tipo == Juegos.JuegoTipo.Game)
+					if (curator.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
 					{
-						if (juegosDestacados.Count < 6)
-						{
-							juegosDestacados.Add(juegoCurator);
-						}
+						global::BaseDatos.Curators.Actualizar.Ejecutar(curator);
+					}
+				}
 
-						juegosCuratorJuegos.Add(juegoCurator);
-					}
-					else if (juegoCurator.Tipo == Juegos.JuegoTipo.DLC)
+				juegosCurator = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.SteamIds);
+
+				if (juegosCurator.Count > 0)
+				{
+					juegosCurator = juegosCurator.Where(x => x.Analisis != null).Where(x => x.Analisis.Cantidad != null).OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
+
+					juegosCuratorMostrar = juegosCurator;
+
+					foreach (var juegoCurator in juegosCurator)
 					{
-						juegosCuratorDLCs.Add(juegoCurator);
-					}
-					else if (juegoCurator.Tipo == Juegos.JuegoTipo.Music)
-					{
-						juegosCuratorBandasSonoras.Add(juegoCurator);
-					}
-					else if (juegoCurator.Tipo == Juegos.JuegoTipo.Software)
-					{
-						juegosCuratorSoftware.Add(juegoCurator);
+						if (juegoCurator.Tipo == Juegos.JuegoTipo.Game)
+						{
+							if (juegosDestacados.Count < 6)
+							{
+								juegosDestacados.Add(juegoCurator);
+							}
+
+							juegosCuratorJuegos.Add(juegoCurator);
+						}
+						else if (juegoCurator.Tipo == Juegos.JuegoTipo.DLC)
+						{
+							juegosCuratorDLCs.Add(juegoCurator);
+						}
+						else if (juegoCurator.Tipo == Juegos.JuegoTipo.Music)
+						{
+							juegosCuratorBandasSonoras.Add(juegoCurator);
+						}
+						else if (juegoCurator.Tipo == Juegos.JuegoTipo.Software)
+						{
+							juegosCuratorSoftware.Add(juegoCurator);
+						}
 					}
 				}
 			}
 		}
-
 	}
 
 	private void MostrarListado(MouseEventArgs e, List<Juegos.Juego> juegos, int nuevoFiltrado)

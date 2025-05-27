@@ -570,7 +570,7 @@
 	private string idAmazon = string.Empty;
 	private string exeUbisoft = string.Empty;
 
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
 		WebApplicationBuilder builder = WebApplication.CreateBuilder();
 		claveExtension = builder.Configuration.GetValue<string>("Extension:Clave");
@@ -1175,7 +1175,7 @@
 
 	private async Task ActualizarDeckSteamApi()
 	{
-		APIs.Steam.SteamDeckAPI deckAPI = await APIs.Steam.Juego.CargarDatosDeck(juego.IdSteam);
+		APIs.Steam.SteamDeckAPI deckAPI = await APIs.Steam.Juego.CargarDatosDeck(juego.Id, juego.IdSteam);
 		bool vacio = true;
 
 		if (deckAPI != null)

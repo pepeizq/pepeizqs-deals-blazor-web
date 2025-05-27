@@ -177,7 +177,7 @@
 
 	public global::Noticias.Noticia noticia = new global::Noticias.Noticia();
 
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
 		noticia = BaseDatos.Noticias.Buscar.UnaNoticia(noticiaId);
 

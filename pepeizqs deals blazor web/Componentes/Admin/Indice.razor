@@ -9,6 +9,7 @@
 
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
+@inject IJSRuntime JavaScript
 
 <style>
     .boton-pestañas {
@@ -198,6 +199,14 @@
         else
         {
             NavManager.NavigateTo("/");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (primerRender == true)
+        {
+             await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
         }
     }
 

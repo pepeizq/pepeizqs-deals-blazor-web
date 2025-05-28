@@ -1,8 +1,6 @@
 ﻿@page "/game/{juegoId:int}/"
 @page "/game/{juegoId:int}/{juegoNombre?}/"
 
-@attribute [StreamRendering]
-
 @using ApexCharts
 @using Bundles2
 @using Gratis2
@@ -2328,7 +2326,7 @@
                                                 </div>
                                             </a>
                                         }
-                                        else if (enlace.Contains("https://weibo.com/") == true)
+                                        else if (enlace.Contains("https://weibo.com/") == true || enlace.Contains("https://www.weibo.com/") == true)
                                         {
                                             <a href="@enlace" target="_blank" class="boton-pequeño" title="Weibo" style="width: fit-content; padding: 10px;">
                                                 <div style="width: 30px; height: 30px; padding: 2px;">

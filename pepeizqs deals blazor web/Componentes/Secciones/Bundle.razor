@@ -16,6 +16,12 @@
 	if (tipo == Tipo.Bundle)
 	{
 		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda + " • pepeizq's deals";
+
+		if (titulo.Length > 67)
+		{
+			titulo = titulo.Substring(0, 67) + " ...";
+		}
+
 		string descripcion = string.Empty;
 		string enlace = "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/";
 		string imagen = string.Empty;
@@ -35,6 +41,11 @@
 				descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Bundle") + " " + precio;
 			}
 		}
+
+		if (descripcion.Length > 147)
+        {
+            descripcion = descripcion.Substring(0, 147) + " ...";
+        }
 
 		if (string.IsNullOrEmpty(bundle.ImagenNoticia) == false)
 		{
@@ -157,7 +168,9 @@
 
 					<div style="padding-left: 20px; padding-right: 20px;">
 						<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="background-color: transparent; padding: 0px; font-size: 20px; margin-bottom: 10px;" target="_blank">
-							@bundle.NombreBundle
+							<h1 style="font-size: 20px;">
+								@bundle.NombreBundle
+							</h1>
 						</a>
 
 						<div style="display: flex; align-items: center; flex-direction: row; font-size: 14px;">

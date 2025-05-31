@@ -18,6 +18,11 @@
 @{
 	string tituloSeo = titulo + " • pepeizq's deals";
 
+	if (tituloSeo.Length > 67)
+	{
+		tituloSeo = tituloSeo.Substring(0, 67) + " ...";
+	}
+
 	if (noticia != null)
 	{
 		string texto2 = Herramientas.Idiomas.ElegirTexto(idioma, noticia.ContenidoEn, noticia.ContenidoEs);
@@ -46,6 +51,11 @@
 		}
 
 		string descripcion = texto2;
+
+		if (descripcion.Length > 147)
+        {
+            descripcion = descripcion.Substring(0, 147) + " ...";
+        }
 
 		string keywords = "news";
 

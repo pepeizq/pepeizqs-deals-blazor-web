@@ -129,6 +129,32 @@ namespace APIs.Gamesplanet
 									}
 								}
 
+								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+								{
+									List<string> listaPaisesAprobados = new List<string>();
+
+									string[] datosPartidos = juego.PaisesAprobados.Split(',');
+									listaPaisesAprobados.AddRange(datosPartidos);
+
+									if (listaPaisesAprobados.Count > 0)
+									{
+										bool encontrado = false;
+										foreach (var pais in listaPaisesAprobados)
+										{
+											if (pais.ToLower() == "es")
+											{
+												encontrado = true;
+												break;
+											}
+										}
+
+										if (encontrado == false)
+										{
+											buscar = false;
+										}
+									}
+								}
+
 								if (buscar == true)
 								{
 									decimal precioBase = decimal.Parse(juego.PrecioBase);
@@ -239,6 +265,32 @@ namespace APIs.Gamesplanet
 												buscar = false;
 												break;
 											}
+										}
+									}
+								}
+
+								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+								{
+									List<string> listaPaisesAprobados = new List<string>();
+
+									string[] datosPartidos = juego.PaisesAprobados.Split(',');
+									listaPaisesAprobados.AddRange(datosPartidos);
+
+									if (listaPaisesAprobados.Count > 0)
+									{
+										bool encontrado = false;
+										foreach (var pais in listaPaisesAprobados)
+										{
+											if (pais.ToLower() == "es")
+											{
+												encontrado = true;
+												break;
+											}
+										}
+
+										if (encontrado == false)
+										{
+											buscar = false;
 										}
 									}
 								}
@@ -357,6 +409,32 @@ namespace APIs.Gamesplanet
 									}
 								}
 
+								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+								{
+									List<string> listaPaisesAprobados = new List<string>();
+
+									string[] datosPartidos = juego.PaisesAprobados.Split(',');
+									listaPaisesAprobados.AddRange(datosPartidos);
+
+									if (listaPaisesAprobados.Count > 0)
+									{
+										bool encontrado = false;
+										foreach (var pais in listaPaisesAprobados)
+										{
+											if (pais.ToLower() == "es")
+											{
+												encontrado = true;
+												break;
+											}
+										}
+
+										if (encontrado == false)
+										{
+											buscar = false;
+										}
+									}
+								}
+
 								if (buscar == true)
 								{
 									decimal precioBase = decimal.Parse(juego.PrecioBase);
@@ -470,7 +548,33 @@ namespace APIs.Gamesplanet
 										}
 									}
 								}
-								
+
+								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+								{
+									List<string> listaPaisesAprobados = new List<string>();
+
+									string[] datosPartidos = juego.PaisesAprobados.Split(',');
+									listaPaisesAprobados.AddRange(datosPartidos);
+
+									if (listaPaisesAprobados.Count > 0)
+									{
+										bool encontrado = false;
+										foreach (var pais in listaPaisesAprobados)
+										{
+											if (pais.ToLower() == "es")
+											{
+												encontrado = true;
+												break;
+											}
+										}
+
+										if (encontrado == false)
+										{
+											buscar = false;
+										}
+									}
+								}
+
 								if (buscar == true)
 								{
 									decimal precioBase = decimal.Parse(juego.PrecioBase);
@@ -573,6 +677,9 @@ namespace APIs.Gamesplanet
 
 		[XmlElement("steam_id")]
 		public string SteamId { get; set; }
+
+		[XmlElement("country_whitelist")]
+		public string PaisesAprobados { get; set; }
 
 		[XmlElement("country_blacklist")]
 		public string PaisesRestringidos { get; set; }

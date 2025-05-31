@@ -25,6 +25,12 @@
 @if (juego != null)
 {
     string titulo = juego.Nombre + " • pepeizq's deals";
+
+	if (titulo.Length > 67)
+	{
+		titulo = titulo.Substring(0, 67) + " ...";
+	}
+
     string descripcion = string.Empty;
     string enlace = "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
     string imagen = string.Empty;
@@ -70,9 +76,9 @@
         {
             string descripcionMeta = descripcion;
 
-            if (descripcionMeta.Length > 150)
+            if (descripcionMeta.Length > 147)
             {
-                descripcionMeta = descripcionMeta.Substring(0, 150) + " ...";
+                descripcionMeta = descripcionMeta.Substring(0, 147) + " ...";
             }
 
             <meta name="description" content="@descripcionMeta" />
@@ -2334,7 +2340,7 @@
                                                 </div>
                                             </a>
                                         }
-                                        else if (enlace.Contains("https://qm.qq.com/") == true)
+                                        else if (enlace.Contains("https://qm.qq.com/") == true || enlace.Contains("https://pd.qq.com/") == true)
                                         {
                                             <a href="@enlace" target="_blank" class="boton-pequeño" title="QQ" style="width: fit-content; padding: 10px;">
                                                 <div style="width: 30px; height: 30px; padding: 2px;">

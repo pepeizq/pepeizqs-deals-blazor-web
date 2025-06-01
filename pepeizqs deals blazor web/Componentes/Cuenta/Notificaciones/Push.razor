@@ -4,17 +4,8 @@
 @using pepeizqs_deals_web.Data
 
 @inject UserManager<Usuario> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
-
-<style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
-		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
-	}
-</style>
 
 <div style="display: flex; flex-direction: column; gap: 20px;">
 	<div class="caja-diseño" style="padding: 30px;">
@@ -29,6 +20,17 @@
 					<div>
 						@userAgentRegistrado
 					</div>
+
+					@if (BaseDatos.Usuarios.Buscar.RolDios(usuario.Id) == true)
+					{
+						<div style="margin-top: 10px;">
+							@idSuscripcionRegistrada.ToString()
+						</div>
+
+						<div style="margin-top: 10px;">
+							@enlaceRegistrado
+						</div>
+					}
 				</div>
 
 				<button @onclick="@(e => QuitarUsuario(e))" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
@@ -149,6 +151,8 @@
 	private Usuario usuario = new Usuario();
 
 	private string userAgentRegistrado = string.Empty;
+	private int idSuscripcionRegistrada = 0;
+	private string enlaceRegistrado = string.Empty;
 
 	private string estadoMinimos = null;
 
@@ -159,7 +163,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+		usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 
 		if (string.IsNullOrEmpty(usuario.Id) == false)
 		{
@@ -168,6 +172,8 @@
 			if (suscripcion != null)
 			{
 				userAgentRegistrado = suscripcion.UserAgent;
+				idSuscripcionRegistrada = suscripcion.NotificationSubscriptionId;
+				enlaceRegistrado = suscripcion.Url;
 
 				if (usuario.NotificationPushLows == null)
 				{

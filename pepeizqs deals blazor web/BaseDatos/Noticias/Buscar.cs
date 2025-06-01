@@ -5,7 +5,6 @@ using Gratis2;
 using Microsoft.Data.SqlClient;
 using Noticias;
 using Suscripciones2;
-using System.Globalization;
 
 namespace BaseDatos.Noticias
 {
@@ -217,11 +216,11 @@ namespace BaseDatos.Noticias
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM noticias WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina";
+				string busqueda = "SELECT * FROM noticias WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina ORDER BY id DESC";
 
 				if (ultimosDias > 0)
 				{
-					busqueda = "SELECT * FROM noticias WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina) AND (GETDATE() - " + ultimosDias.ToString() + " < fechaEmpieza)";
+					busqueda = "SELECT * FROM noticias WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina) AND (GETDATE() - " + ultimosDias.ToString() + " < fechaEmpieza) ORDER BY id DESC";
                 }
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -234,11 +233,6 @@ namespace BaseDatos.Noticias
 						}
 					}
 				}
-			}
-
-			if (noticias.Count > 0)
-			{
-				noticias.Reverse();
 			}
 
 			return noticias;

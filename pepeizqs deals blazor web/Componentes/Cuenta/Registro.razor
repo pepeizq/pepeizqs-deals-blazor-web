@@ -1,6 +1,6 @@
 ﻿@page "/account/register"
 
-@rendermode InteractiveServer
+@attribute [ExcludeFromInteractiveRouting]
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
@@ -16,63 +16,65 @@
 @inject IEmailSender<Usuario> EmailSender
 @inject NavigationManager NavManager
 
-@{
+@if (string.IsNullOrEmpty(usuarioId) == true)
+{
     string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Register") + " • pepeizq's deals";
+
+    <HeadContent>
+        <PageTitle>@titulo</PageTitle>
+    </HeadContent>
+
+    <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
+        @if (string.IsNullOrEmpty(mensajeError) == false)
+        {
+            <div style="margin-bottom: 20px; background-color: var(--fondoPeligro); padding: 15px 20px;">
+                @mensajeError
+            </div>
+        }
+
+        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegistrarUsuario" FormName="register">
+            <DataAnnotationsValidator />
+            <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Register")</div>
+            <hr />
+            <ValidationSummary class="texto-peligro-entrada" role="alert" />
+            <div style="margin-bottom: 20px;">
+                <label for="Input.Email" class="texto-info-entrada">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Register")
+                </label>
+
+                <InputText @bind-Value="Input.Email" id="Input.Email" class="entrada-texto" autocomplete="username" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Register")" />
+                <ValidationMessage For="() => Input.Email" class="texto-peligro-entrada" />
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label for="Input.Password" class="texto-info-entrada">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Register")
+                </label>
+                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
+                <ValidationMessage For="() => Input.Password" class="texto-peligro-entrada" />
+            </div>
+            <div style="margin-bottom: 30px;">
+                <label for="Input.ConfirmPassword" class="texto-info-entrada">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Register")
+                </label>
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
+                <ValidationMessage For="() => Input.ConfirmPassword" class="texto-peligro-entrada" />
+            </div>
+
+            <button type="submit" class="boton-pequeño" style="text-align: center; font-size: 20px; padding: 15px 20px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Register")
+            </button>
+        </EditForm>
+    </div>
+
+    <Accesos idioma="@idioma" mostrarRegistro="false" />
 }
-
-<HeadContent>
-    <PageTitle>@titulo</PageTitle>
-</HeadContent>
-
-<div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
-    @if (string.IsNullOrEmpty(mensajeError) == false)
-    {
-        <div style="margin-bottom: 20px; background-color: var(--fondoPeligro); padding: 15px 20px;">
-            @mensajeError
-        </div>
-    }
-
-    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegistrarUsuario" FormName="register">
-        <DataAnnotationsValidator />
-        <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Register")</div>
-        <hr />
-        <ValidationSummary class="texto-peligro-entrada" role="alert" />
-        <div style="margin-bottom: 20px;">
-            <label for="Input.Email" class="texto-info-entrada">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Register")
-            </label>
-
-            <InputText @bind-Value="Input.Email" id="Input.Email" class="entrada-texto" autocomplete="username" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Register")" />
-            <ValidationMessage For="() => Input.Email" class="texto-peligro-entrada" />
-        </div>
-        <div style="margin-bottom: 20px;">
-            <label for="Input.Password" class="texto-info-entrada">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Register")
-            </label>
-            <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
-            <ValidationMessage For="() => Input.Password" class="texto-peligro-entrada" />
-        </div>
-        <div style="margin-bottom: 30px;">
-            <label for="Input.ConfirmPassword" class="texto-info-entrada">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Register")
-            </label>
-            <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="entrada-texto" autocomplete="new-password" aria-required="true" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Register")" />
-            <ValidationMessage For="() => Input.ConfirmPassword" class="texto-peligro-entrada" />
-        </div>
-
-        <button type="submit" class="boton-pequeño" style="text-align: center; font-size: 20px; padding: 15px 20px;">
-            @Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Register")
-        </button>
-    </EditForm>
-</div>
-
-<Accesos idioma="@idioma" mostrarRegistro="false" />
 
 @code {
 
     #nullable disable
 
     private string idioma = "en";
+    private string usuarioId = null;
 
     private IEnumerable<IdentityError> identityErrors;
 
@@ -86,7 +88,11 @@
 
     protected override void OnInitialized()
     {
-        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+        if (Contexto.HttpContext != null)
+        {
+            idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+            usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+        }
     }
 
     public async Task RegistrarUsuario(EditContext editContext)

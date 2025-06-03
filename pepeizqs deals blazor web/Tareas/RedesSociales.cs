@@ -44,7 +44,7 @@ namespace Tareas
 						{
 							try
 							{
-								BaseDatos.RedesSociales.Buscar.PendientesPosteo(conexion);
+								await BaseDatos.RedesSociales.Buscar.PendientesPosteo(conexion);
 							}
 							catch (Exception ex)
 							{

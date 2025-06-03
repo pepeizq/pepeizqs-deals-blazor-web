@@ -156,7 +156,7 @@ namespace APIs.Steam
 
 									if (juegosDeseados != null)
 									{
-										if (juegosDeseados.Datos.Juegos.Count > 0)
+										if (juegosDeseados.Datos?.Juegos?.Count > 0)
 										{
 											foreach (var juegoDeseado in juegosDeseados.Datos.Juegos)
 											{

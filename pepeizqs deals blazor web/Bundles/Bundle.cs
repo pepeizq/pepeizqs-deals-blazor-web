@@ -7,22 +7,22 @@ namespace Bundles2
 {
 	public class Bundle
 	{
-		public int Id;
-		public BundleTipo Tipo;
-		public string NombreBundle;
-		public string NombreTienda;
-		public string ImagenBundle;
-		public string ImagenTienda;
-		public string ImagenIcono;
-		public string ImagenNoticia;
-		public List<string> ImagenesExtra;
-		public string Enlace;
-		public string EnlaceBase;
-		public DateTime FechaEmpieza;
-		public DateTime FechaTermina;
-		public List<BundleJuego> Juegos;
-		public List<BundleTier> Tiers;
-		public bool Pick;
+		public int Id { get; set; }
+		public BundleTipo Tipo { get; set; }
+		public string NombreBundle { get; set; }
+		public string NombreTienda { get; set; }
+		public string ImagenBundle { get; set; }
+		public string ImagenTienda { get; set; }
+		public string ImagenIcono { get; set; }
+		public string ImagenNoticia { get; set; }
+		public List<string> ImagenesExtra { get; set; }
+		public string Enlace { get; set; }
+		public string EnlaceBase { get; set; }
+		public DateTime FechaEmpieza { get; set; }
+		public DateTime FechaTermina { get; set; }
+		public List<BundleJuego> Juegos { get; set; }
+		public List<BundleTier> Tiers { get; set; }
+		public bool Pick { get; set; }
 	}
 
 	public class BundleTier

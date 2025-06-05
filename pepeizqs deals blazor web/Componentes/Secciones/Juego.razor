@@ -293,6 +293,50 @@
 </script>
 
 <style>
+    .boton-reseñas {
+        display: inline-block;
+    }
+
+    .caja-jugadores {
+        display: flex;
+    }
+
+    .caja-drm {
+        display: flex;
+    }
+
+    .caja-drm-tienda {
+         flex-wrap: wrap;
+    }
+
+    .juego-imagen-boton {
+        margin: 20px;
+        max-height: 40px;
+    }
+
+    @@media(max-width: 900px) {
+        .boton-reseñas {
+            display: none;
+        }
+
+        .caja-jugadores {
+            display: none;
+        }
+
+        .caja-drm {
+            display: grid;
+        }
+
+        .caja-drm-tienda {
+            flex-wrap: inherit;
+        }
+
+        .juego-imagen-boton {
+            margin: 10px;
+            max-height: 30px;
+        }
+    }
+
     .descripcion-datos {
         grid-template-columns: 1fr 1fr;
     }
@@ -529,7 +573,7 @@
                                 {
                                     if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false && string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false)
                                     {
-                                        <button onclick="moverScroll('reviews')" class="boton" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
+                                        <button onclick="moverScroll('reviews')" class="boton boton-reseñas" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
                                             <div style="@fondoCajas border: 1px solid var(--fondoBotonPequeño); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; gap: 10px;">
                                                 <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
                                                     @if (int.Parse(juego.Analisis.Porcentaje) > 74)
@@ -566,7 +610,7 @@
                                     {
                                         if (juego.CantidadJugadores.Cantidad > -1)
                                         {
-                                            <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px; min-height: 82px;">
+                                            <div class="caja-jugadores" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 10px; flex-direction: column; gap: 10px; min-height: 82px;">
                                                 <div style="font-size: 17px; text-align: center; line-height: 30px;">
                                                     @juego.CantidadJugadores.Cantidad.ToString("N0")
                                                 </div>
@@ -923,7 +967,7 @@
 
                                     @if (string.IsNullOrEmpty(mensajeMinimoDRM) == false || BundlesComprobar(juego.Bundles, drm.Id) != null || GratisComprobar(juego.Gratis, drm.Id) != null || SuscripcionesComprobar(juego.Suscripciones, drm.Id) != null)
                                     {
-                                        <div style="text-align: left; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; display: flex; align-items: center; gap: 30px;">
+                                        <div class="caja-drm" style="text-align: left; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; align-items: center; gap: 30px;">
                                             @if (drm.Id == JuegoDRM.DRMFree)
                                             {
                                                 <div style="max-width: 45px; text-align: center;">DRM Free</div>
@@ -1548,7 +1592,7 @@
                                                             }
 
                                                             <a class="juego-boton-pequeño" style="display: block;" href="@Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon)" target="_blank">
-                                                                <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
+                                                                <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
                                                                     <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precio.Nombre)</span>
 
@@ -1707,7 +1751,7 @@
 
                                 if (bundle3 != null)
                                 {
-                                    <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon)" target="_blank" style="font-size: 16px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: block;">
+                                    <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon)" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                         <div style="display: flex; align-items: center;">
                                             <div style="margin-right: 15px;">
                                                 <img src="@BundlesCargar.DevolverBundle(bundle3.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Bundle" loading="lazy"/>
@@ -1792,7 +1836,7 @@
 
                         @foreach (var gratis2 in GratisDisponibles(juego.Gratis))
                         {
-                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon)" target="_blank" style="font-size: 16px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; width: 100%; display: block;">
+                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon)" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                 <div style="display: flex; align-items: center;">
                                     <div style="margin-right: 15px;">
                                         <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Free" loading="lazy"/>
@@ -1881,7 +1925,7 @@
 
                                 enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(enlaceSuscripcion, suscripcion2.Tipo, usuarioPatreon);
 
-                                <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" style="font-size: 16px; padding: 20px 25px; cursor: pointer; display: block;">
+                                <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                     <div style="display: flex; align-items: center;">
                                         <div style="margin-right: 15px;">
                                             <img src="@suscripcionUsar.ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Subscription" loading="lazy" />

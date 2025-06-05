@@ -8,24 +8,24 @@ namespace Noticias
 {
 	public class Noticia
 	{
-		public int Id;
-		public NoticiaTipo Tipo;
-		public BundleTipo BundleTipo;
-		public GratisTipo GratisTipo;
-		public SuscripcionTipo SuscripcionTipo;
-		public string TituloEn;
-		public string TituloEs;
-		public string ContenidoEn;
-		public string ContenidoEs;
-		public string Imagen;
-		public string Enlace;
-		public string Juegos;
-		public DateTime FechaEmpieza;
-		public DateTime FechaTermina;
-		public int IdMaestra;
-		public int BundleId;
-		public string GratisIds;
-		public string SuscripcionesIds;
+		public int Id { get; set; }
+		public NoticiaTipo Tipo { get; set; }
+		public BundleTipo BundleTipo { get; set; }
+		public GratisTipo GratisTipo { get; set; }
+		public SuscripcionTipo SuscripcionTipo { get; set; }
+		public string TituloEn { get; set; }
+		public string TituloEs { get; set; }
+		public string ContenidoEn { get; set; }
+		public string ContenidoEs { get; set; }
+		public string Imagen { get; set; }
+		public string Enlace { get; set; }
+		public string Juegos { get; set; }
+		public DateTime FechaEmpieza { get; set; }
+		public DateTime FechaTermina { get; set; }
+		public int IdMaestra { get; set; }
+		public int BundleId { get; set; }
+		public string GratisIds { get; set; }
+		public string SuscripcionesIds { get; set; }
 	}
 
 	public class NoticiaMostrar

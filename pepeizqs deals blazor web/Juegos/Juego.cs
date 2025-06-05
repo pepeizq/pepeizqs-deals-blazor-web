@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using Suscripciones2;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Juegos
 {

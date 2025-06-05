@@ -326,6 +326,7 @@ builder.Services.AddControllers(opciones =>
 }).AddJsonOptions(opciones2 =>
 {
 	opciones2.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+	opciones2.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 
 });
 builder.Services.AddHttpContextAccessor();

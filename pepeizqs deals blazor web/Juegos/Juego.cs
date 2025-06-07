@@ -58,6 +58,9 @@ namespace Juegos
 		public string ExeUbisoft { get; set; }
 		public string ExeEA { get; set; }
 		public bool OcultarPortada { get; set; }
+		public DateTime? UltimaActualizacionSteam { get; set; }
+		public DateTime? UltimaActualizacionGOG { get; set; }
+		public DateTime? UltimaActualizacion { get; set; }
 	}
 
 	public static class JuegoCrear

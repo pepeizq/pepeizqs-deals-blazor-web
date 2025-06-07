@@ -5,7 +5,6 @@
 @using pepeizqs_deals_web.Data
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<Usuario> UserManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -145,14 +144,23 @@
         };
     </script>
 
-
-
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-02PL2Q3GQX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-02PL2Q3GQX');
+    </script>
 
     <div id="components-reconnect-modal" style="display: none" />
 </body>
 
 </html>
+
+<GBAnchor />
 
 @code {
 

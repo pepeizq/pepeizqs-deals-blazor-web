@@ -93,5 +93,7 @@
   "String95": "Links de desenvolvedor",
   "String96": "Esses links foram fornecidos pelo desenvolvedor para Steam",
   "String97": "Este jogo está no acesso antecipado, o que significa que ainda está em desenvolvimento e estará faltando recursos.",
-  "String98": "Compatibilidade VR"
+  "String98": "Compatibilidade VR",
+  "String99": "Este jogo de acesso antecipado foi abandonado pelo desenvolvedor, pois não foi atualizado para {0}.",
+  "String100": "Última atualização:"
 }

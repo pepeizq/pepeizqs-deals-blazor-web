@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using X.Bluesky;
+using X.Bluesky.Models;
 
 namespace Herramientas.RedesSociales
 {
@@ -53,14 +54,26 @@ namespace Herramientas.RedesSociales
 						{
 							if (imageBytes.Length > 0)
 							{
-								X.Bluesky.Models.Image imagen = new X.Bluesky.Models.Image
+								Image imagen = new Image
 								{
 									Content = imageBytes,
 									Alt = noticia.TituloEn,
 									MimeType = "image/jpeg"
 								};
 
-								await cliente.Post(noticia.TituloEn + Environment.NewLine + Environment.NewLine + enlaceFinal, enlaceFinal, imagen);
+								var post = new Post
+								{
+									Text = noticia.TituloEn + Environment.NewLine + Environment.NewLine + enlaceFinal,
+									Images = new[]
+									{
+										imagen
+									},
+									Url = enlaceFinal,
+									Languages = new[] { "en" },
+									GenerateCardForUrl = true  
+								};
+
+								await cliente.Post(post);
 
 								return true;
 							}

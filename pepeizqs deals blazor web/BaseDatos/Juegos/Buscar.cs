@@ -493,6 +493,33 @@ namespace BaseDatos.Juegos
 			}
 			catch { }
 
+			try
+			{
+				if (lector.IsDBNull(43) == false)
+				{
+					juego.UltimaActualizacionSteam = lector.GetDateTime(43);
+				}
+			}
+			catch { }
+
+			try
+			{
+				if (lector.IsDBNull(44) == false)
+				{
+					juego.UltimaActualizacionGOG = lector.GetDateTime(44);
+				}
+			}
+			catch { }
+
+			try
+			{
+				if (lector.IsDBNull(45) == false)
+				{
+					juego.UltimaActualizacion = lector.GetDateTime(45);
+				}
+			}
+			catch { }
+
 			return juego;
 		}
 

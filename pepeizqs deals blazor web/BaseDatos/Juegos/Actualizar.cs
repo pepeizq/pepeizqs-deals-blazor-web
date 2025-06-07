@@ -1257,6 +1257,13 @@ namespace BaseDatos.Juegos
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
 			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
 
 			using (conexion)
 			{
@@ -1267,6 +1274,67 @@ namespace BaseDatos.Juegos
 				{
 					comando.Parameters.AddWithValue("@id", juego.Id);
 					comando.Parameters.AddWithValue("@cantidadJugadoresSteam", JsonSerializer.Serialize(juego.CantidadJugadores));
+
+					comando.ExecuteNonQuery();
+					try
+					{
+
+					}
+					catch
+					{
+
+					}
+				}
+			}
+		}
+
+		public static void UltimasActualizaciones(int idJuego, DateTime? fechaSteam, DateTime? fechaGOG, SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string añadirFechaSteam = null;
+
+			if (fechaSteam != null)
+			{
+				añadirFechaSteam = ", ultimaActualizacionSteam=@ultimaActualizacionSteam";
+			}
+
+			string añadirFechaGOG = null;
+
+			if (fechaGOG != null)
+			{
+				añadirFechaGOG = ", ultimaActualizacionGOG=@ultimaActualizacionGOG";
+			}
+
+			using (conexion)
+			{
+				string sqlActualizar = "UPDATE juegos " +
+					"SET ultimaActualizacion=@ultimaActualizacion" + añadirFechaSteam + añadirFechaGOG + " WHERE id=@id";
+
+				using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+				{
+					comando.Parameters.AddWithValue("@id", idJuego);
+					comando.Parameters.AddWithValue("@ultimaActualizacion", DateTime.Now);
+
+					if (fechaSteam != null)
+					{
+						comando.Parameters.AddWithValue("@ultimaActualizacionSteam", fechaSteam);
+					}
+
+					if (fechaGOG != null)
+					{
+						comando.Parameters.AddWithValue("@ultimaActualizacionGOG", fechaGOG);
+					}
 
 					comando.ExecuteNonQuery();
 					try

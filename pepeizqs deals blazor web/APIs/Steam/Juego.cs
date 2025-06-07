@@ -786,6 +786,41 @@ namespace APIs.Steam
 			return null;
 		}
 
+		public static async Task<DateTime?> UltimaActualizacion(int id)
+		{
+			if (id > 0)
+			{
+				string html = await Decompiladores.Estandar("https://api.steamcmd.net/v1/info/" + id.ToString());
+
+				if (string.IsNullOrEmpty(html) == false)
+				{
+					SteamCMDAPI api = JsonSerializer.Deserialize<SteamCMDAPI>(html);
+
+					if (api != null)
+					{
+						if (api.Datos != null)
+						{
+							if (api.Datos.Count > 0)
+							{
+								foreach (var dato in api.Datos)
+								{
+									if (dato.Value.Depots?.Branches?.Publico?.Ticks != null)
+									{
+										DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(long.Parse(dato.Value.Depots?.Branches?.Publico?.Ticks));
+										DateTime fechaCreado = fecha.UtcDateTime;
+
+										return fechaCreado;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
 		public static bool Detectar(string enlace)
 		{
 			bool resultado = false;
@@ -1402,6 +1437,40 @@ namespace APIs.Steam
 
 		[JsonPropertyName("playtime_at_review")]
 		public int TiempoJugadoCuandoHizoAnalisis { get; set; }
+	}
+
+	#endregion
+
+	#region Clases Ultima Actualizacion
+
+	public class SteamCMDAPI
+	{
+		[JsonPropertyName("data")]
+		public Dictionary<string, SteamCMDAPIDatos> Datos { get; set; }
+	}
+
+	public class SteamCMDAPIDatos
+	{
+		[JsonPropertyName("depots")]
+		public SteamCMDAPIDepots Depots { get; set; }
+	}
+
+	public class SteamCMDAPIDepots
+	{
+		[JsonPropertyName("branches")]
+		public SteamCMDAPIBranches Branches { get; set; }
+	}
+
+	public class SteamCMDAPIBranches
+	{
+		[JsonPropertyName("public")]
+		public SteamCMDAPIBranchesPublic Publico { get; set; }
+	}
+
+	public class SteamCMDAPIBranchesPublic
+	{
+		[JsonPropertyName("timeupdated")]
+		public string Ticks { get; set; }
 	}
 
 	#endregion

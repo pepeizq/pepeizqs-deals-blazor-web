@@ -31,7 +31,7 @@ namespace APIs.GOG
 
 			string html = await Decompiladores.Estandar(enlace);
 
-			if (html != null)
+			if (string.IsNullOrEmpty(html) == false)
 			{
 				if (html.Contains(Strings.ChrW(34) + "sku" + Strings.ChrW(34)) == true)
 				{
@@ -382,17 +382,34 @@ namespace APIs.GOG
 			return null;
 		}
 
-		public static async Task<string> CargarIdiomasAdmin(string id)
+		public static async Task<DateTime?> UltimaActualizacion(string id)
 		{
-			string html2 = await Decompiladores.Estandar("https://api.gog.com/v2/games/" + id);
-
-			if (string.IsNullOrEmpty(html2) == false)
+			if (string.IsNullOrEmpty(id) == false)
 			{
-				GOGGalaxy2 datos = JsonSerializer.Deserialize<GOGGalaxy2>(html2);
-
-				if (datos != null)
+				string html = await Decompiladores.Estandar("https://content-system.gog.com/products/" + id + "/os/windows/builds?generation=2");
+				
+				if (string.IsNullOrEmpty(html) == false)
 				{
-					return JsonSerializer.Serialize(datos.Caracteristicas.Idiomas);
+					GOGUltimaActualizacion datos = JsonSerializer.Deserialize<GOGUltimaActualizacion>(html);
+
+					if (datos != null)
+					{
+						if (datos.Builds != null)
+						{
+							if (datos.Builds.Count > 0)
+							{
+								GOGUltimaActualizacionBuild ultima = datos.Builds[0];
+								
+								if (ultima != null)
+								{
+									if (ultima.FechaPublicacion != null)
+									{
+										return DateTime.Parse(ultima.FechaPublicacion);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -532,5 +549,24 @@ namespace APIs.GOG
 		public string Cantidad { get; set; }
 	}
 
-    #endregion
+	#endregion
+
+	#region Clases Ultima Actualizacion
+
+	public class GOGUltimaActualizacion
+	{
+		[JsonPropertyName("items")]
+		public List<GOGUltimaActualizacionBuild> Builds { get; set; }
+	}
+
+	public class GOGUltimaActualizacionBuild
+	{
+		[JsonPropertyName("build_id")]
+		public string Id { get; set; }
+
+		[JsonPropertyName("date_published")]
+		public string FechaPublicacion { get; set; }
+	}
+
+	#endregion
 }

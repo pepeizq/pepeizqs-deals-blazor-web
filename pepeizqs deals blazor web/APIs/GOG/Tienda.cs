@@ -343,6 +343,9 @@ namespace APIs.GOG
 
     public class GOGGalaxy2Caracteristicas
     {
+		[JsonPropertyName("product")]
+		public GOGGalaxy2Producto Producto { get; set; }
+
 		[JsonPropertyName("localizations")]
 		public List<GOGGalaxy2Idioma> Idiomas { get; set; }
 
@@ -351,6 +354,12 @@ namespace APIs.GOG
 
 		[JsonPropertyName("properties")]
 		public List<GOGGalaxy2Propiedad> Propiedades { get; set; }
+	}
+
+	public class GOGGalaxy2Producto
+	{
+		[JsonPropertyName("gogReleaseDate")]
+		public string FechaLanzamiento { get; set; }
 	}
 
 	public class GOGGalaxy2Idioma

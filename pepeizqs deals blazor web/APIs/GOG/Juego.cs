@@ -274,6 +274,11 @@ namespace APIs.GOG
 
 				if (datos != null)
 				{
+					if (datos.Caracteristicas.Producto != null)
+					{
+						galaxy.FechaLanzamiento = DateTime.Parse(datos.Caracteristicas.Producto.FechaLanzamiento);
+					}
+
 					foreach (var caracteristica in datos.Caracteristicas.Datos)
 					{
 						if (caracteristica.Id == "achievements")

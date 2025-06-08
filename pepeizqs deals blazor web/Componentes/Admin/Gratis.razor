@@ -183,6 +183,12 @@ else
             gratis.Tipo = GratisCargar.DevolverGratis(tipoGratis).Tipo;
             gratis.JuegoId = int.Parse(idSeleccionadaGratis);
             gratis.Nombre = nombreSeleccionadoGratis;
+
+            if (string.IsNullOrEmpty(imagenSeleccionadaGratis) == true)
+            {
+                imagenSeleccionadaGratis = BaseDatos.Juegos.Buscar.UnJuego(gratis.JuegoId).Imagenes.Header_460x215;
+            }
+
             gratis.Imagen = imagenSeleccionadaGratis;
             gratis.DRM = global::Juegos.JuegoDRM2.DevolverDRM(drmSeleccionadoGratis);
 

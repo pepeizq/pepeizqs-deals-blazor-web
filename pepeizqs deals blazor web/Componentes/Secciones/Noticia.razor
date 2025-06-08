@@ -230,7 +230,7 @@
 
 					@if (string.IsNullOrEmpty(noticia.GratisIds) == false)
 					{
-						<div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 30px; margin-top: 30px;">
+						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 30px; margin-top: 30px;">
 							@{
 								List<string> ids = Herramientas.Listados.Generar(noticia.GratisIds);
 
@@ -297,7 +297,7 @@
 
 					@if (string.IsNullOrEmpty(noticia.SuscripcionesIds) == false)
 					{
-						<div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 30px; margin-top: 30px;">
+						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 30px; margin-top: 30px;">
 							@{
 								List<string> ids = Herramientas.Listados.Generar(noticia.SuscripcionesIds);
 

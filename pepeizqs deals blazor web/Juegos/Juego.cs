@@ -242,7 +242,8 @@ namespace Juegos
         public bool Logros { get; set; }
         public bool GuardadoNube { get; set; }
 		public bool Preservacion { get; set; }
-    }
+		public DateTime FechaLanzamiento { get; set; }
+	}
 
 	public class JuegoEpicGames
 	{

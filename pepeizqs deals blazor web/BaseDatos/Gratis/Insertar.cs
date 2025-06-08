@@ -52,9 +52,9 @@ namespace BaseDatos.Gratis
 					{
 						comando.ExecuteNonQuery();
 					}
-					catch
+					catch (Exception ex)
 					{
-
+						BaseDatos.Errores.Insertar.Mensaje("Insertar juego gratis", ex);
 					}
 				}
 			}

@@ -2190,9 +2190,9 @@
                         </div>
                     }
 
-                    @if (juego.Caracteristicas.Desarrolladores2 != null || juego.Caracteristicas.Editores2 != null)
+                    @if (juego.Caracteristicas.Desarrolladores2 != null || juego.Caracteristicas.Editores2 != null || juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000) || juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
                     {
-                        <div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 15px;">
+                        <div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
                             @if (juego.Caracteristicas.Desarrolladores2 != null)
                             {
                                 if (juego.Caracteristicas.Desarrolladores2.Count > 0)
@@ -2263,7 +2263,63 @@
                                         }
                                     </div>
                                 }
-                            }           
+                            }
+
+                            @if (juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000) || juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
+                            {
+                                <div>
+                                    <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String100", "Game"):</div>
+                                    <hr style="margin: 10px 0px;">
+
+                                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                                        @if (juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000))
+                                        {
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.Steam)" style="max-width: 20px; max-height: 20px;" alt="Steam" loading="lazy" />
+
+                                                <label>@juego.Caracteristicas.FechaLanzamientoSteam.Day/@juego.Caracteristicas.FechaLanzamientoSteam.Month/@juego.Caracteristicas.FechaLanzamientoSteam.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.Caracteristicas.FechaLanzamientoSteam, idioma))</label>
+                                            </div>
+                                        }
+
+                                        @if (juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
+                                        {
+                                             <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.GOG)" style="max-width: 20px; max-height: 20px;" alt="GOG" loading="lazy" />
+
+                                                <label>@juego.GalaxyGOG.FechaLanzamiento.Day/@juego.GalaxyGOG.FechaLanzamiento.Month/@juego.GalaxyGOG.FechaLanzamiento.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.GalaxyGOG.FechaLanzamiento, idioma))</label>
+                                            </div>
+                                        }
+                                    </div> 
+                                </div>
+                            }
+                           
+                            @if (juego.UltimaActualizacionSteam != null || juego.UltimaActualizacionGOG != null)
+                            {
+                                <div>
+                                    <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String101", "Game"):</div>
+                                    <hr style="margin: 10px 0px;">
+
+                                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                                        @if (juego.UltimaActualizacionSteam != null)
+                                        {
+                                             <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.Steam)" style="max-width: 20px; max-height: 20px;" alt="Steam" loading="lazy" />
+
+                                                <label>@juego.UltimaActualizacionSteam.Value.Day/@juego.UltimaActualizacionSteam.Value.Month/@juego.UltimaActualizacionSteam.Value.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam.Value, idioma))</label>
+                                            </div>
+                                        }
+
+                                        @if (juego.UltimaActualizacionGOG != null)
+                                        {
+                                             <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.GOG)" style="max-width: 20px; max-height: 20px;" alt="GOG" loading="lazy" />
+
+                                                <label>@juego.UltimaActualizacionGOG.Value.Day/@juego.UltimaActualizacionGOG.Value.Month/@juego.UltimaActualizacionGOG.Value.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionGOG.Value, idioma))</label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
 

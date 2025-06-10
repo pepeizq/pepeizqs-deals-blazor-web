@@ -634,7 +634,7 @@
 
                                                     @if (juego.IdSteam > 0)
                                                     {
-                                                        <a class="juego-boton-pequeño" style="@fondoBoton" href="@Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon)" target="_blank">Steam</a>
+                                                        <a class="juego-boton-pequeño" style="@fondoBoton" href="@Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow">Steam</a>
                                                     }
                                                 </div>
                                             }
@@ -680,7 +680,7 @@
 
                             if (juego.UltimaActualizacionSteam != null)
                             {
-                                if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-90))
+                                if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-180))
                                 {
                                     alarmaNoActualizacion = true;
                                 }
@@ -936,8 +936,7 @@
 
                                                             <label style="text-align: left; width: 100%;">@mensaje</label>
 
-                                                            @if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
-                                                            {
+                                                            @{
                                                                 string enlaceJugar = string.Empty;
 
                                                                 if (drm.Id == JuegoDRM.Steam && juego.IdSteam > 0)
@@ -963,7 +962,7 @@
 
                                                                 if (string.IsNullOrEmpty(enlaceJugar) == false)
                                                                 {
-                                                                    <a class="juego-boton-pequeño" href="@enlaceJugar" style="width: auto; min-width: 200px; text-align: center; backdrop-filter: brightness(60%); background-color: transparent;">
+                                                                    <a class="juego-boton-pequeño" href="@enlaceJugar" rel="nofollow" style="width: auto; min-width: 200px; text-align: center; backdrop-filter: brightness(60%); background-color: transparent;">
                                                                         @Herramientas.Idiomas.BuscarTexto(idioma, "String81", "Game")
                                                                     </a>
                                                                 }
@@ -1569,36 +1568,33 @@
                                                     </button>
                                                 }
 
-                                                @if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+                                                @if (drm.Id == JuegoDRM.Steam)
                                                 {
-                                                    if (drm.Id == JuegoDRM.Steam)
+                                                    if (juego.IdSteam > 0)
                                                     {
-                                                        if (juego.IdSteam > 0)
-                                                        {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon)" target="_blank" style="width: auto; min-width: 200px; text-align: center;">
-                                                                @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Steam")
-                                                            </a>
-                                                        }
+                                                        <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Steam")
+                                                        </a>
                                                     }
+                                                }
 
-                                                    if (drm.Id == JuegoDRM.GOG)
+                                                @if (drm.Id == JuegoDRM.GOG)
+                                                {
+                                                    if (string.IsNullOrEmpty(juego.SlugGOG) == false)
                                                     {
-                                                        if (string.IsNullOrEmpty(juego.SlugGOG) == false)
-                                                        {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://www.gog.com/game/" + juego.SlugGOG, APIs.GOG.Tienda.Generar().Id, usuarioPatreon)" target="_blank" style="width: auto; min-width: 200px; text-align: center;">
-                                                                @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "GOG")
-                                                            </a>
-                                                        }
+                                                        <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://www.gog.com/game/" + juego.SlugGOG, APIs.GOG.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "GOG")
+                                                        </a>
                                                     }
+                                                }
 
-                                                    if (drm.Id == JuegoDRM.Epic)
+                                                @if (drm.Id == JuegoDRM.Epic)
+                                                {
+                                                    if (string.IsNullOrEmpty(juego.SlugEpic) == false)
                                                     {
-                                                        if (string.IsNullOrEmpty(juego.SlugEpic) == false)
-                                                        {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.epicgames.com/p/" + juego.SlugEpic, APIs.EpicGames.Tienda.Generar().Id, usuarioPatreon)" target="_blank" style="width: auto; min-width: 200px; text-align: center;">
-                                                                @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Epic Games")
-                                                            </a>
-                                                        }
+                                                        <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.epicgames.com/p/" + juego.SlugEpic, APIs.EpicGames.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Epic Games")
+                                                        </a>
                                                     }
                                                 }
                                             </div>
@@ -1635,7 +1631,7 @@
                                                                 </div>
                                                             }
 
-                                                            <a class="juego-boton-pequeño" style="display: block;" href="@Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon)" target="_blank">
+                                                            <a class="juego-boton-pequeño" style="display: block;" href="@Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon)" target="_blank" rel="nofollow">
                                                                 <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
                                                                     <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precio.Nombre)</span>
@@ -1731,7 +1727,7 @@
                                                                 </div>
                                                             }
 
-                                                            <a class="juego-boton-pequeño" style="display: block;" href="@Herramientas.EnlaceAcortador.Generar(precioBajo.Enlace, precioBajo.Tienda, usuarioPatreon)" target="_blank">
+                                                            <a class="juego-boton-pequeño" style="display: block;" href="@Herramientas.EnlaceAcortador.Generar(precioBajo.Enlace, precioBajo.Tienda, usuarioPatreon)" target="_blank" rel="nofollow">
                                                                 <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precioBajo.Tienda)" class="juego-imagen-boton" alt="@precioBajo.Tienda" loading="lazy" />
                                                                     <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precioBajo.Nombre)</span>
@@ -1795,7 +1791,7 @@
 
                                 if (bundle3 != null)
                                 {
-                                    <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon)" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
+                                    <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon)" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                         <div style="display: flex; align-items: center;">
                                             <div style="margin-right: 15px;">
                                                 <img src="@BundlesCargar.DevolverBundle(bundle3.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Bundle" loading="lazy"/>
@@ -1880,7 +1876,7 @@
 
                         @foreach (var gratis2 in GratisDisponibles(juego.Gratis))
                         {
-                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon)" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
+                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon)" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                 <div style="display: flex; align-items: center;">
                                     <div style="margin-right: 15px;">
                                         <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Free" loading="lazy"/>
@@ -1969,7 +1965,7 @@
 
                                 enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(enlaceSuscripcion, suscripcion2.Tipo, usuarioPatreon);
 
-                                <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
+                                <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
                                     <div style="display: flex; align-items: center;">
                                         <div style="margin-right: 15px;">
                                             <img src="@suscripcionUsar.ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Subscription" loading="lazy" />
@@ -2556,7 +2552,7 @@
                                                 </div>
                                             </a>
                                         }
-                                        else if (enlace.Contains("https://mastodon.gamedev.place/") == true || enlace.Contains("https://mastodon.social/") == true || enlace.Contains("https://mstdn.social/") == true)
+                                        else if (enlace.Contains("https://mastodon.gamedev.place/") == true || enlace.Contains("https://mastodon.social/") == true || enlace.Contains("https://mstdn.social/") == true || enlace.Contains("https://mastodon.online/") == true)
                                         {
                                             <a href="@enlace" target="_blank" class="boton-pequeño" title="Mastodon" style="width: fit-content; padding: 10px;">
                                                 <div style="width: 30px; height: 30px; padding: 2px;">
@@ -2596,23 +2592,23 @@
                         <div style="display: flex; align-items: center; gap: 10px;">
                             @if (juego.IdSteam > 0)
                             {
-                                <a href="https://steamdb.info/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="SteamDB" style="width: fit-content; padding: 10px;">
+                                <a href="https://steamdb.info/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="SteamDB" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="steamdb"/>
                                 </a>
-                                <a href="https://protondb.com/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="ProtonDB" style="width: fit-content; padding: 10px;">
+                                <a href="https://protondb.com/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="ProtonDB" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="protondb"/>
                                 </a>
-                                <a href="https://pcgamingwiki.com/api/appid.php?appid=@juego.IdSteam" target="_blank" class="boton-pequeño" title="PCGamingWiki" style="width: fit-content; padding: 10px;">
+                                <a href="https://pcgamingwiki.com/api/appid.php?appid=@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="PCGamingWiki" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="pcgamingwiki"/>
                                 </a>
-                                <a href="https://isthereanydeal.com/steam/app/@juego.IdSteam" target="_blank" class="boton-pequeño" title="IsThereAnyDeal" style="width: fit-content; padding: 10px;">
+                                <a href="https://isthereanydeal.com/steam/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="IsThereAnyDeal" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
                                 </a>
                             }
 
                             @if (juego.IdGog > 0)
                             {
-                                <a href="https://www.gogdb.org/product/@juego.IdGog" target="_blank" class="boton-pequeño" title="GOG Database" style="width: fit-content; padding: 10px;">
+                                <a href="https://www.gogdb.org/product/@juego.IdGog" target="_blank" rel="nofollow" class="boton-pequeño" title="GOG Database" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
                                 </a>
                             }

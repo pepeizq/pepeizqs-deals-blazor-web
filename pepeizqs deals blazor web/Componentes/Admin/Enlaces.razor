@@ -5,15 +5,19 @@
 
     <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px;">
         <div>
-            <a class="boton-pequeño" href="https://win6052.site4now.net/stats/awstats.pl?config=1112749300&h=8d43503475c9993340908170c2f4b9da" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
+            <a class="boton-pequeño" href="@dealsSmarterasp" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
         </div>
 
         <div>
-            <a class="boton-pequeño" href="https://search.google.com/search-console?resource_id=sc-domain:pepeizqdeals.com" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google</a>
+            <a class="boton-pequeño" href="@dealsGoogleSearch" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Search</a>
         </div>
 
         <div>
-            <a class="boton-pequeño" href="https://www.bing.com/webmasters/home?siteUrl=https://pepeizqdeals.com/" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Bing</a>
+            <a class="boton-pequeño" href="@dealsGoogleAnalytics" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Analytics</a>
+        </div>
+
+        <div>
+            <a class="boton-pequeño" href="@dealsBing" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Bing</a>
         </div>
     </div>
 </div>
@@ -25,15 +29,19 @@
 
     <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px;">
         <div>
-            <a class="boton-pequeño" href="https://win6052.site4now.net/stats/awstats.pl?config=1112749301&h=247c8c635b3636dbad356b8bfe410387" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
+            <a class="boton-pequeño" href="@appsSmarterasp" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
         </div>
 
         <div>
-            <a class="boton-pequeño" href="https://search.google.com/search-console?resource_id=sc-domain:pepeizqapps.com" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google</a>
+            <a class="boton-pequeño" href="@appsGoogleSearch" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Search</a>
         </div>
 
         <div>
-            <a class="boton-pequeño" href="https://www.bing.com/webmasters/home?siteUrl=https://pepeizqapps.com/" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Bing</a>
+            <a class="boton-pequeño" href="@appsGoogleAnalytics" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Analytics</a>
+        </div>
+
+        <div>
+            <a class="boton-pequeño" href="@appsBing" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Bing</a>
         </div>
     </div>
 </div>
@@ -146,10 +154,36 @@
 
 @code {
 
+    #nullable disable
+
     [Parameter]
     public int correosDeals { get; set; }
 
     [Parameter]
     public int correosApps { get; set; }
 
+    private string dealsSmarterasp = string.Empty;
+    private string dealsGoogleSearch = string.Empty;
+    private string dealsGoogleAnalytics = string.Empty;
+    private string dealsBing = string.Empty;
+
+    private string appsSmarterasp = string.Empty;
+    private string appsGoogleSearch = string.Empty;
+    private string appsGoogleAnalytics = string.Empty;
+    private string appsBing = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+
+        dealsSmarterasp = builder.Configuration.GetValue<string>("WebmasterDeals:Smarterasp");
+        dealsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleSearch");
+        dealsGoogleAnalytics = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleAnalytics");
+        dealsBing = builder.Configuration.GetValue<string>("WebmasterDeals:Bing");
+
+        appsSmarterasp = builder.Configuration.GetValue<string>("WebmasterApps:Smarterasp");
+        appsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterApps:GoogleSearch");
+        appsGoogleAnalytics = builder.Configuration.GetValue<string>("WebmasterApps:GoogleAnalytics");
+        appsBing = builder.Configuration.GetValue<string>("WebmasterApps:Bing");
+    }
 }

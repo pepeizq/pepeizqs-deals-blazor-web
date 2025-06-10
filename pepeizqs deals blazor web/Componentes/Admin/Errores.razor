@@ -96,7 +96,7 @@
 
     private SqlConnection conexion = new SqlConnection();
 
-    List<Error> listaErrores = new List<Error>();
+    List<BaseDatos.Errores.Error> listaErrores = new List<BaseDatos.Errores.Error>();
 
     protected override void OnInitialized()
     {
@@ -119,7 +119,7 @@
         {
             BaseDatos.Errores.Limpiar.Ejecutar(conexion);
 
-            listaErrores = new List<Error>();
+            listaErrores = new List<BaseDatos.Errores.Error>();
         }
     }
 

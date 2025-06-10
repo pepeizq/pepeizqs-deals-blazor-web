@@ -18,7 +18,7 @@ namespace Herramientas.RedesSociales
 				builder.Configuration.GetValue<string>("Twitter:ConsumerSecret"),
 				builder.Configuration.GetValue<string>("Twitter:AccessToken"),
 				builder.Configuration.GetValue<string>("Twitter:AccessSecret"));
-
+			
 			string enlace = string.Empty;
 
 			if (noticia.Id == 0)

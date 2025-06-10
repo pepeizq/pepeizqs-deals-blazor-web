@@ -277,27 +277,21 @@
 
                         @if (string.IsNullOrEmpty(tooltipDatos.ReviewsIcono) == false && string.IsNullOrEmpty(tooltipDatos.ReviewsCantidad) == false)
                         {
-                            <hr />
+                            if (tooltipDatos.ReviewsCantidad.Length > 3)
+                            {
+                                <hr />
 
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <img src="@tooltipDatos.ReviewsIcono" style="width: 20px; height: 20px;" alt="Reviews" />
-                                <label style="font-size: 14px;">@tooltipDatos.ReviewsCantidad</label>
-                            </div>
-                        }
-
-                        @if (string.IsNullOrEmpty(tooltipDatos.UsuarioMensaje) == false)
-                        {
-                            <hr />
-
-                            <div style="text-align: left;">
-                                @tooltipDatos.UsuarioMensaje
-                            </div>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img src="@tooltipDatos.ReviewsIcono" style="width: 20px; height: 20px;" alt="Reviews" />
+                                    <label style="font-size: 14px;">@tooltipDatos.ReviewsCantidad</label>
+                                </div>
+                            }
                         }
                     </div>
                 </div>
 
                 <a href="@Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon)" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor" target="_blank">
-                    <div style="width: 100%; text-align: center; padding: 5px;">
+                    <div style="width: 100%; text-align: center; padding: 2px;">
                         <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagen)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
 
                         <div style="margin-top: 10px; margin-bottom: 5px; text-align: center; padding: 5px;">

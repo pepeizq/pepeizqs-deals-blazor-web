@@ -95,5 +95,6 @@
   "String97": "Ce jeu est dans un accès précoce, ce qui signifie qu'il est toujours en développement et il manquera des fonctionnalités.",
   "String98": "Compatibilité VR",
   "String99": "Ce jeu d'accès anticipé a été abandonné par le développeur car il n'a pas été mis à jour pour {0}.",
-  "String100": "Dernière mise à jour:"
+  "String100": "Date de sortie",
+  "String101": "Dernier patch"
 }

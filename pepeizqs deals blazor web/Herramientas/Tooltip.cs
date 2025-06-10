@@ -14,7 +14,6 @@ namespace Herramientas
                 Video = null,
                 ReviewsIcono = null,
                 ReviewsCantidad = null,
-                UsuarioMensaje = null,
 				BundlesActuales = null,
                 BundlesPasados = null,
 				GratisActuales = null,
@@ -32,6 +31,8 @@ namespace Herramientas
 						if (string.IsNullOrEmpty(juego.Media.Videos[0].Micro) == false)
 						{
 							datos.Video = juego.Media.Videos[0].Micro;
+
+							datos.Video = datos.Video.Replace(".mp4", ".webm");
 						}
 					}
 				}
@@ -41,48 +42,25 @@ namespace Herramientas
             {
                 if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false && string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
                 {
-                    if (int.Parse(juego.Analisis.Porcentaje) > 74)
-                    {
-                        datos.ReviewsIcono = "/imagenes/analisis/positivo3.svg";
-                    }
-                    else if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
-                    {
-                        datos.ReviewsIcono = "/imagenes/analisis/meh3.svg";
-                    }
-                    else if (int.Parse(juego.Analisis.Porcentaje) < 50)
-                    {
-                        datos.ReviewsIcono = "/imagenes/analisis/negative3.svg";
-                    }
+					if (juego.Analisis.Cantidad.Length > 1)
+					{
+						if (int.Parse(juego.Analisis.Porcentaje) > 74)
+						{
+							datos.ReviewsIcono = "/imagenes/analisis/positivo3.svg";
+						}
+						else if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
+						{
+							datos.ReviewsIcono = "/imagenes/analisis/meh3.svg";
+						}
+						else if (int.Parse(juego.Analisis.Porcentaje) < 50)
+						{
+							datos.ReviewsIcono = "/imagenes/analisis/negativo3.svg";
+						}
 
-					datos.ReviewsCantidad = juego.Analisis.Porcentaje.ToString() + "% • " + Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad);
+						datos.ReviewsCantidad = juego.Analisis.Porcentaje.ToString() + "% • " + Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad);
+					}
                 }
             }
-
-            if (usuarioConectado == true)
-            {
-				if (drm == JuegoDRM.Steam && juego.Tipo == JuegoTipo.Game)
-				{
-					if (usuarioTieneJuego == true)
-					{
-						datos.UsuarioMensaje = Idiomas.BuscarTexto(idioma, "String8", "Tooltip");
-					}
-					else
-					{
-						if (usuarioDeseaJuego == true)
-						{
-							datos.UsuarioMensaje = Idiomas.BuscarTexto(idioma, "String10", "Tooltip");
-						}
-						else
-						{
-							datos.UsuarioMensaje = Idiomas.BuscarTexto(idioma, "String9", "Tooltip");
-						}
-					}
-				}
-			}
-            else
-            {
-                datos.UsuarioMensaje = null;
-			}
 
 			if (juego.Bundles != null)
 			{
@@ -340,7 +318,6 @@ namespace Herramientas
         public string Video { get; set; }
 		public string ReviewsIcono { get; set; }
 		public string ReviewsCantidad { get; set; }
-		public string UsuarioMensaje { get; set; }
         public string BundlesActuales { get; set; }
         public string GratisActuales { get; set; }
         public string SuscripcionesActuales { get; set; }

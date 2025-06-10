@@ -73,7 +73,7 @@ WHERE tipo = 0 AND
 year(getdate()) < year(JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam')) + 5 AND
 CONVERT(float, JSON_VALUE(precioMinimosHistoricos, '$[0].Precio')) > 1.99 AND 
 JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = 0 AND 
-CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaActualizacion')) > GETDATE() - 12 AND 
+CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaActualizacion')) > DATEADD(HOUR,-24,GetDate()) AND 
 (CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > 1999 AND 
 bundles IS NULL AND 
 gratis IS NULL AND 
@@ -253,7 +253,7 @@ ORDER BY NEWID()";
 					}
 				}
 
-				string busqueda = @"SELECT DISTINCT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog FROM seccionMinimos 
+				string busqueda = @"SELECT DISTINCT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog, analisis FROM seccionMinimos 
                                     WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis AND CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) > DATEADD(day, -7, CAST(GETDATE() AS date)) @categoria @drm
                                     ORDER BY Fecha DESC";
 
@@ -347,6 +347,14 @@ ORDER BY NEWID()";
 							if (lector.IsDBNull(10) == false)
 							{
 								juego.IdGog = lector.GetInt32(10);
+							}
+
+							if (lector.IsDBNull(11) == false)
+							{
+								if (string.IsNullOrEmpty(lector.GetString(11)) == false)
+								{
+									juego.Analisis = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(11));
+								}
 							}
 
 							resultados.Add(juego);

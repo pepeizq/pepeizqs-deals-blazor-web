@@ -388,6 +388,8 @@ app.UseRateLimiter();
 
 #endregion
 
+app.UseStatusCodePagesWithRedirects("/error");
+
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 

@@ -1,10 +1,12 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using APIs.Steam
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 @using pepeizqs_deals_blazor_web.Componentes.Account
 @using pepeizqs_deals_web.Data
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<Usuario> UserManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -160,8 +162,6 @@
 
 </html>
 
-<GBAnchor />
-
 @code {
 
     #nullable disable
@@ -178,6 +178,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         usuarioId = user.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
@@ -192,9 +195,87 @@
         if (string.IsNullOrEmpty(usuarioId) == false)
         {
             idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-        }
 
-        WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
+            Usuario usuario = await UserManager.FindByIdAsync(usuarioId);
+
+            if (usuario.EmailConfirmed == true)
+            {
+                if (string.IsNullOrEmpty(usuario.SteamAccount) == false && string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
+                {
+                    bool tiempo = true;
+
+                    if (string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
+                    {
+                        if (Convert.ToDateTime(usuario.SteamAccountLastCheck) + TimeSpan.FromDays(7) > DateTime.Now)
+                        {
+                            tiempo = false;
+                        }
+                    }
+
+                    if (tiempo == true)
+                    {
+                        SteamUsuario datos = await APIs.Steam.Cuenta.CargarDatos(usuario.SteamAccount);
+
+                        usuario.SteamGames = datos.Juegos;
+                        usuario.SteamWishlist = datos.Deseados;
+                        usuario.Avatar = datos.Avatar;
+                        usuario.Nickname = datos.Nombre;
+                        usuario.SteamAccountLastCheck = DateTime.Now.ToString();
+                        usuario.OfficialGroup = datos.GrupoPremium;
+                        usuario.OfficialGroup2 = datos.GrupoNormal;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(usuario.GogAccount) == false && usuario.GogAccountLastCheck != null)
+                {
+                    bool tiempo = true;
+
+                    if (usuario.GogAccountLastCheck + TimeSpan.FromDays(7) > DateTime.Now)
+                    {
+                        tiempo = false;
+                    }
+
+                    if (tiempo == true)
+                    {
+                        usuario.GogGames = await APIs.GOG.Cuenta.BuscarJuegos(usuario.GogAccount);
+                        usuario.GogWishlist = await APIs.GOG.Cuenta.BuscarDeseados(usuario.GogId);
+                        usuario.GogAccountLastCheck = DateTime.Now;
+                    }
+                }
+
+                if (usuario.PatreonLastLogin == null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true)
+                {
+                    usuario.PatreonLastLogin = DateTime.Now;
+                    usuario.PatreonCoins = 2;
+
+                    global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                }
+
+                if (usuario.PatreonLastLogin != null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true)
+                {
+                    if (usuario.PatreonCoins < 30)
+                    {
+                        if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                        {
+                            usuario.PatreonLastLogin = DateTime.Now;
+                            usuario.PatreonCoins = usuario.PatreonCoins + 2;
+
+                            global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                        }
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(idioma) == false)
+            {
+                usuario.Language = idioma;
+            }
+
+            try
+            {
+                await UserManager.UpdateAsync(usuario);
+            }
+            catch { }
+        }
     }
 }

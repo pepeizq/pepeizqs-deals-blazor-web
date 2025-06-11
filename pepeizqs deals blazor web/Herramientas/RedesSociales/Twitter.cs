@@ -71,7 +71,7 @@ namespace Herramientas.RedesSociales
 						Text = noticia.TituloEn + " " + Environment.NewLine + Environment.NewLine + enlace
 					}
 				);
-
+	
 				return resultado.Response.IsSuccessStatusCode;
 			}
 			else

@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_web.Data;
+using Persilsoft.WebPush.Blazor;
+using Persilsoft.WebPush.Blazor.Options;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
@@ -332,6 +334,10 @@ builder.Services.AddControllers(opciones =>
 builder.Services.AddHttpContextAccessor();
 
 #endregion
+
+Action<WebPushNotificationOptions> WebPushNotificationOptionsConfigurator = options =>
+builder.Configuration.GetSection(WebPushNotificationOptions.SectionKey).Bind(options);
+builder.Services.AddNotificationService(WebPushNotificationOptionsConfigurator);
 
 var app = builder.Build();
 

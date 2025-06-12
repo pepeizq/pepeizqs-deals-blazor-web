@@ -43,11 +43,11 @@ namespace Tareas.Tiendas
 
                     if (conexion.State == System.Data.ConnectionState.Open)
                     {
-                        TimeSpan siguienteComprobacion = TimeSpan.FromHours(6);
+                        TimeSpan siguienteComprobacion = TimeSpan.FromHours(4);
 
                         if (DateTime.Now.Hour == 19)
                         {
-                            siguienteComprobacion = TimeSpan.FromHours(7);
+                            siguienteComprobacion = TimeSpan.FromHours(5);
                         }
 
                         bool sePuedeUsar = BaseDatos.Admin.Buscar.TiendasPosibleUsar(siguienteComprobacion, id, conexion);

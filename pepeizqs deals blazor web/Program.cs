@@ -1,4 +1,5 @@
 using ApexCharts;
+using BlazorNotification;
 using Herramientas;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -9,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_web.Data;
-using Persilsoft.WebPush.Blazor;
-using Persilsoft.WebPush.Blazor.Options;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
@@ -44,7 +43,7 @@ builder.Services.AddWebOptimizer(opciones => {
 
 	}, "lib/bootstrap/dist/css/bootstrap.min.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css", "lib/font-awesome/css/all.css");
 
-	opciones.AddJavaScriptBundle("/superjs.js", "pushNotifications.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
+	opciones.AddJavaScriptBundle("/superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
 });
 
 #endregion
@@ -335,9 +334,7 @@ builder.Services.AddHttpContextAccessor();
 
 #endregion
 
-Action<WebPushNotificationOptions> WebPushNotificationOptionsConfigurator = options =>
-builder.Configuration.GetSection(WebPushNotificationOptions.SectionKey).Bind(options);
-builder.Services.AddNotificationService(WebPushNotificationOptionsConfigurator);
+builder.Services.AddBlazorNotification();
 
 var app = builder.Build();
 

@@ -10,218 +10,166 @@ using Juegos;
 using Microsoft.Data.SqlClient;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace APIs.Ubisoft
 {
-    public static class Tienda
-    {
-        public static Tiendas2.Tienda Generar()
-        {
-            Tiendas2.Tienda tienda = new Tiendas2.Tienda
-            {
-                Id = "ubisoft",
-                Nombre = "Ubisoft Store",
-                ImagenLogo = "/imagenes/tiendas/ubisoft2_logo.webp",
-                Imagen300x80 = "/imagenes/tiendas/ubisoft2_300x80.webp",
-                ImagenIcono = "/imagenes/tiendas/ubisoft_icono.webp",
-                Color = "#0a0a0a",
-                AdminEnseñar = true,
-                AdminInteractuar = true
-            };
+	public static class Tienda
+	{
+		public static Tiendas2.Tienda Generar()
+		{
+			Tiendas2.Tienda tienda = new Tiendas2.Tienda
+			{
+				Id = "ubisoft",
+				Nombre = "Ubisoft Store",
+				ImagenLogo = "/imagenes/tiendas/ubisoft2_logo.webp",
+				Imagen300x80 = "/imagenes/tiendas/ubisoft2_300x80.webp",
+				ImagenIcono = "/imagenes/tiendas/ubisoft_icono.webp",
+				Color = "#0a0a0a",
+				AdminEnseñar = true,
+				AdminInteractuar = true
+			};
 
-            return tienda;
-        }
+			return tienda;
+		}
 
-        public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
-        {
+		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
+		{
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
-            //HttpClient cliente = new HttpClient();
-            //cliente.BaseAddress = new Uri("https://store.ubisoft.com/");
-            //cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //         cliente.DefaultRequestHeaders.Add("X-Algolia-Api-Key", "9258b782262f815cdfee54a00cf69d02");
-            //         cliente.DefaultRequestHeaders.Add("X-Algolia-Application-Id", "AVCVYSEJS1");
+			int paginas = 10;
+			int juegos2 = 0;
 
-            //         HttpResponseMessage respuesta = await cliente.GetAsync("https://avcvysejs1-dsn.algolia.net/1/indexes/products_en-us_default?&query=&hitsPerPage=1000");
+			int i = 0;
+			while (i < paginas)
+			{
+				HttpClient cliente = new HttpClient();
+				cliente.BaseAddress = new Uri("https://store.ubisoft.com/");
+				cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            //string html = string.Empty;
+				HttpRequestMessage peticion = new HttpRequestMessage(HttpMethod.Post, "https://xely3u4lod-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20JavaScript%20(3.35.1)%3B%20Browser&x-algolia-application-id=XELY3U4LOD&x-algolia-api-key=5638539fd9edb8f2c6b024b49ec375bd");
+				peticion.Content = new StringContent("{\"requests\":[{\"indexName\":\"production__es_ubisoft__products__es_ES__best_sellers\",\"params\":\"hitsPerPage=100&page=" + i.ToString() + "\"}]}");
 
-            //try
-            //{
-            //	html = await respuesta.Content.ReadAsStringAsync();
-            //}
-            //catch { }
+				HttpResponseMessage respuesta = await cliente.SendAsync(peticion);
 
-            //if (string.IsNullOrEmpty(html) == false)
-            //{
-            //	BaseDatos.Errores.Insertar.Mensaje("test", html);
-            //}
+				string html = string.Empty;
 
-            string html = await Decompiladores.Estandar("https://daisycon.io/datafeed/?media_id=350618&standard_id=1&language_code=es&locale_id=17&type=JSON&program_id=14538&html_transform=none&rawdata=false&encoding=utf8&general=false");
+				try
+				{
+					html = await respuesta.Content.ReadAsStringAsync();
+				}
+				catch { }
 
-            if (string.IsNullOrEmpty(html) == false)
-            {
-                UbisoftDatos datos = JsonSerializer.Deserialize<UbisoftDatos>(html);
+				if (string.IsNullOrEmpty(html) == false)
+				{
+					UbisoftDatos datos = JsonSerializer.Deserialize<UbisoftDatos>(html);
 
-                if (datos != null)
-                {
-                    if (datos.Datos != null)
-                    {
-                        if (datos.Datos.Programas != null)
-                        {
-                            if (datos.Datos.Programas.Count > 0)
-                            {
-                                if (datos.Datos.Programas[0].Productos != null)
-                                {
-                                    if (datos.Datos.Programas[0].Productos.Count > 0)
-                                    {
-                                        int juegos2 = 0;
+					if (datos != null)
+					{
+						if (datos.Datos != null)
+						{
+							paginas = datos.Datos[0].Paginas;
 
-                                        foreach (UbisoftDatosProducto juego in datos.Datos.Programas[0].Productos)
-                                        {
-                                            int descuento = Calculadora.SacarDescuento(juego.Datos.PrecioBase, juego.Datos.PrecioRebajado);
+							if (datos.Datos[0].Juegos != null)
+							{
+								if (datos.Datos[0].Juegos.Count > 0)
+								{
+									foreach (UbisoftJuego juego in datos.Datos[0].Juegos)
+									{
+										if (juego != null)
+										{
+											int descuento = Calculadora.SacarDescuento(juego.PrecioBase.Euro, juego.PrecioRebajado.Euro);
 
-                                            if (descuento > 0)
-                                            {
-                                                string nombre = WebUtility.HtmlDecode(juego.Datos.Nombre);
+											if (descuento > 0)
+											{
+												string nombre = WebUtility.HtmlDecode(juego.Nombre);
+												string enlace = juego.Enlace;
+												string imagen = juego.Imagen;
 
-                                                string enlace = "https://store.ubisoft.com/" + juego.Datos.Id + ".html";
+												JuegoPrecio oferta = new JuegoPrecio
+												{
+													Nombre = nombre,
+													Enlace = enlace,
+													Imagen = imagen,
+													Moneda = JuegoMoneda.Euro,
+													Precio = juego.PrecioRebajado.Euro,
+													Descuento = descuento,
+													Tienda = Generar().Id,
+													DRM = JuegoDRM.Ubisoft,
+													FechaDetectado = DateTime.Now,
+													FechaActualizacion = DateTime.Now
+												};
 
-                                                string imagen = "vacio";
+												try
+												{
+													BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+												}
+												catch (Exception ex)
+												{
+													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+												}
 
-                                                if (juego.Datos.Imagenes != null)
-                                                {
-                                                    if (juego.Datos.Imagenes.Count > 0)
-                                                    {
-                                                        imagen = juego.Datos.Imagenes[0].Enlace;
+												juegos2 += 1;
 
-                                                        if (imagen.Contains("?") == true)
-                                                        {
-                                                            int int1 = imagen.IndexOf("?");
-                                                            imagen = imagen.Remove(int1, imagen.Length - int1);
-                                                        }
-                                                    }
-                                                }
+												try
+												{
+													BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+												}
+												catch (Exception ex)
+												{
+													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 
-                                                JuegoPrecio oferta = new JuegoPrecio
-                                                {
-                                                    Nombre = nombre,
-                                                    Enlace = enlace,
-                                                    Imagen = imagen,
-                                                    Moneda = JuegoMoneda.Euro,
-                                                    Precio = juego.Datos.PrecioRebajado,
-                                                    Descuento = descuento,
-                                                    Tienda = Generar().Id,
-                                                    DRM = JuegoDRM.Ubisoft,
-                                                    FechaDetectado = DateTime.Now,
-                                                    FechaActualizacion = DateTime.Now
-                                                };
-
-                                                try
-                                                {
-                                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    BaseDatos.Errores.Insertar.Mensaje(Tienda.Generar().Id, ex, conexion);
-                                                }
-
-                                                juegos2 += 1;
-
-                                                try
-                                                {
-                                                    BaseDatos.Admin.Actualizar.Tiendas(Tienda.Generar().Id, DateTime.Now, juegos2, conexion);
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    BaseDatos.Errores.Insertar.Mensaje(Tienda.Generar().Id, ex, conexion);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static async void BuscarJuego(string tiendaId)
-        {
-            HttpClient cliente = new HttpClient();
-            cliente.BaseAddress = new Uri("https://store.ubisoft.com/");
-            cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpRequestMessage peticion = new HttpRequestMessage(HttpMethod.Post, "https://xely3u4lod-dsn.algolia.net/1/indexes/eu_custom_MFE/query?x-algolia-agent=Algolia%20for%20JavaScript%20(4.8.5)%3B%20Browser&x-algolia-application-id=XELY3U4LOD&x-algolia-api-key=5638539fd9edb8f2c6b024b49ec375bd");
-            peticion.Content = new StringContent("{\"query\":\"" + tiendaId + "\"}",
-                                                Encoding.UTF8, "application/json");
-
-            HttpResponseMessage respuesta = await cliente.SendAsync(peticion);
-
-            string html = string.Empty;
-
-            try
-            {
-                html = await respuesta.Content.ReadAsStringAsync();
-            }
-            catch { }
-
-            if (string.IsNullOrEmpty(html) == false)
-            {
-                BaseDatos.Errores.Insertar.Mensaje("test", html);
-            }
-        }
+				i += 1;
+			}
+		}
 	}
 
-    public class UbisoftDatos
-    {
-        [JsonPropertyName("datafeed")]
-        public UbisoftDatosProgramas Datos { get; set; }
-    }
+	public class UbisoftDatos
+	{
+		[JsonPropertyName("results")]
+		public List<UbisoftResultados> Datos { get; set; }
+	}
 
-    public class UbisoftDatosProgramas
-    {
-        [JsonPropertyName("programs")]
-        public List<UbisoftDatosProductos> Programas { get; set; }
-    }
+	public class UbisoftResultados
+	{
+		[JsonPropertyName("hits")]
+		public List<UbisoftJuego> Juegos { get; set; }
 
-    public class UbisoftDatosProductos
-    {
-        [JsonPropertyName("products")]
-        public List<UbisoftDatosProducto> Productos { get; set; }
-    }
+		[JsonPropertyName("nbHits")]
+		public int Paginas { get; set; }
+	}
 
-    public class UbisoftDatosProducto
-    {
-        [JsonPropertyName("product_info")]
-        public UbisoftDatosProductoInfo Datos { get; set; }
-    }
+	public class UbisoftJuego
+	{
+		[JsonPropertyName("title")]
+		public string Nombre { get; set; }
 
-    public class UbisoftDatosProductoInfo
-    {
-        [JsonPropertyName("description")]
-        public string Nombre { get; set; }
+		[JsonPropertyName("link")]
+		public string Enlace { get; set; }
 
-        [JsonPropertyName("sku")]
-        public string Id { get; set; }
+		[JsonPropertyName("image_link")]
+		public string Imagen { get; set; }
 
-        [JsonPropertyName("price")]
-        public decimal PrecioRebajado { get; set; }
+		[JsonPropertyName("price")]
+		public UbisoftJuegoPrecio PrecioRebajado { get; set; }
 
-        [JsonPropertyName("price_old")]
-        public decimal PrecioBase { get; set; }
+		[JsonPropertyName("default_price")]
+		public UbisoftJuegoPrecio PrecioBase { get; set; }
+	}
 
-        [JsonPropertyName("images")]
-        public List<UbisoftDatosProductoInfoImagen> Imagenes { get; set; }
-    }
-
-    public class UbisoftDatosProductoInfoImagen
-    {
-        [JsonPropertyName("location")]
-        public string Enlace { get; set; }
-    }
+	public class UbisoftJuegoPrecio
+	{
+		[JsonPropertyName("EUR")]
+		public decimal Euro { get; set; }
+	}
 }

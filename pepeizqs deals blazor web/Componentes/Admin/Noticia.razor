@@ -1,7 +1,10 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@using BlazorNotification
+@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
 @using pepeizqs_deals_web.Data
+
+@inject IBlazorNotificationService ServicioNotificaciones
 
 @if (noticia != null)
 {
@@ -412,17 +415,19 @@
 
 	private async void EnviarNotificacionesPush(MouseEventArgs e)
 	{
-		List<Usuario> usuarios = BaseDatos.Usuarios.Buscar.UsuariosIdioma();
+		// List<Usuario> usuarios = BaseDatos.Usuarios.Buscar.UsuariosIdioma();
 
-		if (usuarios != null)
-		{
-			if (usuarios.Count > 0)
-			{
-				foreach (var usuario in usuarios)
-				{
-					await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticia, usuario.Language);
-				}
-			}
-		}
+		// if (usuarios != null)
+		// {
+		// 	if (usuarios.Count > 0)
+		// 	{
+		// 		foreach (var usuario in usuarios)
+		// 		{
+		// 			await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, usuario.Id, noticia, usuario.Language);
+		// 		}
+		// 	}
+		// }
+
+		await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, noticia);
 	}
 }

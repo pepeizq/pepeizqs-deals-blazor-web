@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@using BlazorNotification
 @using Juegos
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
@@ -14,6 +15,7 @@
 
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
+@inject IBlazorNotificationService ServicioNotificaciones
 @inject PersistentComponentState ApplicationState
 @implements IDisposable
 
@@ -948,6 +950,14 @@
 	}
 
 	public void Dispose() => persistingSubscription?.Dispose();
+
+	protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (primerRender == true)
+        {
+            await ServicioNotificaciones.RequestPermissionAsync();
+        }
+    }
 
 	private void EnseñarDestacadoVideo(EventArgs args, Juegos.Juego juegoDestacado)
 	{

@@ -244,7 +244,7 @@ namespace BaseDatos.Juegos
 			}
 		}
 
-		public static async Task<string> GogReferencia(string idJuego, SqlConnection conexion = null)
+		public static async Task<string> GogReferencia(string idReferencia, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -259,11 +259,11 @@ namespace BaseDatos.Juegos
 			}
 
 			bool sePuedeInsertar = true;
-			string buscar = "SELECT * FROM gogReferencias WHERE idJuego=@idJuego";
+			string buscar = "SELECT * FROM gogReferencias2 WHERE idReferencia=@idReferencia";
 
 			using (SqlCommand comando = new SqlCommand(buscar, conexion))
 			{
-				comando.Parameters.AddWithValue("@idJuego", idJuego);
+				comando.Parameters.AddWithValue("@idReferencia", idReferencia);
 
 				using (SqlDataReader lector = comando.ExecuteReader())
 				{
@@ -280,29 +280,32 @@ namespace BaseDatos.Juegos
 
 			if (sePuedeInsertar == true)
 			{
-				string idReferencia = await APIs.GOG.Juego.BuscarReferencia(idJuego);
+				string idJuego = await APIs.GOG.Juego.BuscarReferencia(idReferencia);
 
-				string insertar = "INSERT INTO gogReferencias (idJuego, idReferencia) VALUES (@idJuego, @idReferencia)";
-
-				using (SqlCommand comando = new SqlCommand(insertar, conexion))
+				if (string.IsNullOrEmpty(idJuego) == false)
 				{
-					comando.Parameters.AddWithValue("@idJuego", idJuego);
-					comando.Parameters.AddWithValue("@idReferencia", idReferencia);
+					string insertar = "INSERT INTO gogReferencias2 (idReferencia, idJuego) VALUES (@idReferencia, @idJuego)";
 
-					try
+					using (SqlCommand comando = new SqlCommand(insertar, conexion))
 					{
-						comando.ExecuteNonQuery();
+						comando.Parameters.AddWithValue("@idReferencia", idReferencia);
+						comando.Parameters.AddWithValue("@idJuego", idJuego);
+
+						try
+						{
+							comando.ExecuteNonQuery();
+						}
+						catch (Exception ex)
+						{
+							Errores.Insertar.Mensaje("Añadir GOG Referencia " + idJuego, ex);
+						}
 					}
-					catch (Exception ex)
-					{
-						Errores.Insertar.Mensaje("Añadir GOG Referencia " + idJuego, ex);
-					}
+
+					return idJuego;
 				}
-
-				return idReferencia;
 			}
 			
-			return idJuego;
+			return idReferencia;
 		}
 	}
 }

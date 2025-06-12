@@ -1,4 +1,5 @@
-﻿@using Bundles2
+﻿@using BlazorNotification
+@using Bundles2
 @using Gratis2
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
@@ -8,6 +9,8 @@
 @using Suscripciones2
 @using global::Noticias
 @using pepeizqs_deals_web.Data
+
+@inject IBlazorNotificationService ServicioNotificaciones
 
 <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
     <div class="opciones-combobox" style="width: 33%;">
@@ -727,35 +730,37 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
 
                 enviandoDiscord = false;
 
-                foreach (var usuario in BaseDatos.Usuarios.Buscar.UsuariosNotificacionesPush())
-                {
-                    try
-                    {
-                        if (usuario.NotificationPushBundles == true && noticiaAñadir.Tipo == NoticiaTipo.Bundles)
-                        {
-                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
-                        }
+                await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, noticiaAñadir);
 
-                        if (usuario.NotificationPushFree == true && noticiaAñadir.Tipo == NoticiaTipo.Gratis)
-                        {
-                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
-                        }
+                // foreach (var usuario in BaseDatos.Usuarios.Buscar.UsuariosNotificacionesPush())
+                // {
+                //     try
+                //     {
+                //         if (usuario.NotificationPushBundles == true && noticiaAñadir.Tipo == NoticiaTipo.Bundles)
+                //         {
+                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, usuario.Id, noticiaAñadir, usuario.Language);
+                //         }
 
-                        if (usuario.NotificationPushSubscriptions == true && noticiaAñadir.Tipo == NoticiaTipo.Suscripciones)
-                        {
-                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
-                        }
+                //         if (usuario.NotificationPushFree == true && noticiaAñadir.Tipo == NoticiaTipo.Gratis)
+                //         {
+                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
+                //         }
 
-                        if (usuario.NotificationPushOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
-                        {
-                            await Herramientas.NotificacionesPush.EnviarNoticia(usuario.Id, noticiaAñadir, usuario.Language);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        BaseDatos.Errores.Insertar.Mensaje("Enviar Notificaciones Push Noticia", ex);
-                    }
-                }
+                //         if (usuario.NotificationPushSubscriptions == true && noticiaAñadir.Tipo == NoticiaTipo.Suscripciones)
+                //         {
+                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
+                //         }
+
+                //         if (usuario.NotificationPushOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
+                //         {
+                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
+                //         }
+                //     }
+                //     catch (Exception ex)
+                //     {
+                //         BaseDatos.Errores.Insertar.Mensaje("Enviar Notificaciones Push Noticia", ex);
+                //     }
+                // }
 
                 noticia = new Plantilla();
 

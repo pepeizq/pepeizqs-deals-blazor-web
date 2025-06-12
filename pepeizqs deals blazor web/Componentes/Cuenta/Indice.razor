@@ -156,25 +156,45 @@
                 </div>
             </button>
 
-@*             <button @onclick="@(e => MostrarForo(e))" class="boton-pestañas">
+            <button @onclick="@(e => MostrarNotificacionesCorreo(e))" class="boton-pestañas">
                 <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
                     <div style="max-width: 22px;">
-                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                            <path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3l0-84.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5l0 21.5c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-26.8C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112l32 0c24 0 46.2 7.5 64.4 20.3zM448 416l0-21.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176l32 0c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2l0 26.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3l0-84.7c-10 11.3-16 26.1-16 42.3zm144-42.3l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2l0 42.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-42.8c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112l32 0c61.9 0 112 50.1 112 112z" />
+                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                            <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z" />
                         </svg>
                     </div>
 
                     <div>
                         <div>
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Account")
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Account")
                         </div>
 
                         <div style="margin-top: 5px; font-size: 14px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "String27", "Account")
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Account")
                         </div>
                     </div>
                 </div>
-            </button> *@
+            </button>
+
+            @*  <button @onclick="@(e => MostrarNotificacionesPush(e))" class="boton-pestañas">
+                    <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
+                        <div style="max-width: 22px;">
+                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <path d="M224 0c-17.7 0-32 14.3-32 32l0 19.2C119 66 64 130.6 64 208l0 18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416l384 0c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8l0-18.8c0-77.4-55-142-128-156.8L256 32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3l-64 0-64 0c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <div>
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Account")
+                            </div>
+
+                            <div style="margin-top: 5px; font-size: 14px;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Account")
+                            </div>
+                        </div>
+                    </div>
+                </button> *@
         </div>
 
         @if (opcionesCuenta.EmailConfirmed == true)
@@ -245,51 +265,6 @@
 
                             <div style="margin-top: 5px; font-size: 14px;">
                                 @Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Account")
-                            </div>
-                        </div>
-                    </div>
-                </button>
-            </div>
-
-            <label style="font-size: 20px; margin-top: 40px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Account")</label>
-            <hr />
-
-            <div class="grid-estructura caja-diseño" style="padding: 20px;">
-                <button @onclick="@(e => MostrarNotificacionesCorreo(e))" class="boton-pestañas">
-                    <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
-                        <div style="max-width: 22px;">
-                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z" />
-                            </svg>
-                        </div>
-
-                        <div>
-                            <div>
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Account")
-                            </div>
-
-                            <div style="margin-top: 5px; font-size: 14px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Account")
-                            </div>
-                        </div>
-                    </div>
-                </button>
-
-                <button @onclick="@(e => MostrarNotificacionesPush(e))" class="boton-pestañas">
-                    <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
-                        <div style="max-width: 22px;">
-                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path d="M224 0c-17.7 0-32 14.3-32 32l0 19.2C119 66 64 130.6 64 208l0 18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416l384 0c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8l0-18.8c0-77.4-55-142-128-156.8L256 32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3l-64 0-64 0c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z" />
-                            </svg>
-                        </div>
-
-                        <div>
-                            <div>
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Account")
-                            </div>
-
-                            <div style="margin-top: 5px; font-size: 14px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Account")
                             </div>
                         </div>
                     </div>
@@ -537,6 +512,8 @@ else
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private bool usuarioPatreon = false;
+    private bool usuarioAdmin = false;
 
     private Usuario opcionesCuenta = null;
 
@@ -553,6 +530,8 @@ else
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
             opcionesCuenta = BaseDatos.Usuarios.Buscar.OpcionesCuenta(usuarioId);
+            usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+            usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
         }
     }
 

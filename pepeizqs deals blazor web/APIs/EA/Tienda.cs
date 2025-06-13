@@ -1,5 +1,6 @@
 ﻿//https://service-aggregation-layer.juno.ea.com/graphql?operationName=GameOffers&variables=%7B%22locale%22%3A%22es%22%2C%22subscriptionLevel%22%3A%22NON_SUBSCRIBER%22%2C%22gameId%22%3A%22ea-sports-fc-25%22%2C%22overrideCountryCode%22%3A%22ES%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%221b08dff7328b969bfefc4ee05b3eeeb6980552ede8b857b0c46c471edd12d14b%22%7D%7D
 //https://www.ea.com/_next/data/IR-HBt2bCqAmiC2sPeash/es/games/ea-sports-fc/fc-25.json
+//https://www.ea.com/_next/data/Pw6aX5Zr4vZj-XwNHrm9N/es/games/f1/f1-25/buy.json
 //https://drop-api.ea.com/checkout/checkout-url/Origin.OFR.50.0004360?locale=en
 //https://drop-api.ea.com/game/the-sims-3?locale=en&subscription-level=NON_SUBSCRIBER
 //https://drop-api.ea.com/addon/the-sims-3-university-life?locale=en&subscription-level=NON_SUBSCRIBER

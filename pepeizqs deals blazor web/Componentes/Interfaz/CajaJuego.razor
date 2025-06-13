@@ -77,7 +77,7 @@
 @{
 	int idMaestra = juego.IdMaestra;
 
-	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego)
+	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Suscripciones)
 	{
 		idMaestra = juego.Id;
 	}
@@ -133,6 +133,10 @@
 	else if (tipo == Tipo.Noticia)
 	{
 		drmUsar = drmNoticia;
+	}
+	else if (tipo == Tipo.Suscripciones)
+	{
+		drmUsar = drmSuscripcion;
 	}
 	else
 	{
@@ -232,7 +236,7 @@
 						</div>
 					</div>
 				}
-				else if (tipo == Tipo.Bundle)
+				else if (tipo == Tipo.Bundle || tipo == Tipo.Suscripciones)
 				{
 					<div style="display: flex; align-items: center; padding: 5px; text-align: left; justify-content: left;">
 						<div style="margin-right: 20px;">
@@ -637,6 +641,21 @@
                 </div>
             </a>
 		}
+
+		@if (tipo == Tipo.Suscripciones)
+		{
+			<a href="@enlaceSuscripcion" class="boton-pequeño" target="_blank" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
+                <div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
+                    <div>
+                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
+                    </div>
+
+                    <div style="width: 100%; text-align: right; padding: 10px;">
+                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="max-width: 20px; max-height: 20px;" />
+                    </div>
+                </div>
+            </a>
+		}
 	</div>
 }
 
@@ -686,6 +705,12 @@
 	[Parameter]
 	public int idCurator { get; set; }
 
+	[Parameter]
+	public string enlaceSuscripcion { get; set; }
+
+	[Parameter]
+	public JuegoDRM drmSuscripcion { get; set; }
+
 	public enum Tipo
 	{
 		Portada,
@@ -695,7 +720,8 @@
 		Filtro,
 		CuratorDestacado,
 		CuratorLista,
-		CuratorJuego
+		CuratorJuego,
+		Suscripciones
 	}
 
 	#region Portapapeles

@@ -1,4 +1,5 @@
 ﻿@page "/subscriptions"
+@page "/subscriptions/{suscripcionSeleccionadaTexto}/"
 
 @using APIs.Steam
 @using Juegos
@@ -6,6 +7,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.VisualBasic
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 @using pepeizqs_deals_web.Data
 @using System.Text.Json
 
@@ -474,38 +476,7 @@ else
                     enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(suscripcionSeleccionadaTipo.Enlace, suscripcionSeleccionadaTipo.Id, usuarioPatreon);
                 }
 
-                <a href="@enlaceSuscripcion" class="boton-pequeño" target="_blank" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
-                   @{
-                        bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego.Juego, juego.DRM);
-                        bool usuarioTieneDeseado = false;
-
-                        string fondoColor = string.Empty;
-
-                        if (usuarioTieneJuego == true)
-                        {
-                            fondoColor = "background-color: var(--fondoBien);";
-                        }
-                        else
-                        {
-                            usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego.Juego, juego.DRM);
-
-                            if (usuarioTieneDeseado == true)
-                            {
-                                fondoColor = "background-color: var(--fondoAlerta);";
-                            }
-                        }
-                   }
-                    
-                    <div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
-                        <div>
-                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
-                        </div>
-
-                        <div style="width: 100%; text-align: right; padding: 10px;">
-                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juego.DRM))" style="max-width: 20px; max-height: 20px;" />
-                        </div>
-                    </div>
-                </a>
+                <CajaJuego enlaceSuscripcion="@enlaceSuscripcion" drmSuscripcion="@juego.DRM" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Suscripciones"/> 
             }
         </div>       
     </div>
@@ -515,28 +486,31 @@ else
 
     #nullable disable
 
-	private string idioma = "en";
-	private string usuarioId = null;
+    private string idioma = "en";
+    private string usuarioId = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
-	private bool usuarioPatreon = false;
+    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
+    private Usuario deseadosUsuario = null;
+    private bool usuarioPatreon = false;
 
     private List<Suscripciones2.SuscripcionComponente> suscripcionesActuales = new List<Suscripciones2.SuscripcionComponente>();
     private List<Suscripciones2.SuscripcionComponente> suscripcionesPasadas = new List<Suscripciones2.SuscripcionComponente>();
 
+    [Parameter]
+    public string suscripcionSeleccionadaTexto { get; set; }
+
     protected override void OnInitialized()
     {
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+        usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
-		if (string.IsNullOrEmpty(usuarioId) == false)
-		{
-			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
-			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
-		}
+        if (string.IsNullOrEmpty(usuarioId) == false)
+        {
+            idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+        }
 
         //--------------------------------------------------------------------
 
@@ -594,10 +568,16 @@ else
 
     private void SuscripcionAbrir(MouseEventArgs e, Suscripciones2.SuscripcionComponente componente)
     {
+        SuscripcionAbrir(componente);
+    }
+
+    private void SuscripcionAbrir(Suscripciones2.SuscripcionComponente componente)
+    {
         if (componente != null)
         {
             suscripcionSeleccionada = true;
 
+            suscripcionSeleccionadaTexto = Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre);
             suscripcionSeleccionadaTipo = componente.Tipo;
             suscripcionSeleccionadaJuegosGestor.Clear();
             suscripcionSeleccionadaDRMs.Clear();

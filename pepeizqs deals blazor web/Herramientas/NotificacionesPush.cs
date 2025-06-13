@@ -23,14 +23,14 @@ namespace Herramientas
 
 			string titulo = noticia.TituloEn;
 
-			NotificationOptions options = new NotificationOptions
+			NotificationOptions opciones = new NotificationOptions
 			{
 				Icon = "https://pepeizqdeals.com/logo/logo6.png",
 				Data = enlace,
 				Image = noticia.Imagen
 			};
 
-			await servicio.SendAsync(titulo, options);
+			await servicio.SendAsync(titulo, opciones);
 
 
 			//WebApplicationBuilder builder = WebApplication.CreateBuilder();

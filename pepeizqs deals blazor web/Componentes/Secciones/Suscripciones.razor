@@ -12,9 +12,25 @@
 @using System.Text.Json
 
 @inject IHttpContextAccessor Contexto
+@inject IJSRuntime JavaScript
 
 @{
     string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Subscriptions") + " • pepeizq's deals";
+
+    if (suscripcionesActuales != null)
+    {
+        if (suscripcionesActuales.Count > 0)
+        {
+            foreach (var componente in suscripcionesActuales)
+            {
+                if (Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre.ToLower()) == suscripcionSeleccionadaTexto)
+                {
+                    titulo = componente.Tipo.Nombre + " • pepeizq's deals";
+                }
+            }
+        }
+    }
+
     string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Subscriptions");
     string enlace = "https://pepeizqdeals.com/subscriptions";
     string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
@@ -136,6 +152,12 @@
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
         window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+</script>
+
+<script>
+    window.ChangeUrl = function (url) {
+        history.pushState(null, '', url);
     }
 </script>
 
@@ -560,28 +582,51 @@ else
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (primerRender == true)
+        {
+            if (string.IsNullOrEmpty(suscripcionSeleccionadaTexto) == false)
+            {
+                if (suscripcionesActuales != null)
+                {
+                    if (suscripcionesActuales.Count > 0)
+                    {
+                        foreach (var componente in suscripcionesActuales)
+                        {
+                            if (Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre.ToLower()) == suscripcionSeleccionadaTexto)
+                            {
+                                await SuscripcionAbrir(componente);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private bool suscripcionSeleccionada = false;
     private Suscripciones2.Suscripcion suscripcionSeleccionadaTipo = new Suscripciones2.Suscripcion();
     private List<Juegos.JuegoSuscripcion> suscripcionSeleccionadaJuegosGestor = new List<Juegos.JuegoSuscripcion>();
     private List<Juegos.JuegoSuscripcion> suscripcionSeleccionadaJuegosMostrar = new List<Juegos.JuegoSuscripcion>();
     private List<JuegoDRM> suscripcionSeleccionadaDRMs = new List<JuegoDRM>();
 
-    private void SuscripcionAbrir(MouseEventArgs e, Suscripciones2.SuscripcionComponente componente)
+    private async void SuscripcionAbrir(MouseEventArgs e, Suscripciones2.SuscripcionComponente componente)
     {
-        SuscripcionAbrir(componente);
+        await SuscripcionAbrir(componente);
     }
 
-    private void SuscripcionAbrir(Suscripciones2.SuscripcionComponente componente)
+    private async Task SuscripcionAbrir(Suscripciones2.SuscripcionComponente componente)
     {
         if (componente != null)
         {
             suscripcionSeleccionada = true;
-
-            suscripcionSeleccionadaTexto = Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre);
+                                
+            suscripcionSeleccionadaTexto = Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre.ToLower());
             suscripcionSeleccionadaTipo = componente.Tipo;
             suscripcionSeleccionadaJuegosGestor.Clear();
             suscripcionSeleccionadaDRMs.Clear();
-
+   
             foreach (var juegoActual in componente.Juegos)
             {
                 Juegos.Juego juego2 = BaseDatos.Juegos.Buscar.UnJuego(juegoActual.JuegoId.ToString());
@@ -665,6 +710,9 @@ else
 
             suscripcionSeleccionadaJuegosMostrar = suscripcionSeleccionadaJuegosGestor;
             suscripcionSeleccionadaJuegosMostrar = suscripcionSeleccionadaJuegosMostrar.AsParallel().OrderByDescending(x => int.Parse(x.Juego.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Juego.Nombre).ToList();
+
+            await JavaScript.InvokeVoidAsync("ChangeUrl", "/subscriptions/" + suscripcionSeleccionadaTexto + "/");
+            await InvokeAsync(StateHasChanged);
         }
     }
 

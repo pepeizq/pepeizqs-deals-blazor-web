@@ -42,7 +42,7 @@ namespace APIs.Ubisoft
 			int juegos2 = 0;
 
 			int i = 0;
-			while (i < paginas)
+			while (i < paginas - 1)
 			{
 				HttpClient cliente = new HttpClient();
 				cliente.BaseAddress = new Uri("https://store.ubisoft.com/");

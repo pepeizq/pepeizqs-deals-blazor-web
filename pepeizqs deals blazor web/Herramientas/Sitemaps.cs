@@ -166,6 +166,19 @@ namespace Herramientas
 
 			sb.Append(textoSuscripciones);
 
+			foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
+			{
+				if (suscripcion.AdminInteractuar == true)
+				{
+					string textoSuscripcion = "<url>" + Environment.NewLine +
+						"<loc>https://pepeizqdeals.com/subscriptions/" + Herramientas.EnlaceAdaptador.Nombre(suscripcion.Nombre.ToLower()) + "/</loc>" + Environment.NewLine +
+						"<changefreq>daily</changefreq>" + Environment.NewLine +
+						"</url>";
+
+					sb.Append(textoSuscripcion);
+				}
+			}
+
 			string textoMinimos = "<url>" + Environment.NewLine +
 					"<loc>https://pepeizqdeals.com/historical-lows/</loc>" + Environment.NewLine +
 					"<changefreq>hourly</changefreq>" + Environment.NewLine +

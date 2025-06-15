@@ -2615,6 +2615,13 @@
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
                                 </a>
                             }
+
+                            @if (juego.IdSteam > 0 && juego.Tipo == JuegoTipo.Game)
+                            {
+                                <a href="https://www.steamgifts.com/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="SteamGifts" style="width: fit-content; padding: 10px;">
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamgifts.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
+                                </a>
+                            }
                         </div>
                     </div>
                 }

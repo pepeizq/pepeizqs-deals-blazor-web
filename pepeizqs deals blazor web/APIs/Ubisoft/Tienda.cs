@@ -79,46 +79,49 @@ namespace APIs.Ubisoft
 									{
 										if (juego != null)
 										{
-											int descuento = Calculadora.SacarDescuento(juego.PrecioBase.Euro, juego.PrecioRebajado.Euro);
-
-											if (descuento > 0)
+											if (juego.PrecioRebajado != null && juego.PrecioBase != null)
 											{
-												string nombre = WebUtility.HtmlDecode(juego.Nombre);
-												string enlace = juego.Enlace;
-												string imagen = juego.Imagen;
+												int descuento = Calculadora.SacarDescuento(juego.PrecioBase.Euro, juego.PrecioRebajado.Euro);
 
-												JuegoPrecio oferta = new JuegoPrecio
+												if (descuento > 0)
 												{
-													Nombre = nombre,
-													Enlace = enlace,
-													Imagen = imagen,
-													Moneda = JuegoMoneda.Euro,
-													Precio = juego.PrecioRebajado.Euro,
-													Descuento = descuento,
-													Tienda = Generar().Id,
-													DRM = JuegoDRM.Ubisoft,
-													FechaDetectado = DateTime.Now,
-													FechaActualizacion = DateTime.Now
-												};
+													string nombre = WebUtility.HtmlDecode(juego.Nombre);
+													string enlace = juego.Enlace;
+													string imagen = juego.Imagen;
 
-												try
-												{
-													BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-												}
-												catch (Exception ex)
-												{
-													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-												}
+													JuegoPrecio oferta = new JuegoPrecio
+													{
+														Nombre = nombre,
+														Enlace = enlace,
+														Imagen = imagen,
+														Moneda = JuegoMoneda.Euro,
+														Precio = juego.PrecioRebajado.Euro,
+														Descuento = descuento,
+														Tienda = Generar().Id,
+														DRM = JuegoDRM.Ubisoft,
+														FechaDetectado = DateTime.Now,
+														FechaActualizacion = DateTime.Now
+													};
 
-												juegos2 += 1;
+													try
+													{
+														BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+													}
+													catch (Exception ex)
+													{
+														BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+													}
 
-												try
-												{
-													BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-												}
-												catch (Exception ex)
-												{
-													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+													juegos2 += 1;
+
+													try
+													{
+														BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+													}
+													catch (Exception ex)
+													{
+														BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+													}
 												}
 											}
 										}

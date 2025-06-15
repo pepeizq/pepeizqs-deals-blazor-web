@@ -598,13 +598,16 @@ else
 
 								<button @onclick="(e => CambiarIDs(e, categoria.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
 									<div style="display: flex; align-items: center; gap: 10px;">
-										<div style="max-width: 30px;">
-											@{
-												string imagenCategoria = "/imagenes/categorias/" + @categoria.Id + ".webp";
-											}
+										@if (int.Parse(categoria.Id) < 64)
+										{
+											<div style="max-width: 30px;">
+												@{
+													string imagenCategoria = "/imagenes/categorias/" + categoria.Id + ".webp";
+												}
 
-											<img src="@imagenCategoria" style="width: 100%; height: 100%;"/>
-										</div>
+												<img src="@imagenCategoria" style="width: 100%; height: 100%;" />
+											</div>
+										}
 
 										<div style="width: 100%; font-size: 14px;">
 											@categoria.Contenido

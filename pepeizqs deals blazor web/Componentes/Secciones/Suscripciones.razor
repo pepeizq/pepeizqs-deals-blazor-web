@@ -33,6 +33,12 @@
 
     string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Subscriptions");
     string enlace = "https://pepeizqdeals.com/subscriptions";
+
+    if (string.IsNullOrEmpty(suscripcionSeleccionadaTexto) == false)
+    {
+        enlace = "https://pepeizqdeals.com/subscriptions/" + suscripcionSeleccionadaTexto + "/";
+    }
+
     string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
     string keywords = "subscriptions";
 

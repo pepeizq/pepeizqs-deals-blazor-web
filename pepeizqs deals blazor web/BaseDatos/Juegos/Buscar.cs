@@ -1160,10 +1160,11 @@ namespace BaseDatos.Juegos
                                 etiquetas.Add(id.Replace("t", null));
                             }
 
-                            if (id.Contains("c") == true)
+                            if (id.Contains("c") == true || id.Contains("a") == true)
                             {
                                 categorias.Add(id.Replace("c", null));
-                            }
+								categorias.Add(id.Replace("a", null));
+							}
 
                             if (id.Contains("g") == true)
                             {

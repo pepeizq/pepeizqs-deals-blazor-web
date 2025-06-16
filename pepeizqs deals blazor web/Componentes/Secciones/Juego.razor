@@ -721,7 +721,7 @@
                     {
                         if (juego.MayorEdad.ToLower() == "true")
                         {
-                            <div style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background-color: var(--fondoAlerta); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
+                            <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: var(--fondoAlerta);">
                                 <div style="max-width: 26px;">
                                     <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                         <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z" />
@@ -1360,7 +1360,7 @@
                                                                     if (drmG == drm.Id)
                                                                     {
                                                                         <div style="display: flex; align-items: center; justify-content: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String71", "Game")">
-                                                                            <img src="@APIs.GeforceNOW.Streaming.Generar().ImagenIcono" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Geforce NOW" />
+                                                                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(APIs.GeforceNOW.Streaming.Generar().ImagenIcono, 22, 22)" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Geforce NOW" />
                                                                         </div>
                                                                     }
                                                                 }
@@ -2323,9 +2323,31 @@
                     {
                         if (juego.Categorias.Count > 0)
                         {
+                            List<string> categorias = new List<string>();
+                            List<string> accesibilidad = new List<string>();
+
+                            foreach (var categoria in juego.Categorias)
+                            {
+                                if (int.Parse(categoria) < 64)
+                                {
+                                    categorias.Add(categoria);
+                                }
+                                else if (int.Parse(categoria) >= 64)
+                                {
+                                    accesibilidad.Add(categoria);
+                                }
+                            }
+
                             <div class="caja-diseño" style="padding: 30px; width: 100%;">
                                 <div style="margin-bottom: 5px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String49", "Game")
+                                    @if (accesibilidad.Count > 0)
+                                    {
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String102", "Game")
+                                    }
+                                    else
+                                    {
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String49", "Game")
+                                    }
                                 </div>
                                 <div style="font-size: 14px;">
                                     @Herramientas.Idiomas.BuscarTexto(idioma, "String50", "Game")
@@ -2333,7 +2355,7 @@
                                 <hr />
 
                                 <div style="display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
-                                    @foreach (var categoria in juego.Categorias)
+                                    @foreach (var categoria in categorias)
                                     {
                                         string cadenaCategoria = Herramientas.Idiomas.BuscarTexto(idioma, categoria, "Categories");
 
@@ -2344,10 +2366,7 @@
 
                                             <a href="/filter/@idCategoria/" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none;">
                                                 <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-                                                    @if (int.Parse(categoria) < 64)
-                                                    {
-                                                        <img style="width: 26px; height: 16px;" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCategoria)" alt="@categoria" loading="lazy" />
-                                                    }
+                                                    <img style="width: 26px; height: 16px;" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCategoria)" alt="@categoria" loading="lazy" />
 
                                                     <div style="width: 100%; font-size: 14px;">@cadenaCategoria</div>
                                                 </div>
@@ -2356,6 +2375,31 @@
                                         else
                                         {
                                             global::BaseDatos.Errores.Insertar.Mensaje("Categoría no encontrada", categoria + " - " + juego.Nombre + ": https://store.steampowered.com/api/appdetails/?appids=" + juego.IdSteam.ToString() + "&l=english");
+                                        }
+                                    }
+
+                                    @if (accesibilidad.Count > 0)
+                                    {
+                                        <hr style="width: 100%;"/>
+                                        
+                                        foreach (var acceso in accesibilidad)
+                                        {
+                                            string cadenaAccesibilidad = Herramientas.Idiomas.BuscarTexto(idioma, acceso, "Categories");
+
+                                            if (string.IsNullOrEmpty(cadenaAccesibilidad) == false)
+                                            {
+                                                string idAccesibilidad = "a" + acceso;
+
+                                                <a href="/filter/@idAccesibilidad/" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none;">
+                                                    <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+                                                        <div style="width: 100%; font-size: 14px;">@cadenaAccesibilidad</div>
+                                                    </div>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                global::BaseDatos.Errores.Insertar.Mensaje("Accesibilidad no encontrada", acceso + " - " + juego.Nombre + ": https://store.steampowered.com/api/appdetails/?appids=" + juego.IdSteam.ToString() + "&l=english");
+                                            }
                                         }
                                     }
                                 </div>
@@ -2596,30 +2640,30 @@
                             @if (juego.IdSteam > 0)
                             {
                                 <a href="https://steamdb.info/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="SteamDB" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="steamdb"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="steamdb"/>
                                 </a>
                                 <a href="https://protondb.com/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="ProtonDB" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="protondb"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="protondb"/>
                                 </a>
                                 <a href="https://pcgamingwiki.com/api/appid.php?appid=@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="PCGamingWiki" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="pcgamingwiki"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="pcgamingwiki"/>
                                 </a>
                                 <a href="https://isthereanydeal.com/steam/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="IsThereAnyDeal" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
                                 </a>
                             }
 
                             @if (juego.IdGog > 0)
                             {
                                 <a href="https://www.gogdb.org/product/@juego.IdGog" target="_blank" rel="nofollow" class="boton-pequeño" title="GOG Database" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
                                 </a>
                             }
 
                             @if (juego.IdSteam > 0 && juego.Tipo == JuegoTipo.Game)
                             {
                                 <a href="https://www.steamgifts.com/app/@juego.IdSteam" target="_blank" rel="nofollow" class="boton-pequeño" title="SteamGifts" style="width: fit-content; padding: 10px;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamgifts.webp")" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamgifts.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
                                 </a>
                             }
                         </div>
@@ -3622,8 +3666,33 @@
                 #region API
 
                 bool actualizarDatosAPI = false;
+                TimeSpan tiempoComprobar = TimeSpan.FromDays(60);
 
-                if (juego.FechaSteamAPIComprobacion + TimeSpan.FromDays(60) < DateTime.Now)
+                if (juego.Caracteristicas.FechaLanzamientoSteam != null)
+                {
+                    if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(7) < DateTime.Now)
+                    {
+                        tiempoComprobar = TimeSpan.FromDays(1);
+                    }
+                    else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(14) < DateTime.Now)
+                    {
+                        tiempoComprobar = TimeSpan.FromDays(3);
+                    }
+                    else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(30) < DateTime.Now)
+                    {
+                        tiempoComprobar = TimeSpan.FromDays(5);
+                    }
+                    else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(120) < DateTime.Now)
+                    {
+                        tiempoComprobar = TimeSpan.FromDays(15);
+                    }
+                    else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(365) < DateTime.Now)
+                    {
+                        tiempoComprobar = TimeSpan.FromDays(30);
+                    }
+                }
+
+                if (juego.FechaSteamAPIComprobacion + tiempoComprobar < DateTime.Now)
                 {
                     actualizarDatosAPI = true;
                 }

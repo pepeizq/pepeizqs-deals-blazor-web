@@ -619,6 +619,74 @@ else
 					}
 				</div>
 			}
+
+			@if (accesibilidad.Count > 0)
+			{
+				string letra = "a";
+
+				<div>
+					<button @onclick="(e => AbrirAccesibilidad(e))" style="background-color: transparent; color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; background-color: var(--fondoBotonPequeño);">
+						<div style="display: flex; align-items: center;">
+							<div style="width: 100%;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Filter") (@CantidadIDs(letra))
+							</div>
+
+							<div>
+								@if (enseñarAccesibilidad == true)
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 16px;">
+										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+											<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</div>
+					</button>
+
+					@if (enseñarAccesibilidad == true)
+					{
+						<div class="caja-diseño" style="border-radius: 0px 0px 5px 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+							@foreach (var acceso in accesibilidad)
+							{
+								string fondo = string.Empty;
+
+								if (idsLista != null)
+								{
+									if (idsLista.Count > 0)
+									{
+										foreach (var id2 in idsLista)
+										{
+											if (letra + acceso.Id == id2)
+											{
+												fondo = "background-color: var(--fondoBotonPequeño);";
+												break;
+											}
+										}
+									}
+								}
+
+								<button @onclick="(e => CambiarIDs(e, acceso.Id, letra))" class="boton-expandir" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondo">
+									<div style="display: flex; align-items: center; gap: 10px;">
+										<div style="width: 100%; font-size: 14px;">
+											@acceso.Contenido
+										</div>
+									</div>
+								</button>
+							}
+						</div>
+					}
+				</div>
+			}
+
 		</div>
 
 		<div style="width: 100%;">
@@ -670,9 +738,48 @@ else
 		CargarTipos();
 		CargarSistemas();
 		CargarEtiquetas();
-		CargarCategorias();
+		CargarCategoriasyAccesibilidad();
 
 		idsLista = Herramientas.Listados.Generar(ids);
+
+		if (idsLista != null)
+		{
+			foreach (var id in idsLista)
+			{
+				if (string.IsNullOrEmpty(id) == false)
+				{
+					if (id.Contains("d") == true)
+					{
+						enseñarDeck = true;
+					}
+
+					if (id.Contains("i") == true)
+					{
+						enseñarTipos = true;
+                    }
+
+					if (id.Contains("s") == true)
+					{
+						enseñarSistemas = true;
+                    }
+
+					if (id.Contains("t") == true)
+					{
+						enseñarEtiquetas = true;
+                    }
+
+					if (id.Contains("c") == true)
+					{
+						enseñarCategorias = true;
+                    }
+
+					if (id.Contains("a") == true)
+					{
+						enseñarAccesibilidad = true;
+                    }
+				}
+            }
+		}
 
 		resultadosGestor = BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
 
@@ -918,11 +1025,12 @@ else
 
 	#endregion
 
-	#region Categorias
+    #region Categorias y Accesibilidad
 
 	private List<FiltroItem> categorias = new List<FiltroItem>();
+	private List<FiltroItem> accesibilidad = new List<FiltroItem>();
 
-	private void CargarCategorias()
+	private void CargarCategoriasyAccesibilidad()
 	{
 		string json = Herramientas.Idiomas.CogerTodo(idioma, "Categories");
 
@@ -932,11 +1040,20 @@ else
 
 			foreach (var item2 in items2)
 			{
-				FiltroItem nuevaEtiqueta = new FiltroItem();
-				nuevaEtiqueta.Id = item2.Key;
-				nuevaEtiqueta.Contenido = item2.Value.ToString();
-
-				categorias.Add(nuevaEtiqueta);
+				if (int.Parse(item2.Key) < 64)
+				{
+					FiltroItem nuevaCategoria = new FiltroItem();
+					nuevaCategoria.Id = item2.Key;
+					nuevaCategoria.Contenido = item2.Value.ToString();
+					categorias.Add(nuevaCategoria);
+				}
+				else
+				{
+					FiltroItem nuevaAccesibilidad = new FiltroItem();
+					nuevaAccesibilidad.Id = item2.Key;
+					nuevaAccesibilidad.Contenido = item2.Value.ToString();
+					accesibilidad.Add(nuevaAccesibilidad);
+                }
 			}
 		}
 	}
@@ -954,6 +1071,20 @@ else
 			enseñarCategorias = true;
 		}
 	}
+
+    private bool enseñarAccesibilidad = false;
+
+    private void AbrirAccesibilidad(MouseEventArgs e)
+    {
+        if (enseñarAccesibilidad == true)
+		{
+			enseñarAccesibilidad = false;
+		}
+		else
+		{
+			enseñarAccesibilidad = true;
+        }
+    }
 
 	#endregion
 }

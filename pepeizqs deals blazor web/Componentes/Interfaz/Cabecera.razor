@@ -299,7 +299,7 @@
             </div>
         </button>
 
-        <input type="text" @oninput="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="min-width: 50px; margin-left: 5px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")"/>
+        <input type="text" @bind-value="cadenaBusqueda" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="min-width: 50px; margin-left: 5px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")"/>
 
         @if (encontroAlgo == true)
         {
@@ -421,9 +421,9 @@
 
     private string cadenaBusqueda = string.Empty;
 
-    private void TextoCambiaBuscador(ChangeEventArgs e)
+    private void TextoCambiaBuscador()
     {
-        cadenaBusqueda = e.Value.ToString();
+        // cadenaBusqueda = e.Value.ToString();
         cadenaBusqueda = cadenaBusqueda.Replace("'", null);
 
         if (cadenaBusqueda.Trim().Length > 3)

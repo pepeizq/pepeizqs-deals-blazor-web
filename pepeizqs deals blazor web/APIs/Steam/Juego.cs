@@ -195,6 +195,13 @@ namespace APIs.Steam
 								{
 									imagenes.Header_460x215 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Header_460x215;
 								}
+								else
+								{
+									if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Capsule_231x87) == false)
+									{
+										imagenes.Header_460x215 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Capsule_231x87;
+									}
+								}
 
 								if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Capsule_231x87) == false)
 								{

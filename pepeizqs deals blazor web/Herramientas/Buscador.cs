@@ -286,7 +286,7 @@ namespace Herramientas
 					}
 					else if (mensajeComplementoCantidadSuscripciones > 1)
 					{
-						return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage12", "Header"), mensajeComplementoCantidadBundles);
+						return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage12", "Header"), mensajeComplementoCantidadSuscripciones);
 					}
 				}
 			}

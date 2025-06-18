@@ -304,35 +304,38 @@
         @if (encontroAlgo == true)
         {
             <div class="buscador-panel" style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); background-color: var(--fondoCuerpo); display: flex; align-items: start; flex-direction: column;">
-                <div class="caja-diseño" style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%; padding: 0px 20px 20px 20px;">
-                    <Virtualize Context="juego" Items="resultadosMostrar" ItemSize="107">
+                <div class="caja-diseño" style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%; padding: 0px 20px 20px 20px;">                   
+                    <Virtualize Context="juego" Items="resultadosMostrar" ItemSize="107" OverscanCount="5">
                         <ItemContent>
                             @{
-                                bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
-                                bool usuarioTieneDeseado = false;
-
                                 string fondoColor = string.Empty;
 
-                                if (usuarioTieneJuego == true)
+                                if (string.IsNullOrEmpty(usuarioId) == false)
                                 {
-                                    fondoColor = "background-color: var(--fondoBien);";
-                                }
-                                else
-                                {
-                                    usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                                    bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
+                                    bool usuarioTieneDeseado = false;
 
-                                    if (usuarioTieneDeseado == true)
+                                    if (usuarioTieneJuego == true)
                                     {
-                                        fondoColor = "background-color: var(--fondoAlerta);";
+                                        fondoColor = "background-color: var(--fondoBien);";
+                                    }
+                                    else
+                                    {
+                                        usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+
+                                        if (usuarioTieneDeseado == true)
+                                        {
+                                            fondoColor = "background-color: var(--fondoAlerta);";
+                                        }
                                     }
                                 }
                             }
-
+                         
                             <div class="perfil-flexible-centrado" style="padding-top: 20px;">
                                 @{
                                     int ancho = 230;
                                     int alto = 107;
-                                    string imagen = "width: 230px; height: 107px;";
+                                    string imagen = "width: " + ancho.ToString() + "px; height: " + alto.ToString() + "px;";
                                     string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
                                 }
                                  
@@ -423,7 +426,6 @@
 
     private void TextoCambiaBuscador()
     {
-        // cadenaBusqueda = e.Value.ToString();
         cadenaBusqueda = cadenaBusqueda.Replace("'", null);
 
         if (cadenaBusqueda.Trim().Length > 3)

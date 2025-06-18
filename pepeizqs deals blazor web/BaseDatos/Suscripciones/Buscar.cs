@@ -296,6 +296,38 @@ namespace BaseDatos.Suscripciones
 			return null;
 		}
 
+		public static List<JuegoSuscripcion> UltimasAñadidas(SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			List<JuegoSuscripcion> suscripciones = new List<JuegoSuscripcion>();
+
+			string busqueda = "SELECT * FROM suscripciones WHERE fechaEmpieza >= DATEADD(day,-7, GETDATE()) ORDER BY fechaEmpieza DESC";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					while (lector.Read())
+					{
+						suscripciones.Add(Cargar(lector));
+					}
+				}
+			}
+
+			return suscripciones;
+		}
+
 		public static List<JuegoSuscripcion> Ultimos(string cantidad)
 		{
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();

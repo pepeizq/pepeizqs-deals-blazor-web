@@ -250,9 +250,9 @@
 
 												if (juego != null)
 												{
-													string enlace = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, usuarioPatreon);
+													string enlaceJuego = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, usuarioPatreon);
 
-													<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlace" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
+													<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
 												}
 											}
 										}
@@ -313,9 +313,9 @@
 
 											if (juego != null)
 											{
-												string enlace = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon);
+												string enlaceJuego = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon);
 
-												<CajaJuego drmNoticia="@suscripcion.DRM" enlaceNoticia="@enlace" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
+												<CajaJuego drmNoticia="@suscripcion.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
 											}
 										}
 									}

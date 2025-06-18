@@ -1948,11 +1948,11 @@
                 <div id="suscripciones" class="caja-diseño" style="padding: 40px;">
                     @if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
                     {
-                        <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom: 10px;">
                             <label style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Game")</label>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: flex; flex-direction: column;">
                             @foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
                             {
                                 Suscripcion suscripcionUsar = SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo);

@@ -127,6 +127,8 @@ namespace Herramientas
 		public static async Task<string> GZipFormato2(string enlace)
 		{
 			HttpRequestMessage mensaje = new HttpRequestMessage();
+			mensaje.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue() { NoCache = true, NoStore = true };
+			mensaje.Headers.Pragma.ParseAdd("no-cache");
 			mensaje.RequestUri = new Uri(enlace);
 			mensaje.Headers.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
 			mensaje.Headers.AcceptEncoding.ParseAdd("gzip, deflate, br");

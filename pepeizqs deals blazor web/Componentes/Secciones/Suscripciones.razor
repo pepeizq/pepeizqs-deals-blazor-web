@@ -276,6 +276,46 @@
     }
 
     <div style="font-size: 23px; margin-top: 60px">
+        @Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Subscriptions")
+    </div>
+    <hr />
+
+    <div class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
+        @if (suscripcionesUltimas.Count > 0)
+        {
+            foreach (var juego in suscripcionesUltimas)
+            {
+                string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
+
+                if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).UsuarioEnlacesEspecificos == false)
+                {
+                    enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Enlace, Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Id, usuarioPatreon);
+                }
+
+                <div>
+                    <a href="@enlaceSuscripcion" target="_blank" class="boton-pequeño" style="text-decoration: none;">
+                        <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between; padding: 10px 20px;">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).ImagenIcono, 20, 20)" alt="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Nombre" style="width: 20px; height: 20px;"/>
+
+                                <div>@juego.Nombre</div>
+                            </div>
+                            
+                            <div>
+                                @Herramientas.Calculadora.DiferenciaTiempo(juego.FechaEmpieza, idioma)
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            @Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Subscriptions")
+        }
+    </div>
+
+    <div style="font-size: 23px; margin-top: 60px">
         @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Subscriptions")
     </div>
 
@@ -426,11 +466,14 @@ else
                     {
                         Suscripciones2.SuscripcionComponente componenteBuscado = new Suscripciones2.SuscripcionComponente();
 
-                        foreach (var suscripcionActual in suscripcionesActuales)
+                        if (suscripcionesActuales != null)
                         {
-                            if (suscripcionActual.Tipo.Id == suscripcionSeleccionadaTipo.IncluyeSuscripcion)
+                            foreach (var suscripcionActual in suscripcionesActuales)
                             {
-                                componenteBuscado = suscripcionActual;
+                                if (suscripcionActual.Tipo.Id == suscripcionSeleccionadaTipo.IncluyeSuscripcion)
+                                {
+                                    componenteBuscado = suscripcionActual;
+                                }
                             }
                         }
 
@@ -491,7 +534,7 @@ else
                 </svg>
             </div>
 
-            <input type="text" @onchange="(e => TextoCambiaBuscador(e))" class="entrada-texto" style="min-width: 50%;" />
+            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="min-width: 50%;" />
         </div>
 
         <div class="caja-diseño" style="padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px;">
@@ -523,6 +566,7 @@ else
 
     private List<Suscripciones2.SuscripcionComponente> suscripcionesActuales = new List<Suscripciones2.SuscripcionComponente>();
     private List<Suscripciones2.SuscripcionComponente> suscripcionesPasadas = new List<Suscripciones2.SuscripcionComponente>();
+    private List<JuegoSuscripcion> suscripcionesUltimas = new List<JuegoSuscripcion>();
 
     [Parameter]
     public string suscripcionSeleccionadaTexto { get; set; }
@@ -586,6 +630,10 @@ else
                 }
             }
         }
+
+        //--------------------------------------------------------------------
+
+        suscripcionesUltimas = BaseDatos.Suscripciones.Buscar.UltimasAñadidas();
     }
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
@@ -722,17 +770,17 @@ else
         }
     }
 
-    private void SuscripcionCerrar(MouseEventArgs e)
+    private async Task SuscripcionCerrar(MouseEventArgs e)
     {
         suscripcionSeleccionada = false;
+        suscripcionSeleccionadaTexto = string.Empty;
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/subscriptions/");
     }
 
     private string textoBuscador = string.Empty;
 
-    private void TextoCambiaBuscador(ChangeEventArgs texto)
+    private void TextoCambiaBuscador()
     {
-        textoBuscador = texto.Value.ToString().Trim();
-
         suscripcionSeleccionadaJuegosMostrar.Clear();
 
         if (string.IsNullOrEmpty(textoBuscador) == false)

@@ -18,8 +18,8 @@ namespace BaseDatos.Suscripciones
 				Imagen = lector.GetString(3),
 				DRM = JuegoDRM2.DevolverDRM(lector.GetInt32(4)),
 				Enlace = lector.GetString(5),
-				FechaEmpieza = Convert.ToDateTime(lector.GetString(6)),
-				FechaTermina = Convert.ToDateTime(lector.GetString(7))
+				FechaEmpieza = lector.GetDateTime(6),
+				FechaTermina = lector.GetDateTime(7)
 			};
 
 			if (lector.IsDBNull(8) == false)

@@ -1,13 +1,9 @@
 ﻿#nullable disable
 
-using ApexCharts;
 using Herramientas;
-using Herramientas.Redireccionador;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
-using System.Globalization;
-using System.Text.Json;
 
 namespace APIs.EA
 {
@@ -62,10 +58,20 @@ namespace APIs.EA
 
 			int cantidad = 0;
 
-			int i = 1;
+			int i = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id.ToString().ToLower(), "valorAdicional", conexion);
+
+			if (i < 1)
+			{
+				i = 1;
+			}
+			else if (i > 19)
+			{
+				i = 1;
+			}
+
 			while (i < 20)
 			{
-				string html = await Decompiladores.GZipFormato2("https://www.ea.com/pagination/2-eiKprHf3zpqmQ4uWlpOgMQ6ECG%2Br7eNSz%2BiCznR1RZuGI4By6p%2Fn9YG0Ud0PBvnPoiDyJThxmtTrrxvFwVs%2F%2FMaP0KLbegXNWwlBX%2FFqh7%2B6kF9TLUbwZv7dND7mXcxxaskgrsuee8vZ9oY7j9ZC%2BbFNGi%2FHdWoshxUGKvlCSAsQ0m41qig%2Bppq6CYoNAUrevtuZd40pcBT%2BhfxLs9Rr8kKo0nENuHSMrn8TXPgJZmaVfY39ZkSENi%2BauM8%3D/page/" + i.ToString());
+				string html = await Decompiladores.Estandar("https://www.ea.com/pagination/2-eiKprHf3zpqmQ4uWlpOgMQ6ECG%2Br7eNSz%2BiCznR1RZuGI4By6p%2Fn9YG0Ud0PBvnPoiDyJThxmtTrrxvFwVs%2F%2FMaP0KLbegXNWwlBX%2FFqh7%2B6kF9TLUbwZv7dND7mXcxxaskgrsuee8vZ9oY7j9ZC%2BbFNGi%2FHdWoshxUGKvlCSAsQ0m41qig%2Bppq6CYoNAUrevtuZd40pcBT%2BhfxLs9Rr8kKo0nENuHSMrn8TXPgJZmaVfY39ZkSENi%2BauM8%3D/page/" + i.ToString());
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
@@ -98,7 +104,127 @@ namespace APIs.EA
 
 								string titulo = temp4.Trim();
 
-								cantidad += 1;
+								bool encontrado = false;
+
+								string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
+
+								using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+								{
+									comando.Parameters.AddWithValue("@enlace", enlace);
+
+									using (SqlDataReader lector = comando.ExecuteReader())
+									{
+										if (lector.Read() == true)
+										{
+											cantidad += 1;
+
+											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+
+											if (lector.IsDBNull(0) == false)
+											{
+												if (string.IsNullOrEmpty(lector.GetString(0)) == false)
+												{
+													string idJuegosTexto = lector.GetString(0);
+
+													encontrado = true;
+
+													if (idJuegosTexto != "0")
+													{
+														List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+
+														if (idJuegos.Count > 0)
+														{
+															foreach (var id in idJuegos)
+															{
+																Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
+
+																if (juegobd != null)
+																{
+																	bool añadirSuscripcion = true;
+
+																	if (juegobd.Suscripciones != null)
+																	{
+																		if (juegobd.Suscripciones.Count > 0)
+																		{
+																			bool actualizar = false;
+
+																			foreach (var suscripcion in juegobd.Suscripciones)
+																			{
+																				if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlay)
+																				{
+																					añadirSuscripcion = false;
+																					actualizar = true;
+
+																					DateTime nuevaFecha = suscripcion.FechaTermina;
+																					nuevaFecha = DateTime.Now;
+																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																					suscripcion.FechaTermina = nuevaFecha;
+																				}
+																			}
+
+																			if (actualizar == true)
+																			{
+																				BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+
+																				JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlace);
+
+																				if (suscripcion2 != null)
+																				{
+																					DateTime nuevaFecha = suscripcion2.FechaTermina;
+																					nuevaFecha = DateTime.Now;
+																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																					suscripcion2.FechaTermina = nuevaFecha;
+																					BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+																				}
+																				else
+																				{
+																					añadirSuscripcion = true;
+																				}
+																			}
+																		}
+																	}
+
+																	if (añadirSuscripcion == true)
+																	{
+																		DateTime nuevaFecha = DateTime.Now;
+																		nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+
+																		JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+																		{
+																			DRM = JuegoDRM.EA,
+																			Nombre = juegobd.Nombre,
+																			FechaEmpieza = DateTime.Now,
+																			FechaTermina = nuevaFecha,
+																			Imagen = juegobd.Imagenes.Header_460x215,
+																			ImagenNoticia = juegobd.Imagenes.Header_460x215,
+																			JuegoId = juegobd.Id,
+																			Enlace = enlace,
+																			Tipo = Suscripciones2.SuscripcionTipo.EAPlay
+																		};
+
+																		if (juegobd.Suscripciones == null)
+																		{
+																			juegobd.Suscripciones = new List<JuegoSuscripcion>();
+																		}
+
+																		juegobd.Suscripciones.Add(nuevaSuscripcion);
+
+																		BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+
+									if (encontrado == false)
+									{
+										BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), enlace, titulo);
+									}
+								}
 							}
 
 							j += 1;
@@ -106,16 +232,20 @@ namespace APIs.EA
 					}
 					else
 					{
+						i = 30;
 						break;
 					}
 				}
 
-				BaseDatos.Errores.Insertar.Mensaje("EA Suscripciones", i.ToString());
+				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id.ToString().ToLower(), "valorAdicional", i + 1, conexion);
 
 				i += 1;
 			}
 
-			BaseDatos.Errores.Insertar.Mensaje("EA Suscripciones", "Cantidad de juegos encontrados: " + cantidad.ToString());
+			if (cantidad == 0)
+			{
+				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id.ToString().ToLower(), "valorAdicional", 1, conexion);
+			}
 		}
 	}
 }

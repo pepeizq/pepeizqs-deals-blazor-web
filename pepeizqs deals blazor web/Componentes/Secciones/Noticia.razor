@@ -427,11 +427,6 @@
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
-
-		if (string.IsNullOrEmpty(Language) == false)
-		{
-			idioma = Language;
-		}
 	}
 
 	protected override void OnParametersSet()
@@ -442,8 +437,21 @@
 
 			if (noticia != null)
 			{
+				if (string.IsNullOrEmpty(Language) == false)
+				{
+					idioma = Language;
+				}
+
 				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-				enlace = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/";
+
+				if (Herramientas.Idiomas.ComprobarIdiomaUso("es", idioma) == true)
+				{
+					enlace = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/?language=" + idioma;
+				}
+				else
+				{
+					enlace = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/";
+				}
 
 				List<string> juegosTexto = Herramientas.Listados.Generar(noticia.Juegos);
 
@@ -518,7 +526,10 @@
 			{
 				if (cambiarEnlace == true)
 				{
-					await JavaScript.InvokeVoidAsync("ChangeUrl", "/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/");
+					string cambiarEnlace = enlace;
+                    cambiarEnlace = cambiarEnlace.Replace("https://pepeizqdeals.com", null);
+
+					await JavaScript.InvokeVoidAsync("ChangeUrl", cambiarEnlace);
 				}				
 			}
 		}

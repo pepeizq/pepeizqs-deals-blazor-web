@@ -15,15 +15,15 @@ namespace BaseDatos.Suscripciones
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 			{
 				comando.Parameters.AddWithValue("@enlace", suscripcion.Enlace);
-				comando.Parameters.AddWithValue("@fechaTermina", suscripcion.FechaTermina.ToString());
+				comando.Parameters.AddWithValue("@fechaTermina", suscripcion.FechaTermina);
 
 				try
 				{
 					comando.ExecuteNonQuery();
 				}
-				catch
+				catch (Exception ex)
 				{
-
+					BaseDatos.Errores.Insertar.Mensaje("Actualizar FechaTermina", ex);
 				}
 			}
 		}

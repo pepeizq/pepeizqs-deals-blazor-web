@@ -38,8 +38,8 @@ namespace BaseDatos.Suscripciones
 				comando.Parameters.AddWithValue("@imagen", actual.Imagen);
 				comando.Parameters.AddWithValue("@drm", actual.DRM);
 				comando.Parameters.AddWithValue("@enlace", actual.Enlace);
-				comando.Parameters.AddWithValue("@fechaEmpieza", actual.FechaEmpieza.ToString());
-				comando.Parameters.AddWithValue("@fechaTermina", actual.FechaTermina.ToString());
+				comando.Parameters.AddWithValue("@fechaEmpieza", actual.FechaEmpieza);
+				comando.Parameters.AddWithValue("@fechaTermina", actual.FechaTermina);
 				comando.Parameters.AddWithValue("@imagenNoticia", actual.ImagenNoticia);
 
 				try
@@ -87,9 +87,9 @@ namespace BaseDatos.Suscripciones
 					{
 						comando.ExecuteNonQuery();
 					}
-					catch
+					catch (Exception ex)
 					{
-
+						BaseDatos.Errores.Insertar.Mensaje("Insertar Temporal Suscripción", ex);
 					}
 				}
 			}

@@ -420,7 +420,7 @@ namespace BaseDatos.Juegos
 				}
 				catch
 				{
-
+				
 				}
 			}
 		}

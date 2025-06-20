@@ -15,7 +15,6 @@ using Microsoft.Data.SqlClient;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Serialization;
 
 namespace APIs.EA
 {
@@ -31,128 +30,438 @@ namespace APIs.EA
                 Imagen300x80 = "/imagenes/tiendas/ea_300x80.webp",
                 ImagenIcono = "/imagenes/tiendas/ea_icono.webp",
                 Color = "#ff4747",
-                AdminEnseñar = false,
+                AdminEnseñar = true,
                 AdminInteractuar = true
             };
 
             return tienda;
         }
 
-        public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
+		public static List<string> juegos = new List<string>() {
+			"battlefield-1",
+			"battlefield-2042",
+			"crysis-remastered",
+			"crysis-2-remastered",
+			"crysis-3-remastered",
+			"dead-space",
+			"dragon-age-the-veilguard",
+			"f1-23",
+			"f1-24",
+			"f1-25",
+			"fc-24",
+			"fc-25",
+			"grid-legends",
+			"it-takes-two",
+			"jedi-fallen-order",
+			"jedi-survivor",
+			"lost-in-random",
+			"madden-nfl-24",
+			"madden-nfl-25",
+			"mass-effect-legendary-edition",
+			"medal-of-honor-pacific-assault",
+			"need-for-speed-hot-pursuit-remastered",
+			"need-for-speed-unbound",
+			"pga-tour",
+			"super-mega-baseball-4",
+			"the-sims-25th-birthday-bundle",
+			"the-sims-25th-anniv-edition",
+			"the-sims-2-25th-anniv-edition",
+			"the-sims-4",
+			"wild-hearts",
+			"wrc-24",
+			"zau"
+		};
+
+		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
         {
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
 			int juegos2 = 0;
 
-            List<string> listaIds = new List<string>();
-			string html = await Decompiladores.Estandar("https://api3.origin.com/supercat/GB/en_GB/supercat-PCWIN_MAC-GB-en_GB.json.gz");
-
-			if (string.IsNullOrEmpty(html) == false)
+			foreach (var juego in juegos)
 			{
-				EABD basedatos = JsonSerializer.Deserialize<EABD>(html);
+				string html = await Decompiladores.Estandar("https://drop-api.ea.com/game/" + juego);
 
-				if (basedatos != null)
+				if (string.IsNullOrEmpty(html) == false)
 				{
-					string superIds = string.Empty;
-					int i = 0;
+					EAJuego juegoEA = JsonSerializer.Deserialize<EAJuego>(html);
 
-					foreach (var juegoEA in basedatos.Juegos)
+					if (juegoEA != null)
 					{
-						superIds = superIds + juegoEA.Id + ",";
-						i += 1;
+						string nombre = WebUtility.HtmlDecode(juegoEA.Nombre);
+						string slug = juegoEA.Slug;
 
-						if (i == 20)
+						if (juegoEA.Franquicia != null && !string.IsNullOrEmpty(juegoEA.Franquicia.Slug))
 						{
-							i = 0;
-
-							superIds = superIds.Remove(superIds.Length - 1, 1);
-                            listaIds.Add(superIds);
-
-							superIds = string.Empty;
+							slug = juegoEA.Franquicia.Slug + "/" + slug;
 						}
-					}
 
-					if (listaIds.Count > 0)
-					{
-						foreach (var superIds2 in listaIds)
+						string enlace = "https://www.ea.com/games/" + slug + "/buy";
+
+						if (juegoEA.Ediciones != null && juegoEA.Ediciones.Count > 0)
 						{
-							string html2 = await Decompiladores.Estandar("https://api1.origin.com/supercarp/rating/offers/anonymous?country=ES&locale=es_ES&pid=&currency=EUR&offerIds=" + superIds2);
-
-							if (string.IsNullOrEmpty(html2) == false)
+							foreach (var edicion in juegoEA.Ediciones)
 							{
-								StringReader stream = new StringReader(html2);
-								XmlSerializer xml = new XmlSerializer(typeof(EAPrecio1));
-								EAPrecio1 precio1 = null;
-
-								try
+								if (edicion.Precio != null && !string.IsNullOrEmpty(edicion.Precio.PrecioRebajado))
 								{
-									precio1 = (EAPrecio1)xml.Deserialize(stream);
-								}
-								catch 
-								{ }
+									string textoPrecioRebajado = edicion.Precio.PrecioRebajado;
+									textoPrecioRebajado = textoPrecioRebajado.Replace("€", null);
+									textoPrecioRebajado = textoPrecioRebajado.Replace(",", ".");
+									textoPrecioRebajado = textoPrecioRebajado.Trim();
 
-								if (precio1 != null)
-								{
-									if (precio1.Precio2 != null)
+									string textoPrecioBase = edicion.Precio.PrecioBase;
+									textoPrecioBase = textoPrecioBase.Replace("€", null);
+									textoPrecioBase = textoPrecioBase.Replace(",", ".");
+									textoPrecioBase = textoPrecioBase.Trim();
+
+									decimal precioRebajado = decimal.Parse(textoPrecioRebajado);
+									decimal precioBase = decimal.Parse(textoPrecioBase);
+
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+
+									if (descuento > 0)
 									{
-										foreach (var precioEA in precio1.Precio2)
+										string imagen = juegoEA.Imagenes.Ar1X1;
+
+										JuegoPrecio oferta = new JuegoPrecio
 										{
-											if (precioEA.Precio3 != null)
+											Nombre = edicion.Nombre,
+											Enlace = enlace + "#" + edicion.Slug,
+											Imagen = imagen,
+											Moneda = JuegoMoneda.Euro,
+											Precio = precioRebajado,
+											Descuento = descuento,
+											Tienda = Generar().Id,
+											DRM = JuegoDRM.EA,
+											FechaDetectado = DateTime.Now,
+											FechaActualizacion = DateTime.Now
+										};
+
+										try
+										{
+											BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+
+										juegos2 += 1;
+
+										try
+										{
+											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+									}
+								}
+							}
+						}
+
+						if (juegoEA.DLCs != null && juegoEA.DLCs.DLCs != null && juegoEA.DLCs.DLCs.Count > 0)
+						{
+							foreach (var dlc in juegoEA.DLCs.DLCs)
+							{
+								if (dlc.Precio != null && !string.IsNullOrEmpty(dlc.Precio.PrecioRebajado))
+								{
+									string textoPrecioRebajado = dlc.Precio.PrecioRebajado;
+									textoPrecioRebajado = textoPrecioRebajado.Replace("€", null);
+									textoPrecioRebajado = textoPrecioRebajado.Replace(",", ".");
+									textoPrecioRebajado = textoPrecioRebajado.Trim();
+
+									string textoPrecioBase = dlc.Precio.PrecioBase;
+									textoPrecioBase = textoPrecioBase.Replace("€", null);
+									textoPrecioBase = textoPrecioBase.Replace(",", ".");
+									textoPrecioBase = textoPrecioBase.Trim();
+
+									decimal precioRebajado = decimal.Parse(textoPrecioRebajado);
+									decimal precioBase = decimal.Parse(textoPrecioBase);
+
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+
+									if (descuento > 0)
+									{
+										string nombreDLC = WebUtility.HtmlDecode(dlc.Nombre);
+										string slugDLC = dlc.Slug;
+										string imagenDLC = dlc.Imagenes.Ar1X1;
+										string enlaceDLC = enlace + "/addon/" + slugDLC;
+
+										JuegoPrecio ofertaDLC = new JuegoPrecio
+										{
+											Nombre = nombreDLC,
+											Enlace = enlaceDLC,
+											Imagen = imagenDLC,
+											Moneda = JuegoMoneda.Euro,
+											Precio = precioRebajado,
+											Descuento = descuento,
+											Tienda = Generar().Id,
+											DRM = JuegoDRM.EA,
+											FechaDetectado = DateTime.Now,
+											FechaActualizacion = DateTime.Now
+										};
+
+										try
+										{
+											BaseDatos.Tiendas.Comprobar.Resto(ofertaDLC, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+
+										juegos2 += 1;
+
+										try
+										{
+											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+									}
+								}
+							}
+						}
+
+						if (juegoEA.Suscripciones != null)
+						{
+							string enlaceSuscripcion = enlace.Replace("/buy", null);
+
+							if (juegoEA.Suscripciones.EaPlay != null)
+							{
+								bool encontrado = false;
+							
+								string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
+
+								using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+								{
+									comando.Parameters.AddWithValue("@enlace", enlaceSuscripcion);
+
+									using (SqlDataReader lector = comando.ExecuteReader())
+									{
+										if (lector.Read() == true)
+										{
+											if (lector.IsDBNull(0) == false)
 											{
-												decimal precioRebajado = precioEA.Precio3.PrecioRebajado;
-												decimal precioBase = precioEA.Precio3.PrecioBase;
-
-												int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-												if (descuento > 0)
+												if (string.IsNullOrEmpty(lector.GetString(0)) == false)
 												{
-													foreach (var juegobd in basedatos.Juegos)
+													string idJuegosTexto = lector.GetString(0);
+
+													encontrado = true;
+
+													if (idJuegosTexto != "0")
 													{
-														if (precioEA.Id == juegobd.Id)
+														List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+
+														if (idJuegos.Count > 0)
 														{
-															string nombre = WebUtility.HtmlDecode(juegobd.i18n.Titulo);
-
-															string enlace = "https://www.origin.com/store" + juegobd.Enlace;
-
-															string imagen = juegobd.ImagenServidor + juegobd.i18n.ImagenGrande;
-
-															JuegoPrecio oferta = new JuegoPrecio
+															foreach (var id in idJuegos)
 															{
-																Nombre = nombre,
-																Enlace = enlace,
-																Imagen = imagen,
-																Moneda = JuegoMoneda.Euro,
-																Precio = precioRebajado,
-																Descuento = descuento,
-																Tienda = Generar().Id,
-																DRM = JuegoDRM.EA,
-																FechaDetectado = DateTime.Now,
-																FechaActualizacion = DateTime.Now
-															};
+																Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
 
-															try
-															{
-																BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-															}
-															catch (Exception ex)
-															{
-																BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-															}
+																if (juegobd != null)
+																{
+																	bool añadirSuscripcion = true;
 
-															juegos2 += 1;
+																	if (juegobd.Suscripciones != null)
+																	{
+																		if (juegobd.Suscripciones.Count > 0)
+																		{
+																			bool actualizar = false;
 
-															try
-															{
-																BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-															}
-															catch (Exception ex)
-															{
-																BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+																			foreach (var suscripcion in juegobd.Suscripciones)
+																			{
+																				if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlay)
+																				{
+																					añadirSuscripcion = false;
+																					actualizar = true;
+
+																					DateTime nuevaFecha = suscripcion.FechaTermina;
+																					nuevaFecha = DateTime.Now;
+																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																					suscripcion.FechaTermina = nuevaFecha;
+																				}
+																			}
+
+																			if (actualizar == true)
+																			{
+																				BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+
+																				JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
+
+																				if (suscripcion2 != null)
+																				{
+																					DateTime nuevaFecha = suscripcion2.FechaTermina;
+																					nuevaFecha = DateTime.Now;
+																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																					suscripcion2.FechaTermina = nuevaFecha;
+																					BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+																				}
+																			}
+																		}
+																	}
+
+																	if (añadirSuscripcion == true)
+																	{
+																		DateTime nuevaFecha = DateTime.Now;
+																		nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+
+																		JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+																		{
+																			DRM = JuegoDRM.EA,
+																			Nombre = juegobd.Nombre,
+																			FechaEmpieza = DateTime.Now,
+																			FechaTermina = nuevaFecha,
+																			Imagen = juegobd.Imagenes.Header_460x215,
+																			ImagenNoticia = juegobd.Imagenes.Header_460x215,
+																			JuegoId = juegobd.Id,
+																			Enlace = enlaceSuscripcion,
+																			Tipo = Suscripciones2.SuscripcionTipo.EAPlay
+																		};
+
+																		if (juegobd.Suscripciones == null)
+																		{
+																			juegobd.Suscripciones = new List<JuegoSuscripcion>();
+																		}
+
+																		juegobd.Suscripciones.Add(nuevaSuscripcion);
+
+																		BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
+																	}
+																}
 															}
 														}
 													}
 												}
 											}
+										}
+									}
+
+									if (encontrado == false)
+									{
+										BaseDatos.Suscripciones.Insertar.Temporal(conexion, Suscripcion.Generar().Id.ToString().ToLower(), enlaceSuscripcion, nombre);
+									}
+								}
+							}
+							else
+							{
+								if (juegoEA.Suscripciones.EaPlayPro != null)
+								{
+									bool encontrado = false;
+
+									string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
+
+									using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+									{
+										comando.Parameters.AddWithValue("@enlace", enlaceSuscripcion);
+
+										using (SqlDataReader lector = comando.ExecuteReader())
+										{
+											if (lector.Read() == true)
+											{
+												if (lector.IsDBNull(0) == false)
+												{
+													if (string.IsNullOrEmpty(lector.GetString(0)) == false)
+													{
+														string idJuegosTexto = lector.GetString(0);
+
+														encontrado = true;
+
+														if (idJuegosTexto != "0")
+														{
+															List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+
+															if (idJuegos.Count > 0)
+															{
+																foreach (var id in idJuegos)
+																{
+																	Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
+
+																	if (juegobd != null)
+																	{
+																		bool añadirSuscripcion = true;
+
+																		if (juegobd.Suscripciones != null)
+																		{
+																			if (juegobd.Suscripciones.Count > 0)
+																			{
+																				bool actualizar = false;
+
+																				foreach (var suscripcion in juegobd.Suscripciones)
+																				{
+																					if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlayPro)
+																					{
+																						añadirSuscripcion = false;
+																						actualizar = true;
+
+																						DateTime nuevaFecha = suscripcion.FechaTermina;
+																						nuevaFecha = DateTime.Now;
+																						nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																						suscripcion.FechaTermina = nuevaFecha;
+																					}
+																				}
+
+																				if (actualizar == true)
+																				{
+																					BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+
+																					JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
+
+																					if (suscripcion2 != null)
+																					{
+																						DateTime nuevaFecha = suscripcion2.FechaTermina;
+																						nuevaFecha = DateTime.Now;
+																						nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																						suscripcion2.FechaTermina = nuevaFecha;
+																						BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+																					}
+																				}
+																			}
+																		}
+
+																		if (añadirSuscripcion == true)
+																		{
+																			DateTime nuevaFecha = DateTime.Now;
+																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+
+																			JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+																			{
+																				DRM = JuegoDRM.EA,
+																				Nombre = juegobd.Nombre,
+																				FechaEmpieza = DateTime.Now,
+																				FechaTermina = nuevaFecha,
+																				Imagen = juegobd.Imagenes.Header_460x215,
+																				ImagenNoticia = juegobd.Imagenes.Header_460x215,
+																				JuegoId = juegobd.Id,
+																				Enlace = enlaceSuscripcion,
+																				Tipo = Suscripciones2.SuscripcionTipo.EAPlayPro
+																			};
+
+																			if (juegobd.Suscripciones == null)
+																			{
+																				juegobd.Suscripciones = new List<JuegoSuscripcion>();
+																			}
+
+																			juegobd.Suscripciones.Add(nuevaSuscripcion);
+
+																			BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+
+										if (encontrado == false)
+										{
+											BaseDatos.Suscripciones.Insertar.Temporal(conexion, Suscripcion.GenerarPro().Id.ToString().ToLower(), enlaceSuscripcion, nombre);
 										}
 									}
 								}
@@ -166,94 +475,104 @@ namespace APIs.EA
 
     #region Clases
 
-    public class EABD
+    public class EAJuego
     {
-        [JsonPropertyName("offers")]
-        public List<EABDJuego> Juegos { get; set; }
-    }
+		[JsonPropertyName("name")]
+		public string Nombre { get; set; }
 
-    public class EABDJuego 
-    {
-        [JsonPropertyName("offerId")]
-        public string Id { get; set; }
+		[JsonPropertyName("slug")]
+        public string Slug { get; set; }
 
-        [JsonPropertyName("itemName")]
-        public string Titulo { get; set; }
+		[JsonPropertyName("packArt")]
+		public EAJuegoImagenes Imagenes { get; set; }
 
-        [JsonPropertyName("offerPath")]
-        public string Enlace { get; set; }
+		[JsonPropertyName("franchise")]
+		public EAJuegoFranquicia Franquicia { get; set; }
 
-        [JsonPropertyName("i18n")]
-        public EABDJuegoi18n i18n { get; set; }
+		[JsonPropertyName("editions")]
+		public List<EAJuegoEdicion> Ediciones { get; set; }
 
-        [JsonPropertyName("imageServer")]
-        public string ImagenServidor { get; set; }
+		[JsonPropertyName("subscriptionInfo")]
+		public EAJuegoSuscripciones Suscripciones { get; set; }
 
-		[JsonPropertyName("vault")]
-		public EABDJuegoSuscripcion Suscripcion { get; set; }
-
-		[JsonPropertyName("premiumVault")]
-		public EABDJuegoSuscripcion SuscripcionPremium { get; set; }
-
-		[JsonPropertyName("originDisplayType")]
-		public string Tipo { get; set; }
-
-		[JsonPropertyName("mdmItemType")]
-		public string Tipo2 { get; set; }
-
-        [JsonPropertyName("softwareLocales")]
-        public List<string> Idiomas { get; set; }
-
-        [JsonPropertyName("gdpPath")]
-        public string EnlaceTienda { get; set; }
+		[JsonPropertyName("addonsInfo")]
+		public EAJuegoDLCs DLCs { get; set; }
 	}
 
-    public class EABDJuegoi18n
-    {
-        [JsonPropertyName("displayName")]
-        public string Titulo { get; set; }
-
-        [JsonPropertyName("packArtMedium")]
-        public string ImagenPequeña { get; set; }
-
-        [JsonPropertyName("packArtLarge")]
-        public string ImagenGrande { get; set; }
-    }
-
-    public class EABDJuegoSuscripcion
-    {
-        [JsonPropertyName("path")]
-        public string Enlace { get; set; }
-
-		[JsonPropertyName("vaultEndDate")]
-		public string FechaAcaba { get; set; }
+	public class EAJuegoImagenes
+	{
+		[JsonPropertyName("ar1X1")]
+		public string Ar1X1 { get; set; }
 	}
 
+	public class EAJuegoFranquicia
+	{
+		[JsonPropertyName("slug")]
+		public string Slug { get; set; }
+	}
 
-	[XmlRoot("offerRatingResults")]
-    public class EAPrecio1
-    {
-        [XmlElement("offer")]
-        public List<EAPrecio2> Precio2 { get; set; }
-    }
+	public class EAJuegoEdicion
+	{
+		[JsonPropertyName("slug")]
+		public string Slug { get; set; }
 
-    public class EAPrecio2
-    {
-        [XmlElement("offerId")]
-        public string Id { get; set; }
+		[JsonPropertyName("name")]
+		public string Nombre { get; set; }
 
-        [XmlElement("rating")]
-        public EAPrecio3 Precio3 { get; set; }
-    }
+		[JsonPropertyName("packArt")]
+		public EAJuegoImagenes Imagenes { get; set; }
 
-    public class EAPrecio3
-    {
-        [XmlElement("finalTotalAmount")]
-        public decimal PrecioRebajado { get; set; }
+		[JsonPropertyName("price")]
+		public EAEdicionPrecio Precio { get; set; }
+	}
 
-        [XmlElement("originalTotalPrice")]
-        public decimal PrecioBase { get; set; }
-    }
+	public class EAEdicionPrecio
+	{
+		[JsonPropertyName("displayTotal")]
+		public string PrecioBase { get; set; }
 
-    #endregion
+		[JsonPropertyName("displayTotalWithDiscount")]
+		public string PrecioRebajado { get; set; }
+	}
+
+	public class EAJuegoSuscripciones
+	{
+		[JsonPropertyName("play_pro")]
+		public EAJuegoSuscripcion EaPlayPro { get; set; }
+
+		[JsonPropertyName("play")]
+		public EAJuegoSuscripcion EaPlay { get; set; }
+	}
+
+	public class EAJuegoSuscripcion
+	{
+		[JsonPropertyName("acquisitionStartDate")]
+		public string FechaEmpieza { get; set; }
+
+		[JsonPropertyName("name")]
+		public string Nombre { get; set; }
+	}
+
+	public class EAJuegoDLCs
+	{
+		[JsonPropertyName("items")]
+		public List<EAJuegoDLC> DLCs { get; set; }
+	}
+
+	public class EAJuegoDLC
+	{
+		[JsonPropertyName("slug")]
+		public string Slug { get; set; }
+
+		[JsonPropertyName("title")]
+		public string Nombre { get; set; }
+
+		[JsonPropertyName("packArt")]
+		public EAJuegoImagenes Imagenes { get; set; }
+
+		[JsonPropertyName("price")]
+		public EAEdicionPrecio Precio { get; set; }
+	}
+
+	#endregion
 }

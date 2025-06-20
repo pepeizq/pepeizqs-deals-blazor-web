@@ -19,7 +19,7 @@ namespace APIs.EA
 				ImagenIcono = "/imagenes/tiendas/ea_icono.webp",
 				Enlace = "https://www.ea.com/ea-play",
 				DRMDefecto = JuegoDRM.EA,
-				AdminInteractuar = true,
+				AdminInteractuar = false,
 				UsuarioEnlacesEspecificos = false,
 				ParaSiempre = false,
 				Precio = 5.99,
@@ -45,7 +45,7 @@ namespace APIs.EA
 				ParaSiempre = false,
 				IncluyeSuscripcion = Suscripciones2.SuscripcionTipo.EAPlay,
                 Precio = 16.99,
-                AdminPendientes = false,
+                AdminPendientes = true,
                 TablaPendientes = "tiendaea"
             };
 
@@ -71,7 +71,7 @@ namespace APIs.EA
 
 			while (i < 20)
 			{
-				string html = await Decompiladores.Estandar("https://www.ea.com/pagination/2-eiKprHf3zpqmQ4uWlpOgMQ6ECG%2Br7eNSz%2BiCznR1RZuGI4By6p%2Fn9YG0Ud0PBvnPoiDyJThxmtTrrxvFwVs%2F%2FMaP0KLbegXNWwlBX%2FFqh7%2B6kF9TLUbwZv7dND7mXcxxaskgrsuee8vZ9oY7j9ZC%2BbFNGi%2FHdWoshxUGKvlCSAsQ0m41qig%2Bppq6CYoNAUrevtuZd40pcBT%2BhfxLs9Rr8kKo0nENuHSMrn8TXPgJZmaVfY39ZkSENi%2BauM8%3D/page/" + i.ToString());
+				string html = await Decompiladores.GZipFormato2("https://www.ea.com/pagination/2-eiKprHf3zpqmQ4uWlpOgMQ6ECG%2Br7eNSz%2BiCznR1RZuGI4By6p%2Fn9YG0Ud0PBvnPoiDyJThxmtTrrxvFwVs%2F%2FMaP0KLbegXNWwlBX%2FFqh7%2B6kF9TLUbwZv7dND7mXcxxaskgrsuee8vZ9oY7j9ZC%2BbFNGi%2FHdWoshxUGKvlCSAsQ0m41qig%2Bppq6CYoNAUrevtuZd40pcBT%2BhfxLs9Rr8kKo0nENuHSMrn8TXPgJZmaVfY39ZkSENi%2BauM8%3D/page/" + i.ToString());
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
@@ -79,7 +79,7 @@ namespace APIs.EA
 					{
 						int j = 0;
 
-						while (j < 12)
+						while (j < 20)
 						{
 							if (html.Contains("main-link-url=") == true)
 							{
@@ -176,10 +176,6 @@ namespace APIs.EA
 																					suscripcion2.FechaTermina = nuevaFecha;
 																					BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
 																				}
-																				else
-																				{
-																					añadirSuscripcion = true;
-																				}
 																			}
 																		}
 																	}
@@ -229,6 +225,8 @@ namespace APIs.EA
 
 							j += 1;
 						}
+
+						BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id.ToString().ToLower(), "valorAdicional", i + 1, conexion);
 					}
 					else
 					{
@@ -236,8 +234,6 @@ namespace APIs.EA
 						break;
 					}
 				}
-
-				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id.ToString().ToLower(), "valorAdicional", i + 1, conexion);
 
 				i += 1;
 			}

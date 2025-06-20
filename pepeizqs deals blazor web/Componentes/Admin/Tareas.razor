@@ -56,43 +56,46 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
         @foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
         {
-            AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(suscripcion.Id.ToString());
-
-            if (tarea != null)
+            if (suscripcion.AdminInteractuar == true)
             {
-                string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+                AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(suscripcion.Id.ToString());
 
-                <button @onclick="(e => ClickearSuscripcionStreaming(e, suscripcion.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
-                    <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="@suscripcion.ImagenIcono" style="height: 22px;" />
-                                <div>@suscripcion.Nombre</div>
+                if (tarea != null)
+                {
+                    string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+
+                    <button @onclick="(e => ClickearSuscripcionStreaming(e, suscripcion.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
+                        <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="@suscripcion.ImagenIcono" style="height: 22px;" />
+                                    <div>@suscripcion.Nombre</div>
+                                </div>
+
+                                <div>@tiempo</div>
                             </div>
 
-                            <div>@tiempo</div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="text-align: right;">@tarea.Cantidad</div>
+
+                                @if (tarea.Valor1 > 0)
+                                {
+                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
+                                        @if (tarea.Valor1 > 0)
+                                        {
+                                            <div style="font-size: 14px;">@tarea.Valor1</div>
+                                        }
+
+                                        @if (tarea.Valor2 > 0)
+                                        {
+                                            <div style="font-size: 14px;">@tarea.Valor2</div>
+                                        }
+                                    </div>
+                                }
+                            </div>
                         </div>
-
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="text-align: right;">@tarea.Cantidad</div>
-
-                            @if (tarea.Valor1 > 0)
-                            {
-                                <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
-                                    @if (tarea.Valor1 > 0)
-                                    {
-                                        <div style="font-size: 14px;">@tarea.Valor1</div>
-                                    }
-
-                                    @if (tarea.Valor2 > 0)
-                                    {
-                                        <div style="font-size: 14px;">@tarea.Valor2</div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                }
             }
         }
     </div>

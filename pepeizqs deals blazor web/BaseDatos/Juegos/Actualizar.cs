@@ -284,6 +284,24 @@ namespace BaseDatos.Juegos
 
 				}
 			}
+
+			string sqlActualizar2 = "UPDATE seccionMinimos " +
+					"SET imagenes=@imagenes WHERE idMaestra=@id";
+
+			using (SqlCommand comando2 = new SqlCommand(sqlActualizar2, conexion))
+			{
+				comando2.Parameters.AddWithValue("@id", juego.Id);
+				comando2.Parameters.AddWithValue("@imagenes", JsonSerializer.Serialize(juego.Imagenes));
+
+				try
+				{
+					comando2.ExecuteNonQuery();
+				}
+				catch
+				{
+
+				}
+			}
 		}
 
 		public static void PreciosActuales(Juego juego, SqlConnection conexion)

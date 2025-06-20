@@ -51,56 +51,107 @@ namespace APIs.WinGameStore
 
 						foreach (WinGameStoreJuego juego in juegos)
 						{
-							decimal precioBase = decimal.Parse(juego.PrecioBase);
-							decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+							bool buscar = true;
 
-							int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-							if (descuento > 0)
+							if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
 							{
-								string nombre = WebUtility.HtmlDecode(juego.Nombre);
+								List<string> listaPaisesRestringidos = new List<string>();
 
-								string enlace = juego.Enlace;
+								string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+								listaPaisesRestringidos.AddRange(datosPartidos);
 
-								enlace = enlace.Replace("?ars=pepeizqdeals", null);
-
-								string imagen = juego.Imagen;
-
-								JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
-
-								JuegoPrecio oferta = new JuegoPrecio
+								if (listaPaisesRestringidos.Count > 0)
 								{
-									Nombre = nombre,
-									Enlace = enlace,
-									Imagen = imagen,
-									Moneda = JuegoMoneda.Dolar,
-									Precio = precioRebajado,
-									Descuento = descuento,
-									Tienda = Generar().Id,
-									DRM = drm,
-									FechaDetectado = DateTime.Now,
-									FechaActualizacion = DateTime.Now
-								};
-
-								try
-								{
-									BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+									foreach (var pais in listaPaisesRestringidos)
+									{
+										if (pais.ToLower() == "es")
+										{
+											buscar = false;
+											break;
+										}
+									}
 								}
-								catch (Exception ex)
-								{
-                                    BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                }
+							}
 
-								juegos2 += 1;
+							if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+							{
+								List<string> listaPaisesAprobados = new List<string>();
 
-								try
+								string[] datosPartidos = juego.PaisesAprobados.Split(',');
+								listaPaisesAprobados.AddRange(datosPartidos);
+
+								if (listaPaisesAprobados.Count > 0)
 								{
-									BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+									bool encontrado = false;
+									foreach (var pais in listaPaisesAprobados)
+									{
+										if (pais.ToLower() == "es")
+										{
+											encontrado = true;
+											break;
+										}
+									}
+
+									if (encontrado == false)
+									{
+										buscar = false;
+									}
 								}
-								catch (Exception ex)
+							}
+
+							if (buscar == true)
+							{
+								decimal precioBase = decimal.Parse(juego.PrecioBase);
+								decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+
+								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+
+								if (descuento > 0)
 								{
-                                    BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                }
+									string nombre = WebUtility.HtmlDecode(juego.Nombre);
+
+									string enlace = juego.Enlace;
+
+									enlace = enlace.Replace("?ars=pepeizqdeals", null);
+
+									string imagen = juego.Imagen;
+
+									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+
+									JuegoPrecio oferta = new JuegoPrecio
+									{
+										Nombre = nombre,
+										Enlace = enlace,
+										Imagen = imagen,
+										Moneda = JuegoMoneda.Dolar,
+										Precio = precioRebajado,
+										Descuento = descuento,
+										Tienda = Generar().Id,
+										DRM = drm,
+										FechaDetectado = DateTime.Now,
+										FechaActualizacion = DateTime.Now
+									};
+
+									try
+									{
+										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+									}
+									catch (Exception ex)
+									{
+										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+									}
+
+									juegos2 += 1;
+
+									try
+									{
+										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+									}
+									catch (Exception ex)
+									{
+										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+									}
+								}
 							}
 						}
 					}
@@ -128,5 +179,11 @@ namespace APIs.WinGameStore
 
 		[JsonPropertyName("badge")]
 		public string Imagen { get; set; }
+
+		[JsonPropertyName("whitelist")]
+		public string PaisesAprobados { get; set; }
+
+		[JsonPropertyName("blacklist")]
+		public string PaisesRestringidos { get; set; }
 	}
 }

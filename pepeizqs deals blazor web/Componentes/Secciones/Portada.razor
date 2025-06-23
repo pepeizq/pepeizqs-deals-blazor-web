@@ -385,7 +385,7 @@
 					}
 
 					<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="@colorFondoDestacado">
-						<img class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
+						<img @key="destacado.Id.ToString()" class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
 
 						@if (mostrarBarra == true)
 						{

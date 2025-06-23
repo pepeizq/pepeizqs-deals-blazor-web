@@ -1539,21 +1539,7 @@
                                                                             </div>
                                                                         </button>
                                                                     }
-                                                                }
-
-                                                                // if (drm.Id == JuegoDRM.Steam && juego.UltimaActualizacionSteam != null)
-                                                                // {
-                                                                //     <div style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
-                                                                //         @Herramientas.Idiomas.BuscarTexto(idioma, "String100", "Game") @juego.UltimaActualizacionSteam.Value.Day.ToString()/@juego.UltimaActualizacionSteam.Value.Month.ToString()/@juego.UltimaActualizacionSteam.Value.Year.ToString() (@Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam.Value, idioma))
-                                                                //     </div>
-                                                                // }
-                                                       
-                                                                // if (drm.Id == JuegoDRM.GOG && juego.UltimaActualizacionGOG != null)
-                                                                // {
-                                                                //     <div style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
-                                                                //         @Herramientas.Idiomas.BuscarTexto(idioma, "String100", "Game") @juego.UltimaActualizacionGOG.Value.Day.ToString()/@juego.UltimaActualizacionGOG.Value.Month.ToString()/@juego.UltimaActualizacionGOG.Value.Year.ToString() (@Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionGOG.Value, idioma))
-                                                                //     </div>
-                                                                // }                                                                
+                                                                }                                                             
                                                             }   
                                                         </div>
                                                     }
@@ -1601,7 +1587,7 @@
                                         </div>
                                     }
 
-                                    @if (preciosActualesDRM.Count > 0 && Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+                                    @if (preciosActualesDRM.Count > 0)
                                     {
                                         List<JuegoPrecio> preciosBajos = new List<JuegoPrecio>();
                                         int descuentoMaximo = 0;
@@ -3668,7 +3654,7 @@
                 bool actualizarDatosAPI = false;
                 TimeSpan tiempoComprobar = TimeSpan.FromDays(60);
 
-                if (juego.Caracteristicas.FechaLanzamientoSteam != null)
+                if (juego.Caracteristicas?.FechaLanzamientoSteam != null)
                 {
                     if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(7) < DateTime.Now)
                     {

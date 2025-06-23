@@ -47,6 +47,8 @@ namespace APIs.Battlenet
 				"diablo-iv",
 				"doom-the-dark-ages",
 				"sea-of-thieves",
+				"the-outer-worlds-2",
+				"tony-hawks-pro-skater-3-4",
 				"warcraft-orcs-and-humans",
 				"warcraft-ii-battle-net-edition"];
 

@@ -30,7 +30,7 @@
     <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png" />
     <meta name="theme-color" content="#007272" />
 
-    <HeadOutlet @rendermode="renderizacion" />
+    <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: true)" />
 </head>
 
 <body class="cuerpo" id="cuerpazo" style="margin: 0px;">
@@ -99,9 +99,14 @@
 
     <script async src="@Assets["~/superjs.js"]"></script>
 
-    <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
+    @if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+    {
+        <div id="reconnect-modal" style="display: none;"></div>
+        <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
+        <script src="@Assets["Inicio.js"]"></script>
+    }
 
-    <script>
+@*     <script>
         function delay(milliseconds) {
             return new Promise(resolve => {
                 setTimeout(resolve, milliseconds)
@@ -122,7 +127,7 @@
         }
 
         boot()
-    </script>
+    </script> *@
 
     <script>
         function moverScroll(id) {
@@ -155,7 +160,7 @@
         gtag('config', 'G-02PL2Q3GQX');
     </script>
 
-    <div id="components-reconnect-modal" style="display: none" />
+   @*  <div id="components-reconnect-modal" style="display: none" /> *@
 </body>
 
 </html>
@@ -171,6 +176,7 @@
 
     private string idioma = "en";
     private string usuarioId = null;
+    private string userAgent = null;
     private string enlace = null;
     private string codigoFuente = null;
 
@@ -187,6 +193,7 @@
         {
             idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+            userAgent = HttpContext.Request.Headers.UserAgent.ToString();
             enlace = HttpContext.Request.Path.ToString();
         }
 

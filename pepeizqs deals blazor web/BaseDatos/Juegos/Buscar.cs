@@ -528,13 +528,13 @@ namespace BaseDatos.Juegos
 			return UnJuego(id.ToString());
 		}
 
-        public static Juego UnJuego(string id = null, string idSteam = null, string idGog = null)
+        public static Juego UnJuego(string id = null, string idSteam = null, string idGog = null, string idEpic = null)
 		{
 			string sqlBuscar = string.Empty;
 			string idParametro = string.Empty;
 			string idBuscar = string.Empty;
 
-			if (id != null)
+			if (string.IsNullOrEmpty(id) == false)
 			{
 				sqlBuscar = "SELECT * FROM juegos WHERE id=@id";
 				idParametro = "@id";
@@ -542,7 +542,7 @@ namespace BaseDatos.Juegos
 			}
 			else
 			{
-				if (idSteam != null)
+				if (string.IsNullOrEmpty(idSteam) == false)
 				{
 					sqlBuscar = "SELECT * FROM juegos WHERE idSteam=@idSteam";
 					idParametro = "@idSteam";
@@ -550,11 +550,20 @@ namespace BaseDatos.Juegos
 				}
 				else
 				{
-					if (idGog != null)
+					if (string.IsNullOrEmpty(idGog) == false)
 					{
 						sqlBuscar = "SELECT * FROM juegos WHERE slugGog=@slugGog";
 						idParametro = "@slugGog";
 						idBuscar = idGog;
+					}
+					else
+					{
+						if (string.IsNullOrEmpty(idEpic) == false)
+						{
+							sqlBuscar = "SELECT * FROM juegos WHERE slugEpic=@slugEpic";
+							idParametro = "@slugEpic";
+							idBuscar = idEpic;
+						}
 					}
 				}
 			}

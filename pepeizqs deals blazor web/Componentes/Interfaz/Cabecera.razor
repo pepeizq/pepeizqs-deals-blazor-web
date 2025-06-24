@@ -375,6 +375,9 @@
     [Parameter]
     public string usuarioId { get; set; }
 
+    [SupplyParameterFromQuery]
+    private string Search { get; set; }
+
     private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
     private Usuario deseadosUsuario = null;
     private bool usuarioPatreon = false;
@@ -392,6 +395,16 @@
             deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
             opcionesCabecera = BaseDatos.Usuarios.Buscar.OpcionesCabecera(usuarioId);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Search) == false)
+        {
+            cadenaBusqueda = Search;
+            enseñarBuscador = true;
+            TextoCambiaBuscador();
         }
     }
 

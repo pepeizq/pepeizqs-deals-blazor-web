@@ -12,6 +12,7 @@ namespace Herramientas
 			"GoogleAssociationService",
 			"fetcher",
 			"Feedfetcher-Google",
+			"feedburner",
 			"Bingbot",
 			"YandexBot", 
 			"Applebot", 

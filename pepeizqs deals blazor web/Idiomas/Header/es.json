@@ -11,14 +11,6 @@
   "Forum": "Foro",
   "LastNews": "Últimas Noticias",
   "LastAdded": "Últimos Añadidos",
-  "SearchFilter1": "Juegos",
-  "SearchFilter2": "DLCs",
-  "SearchFilter3": "Bandas Sonoras",
-  "SearchFilter4": "Software",
-  "SearchFilter5": "Bundles",
-  "SearchFilter6": "Gratis",
-  "SearchFilter7": "Suscripciones",
-  "SearchFilter8": "Curators",
   "SearchMessage1": "Desde {0}",
   "SearchMessage2": "No hay Ofertas",
   "SearchMessage3": "Desde {0} y en un bundle de {1}",
@@ -31,5 +23,7 @@
   "SearchMessage10": "Desde {0} y en {1} suscripciones",
   "SearchMessage11": "En {0} bundles",
   "SearchMessage12": "En {0} suscripciones",
-  "SearchPlaceholder": "buscar"
+  "SearchPlaceholder": "buscar",
+  "String1": "Copiar al clipboard los resultados de búsqueda",
+  "String2": "Limpiar búsqueda"
 }

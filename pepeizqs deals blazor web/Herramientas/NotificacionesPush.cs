@@ -48,7 +48,7 @@ namespace Herramientas
 			EnviarMinimo(usuarioId, juego, minimo, drm);
 		}
 
-		public static async void EnviarMinimo(string usuarioId, Juego juego, JuegoPrecio minimo, JuegoDRM drm)
+		public static void EnviarMinimo(string usuarioId, Juego juego, JuegoPrecio minimo, JuegoDRM drm)
 		{
 			if (juego != null)
 			{

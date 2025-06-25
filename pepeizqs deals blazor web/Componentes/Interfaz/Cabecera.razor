@@ -9,8 +9,22 @@
 @using pepeizqs_deals_web.Data
 
 @inject NavigationManager NavManager
+@inject IJSRuntime JavaScript
 
 @inherits Juegos.Juego
+
+<script>
+    window.clipboardCopy = {
+        copyText: function(text) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert("Copied to clipboard");
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+        }
+    };
+</script>
 
 <style>
     .buscador-panel {
@@ -305,6 +319,24 @@
         {
             <div class="buscador-panel" style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); background-color: var(--fondoCuerpo); display: flex; align-items: start; flex-direction: column;">
                 <div class="caja-diseño" style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%; padding: 0px 20px 20px 20px;">                   
+                    <div style="font-size: 14px; margin-top: 15px; display: flex; align-items: center; gap: 10px; justify-content: right;">
+                        <button @onclick="(e => CopiarAlClipboardEnlace(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Header")">
+                            <div style="max-width: 16px; max-height: 16px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                    <path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/>
+                                </svg>
+                            </div>
+                        </button>
+                        
+                        <button @onclick="(e => LimpiarBusqueda(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Header")">
+                            <div style="max-width: 16px; max-height: 16px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+                    
                     <Virtualize Context="juego" Items="resultadosMostrar" ItemSize="107" OverscanCount="5">
                         <ItemContent>
                             @{
@@ -459,8 +491,44 @@
 
             using (conexion)
             {
-                resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 50, false, -1);
+                if (APIs.Steam.Juego.Detectar(cadenaBusqueda) == true)
+                {
+                    cadenaBusqueda = APIs.Steam.Juego.LimpiarID(cadenaBusqueda);
 
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, cadenaBusqueda) };
+
+                    if (resultadosMostrar.Count > 0)
+                    {
+                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                    } 
+                }
+                else if (APIs.GOG.Juego.Detectar(cadenaBusqueda) == true)
+                {
+                    cadenaBusqueda = APIs.GOG.Juego.LimpiarSlug(cadenaBusqueda);
+
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, cadenaBusqueda) };
+
+                    if (resultadosMostrar.Count > 0)
+                    {
+                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                    } 
+                }
+                else if (APIs.EpicGames.Juego.Detectar(cadenaBusqueda) == true)
+                {
+                    cadenaBusqueda = APIs.EpicGames.Juego.LimpiarSlug(cadenaBusqueda);
+
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, null, cadenaBusqueda) };
+
+                    if (resultadosMostrar.Count > 0)
+                    {
+                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                    } 
+                }
+                else
+                {
+                    resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 50, false, -1);
+                }
+                
                 if (resultadosMostrar.Count > 0)
                 {
                     encontroAlgo = true;
@@ -484,6 +552,11 @@
         encontroAlgo = false;
         enseñarBuscador = false;
 	}
+
+    private async Task CopiarAlClipboardEnlace(MouseEventArgs e)
+    {
+        await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", "https://pepeizqdeals.com/?search=" + cadenaBusqueda);
+    }
 
     #endregion
 }

@@ -11,14 +11,6 @@
   "Forum": "Forum",
   "LastNews": "Dernières nouvelles",
   "LastAdded": "Dernier ajouté",
-  "SearchFilter1": "Jeux",
-  "SearchFilter2": "DLC",
-  "SearchFilter3": "Bandes sonores",
-  "SearchFilter4": "Logiciel",
-  "SearchFilter5": "Forfaits",
-  "SearchFilter6": "Gratuit",
-  "SearchFilter7": "Abonnements",
-  "SearchFilter8": "Curators",
   "SearchMessage1": "De {0}",
   "SearchMessage2": "Pas en vente",
   "SearchMessage3": "De {0} et dans un bundle {1}",
@@ -31,5 +23,7 @@
   "SearchMessage10": "De {0} et dans les abonnements {1}",
   "SearchMessage11": "Dans les paquets {0}",
   "SearchMessage12": "Dans les abonnements {0}",
-  "SearchPlaceholder": "recherche"
+  "SearchPlaceholder": "recherche",
+  "String1": "Copier les résultats de la recherche dans le presse-papiers",
+  "String2": "Recherche claire"
 }

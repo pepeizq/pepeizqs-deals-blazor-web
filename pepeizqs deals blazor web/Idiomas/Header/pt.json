@@ -11,14 +11,6 @@
   "Forum": "Fórum",
   "LastNews": "Últimas notícias",
   "LastAdded": "Última adição",
-  "SearchFilter1": "Jogos",
-  "SearchFilter2": "DLCs",
-  "SearchFilter3": "Trilhas sonoras",
-  "SearchFilter4": "Programas",
-  "SearchFilter5": "Pacotes",
-  "SearchFilter6": "Livre",
-  "SearchFilter7": "Assinaturas",
-  "SearchFilter8": "Curators",
   "SearchMessage1": "De {0}",
   "SearchMessage2": "Não em venda",
   "SearchMessage3": "De {0} e em um pacote {1}",
@@ -31,5 +23,7 @@
   "SearchMessage10": "De {0} e em {1} assinaturas",
   "SearchMessage11": "Em {0} pacotes",
   "SearchMessage12": "Em {0} assinaturas",
-  "SearchPlaceholder": "procurar"
+  "SearchPlaceholder": "procurar",
+  "String1": "Copiar resultados de pesquisa para a área de transferência",
+  "String2": "Pesquisa clara"
 }

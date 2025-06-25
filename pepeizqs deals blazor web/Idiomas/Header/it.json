@@ -11,14 +11,6 @@
   "Forum": "Forum",
   "LastNews": "Ultime notizie",
   "LastAdded": "Ultimo aggiunto",
-  "SearchFilter1": "Giochi",
-  "SearchFilter2": "DLC",
-  "SearchFilter3": "Colonne sonore",
-  "SearchFilter4": "Software",
-  "SearchFilter5": "Fasci",
-  "SearchFilter6": "Gratuito",
-  "SearchFilter7": "Abbonamenti",
-  "SearchFilter8": "Curators",
   "SearchMessage1": "Da {0}",
   "SearchMessage2": "Non in vendita",
   "SearchMessage3": "Da {0} e in un pacchetto {1}",
@@ -31,5 +23,7 @@
   "SearchMessage10": "Da {0} e in {1} abbonamenti",
   "SearchMessage11": "In {0} pacchetti",
   "SearchMessage12": "In abbonamenti {0}",
-  "SearchPlaceholder": "ricerca"
+  "SearchPlaceholder": "ricerca",
+  "String1": "Copia i risultati di ricerca sugli appunti",
+  "String2": "Ricerca chiara"
 }

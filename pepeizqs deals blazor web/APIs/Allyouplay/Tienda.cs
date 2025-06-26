@@ -53,15 +53,15 @@ namespace APIs.Allyouplay
 								{ "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0" },
 								{ "Accept", "application/json, text/plain, */*" },
 								{ "Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"},
-								{ "Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOiIxNzMzOTUwNjM2IiwiZXhwIjoiMTczNDU1NTQzNiIsIkN1c3RvbWVySWQiOiI1NjIyMTk1MyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMmNkODI0MzUtNjRiMS00YmIwLTg1OWYtZjMzMzk3YzU5NTJlIn0.EUOoslhtBROeaHxBr5qbshw9EazbSq9bz0t7TuwHH9M" },
 								{ "Origin", "https://allyouplay.com" },
 								{ "DNT", "1" },
 								{ "Sec-GPC", "1" },
 								{ "Connection", "keep-alive" },
 								{ "Referer", "https://allyouplay.com/" },
-								{ "Cookie", "soundestID=20241211205715-T0d2Dm0lrpDbKX6EkVpfp6v7Gooz58jdx5h0gvBNE7wlpV6gZ; .Nop.Customer=2cd82435-64b1-4bb0-859f-f33397c5952e; .Nop.Culture=c%3Den-GB%7Cuic%3Den-GB" },
 								{ "Sec-Fetch-Dest", "empty" },
-								{ "Sec-Fetch-Mode", "cors" }
+								{ "Sec-Fetch-Mode", "cors" },
+								{ "Pragma", "no-cache" },
+								{ "Cache-Control", "no-cache" }
 					}
 				}; 
 

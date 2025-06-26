@@ -116,10 +116,6 @@ namespace Herramientas
 					{
 						enlace = APIs.JoyBuggy.Tienda.Referido(enlace);
 					}
-					else if (tienda == APIs._2Game.Tienda.Generar().Id)
-					{
-						enlace = APIs._2Game.Tienda.Referido(enlace);
-					}
 					else if (tienda == APIs.GameBillet.Tienda.Generar().Id)
 					{
 						enlace = APIs.GameBillet.Tienda.Referido(enlace);

@@ -57,56 +57,107 @@ namespace APIs.Playsum
 				{
 					foreach (PlaysumJuego juego in listaJuegos.Canal.Juegos)
 					{
-						if (juego.Moneda == "EUR")
+						bool buscar = true;
+
+						if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
 						{
-							if (string.IsNullOrEmpty(juego.PrecioBase) == false && string.IsNullOrEmpty(juego.PrecioRebajado) == false)
+							List<string> listaPaisesRestringidos = new List<string>();
+
+							string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+							listaPaisesRestringidos.AddRange(datosPartidos);
+
+							if (listaPaisesRestringidos.Count > 0)
 							{
-								decimal precioBase = decimal.Parse(juego.PrecioBase);
-								decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
-
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-								if (descuento > 0)
+								foreach (var pais in listaPaisesRestringidos)
 								{
-									string nombre = WebUtility.HtmlDecode(juego.Nombre);
-
-									string enlace = juego.Enlace;
-
-									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
-
-									JuegoPrecio oferta = new JuegoPrecio
+									if (pais.ToLower() == "es")
 									{
-										Nombre = nombre,
-										Enlace = enlace,
-										Moneda = JuegoMoneda.Euro,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = Generar().Id,
-										DRM = drm,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now,
-										CodigoDescuento = 10,
-										CodigoTexto = "PEPEIZQDEALS"
-									};
-
-									try
-									{
-										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										buscar = false;
+										break;
 									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-									}
+								}
+							}
+						}
 
-									juegos2 += 1;
+						if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+						{
+							List<string> listaPaisesAprobados = new List<string>();
 
-									try
+							string[] datosPartidos = juego.PaisesAprobados.Split(',');
+							listaPaisesAprobados.AddRange(datosPartidos);
+
+							if (listaPaisesAprobados.Count > 0)
+							{
+								bool encontrado = false;
+								foreach (var pais in listaPaisesAprobados)
+								{
+									if (pais.ToLower() == "es")
 									{
-										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+										encontrado = true;
+										break;
 									}
-									catch (Exception ex)
+								}
+
+								if (encontrado == false)
+								{
+									buscar = false;
+								}
+							}
+						}
+
+						if (buscar == true)
+						{
+							if (juego.Moneda == "EUR")
+							{
+								if (string.IsNullOrEmpty(juego.PrecioBase) == false && string.IsNullOrEmpty(juego.PrecioRebajado) == false)
+								{
+									decimal precioBase = decimal.Parse(juego.PrecioBase);
+									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+
+									if (descuento > 0)
 									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+
+										string enlace = juego.Enlace;
+
+										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+
+										JuegoPrecio oferta = new JuegoPrecio
+										{
+											Nombre = nombre,
+											Enlace = enlace,
+											Moneda = JuegoMoneda.Euro,
+											Precio = precioRebajado,
+											Descuento = descuento,
+											Tienda = Generar().Id,
+											DRM = drm,
+											FechaDetectado = DateTime.Now,
+											FechaActualizacion = DateTime.Now,
+											CodigoDescuento = 10,
+											CodigoTexto = "PEPEIZQDEALS"
+										};
+
+										try
+										{
+											BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+
+										juegos2 += 1;
+
+										try
+										{
+											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
 									}
 								}
 							}
@@ -153,7 +204,10 @@ namespace APIs.Playsum
 		[XmlElement("keyProvider")]
 		public string DRM { get; set; }
 
+		[XmlElement("whitelistedCountries")]
+		public string PaisesAprobados { get; set; }
+
 		[XmlElement("blacklistedCountries")]
-		public string PaisesBloqueados { get; set; }
+		public string PaisesRestringidos { get; set; }
 	}
 }

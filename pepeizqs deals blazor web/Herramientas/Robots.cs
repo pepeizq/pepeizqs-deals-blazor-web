@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using ImageProcessor.Imaging.Quantizers.WuQuantizer;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -80,17 +81,17 @@ namespace Herramientas
 
 			if (piscinaApp == piscinaUsada)
 			{
-				sb.Append(@"
-User-agent: *
-Disallow: /");
+				//				sb.Append(@"
+				//User-agent: *
+				//Disallow: /");
 
-				foreach (var bot in RobotsUserAgents.bots)
-				{
-					sb.Append($"\r\nUser-agent: {bot}\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*");
-				}
+				//				foreach (var bot in RobotsUserAgents.bots)
+				//				{
+				//					sb.Append($"\r\nUser-agent: {bot}\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*");
+				//				}
 
-				sb.Append(@"
-Sitemap: https://pepeizqdeals.com/sitemap.xml");
+				sb.Append(@"Sitemap: https://pepeizqdeals.com/sitemap.xml");
+				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*");
 			}
             else
             {

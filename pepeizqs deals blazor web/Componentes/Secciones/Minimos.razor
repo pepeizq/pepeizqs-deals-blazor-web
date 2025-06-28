@@ -515,8 +515,8 @@ else
 
 		@if (juegosMostrar.Count > 0)
 		{
-			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -25px;">
-				<Virtualize Context="juego" Items="juegosMostrar" ItemSize="107">
+			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -15px;">
+				<Virtualize @ref="juegosVirtualizados" Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="10">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
 					</ItemContent>
@@ -546,6 +546,7 @@ else
 
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosMostrar = new List<Juegos.Juego>();
+	private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
 	private string ordenamientoElegido = string.Empty;
 
@@ -639,8 +640,11 @@ else
 				#endregion
 			}
 		}
+	}
 
-		//--------------------------------------------------------------------
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Yield();
 
 		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
@@ -688,6 +692,16 @@ else
 				}
 			}
 		}
+
+		cargado = true;
+	}
+
+	private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
+	{
+		await Task.Yield(); 
+		int numeroJuegos = Math.Min(peticion.Count, juegosMostrar.Count - peticion.StartIndex);
+		IEnumerable<Juegos.Juego> cargarJuegos = juegosMostrar.Skip(peticion.StartIndex).Take(numeroJuegos);
+		return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, juegosMostrar.Count);
 	}
 
 	#region Ordenar
@@ -1062,7 +1076,8 @@ else
 			OrdenarDescuento();
 		}
 
-		await InvokeAsync(StateHasChanged);
+        await juegosVirtualizados.RefreshDataAsync();
+		StateHasChanged();
 	}
 
 	private void TextoCambiaBusqueda(ChangeEventArgs texto)

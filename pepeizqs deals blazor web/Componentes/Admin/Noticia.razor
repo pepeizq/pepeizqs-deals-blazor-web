@@ -415,19 +415,6 @@
 
 	private async void EnviarNotificacionesPush(MouseEventArgs e)
 	{
-		// List<Usuario> usuarios = BaseDatos.Usuarios.Buscar.UsuariosIdioma();
-
-		// if (usuarios != null)
-		// {
-		// 	if (usuarios.Count > 0)
-		// 	{
-		// 		foreach (var usuario in usuarios)
-		// 		{
-		// 			await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, usuario.Id, noticia, usuario.Language);
-		// 		}
-		// 	}
-		// }
-
 		await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, noticia);
 	}
 }

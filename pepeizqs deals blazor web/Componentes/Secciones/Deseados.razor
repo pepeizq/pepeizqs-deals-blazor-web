@@ -419,7 +419,7 @@
 
 					if (deseadosFinales.Count > 0)
 					{
-						<Virtualize Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
+						<Virtualize @ref="deseadosVirtualizados" Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
 							<ItemContent>
 								<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
 									<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
@@ -721,6 +721,7 @@
 	private List<JuegoDeseadoMostrar> deseadosHistoricos = new List<JuegoDeseadoMostrar>();
 	private List<JuegoDeseadoMostrar> deseadosBundles = new List<JuegoDeseadoMostrar>();
 	private List<JuegoDeseadoMostrar> deseadosSuscripciones = new List<JuegoDeseadoMostrar>();
+	private Virtualize<JuegoDeseadoMostrar> deseadosVirtualizados { get; set; }
 
 	private List<string> deseadosSteam = new List<string>();
 	private List<JuegoDeseado> deseadosWeb = new List<JuegoDeseado>();
@@ -751,6 +752,11 @@
 		{
 			usuarioId = BaseDatos.Usuarios.Buscar.UsuarioDeseadosNickname(otroUsuario);
 		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Yield();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -1189,7 +1195,8 @@
 			deseadosSuscripciones.Remove(juegoMostrar);
 		}
 
-		await InvokeAsync(StateHasChanged);
+        await deseadosVirtualizados.RefreshDataAsync();
+		StateHasChanged();
 	}
 
 	#region Ordenar

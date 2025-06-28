@@ -157,7 +157,7 @@
 
 	if (usuarioTieneJuego == true)
 	{
-		fondoColor = "background-color: var(--fondoBien);";
+		fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
 		fondoDescuento = "backdrop-filter: brightness(70%);";
 	}
 	else
@@ -166,7 +166,7 @@
 
 		if (usuarioTieneDeseado == true)
 		{
-			fondoColor = "background-color: var(--fondoAlerta);";
+			fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
 			fondoDescuento = "backdrop-filter: brightness(70%);";
 		}
 	}
@@ -359,10 +359,10 @@
 		{
 			if (string.IsNullOrEmpty(fondoColor) == true)
 			{
-				fondoColor = "background-color: var(--fondoBotonPequeño);";
+				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
 			}
 
-			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
+			<a class="boton-pequeño" style="padding: 0px; border-radius: 5px; overflow: auto; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 100%; height: 100%;" alt="@juego.Nombre" loading="lazy" />
@@ -393,7 +393,12 @@
 
 		@if (tipo == Tipo.MinimosHistoricos)
 		{
-			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
+			if (string.IsNullOrEmpty(fondoColor) == true)
+			{
+				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
+			}
+
+			<a class="boton-pequeño" style="padding: 0px; border-radius: 5px; overflow: auto; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 100%; height: 100%;" loading="lazy" />
@@ -402,7 +407,7 @@
 					<div style="width: 100%; display: flex; flex-flow: column wrap; padding: 10px 20px;">
 						<div class="minimo-fuente">@juego.Nombre</div>
 
-						<div class="perfil-flexible-centrado" style="justify-content: left; margin-top: 10px; gap: 10px;">
+						<div class="perfil-flexible-centrado" style="justify-content: left; margin-top: 12px; gap: 12px;">
 							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 20px; height: 20px;" loading="lazy" />
 
 							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 20px; height: 20px;" loading="lazy" />

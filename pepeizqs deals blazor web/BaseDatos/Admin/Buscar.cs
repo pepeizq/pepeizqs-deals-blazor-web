@@ -1,8 +1,6 @@
 ﻿#nullable disable
 
-using Herramientas;
 using Microsoft.Data.SqlClient;
-using System.Globalization;
 using Tiendas2;
 
 namespace BaseDatos.Admin

@@ -337,10 +337,10 @@
                         </button>
                     </div>
                     
-                    <Virtualize Context="juego" Items="resultadosMostrar" ItemSize="107" OverscanCount="5">
+                    <Virtualize @ref="juegosVirtualizados" Context="juego" Items="resultadosMostrar" ItemSize="107" OverscanCount="5">
                         <ItemContent>
                             @{
-                                string fondoColor = string.Empty;
+                                string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
 
                                 if (string.IsNullOrEmpty(usuarioId) == false)
                                 {
@@ -349,7 +349,7 @@
 
                                     if (usuarioTieneJuego == true)
                                     {
-                                        fondoColor = "background-color: var(--fondoBien);";
+                                        fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
                                     }
                                     else
                                     {
@@ -357,7 +357,7 @@
 
                                         if (usuarioTieneDeseado == true)
                                         {
-                                            fondoColor = "background-color: var(--fondoAlerta);";
+                                            fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
                                         }
                                     }
                                 }
@@ -444,6 +444,7 @@
 
     private bool encontroAlgo = false;
     private List<Juegos.Juego> resultadosMostrar = new List<Juegos.Juego>();
+    private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
     private bool enseñarBuscador = false;
 
@@ -469,7 +470,7 @@
 
     private string cadenaBusqueda = string.Empty;
 
-    private void TextoCambiaBuscador()
+    private async void TextoCambiaBuscador()
     {
         cadenaBusqueda = cadenaBusqueda.Replace("'", null);
 
@@ -532,6 +533,12 @@
                 if (resultadosMostrar.Count > 0)
                 {
                     encontroAlgo = true;
+
+                    if (juegosVirtualizados != null)
+			        {
+				        await juegosVirtualizados.RefreshDataAsync();
+				        StateHasChanged();
+			        }
                 }
                 else
                 {

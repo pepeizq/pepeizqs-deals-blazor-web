@@ -25,10 +25,55 @@
 @if (juego != null)
 {
     string titulo = juego.Nombre + " • pepeizq's deals";
+    string tituloDRMs = string.Empty;
 
-	if (titulo.Length > 67)
+    foreach (DRM drm in JuegoDRM2.GenerarListado())
+    {
+        if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+        {
+            if (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG)
+            {
+                if (string.IsNullOrEmpty(tituloDRMs) == false)
+                {
+                    tituloDRMs = tituloDRMs + ", ";
+                }
+
+                tituloDRMs = tituloDRMs + drm.Nombre;
+            }
+        }
+    }
+
+    if (juego.Suscripciones != null)
+    {
+        if (juego.Suscripciones.Count > 0)
+        {
+            if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
+            {
+                foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
+                {
+                    if (suscripcion2.Tipo == SuscripcionTipo.PCGamePass)
+                    {
+                        if (string.IsNullOrEmpty(tituloDRMs) == false)
+                        {
+                            tituloDRMs = tituloDRMs + ", ";
+                        }
+
+                         tituloDRMs = tituloDRMs + "Game Pass";
+                    }
+                }
+            }
+        }
+    }
+
+    if (string.IsNullOrEmpty(tituloDRMs) == false)
+    {
+        tituloDRMs = " (" + tituloDRMs + ")";
+        titulo = juego.Nombre + tituloDRMs + " • pepeizq's deals";
+    }
+
+	if (titulo.Length > 70)
 	{
-		titulo = titulo.Substring(0, 67) + " ...";
+		titulo = juego.Nombre.Substring(0, titulo.Length - tituloDRMs.Length - 4 - " • pepeizq's deals".Length) + "... " + tituloDRMs + " • pepeizq's deals";
 	}
 
     string descripcion = string.Empty;
@@ -3631,7 +3676,7 @@
         }      
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 

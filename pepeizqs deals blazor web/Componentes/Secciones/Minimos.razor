@@ -39,6 +39,12 @@
 	</HeadContent>
 }
 
+<script>
+	window.ChangeUrl = function (url) {
+		history.pushState(null, '', url);
+	}
+</script>
+
 <style>
 	.cargando {
 		width: 48px;
@@ -362,7 +368,7 @@ else
 						{
 							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
 								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
-									@foreach (var drm in drms)
+									@foreach (var drm in drmsListado)
 									{
 										string iconoDRM = string.Empty;
 										string nombreDRM = string.Empty;
@@ -538,11 +544,11 @@ else
 	private bool usuarioPatreon = false;
 	private Usuario opcionesMinimos = null;
 
-	[Parameter]
-	public string drmEscrito { get; set; }
+	[SupplyParameterFromQuery]
+	private string DRMs { get; set; }
 
-	[Parameter]
-	public string tiendaEscrita { get; set; }
+	[SupplyParameterFromQuery]
+	private string Stores { get; set; }
 
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosMostrar = new List<Juegos.Juego>();
@@ -623,7 +629,7 @@ else
 
 				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsDRMs) == false)
 				{
-					drms = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(opcionesMinimos.HistoricalLowsDRMs);
+					drmsListado = JsonSerializer.Deserialize<List<MostrarJuegoDRM>>(opcionesMinimos.HistoricalLowsDRMs);
 				}
 
 				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsStores) == false)
@@ -639,6 +645,56 @@ else
 
 				#endregion
 			}
+		}
+
+		if (string.IsNullOrEmpty(DRMs) == false)
+		{
+			foreach (var drm in drmsListado)
+			{
+				drm.Checkbox = null;
+				drm.Estado = false;
+			}
+
+			List<string> drmsEnlace = DRMs.Split(',').ToList();
+
+			foreach (var drmEnlace in drmsEnlace)
+			{
+				foreach (var drm in drmsListado)
+				{
+					if (drm.DRMId.ToString() == drmEnlace)
+					{
+						drm.Estado = true;
+						drm.Checkbox = "checked";
+						break;
+					}
+				}
+			}
+        }
+
+		if (string.IsNullOrEmpty(Stores) == false)
+		{
+			foreach (var tienda in tiendas)
+			{
+				tienda.Checkbox = null;
+				tienda.Estado = false;
+			}
+
+			List<string> tiendasEnlace = Stores.Split(',').ToList();
+
+			foreach (var tiendaEnlace in tiendasEnlace)
+			{
+				foreach (var tienda in tiendas)
+				{
+					if (tienda.TiendaId == tiendaEnlace)
+					{
+						tienda.Estado = true;
+						tienda.Checkbox = "checked";
+						break;
+					}
+				}
+			}
+
+			tiendas = GenerarListaTiendas(tiendas);
 		}
 	}
 
@@ -929,43 +985,7 @@ else
 
 			bool drm2 = false;
 
-			#region Usuario añade DRM en enlace
-
-			if (string.IsNullOrEmpty(drmEscrito) == false)
-			{
-				foreach (var drm3 in JuegoDRM2.GenerarListado())
-				{
-					bool añadir = false;
-
-					if (Herramientas.Buscador.LimpiarNombre(drmEscrito, true) == Herramientas.Buscador.LimpiarNombre(drm3.Nombre, true))
-					{
-						añadir = true;
-					}
-
-					foreach (var drm4 in drm3.Acepciones)
-					{
-						if (Herramientas.Buscador.LimpiarNombre(drmEscrito, true) == Herramientas.Buscador.LimpiarNombre(drm4, true))
-						{
-							añadir = true;
-						}
-					}
-
-					if (añadir == true)
-					{
-						MostrarJuegoDRM nuevoDrm = new MostrarJuegoDRM();
-						nuevoDrm.DRMId = drm3.Id;
-						nuevoDrm.Estado = true;
-
-						drms.Clear();
-						drms.Add(nuevoDrm);
-						break;
-					}
-				}
-			}
-
-			#endregion
-
-			foreach (var drm in drms)
+			foreach (var drm in drmsListado)
 			{
 				if (juego.PrecioMinimosHistoricos[0].DRM == drm.DRMId && drm.Estado == true)
 				{
@@ -974,34 +994,6 @@ else
 			}
 
 			bool tienda2 = false;
-
-			#region Usuario añade Tienda en enlace
-
-			if (string.IsNullOrEmpty(tiendaEscrita) == false)
-			{
-				foreach (var tienda3 in Tiendas2.TiendasCargar.GenerarListado())
-				{
-					bool añadir = false;
-
-					if (Herramientas.Buscador.LimpiarNombre(tiendaEscrita, true) == Herramientas.Buscador.LimpiarNombre(tienda3.Nombre, true))
-					{
-						añadir = true;
-					}
-
-					if (añadir == true)
-					{
-						MostrarJuegoTienda nuevaTienda = new MostrarJuegoTienda();
-						nuevaTienda.TiendaId = tienda3.Id;
-						nuevaTienda.Estado = true;
-
-						tiendas.Clear();
-						tiendas.Add(nuevaTienda);
-						break;
-					}
-				}
-			}
-
-			#endregion
 
 			foreach (var tienda in tiendas)
 			{
@@ -1076,8 +1068,40 @@ else
 			OrdenarDescuento();
 		}
 
-        await juegosVirtualizados.RefreshDataAsync();
+		await juegosVirtualizados.RefreshDataAsync();
 		StateHasChanged();
+
+		string drmsTexto = string.Empty;
+
+		foreach (var drm in drmsListado)
+		{
+			if (drm.Estado == true)
+			{
+				drmsTexto += drm.DRMId.ToString() + ",";
+			}
+		}
+
+		if (string.IsNullOrEmpty(drmsTexto) == false)
+		{
+			drmsTexto = "drms=" + drmsTexto.TrimEnd(',');
+		}
+
+		string tiendasTexto = string.Empty;
+
+		foreach (var tienda in tiendas)
+		{
+			if (tienda.Estado == true)
+			{
+				tiendasTexto += tienda.TiendaId.ToString() + ",";
+			}
+		}
+
+		if (string.IsNullOrEmpty(tiendasTexto) == false)
+		{
+			tiendasTexto = "&stores=" + tiendasTexto.TrimEnd(',');
+		}
+
+		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto);
 	}
 
 	private void TextoCambiaBusqueda(ChangeEventArgs texto)
@@ -1111,7 +1135,7 @@ else
 				ocultarJuegosUsuarioSteam = "checked";
 			}
 
-            BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
 
 			ElegirOrdenamiento();
 		}
@@ -1179,7 +1203,7 @@ else
 
 	private void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
 	{
-		foreach (var drm in drms)
+		foreach (var drm in drmsListado)
 		{
 			if (drm.DRMId == drmElegido)
 			{
@@ -1198,7 +1222,7 @@ else
 
 		if (opcionesMinimos != null)
 		{
-			opcionesMinimos.HistoricalLowsDRMs = JsonSerializer.Serialize(drms);
+			opcionesMinimos.HistoricalLowsDRMs = JsonSerializer.Serialize(drmsListado);
 
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsDRMs", opcionesMinimos.HistoricalLowsDRMs, usuarioId);
 		}
@@ -1206,7 +1230,7 @@ else
 		ElegirOrdenamiento();
 	}
 
-	private List<MostrarJuegoDRM> drms = CrearListaDRMs();
+	private List<MostrarJuegoDRM> drmsListado = CrearListaDRMs();
 
 	public class MostrarJuegoDRM
 	{
@@ -1283,12 +1307,13 @@ else
 		foreach (var tienda in Tiendas2.TiendasCargar.GenerarListado())
 		{
 			MostrarJuegoTienda nuevaTienda = new MostrarJuegoTienda();
-			nuevaTienda.Estado = true;
-			nuevaTienda.Checkbox = "checked";
 			nuevaTienda.TiendaId = tienda.Id;
 
 			if (viejaLista != null)
 			{
+				nuevaTienda.Estado = false;
+				nuevaTienda.Checkbox = null;
+
 				foreach (var viejaTienda in viejaLista)
 				{
 					if (viejaTienda.TiendaId == tienda.Id)
@@ -1297,6 +1322,11 @@ else
 						nuevaTienda.Checkbox = viejaTienda.Checkbox;
 					}
 				}
+			}
+			else
+			{
+				nuevaTienda.Estado = true;
+				nuevaTienda.Checkbox = "checked";
 			}
 
 			nuevaLista.Add(nuevaTienda);

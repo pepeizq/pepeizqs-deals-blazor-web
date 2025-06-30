@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Globalization;
 using System.Text.Json;
+using static pepeizqs_deals_blazor_web.Componentes.Secciones.Minimos;
 
 namespace BaseDatos.Juegos
 {
@@ -999,7 +1000,7 @@ namespace BaseDatos.Juegos
             return juegos;
         }
 
-        public static List<Juego> Minimos(SqlConnection conexion = null, int dias = 0, bool analisis = false)
+        public static List<Juego> Minimos(SqlConnection conexion = null, int ordenar = 0, List<MostrarJuegoTienda> tiendas = null, List<MostrarJuegoDRM> drms = null, List<MostrarJuegoCategoria> categorias = null, int? minimoDescuento = null, decimal? maximoPrecio = null, List<MostrarJuegoSteamDeck> deck = null)
 		{
             if (conexion == null)
             {
@@ -1018,32 +1019,153 @@ namespace BaseDatos.Juegos
             using (conexion)
 			{
                 string busqueda = "SELECT * FROM seccionMinimos";
-                string donde = string.Empty;
+                string dondeTiendas = string.Empty;
 
-                if (dias > 0)
-                {
-                    if (string.IsNullOrEmpty(donde) == false)
-                    {
-                        donde = donde + " AND";
-                    }
+                if (tiendas != null)
+				{
+					if (tiendas.Count > 0)
+					{
+						foreach (var tienda in tiendas)
+						{
+							if (tienda.Estado == true)
+							{
+								if (string.IsNullOrEmpty(dondeTiendas) == false)
+								{
+									dondeTiendas = dondeTiendas + " OR ";
+								}
 
-                    donde = donde + " ultimaModificacion >= DATEADD(day, -" + dias.ToString() + ", GETDATE())";
+								dondeTiendas = dondeTiendas + "JSON_VALUE(precioMinimosHistoricos, '$[0].Tienda') = '" + tienda.TiendaId + "'";
+							}
+						}
+					}
+				}
+
+				if (string.IsNullOrEmpty(dondeTiendas) == false)
+				{
+					dondeTiendas = " (" + dondeTiendas + ")";
+				}
+
+				string dondeDRMs = string.Empty;
+
+				if (drms != null)
+				{
+					if (drms.Count > 0)
+					{
+						foreach (var drm in drms)
+						{
+							if (drm.Estado == true)
+							{
+								if (string.IsNullOrEmpty(dondeDRMs) == false)
+								{
+									dondeDRMs = dondeDRMs + " OR ";
+								}
+
+								dondeDRMs = dondeDRMs + "JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = '" + ((int)drm.DRMId).ToString() + "'";
+							}
+						}
+					}
+				}
+
+				if (string.IsNullOrEmpty(dondeDRMs) == false)
+				{
+					dondeDRMs = " (" + dondeDRMs + ")";
+				}
+
+				string dondeCategorias = string.Empty;
+
+				if (categorias != null)
+				{
+					if (categorias.Count > 0)
+					{
+						foreach (var categoria in categorias)
+						{
+							if (categoria.Estado == true)
+							{
+								if (string.IsNullOrEmpty(dondeCategorias) == false)
+								{
+									dondeCategorias = dondeCategorias + " OR ";
+								}
+
+								dondeCategorias = dondeCategorias + "tipo = '" + ((int)categoria.Categoria).ToString() + "'";
+							}
+						}
+					}
+				}
+
+				if (string.IsNullOrEmpty(dondeCategorias) == false)
+				{
+					dondeCategorias = " (" + dondeCategorias + ")";
+				}
+
+				string dondeMinimoDescuento = string.Empty;
+
+				if (minimoDescuento == null)
+				{
+					minimoDescuento = 1;
+				}
+
+				if (minimoDescuento > 0)
+				{
+					dondeMinimoDescuento = "JSON_VALUE(precioMinimosHistoricos, '$[0].Descuento') >= " + minimoDescuento.ToString();
+				}
+
+				if (string.IsNullOrEmpty(dondeMinimoDescuento) == false)
+				{
+					dondeMinimoDescuento = " (" + dondeMinimoDescuento + ")";
+				}
+
+				string dondeMaximoPrecio = string.Empty;
+
+				if (maximoPrecio == null)
+				{
+					maximoPrecio = 90;
+				}
+
+				if (maximoPrecio > 0)
+				{
+					dondeMaximoPrecio = "CONVERT(decimal, JSON_VALUE(precioMinimosHistoricos, '$[0].Precio')) <= " + maximoPrecio.ToString();
+				}
+
+				if (string.IsNullOrEmpty(dondeMaximoPrecio) == false)
+				{
+					dondeMaximoPrecio = " (" + dondeMaximoPrecio + ")";
+				}
+
+				string dondeDeck = string.Empty;
+
+				if (deck != null)
+				{
+					if (deck.Count > 0)
+					{
+						foreach (var d in deck)
+						{
+							if (d.Estado == true)
+							{
+								if (string.IsNullOrEmpty(dondeDeck) == false)
+								{
+									dondeDeck = dondeDeck + " OR ";
+								}
+
+								dondeDeck = dondeDeck + "deck = '" + ((int)d.Tipo).ToString() + "'";
+							}
+						}
+					}
+				}
+
+				if (string.IsNullOrEmpty(dondeDeck) == false)
+				{
+					dondeDeck = " (" + dondeDeck + ")";
+				}
+
+				if (string.IsNullOrEmpty(dondeTiendas) == false && string.IsNullOrEmpty(dondeDRMs) == false && string.IsNullOrEmpty(dondeCategorias) == false && string.IsNullOrEmpty(dondeMinimoDescuento) == false && string.IsNullOrEmpty(dondeMaximoPrecio) == false && string.IsNullOrEmpty(dondeDeck) == false)
+				{
+                    busqueda = busqueda + " WHERE " + dondeTiendas + " AND " + dondeDRMs + " AND " + dondeCategorias + " AND " + dondeMinimoDescuento + " AND " + dondeMaximoPrecio + " AND " + dondeDeck;
                 }
 
-                if (analisis == true)
-                {
-                    if (string.IsNullOrEmpty(donde) == false)
-                    {
-                        donde = donde + " AND";
-                    }
-
-                    donde = donde + " JSON_PATH_EXISTS(analisis, '$.Cantidad') > 0 AND CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > 99";
-                }
-
-                if (string.IsNullOrEmpty(donde) == false)
-                {
-                    busqueda = busqueda + " WHERE" + donde;
-                }
+				if (ordenar == 0)
+				{
+					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+				}
 
                 using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {

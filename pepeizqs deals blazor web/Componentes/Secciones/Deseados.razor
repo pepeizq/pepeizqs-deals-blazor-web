@@ -422,7 +422,7 @@
 						<Virtualize @ref="deseadosVirtualizados" Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
 							<ItemContent>
 								<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-									<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
+									<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
 										<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 											<div class="deseado-imagen">
 												@{
@@ -486,7 +486,7 @@
 												}
 												else
 												{
-													<div style="text-align: center; font-size: 14px; padding: 5px; background-color: var(--fondoOscuro);">
+													<div style="text-align: center; font-size: 14px; padding: 5px; background-color: var(--fondoMinimo);">
 														@juego.HistoricoPrecio
 													</div>
 												}
@@ -525,7 +525,7 @@
 										if (bundle != null)
 										{
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" target="_blank">
+												<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" target="_blank">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{
@@ -637,7 +637,7 @@
 										if (suscripcion != null)
 										{
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<a class="boton-pequeño" style="padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon)" target="_blank">
+												<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon)" target="_blank">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{

@@ -105,7 +105,7 @@ else
 							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasPorcentaje">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "HistoricalLows")
 							</button>
-							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasCantidad">
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarReseñasCantidad(true))">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "HistoricalLows")
 							</button>
 							<hr />
@@ -136,16 +136,16 @@ else
 							</svg>
 						</div>
 
-						<input type="text" @onchange="(e => TextoCambiaBusqueda(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "HistoricalLows")" />
+						<input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "HistoricalLows")" />
 
 						<div style="font-size: 14px; text-align: right; padding-left: 20px;">
-							@if (juegosMostrar.Count == 1)
+							@if (juegosFiltrados.Count == 1)
 							{
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "HistoricalLows"), juegosMostrar.Count)
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "HistoricalLows"), juegosFiltrados.Count)
 							}
 							else
 							{
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "HistoricalLows"), juegosMostrar.Count)
+								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "HistoricalLows"), juegosFiltrados.Count)
 							}
 						</div>
 					</div>
@@ -480,7 +480,7 @@ else
 						{
 							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
 								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-									@foreach (var steamdeck in deck)
+									@foreach (var steamdeck in deckListado)
 									{
 										string nombreTipo = string.Empty;
 
@@ -519,13 +519,11 @@ else
 			}
 		</div>
 
-		@if (juegosMostrar.Count > 0)
+		@if (juegosFiltrados.Count > 0)
 		{
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -15px;">
 				<Virtualize @ref="juegosVirtualizados" Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="10">
-					<ItemContent>
-						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
-					</ItemContent>
+					<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
 				</Virtualize>
 			</div>
 		}
@@ -550,8 +548,20 @@ else
 	[SupplyParameterFromQuery]
 	private string Stores { get; set; }
 
+	[SupplyParameterFromQuery]
+	private string Categories { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string MinDiscount { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string MaxPrice { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string Deck { get; set; }
+
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
-	private List<Juegos.Juego> juegosMostrar = new List<Juegos.Juego>();
+	private List<Juegos.Juego> juegosFiltrados = new List<Juegos.Juego>();
 	private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
 	private string ordenamientoElegido = string.Empty;
@@ -643,6 +653,11 @@ else
 					categorias = JsonSerializer.Deserialize<List<MostrarJuegoCategoria>>(opcionesMinimos.HistoricalLowsCategories);
 				}
 
+				if (string.IsNullOrEmpty(opcionesMinimos.HistoricalLowsSteamDeck) == false)
+				{
+					deckListado = JsonSerializer.Deserialize<List<MostrarJuegoSteamDeck>>(opcionesMinimos.HistoricalLowsSteamDeck);
+				}
+
 				#endregion
 			}
 		}
@@ -669,7 +684,7 @@ else
 					}
 				}
 			}
-        }
+		}
 
 		if (string.IsNullOrEmpty(Stores) == false)
 		{
@@ -696,233 +711,294 @@ else
 
 			tiendas = GenerarListaTiendas(tiendas);
 		}
-	}
 
-	protected override async Task OnInitializedAsync()
-	{
-		await Task.Yield();
-
-		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
-
-		using (conexion)
+		if (string.IsNullOrEmpty(Categories) == false)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(conexion);
+			foreach (var categoria in categorias)
+			{
+				categoria.Checkbox = null;
+				categoria.Estado = false;
+			}
+
+			List<string> categoriasEnlace = Categories.Split(',').ToList();
+
+			foreach (var categoriaEnlace in categoriasEnlace)
+			{
+				foreach (var categoria in categorias)
+				{
+					if (categoria.Categoria.ToString() == categoriaEnlace)
+					{
+						categoria.Estado = true;
+						categoria.Checkbox = "checked";
+						break;
+					}
+				}
+			}
 		}
 
-		if (juegosGestor.Count > 0)
+		if (string.IsNullOrEmpty(MinDiscount) == false)
 		{
-			if (opcionesMinimos == null)
+			if (int.TryParse(MinDiscount, out int descuento))
 			{
-				OrdenarReseñasCantidad();
+				minimoDescuento = descuento;
 			}
 			else
 			{
-				if (opcionesMinimos.HistoricalLowsSort == null)
-				{
-					opcionesMinimos.HistoricalLowsSort = 1;
-				}
+				minimoDescuento = 1;
+			}
+		}
 
-				if (opcionesMinimos.HistoricalLowsSort == 0)
+		if (string.IsNullOrEmpty(MaxPrice) == false)
+		{
+			if (int.TryParse(MaxPrice, out int precio))
+			{
+				maximoPrecio = precio;
+			}
+			else
+			{
+				maximoPrecio = 90;
+			}
+		}
+
+		if (string.IsNullOrEmpty(Deck) == false)
+		{
+			foreach (var deck in deckListado)
+			{
+				deck.Checkbox = null;
+				deck.Estado = false;
+			}
+
+			List<string> decksEnlace = Deck.Split(',').ToList();
+
+			foreach (var deckEnlace in decksEnlace)
+			{
+				foreach (var deck in deckListado)
 				{
-					OrdenarReseñasPorcentaje();
+					if (deck.Tipo.ToString() == deckEnlace)
+					{
+						deck.Estado = true;
+						deck.Checkbox = "checked";
+						break;
+					}
 				}
-				else if (opcionesMinimos.HistoricalLowsSort == 1)
-				{
-					OrdenarReseñasCantidad();
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 2)
-				{
-					OrdenarNombreAZ();
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 3)
-				{
-					OrdenarNombreZA();
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 4)
-				{
-					OrdenarPrecio();
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 5)
-				{
-					OrdenarDescuento();
-				}
+			}
+		}
+
+		if (opcionesMinimos == null)
+		{
+			OrdenarReseñasCantidad(true);
+		}
+		else
+		{
+			if (opcionesMinimos.HistoricalLowsSort == null)
+			{
+				opcionesMinimos.HistoricalLowsSort = 1;
+			}
+
+			if (opcionesMinimos.HistoricalLowsSort == 0)
+			{
+				OrdenarReseñasPorcentaje();
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 1)
+			{
+				OrdenarReseñasCantidad(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 2)
+			{
+				OrdenarNombreAZ();
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 3)
+			{
+				OrdenarNombreZA();
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 4)
+			{
+				OrdenarPrecio();
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 5)
+			{
+				OrdenarDescuento();
 			}
 		}
 
 		cargado = true;
 	}
 
+	protected override async Task OnAfterRenderAsync(bool primerRender)
+	{
+		if (primerRender == true)
+		{
+			await CambiarEnlace();
+		}
+	}
+
 	private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
 	{
 		await Task.Yield(); 
-		int numeroJuegos = Math.Min(peticion.Count, juegosMostrar.Count - peticion.StartIndex);
-		IEnumerable<Juegos.Juego> cargarJuegos = juegosMostrar.Skip(peticion.StartIndex).Take(numeroJuegos);
-		return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, juegosMostrar.Count);
+		int numeroJuegos = Math.Min(peticion.Count, juegosFiltrados.Count - peticion.StartIndex);
+		IEnumerable<Juegos.Juego> cargarJuegos = juegosFiltrados.Skip(peticion.StartIndex).Take(numeroJuegos);
+		return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, juegosFiltrados.Count);
 	}
 
 	#region Ordenar
 
 	private void OrdenarReseñasPorcentaje()
 	{
-		if (juegosGestor != null)
-		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "HistoricalLows");
+		// if (juegosGestor != null)
+		// {
+		// 	ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "HistoricalLows");
 
-			if (juegosGestor.Count > 0)
-			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => int.Parse(x.Analisis.Porcentaje.Replace("%", null))).ThenBy(x => x.Nombre).ToList();
-			}
+		// 	if (juegosGestor.Count > 0)
+		// 	{
+		// 		juegosFiltrados.Clear();
+		// 		juegosFiltrados = Filtros();
+		// 		juegosFiltrados = juegosFiltrados.AsParallel().OrderByDescending(x => int.Parse(x.Analisis.Porcentaje.Replace("%", null))).ThenBy(x => x.Nombre).ToList();
+		// 	}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 0;
+		// 	if (opcionesMinimos != null)
+		// 	{
+		// 		opcionesMinimos.HistoricalLowsSort = 0;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
-			}
-		}
+		// 		BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
+		// 	}
+		// }
 	}
 
-	private void OrdenarReseñasCantidad()
+	private async void OrdenarReseñasCantidad(bool buscar = true)
 	{
-		if (juegosGestor != null)
+		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "HistoricalLows");
+
+		if (buscar == true)
 		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "HistoricalLows");
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 0, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado);
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
+				juegosFiltrados = await Filtros(juegosGestor);
 			}
+		}
+		else
+		{
+			juegosFiltrados = await Filtros(juegosGestor);
+		}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 1;
+		if (opcionesMinimos != null)
+		{
+			opcionesMinimos.HistoricalLowsSort = 1;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
-			}
+			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
 		}
 	}
 
 	private void OrdenarNombreAZ()
 	{
-		if (juegosGestor != null)
-		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "HistoricalLows");
+		// if (juegosGestor != null)
+		// {
+		// 	ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "HistoricalLows");
 
-			if (juegosGestor.Count > 0)
-			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderBy(x => x.Nombre).ToList();
-			}
+		// 	if (juegosGestor.Count > 0)
+		// 	{
+		// 		juegosFiltrados.Clear();
+		// 		juegosFiltrados = Filtros();
+		// 		juegosFiltrados = juegosFiltrados.AsParallel().OrderBy(x => x.Nombre).ToList();
+		// 	}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 2;
+		// 	if (opcionesMinimos != null)
+		// 	{
+		// 		opcionesMinimos.HistoricalLowsSort = 2;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
-			}
-		}
+		// 		BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
+		// 	}
+		// }
 	}
 
 	private void OrdenarNombreZA()
 	{
-		if (juegosGestor != null)
-		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "HistoricalLows");
+		// if (juegosGestor != null)
+		// {
+		// 	ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "HistoricalLows");
 
-			if (juegosGestor.Count > 0)
-			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => x.Nombre).ToList();
-			}
+		// 	if (juegosGestor.Count > 0)
+		// 	{
+		// 		juegosFiltrados.Clear();
+		// 		juegosFiltrados = Filtros();
+		// 		juegosFiltrados = juegosFiltrados.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+		// 	}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 3;
+		// 	if (opcionesMinimos != null)
+		// 	{
+		// 		opcionesMinimos.HistoricalLowsSort = 3;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
-			}
-		}
+		// 		BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
+		// 	}
+		// }
 	}
 
 	private void OrdenarPrecio()
 	{
-		if (juegosGestor != null)
-		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "HistoricalLows");
+		// if (juegosGestor != null)
+		// {
+		// 	ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "HistoricalLows");
 
-			if (juegosGestor.Count > 0)
-			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderBy(x => x.PrecioMinimosHistoricos[0].Precio).ThenBy(x => x.Nombre).ToList();
-			}
+		// 	if (juegosGestor.Count > 0)
+		// 	{
+		// 		juegosFiltrados.Clear();
+		// 		juegosFiltrados = Filtros();
+		// 		juegosFiltrados = juegosFiltrados.AsParallel().OrderBy(x => x.PrecioMinimosHistoricos[0].Precio).ThenBy(x => x.Nombre).ToList();
+		// 	}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 4;
+		// 	if (opcionesMinimos != null)
+		// 	{
+		// 		opcionesMinimos.HistoricalLowsSort = 4;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
-			}
-		}
+		// 		BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
+		// 	}
+		// }
 	}
 
 	private void OrdenarDescuento()
 	{
-		if (juegosGestor != null)
-		{
-			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "HistoricalLows");
+		// if (juegosGestor != null)
+		// {
+		// 	ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "HistoricalLows");
 
-			if (juegosGestor.Count > 0)
-			{
-				juegosMostrar.Clear();
-				juegosMostrar = Filtros();
-				juegosMostrar = juegosMostrar.AsParallel().OrderByDescending(x => x.PrecioMinimosHistoricos[0].Descuento).ThenBy(x => x.Nombre).ToList();
-			}
+		// 	if (juegosGestor.Count > 0)
+		// 	{
+		// 		juegosFiltrados.Clear();
+		// 		juegosFiltrados = Filtros();
+		// 		juegosFiltrados = juegosFiltrados.AsParallel().OrderByDescending(x => x.PrecioMinimosHistoricos[0].Descuento).ThenBy(x => x.Nombre).ToList();
+		// 	}
 
-			if (opcionesMinimos != null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 5;
+		// 	if (opcionesMinimos != null)
+		// 	{
+		// 		opcionesMinimos.HistoricalLowsSort = 5;
 
-				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
-			}
-		}
+		// 		BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
+		// 	}
+		// }
 	}
 
 	#endregion
 
 	#region Filtrado
 
-	private List<Juegos.Juego> Filtros()
+	private async Task<List<Juegos.Juego>> Filtros(List<Juegos.Juego> lista)
 	{
-		List<Juegos.Juego> juegosFiltrados = new List<Juegos.Juego>();
+		List<Juegos.Juego> nuevaLista = new List<Juegos.Juego>();
 
-		foreach (var juego in juegosGestor)
+		foreach (var juego in lista)
 		{
-			bool buscador = false;
-
 			if (string.IsNullOrEmpty(textoBuscador) == false)
 			{
 				if (Herramientas.Buscador.LimpiarNombre(juego.Nombre, true).Contains(Herramientas.Buscador.LimpiarNombre(textoBuscador, true)))
 				{
-					buscador = true;
-				}
-				else
-				{
-					buscador = false;
+					nuevaLista.Add(juego);
 				}
 			}
 			else
 			{
-				buscador = true;
+				nuevaLista.Add(juego);
 			}
-
-			bool ocultar = false;
 
 			if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
 			{
@@ -936,8 +1012,17 @@ else
 							{
 								if (juego.IdSteam.ToString() == juegoUsuario)
 								{
-									ocultar = true;
-									break;
+									if (nuevaLista.Count > 0)
+									{
+										foreach (var juegoFiltrado in nuevaLista)
+										{
+											if (juego.IdSteam.ToString() == juegoFiltrado.IdSteam.ToString())
+											{
+												nuevaLista.Remove(juegoFiltrado);
+												break;
+											}
+										}
+									}
 								}
 							}
 						}
@@ -957,8 +1042,17 @@ else
 							{
 								if (juego.IdGog.ToString() == juegoUsuario)
 								{
-									ocultar = true;
-									break;
+									if (nuevaLista.Count > 0)
+									{
+										foreach (var juegoFiltrado in nuevaLista)
+										{
+											if (juego.IdGog.ToString() == juegoFiltrado.IdGog.ToString())
+											{
+												nuevaLista.Remove(juegoFiltrado);
+												break;
+											}
+										}
+									}
 								}
 							}
 						}
@@ -966,77 +1060,19 @@ else
 				}
 			}
 
-			bool minimoDescuento2 = false;
-
-			if (juego.PrecioMinimosHistoricos != null)
-			{
-				if (juego.PrecioMinimosHistoricos[0].Descuento >= minimoDescuento)
-				{
-					minimoDescuento2 = true;
-				}
-			}
-
-			bool maximoPrecio2 = false;
-
-			if (juego.PrecioMinimosHistoricos[0].Precio <= maximoPrecio)
-			{
-				maximoPrecio2 = true;
-			}
-
-			bool drm2 = false;
-
-			foreach (var drm in drmsListado)
-			{
-				if (juego.PrecioMinimosHistoricos[0].DRM == drm.DRMId && drm.Estado == true)
-				{
-					drm2 = true;
-				}
-			}
-
-			bool tienda2 = false;
-
-			foreach (var tienda in tiendas)
-			{
-				if (juego.PrecioMinimosHistoricos[0].Tienda == tienda.TiendaId && tienda.Estado == true)
-				{
-					tienda2 = true;
-					break;
-				}
-			}
-
-			bool categoria2 = false;
-
-			foreach (var categoria in categorias)
-			{
-				if (juego.Tipo == categoria.Categoria && categoria.Estado == true)
-				{
-					categoria2 = true;
-				}
-			}
-
-			bool steamdeck2 = false;
-
-			foreach (var steamdeck in deck)
-			{
-				if (juego.Deck == steamdeck.Tipo && steamdeck.Estado == true)
-				{
-					steamdeck2 = true;
-				}
-			}
-
-			if (buscador == true && ocultar == false && minimoDescuento2 == true && maximoPrecio2 == true && 
-				drm2 == true && tienda2 == true && categoria2 == true && steamdeck2 == true)
-			{
-				juegosFiltrados.Add(juego);
-			}
-
 			cargado = true;
 		}
 
-		return juegosFiltrados;
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
+
+		return nuevaLista;
 	}
 
-	private async void ElegirOrdenamiento()
+	private async void ElegirOrdenamiento(bool buscar)
 	{
 		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String3", "HistoricalLows"))
 		{
@@ -1045,7 +1081,7 @@ else
 
 		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String4", "HistoricalLows"))
 		{
-			OrdenarReseñasCantidad();
+			OrdenarReseñasCantidad(buscar);
 		}
 
 		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String5", "HistoricalLows"))
@@ -1068,9 +1104,11 @@ else
 			OrdenarDescuento();
 		}
 
-		await juegosVirtualizados.RefreshDataAsync();
-		StateHasChanged();
+		await CambiarEnlace();
+	}
 
+	private async Task CambiarEnlace()
+	{
 		string drmsTexto = string.Empty;
 
 		foreach (var drm in drmsListado)
@@ -1101,26 +1139,71 @@ else
 			tiendasTexto = "&stores=" + tiendasTexto.TrimEnd(',');
 		}
 
-		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto);
+		string categoriasTexto = string.Empty;
+
+		foreach (var categoria in categorias)
+		{
+			if (categoria.Estado == true)
+			{
+				categoriasTexto += categoria.Categoria.ToString() + ",";
+			}
+		}
+
+		if (string.IsNullOrEmpty(categoriasTexto) == false)
+		{
+			categoriasTexto = "&categories=" + categoriasTexto.TrimEnd(',');
+		}
+
+		string minimoDescuentoTexto = string.Empty;
+
+		if (minimoDescuento != null && minimoDescuento > 0)
+		{
+			minimoDescuentoTexto = "&mindiscount=" + minimoDescuento;
+		}
+
+		string maximoPrecioTexto = string.Empty;
+
+		if (maximoPrecio != null && maximoPrecio > 0)
+		{
+			maximoPrecioTexto = "&maxprice=" + maximoPrecio;
+		}
+
+		string deckTexto = string.Empty;
+
+		foreach (var deck in deckListado)
+		{
+			if (deck.Estado == true)
+			{
+				deckTexto += deck.Tipo.ToString() + ",";
+			}
+		}
+
+		if (string.IsNullOrEmpty(deckTexto) == false)
+		{
+			deckTexto = "&deck=" + deckTexto.TrimEnd(',');
+        }
+
+		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto + categoriasTexto + minimoDescuentoTexto + maximoPrecioTexto + deckTexto);
 	}
 
-	private void TextoCambiaBusqueda(ChangeEventArgs texto)
+	private async void TextoCambiaBuscador()
 	{
-		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
-		{
-			textoBuscador = texto.Value.ToString().Trim();
-		}
-		else
-		{
-			textoBuscador = null;
-		}
+		ElegirOrdenamiento(false);
 
-		ElegirOrdenamiento();
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
 	private string ocultarJuegosUsuarioSteam = null;
 
-	private void OcultarJuegosUsuarioSteam()
+	#endregion
+
+	#region Opciones Usuario
+
+	private async void OcultarJuegosUsuarioSteam()
 	{
 		if (opcionesMinimos != null)
 		{
@@ -1137,13 +1220,19 @@ else
 
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
 
-			ElegirOrdenamiento();
+			ElegirOrdenamiento(false);
+
+			if (juegosVirtualizados != null)
+			{
+				await juegosVirtualizados.RefreshDataAsync();
+				StateHasChanged();
+			}
 		}
 	}
 
 	private string ocultarJuegosUsuarioGog = null;
 
-	private void OcultarJuegosUsuarioGog()
+	private async void OcultarJuegosUsuarioGog()
 	{
 		if (opcionesMinimos != null)
 		{
@@ -1160,13 +1249,19 @@ else
 
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption4", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
 
-			ElegirOrdenamiento();
+			ElegirOrdenamiento(false);
+
+			if (juegosVirtualizados != null)
+			{
+				await juegosVirtualizados.RefreshDataAsync();
+				StateHasChanged();
+			}
 		}
 	}
 
 	private int? minimoDescuento = 1;
 
-	private void CambiarMinimoDescuento(ChangeEventArgs e)
+	private async void CambiarMinimoDescuento(ChangeEventArgs e)
 	{
 		minimoDescuento = int.Parse(e.Value.ToString());
 
@@ -1182,12 +1277,18 @@ else
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption2", (int)opcionesMinimos.HistoricalLowsOption2, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
 	private decimal? maximoPrecio = 90;
 
-	private void CambiarMaximoPrecio(ChangeEventArgs e)
+	private async void CambiarMaximoPrecio(ChangeEventArgs e)
 	{
 		maximoPrecio = decimal.Parse(e.Value.ToString());
 
@@ -1198,10 +1299,16 @@ else
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption3", (decimal)opcionesMinimos.HistoricalLowsOption3, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
-	private void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
+	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
 	{
 		foreach (var drm in drmsListado)
 		{
@@ -1227,7 +1334,13 @@ else
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsDRMs", opcionesMinimos.HistoricalLowsDRMs, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
 	private List<MostrarJuegoDRM> drmsListado = CrearListaDRMs();
@@ -1262,7 +1375,7 @@ else
 		return nuevaLista;
 	}
 
-	private void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
+	private async void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
 	{
 		foreach (var tienda in tiendas)
 		{
@@ -1288,7 +1401,13 @@ else
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsStores", opcionesMinimos.HistoricalLowsStores, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
 	private List<MostrarJuegoTienda> tiendas = GenerarListaTiendas();
@@ -1335,7 +1454,7 @@ else
 		return nuevaLista;
 	}
 
-	private void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
+	private async void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
 	{
 		foreach (var categoria in categorias)
 		{
@@ -1361,7 +1480,13 @@ else
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsCategories", opcionesMinimos.HistoricalLowsCategories, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
 	private List<MostrarJuegoCategoria> categorias = CrearListaCategorias();
@@ -1393,9 +1518,9 @@ else
 		return nuevaLista;
 	}
 
-	private void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
+	private async void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
 	{
-		foreach (var steamdeck in deck)
+		foreach (var steamdeck in deckListado)
 		{
 			if (steamdeck.Tipo == tipoElegido)
 			{
@@ -1414,15 +1539,21 @@ else
 
 		if (opcionesMinimos != null)
 		{
-			opcionesMinimos.HistoricalLowsSteamDeck = JsonSerializer.Serialize(deck);
+			opcionesMinimos.HistoricalLowsSteamDeck = JsonSerializer.Serialize(deckListado);
 
 			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSteamDeck", opcionesMinimos.HistoricalLowsSteamDeck, usuarioId);
 		}
 
-		ElegirOrdenamiento();
+		ElegirOrdenamiento(true);
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
 	}
 
-	private List<MostrarJuegoSteamDeck> deck = CrearListaSteamDeck();
+	private List<MostrarJuegoSteamDeck> deckListado = CrearListaSteamDeck();
 
 	public class MostrarJuegoSteamDeck
 	{
@@ -1468,7 +1599,7 @@ else
 
 	#endregion
 
-	#region Opciones
+	#region Opciones Defecto
 
 	private void OpcionesPestañas()
 	{

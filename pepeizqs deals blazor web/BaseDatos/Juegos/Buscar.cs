@@ -1000,7 +1000,7 @@ namespace BaseDatos.Juegos
             return juegos;
         }
 
-        public static List<Juego> Minimos(SqlConnection conexion = null, int ordenar = 0, List<MostrarJuegoTienda> tiendas = null, List<MostrarJuegoDRM> drms = null, List<MostrarJuegoCategoria> categorias = null, int? minimoDescuento = null, decimal? maximoPrecio = null, List<MostrarJuegoSteamDeck> deck = null)
+        public static List<Juego> Minimos(SqlConnection conexion = null, int ordenar = 0, List<MostrarJuegoTienda> tiendas = null, List<MostrarJuegoDRM> drms = null, List<MostrarJuegoCategoria> categorias = null, int? minimoDescuento = null, decimal? maximoPrecio = null, List<MostrarJuegoSteamDeck> deck = null, int lanzamiento = 0)
 		{
             if (conexion == null)
             {
@@ -1162,12 +1162,52 @@ namespace BaseDatos.Juegos
                     busqueda = busqueda + " WHERE " + dondeTiendas + " AND " + dondeDRMs + " AND " + dondeCategorias + " AND " + dondeMinimoDescuento + " AND " + dondeMaximoPrecio + " AND " + dondeDeck;
                 }
 
+				if (lanzamiento == 1)
+				{
+					busqueda = busqueda + " AND (JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') > DATEADD(MONTH, -6, CAST(GETDATE() as date)) OR JSON_VALUE(caracteristicas, '$.FechaLanzamientoOriginal') > DATEADD(MONTH, -6, CAST(GETDATE() as date))) ";
+				}
+
+				if (lanzamiento == 2)
+				{
+					busqueda = busqueda + " AND (JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') > DATEADD(MONTH, -12, CAST(GETDATE() as date)) OR JSON_VALUE(caracteristicas, '$.FechaLanzamientoOriginal') > DATEADD(MONTH, -12, CAST(GETDATE() as date))) ";
+				}
+
+				if (lanzamiento == 3)
+				{
+					busqueda = busqueda + " AND (JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') > DATEADD(MONTH, -24, CAST(GETDATE() as date)) OR JSON_VALUE(caracteristicas, '$.FechaLanzamientoOriginal') > DATEADD(MONTH, -24, CAST(GETDATE() as date))) ";
+				}
+
 				if (ordenar == 0)
 				{
 					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
 				}
 
-                using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				if (ordenar == 1)
+				{
+					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, JSON_VALUE(analisis, '$.Porcentaje'))\r\n END DESC";
+				}
+
+				if (ordenar == 2)
+				{
+					busqueda = busqueda + " ORDER BY nombre";
+				}
+
+				if (ordenar == 3)
+				{
+					busqueda = busqueda + " ORDER BY nombre DESC";
+				}
+
+				if (ordenar == 4)
+				{
+					busqueda = busqueda + " ORDER BY CASE WHEN precioMinimosHistoricos = 'null' OR precioMinimosHistoricos IS NULL THEN 1000000 ELSE CAST(JSON_VALUE(precioMinimosHistoricos, '$[0].Precio') AS decimal(18,2)) END";
+				}
+
+				if (ordenar == 5)
+				{
+					busqueda = busqueda + " ORDER BY CASE WHEN precioMinimosHistoricos = 'null' OR precioMinimosHistoricos IS NULL THEN 0 ELSE CAST(JSON_VALUE(precioMinimosHistoricos, '$[0].Descuento') AS bigint) END DESC";
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {

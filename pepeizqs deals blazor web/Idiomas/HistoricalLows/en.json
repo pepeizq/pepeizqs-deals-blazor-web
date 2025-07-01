@@ -27,5 +27,10 @@
   "String25": "Verified",
   "String26": "Playable",
   "String27": "Not playable",
-  "String28": "Unknown"
+  "String28": "Unknown",
+  "String29": "Release",
+  "String30": "Any date",
+  "String31": "Last 6 months",
+  "String32": "Last year",
+  "String33": "Last 2 years"
 }

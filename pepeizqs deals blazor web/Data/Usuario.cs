@@ -126,6 +126,10 @@ public class Usuario : IdentityUser
 	public string? HistoricalLowsSteamDeck { get; set; }
 
 	[PersonalData]
+	[Column(TypeName = "int(4)")]
+	public int? HistoricalLowsRelease { get; set; }
+
+	[PersonalData]
 	[Column(TypeName = "bit(1)")]
 	public bool? IndexOption1 { get; set; }
 

@@ -182,13 +182,14 @@ namespace BaseDatos.Usuarios
 			{
 				comando.Parameters.AddWithValue("@Id", usuarioId);
 				comando.Parameters.AddWithValue("@Valor", valor);
-
+	
 				try
 				{
 					comando.ExecuteNonQuery();
 				}
-				catch
+				catch (Exception ex)
 				{
+					BaseDatos.Errores.Insertar.Mensaje("Actualizar Opcion", ex);
 				}
 			}
 		}

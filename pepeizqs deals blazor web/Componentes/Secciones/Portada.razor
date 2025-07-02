@@ -943,21 +943,21 @@
 		}
 
 		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-        {
-            ApplicationState.PersistAsJson("juegosGuardados", juegosDestacadosMostrar);
-            return Task.CompletedTask;
-        });
+		{
+			ApplicationState.PersistAsJson("juegosGuardados", juegosDestacadosMostrar);
+			return Task.CompletedTask;
+		});
 	}
 
 	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
-    {
-        if (primerRender == true)
-        {
-            await ServicioNotificaciones.RequestPermissionAsync();
-        }
-    }
+	{
+		if (primerRender == true)
+		{
+			await ServicioNotificaciones.RequestPermissionAsync();
+		}
+	}
 
 	private void EnseñarDestacadoVideo(EventArgs args, Juegos.Juego juegoDestacado)
 	{
@@ -1239,8 +1239,11 @@
 			valor = false;
 		}
 
-		BaseDatos.Usuarios.Actualizar.Opcion("IndexOption1", valor, usuarioId, conexion);
-
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			BaseDatos.Usuarios.Actualizar.Opcion("IndexOption1", valor, usuarioId, conexion);
+		}
+		
 		Filtros();
 	}
 
@@ -1266,7 +1269,10 @@
 			valor = false;
 		}
 
-		BaseDatos.Usuarios.Actualizar.Opcion("IndexOption2", valor, usuarioId, conexion);
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			BaseDatos.Usuarios.Actualizar.Opcion("IndexOption2", valor, usuarioId, conexion);
+		}	
 
 		Filtros();
 	}
@@ -1290,7 +1296,10 @@
 			}
 		}
 
-		BaseDatos.Usuarios.Actualizar.Opcion("IndexDRMs", JsonSerializer.Serialize(drms), usuarioId, conexion);
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			BaseDatos.Usuarios.Actualizar.Opcion("IndexDRMs", JsonSerializer.Serialize(drms), usuarioId, conexion);
+		}
 
 		Filtros();
 	}
@@ -1346,8 +1355,11 @@
 			}
 		}
 
-		BaseDatos.Usuarios.Actualizar.Opcion("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
-
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			BaseDatos.Usuarios.Actualizar.Opcion("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
+		}
+		
 		Filtros();
 	}
 

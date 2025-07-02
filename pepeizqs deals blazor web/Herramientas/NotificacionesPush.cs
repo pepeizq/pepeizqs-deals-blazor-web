@@ -21,6 +21,7 @@ namespace Herramientas
 			}
 
 			string titulo = noticia.TituloEn;
+			titulo = titulo.Replace("'", null);
 
 			NotificationOptions opciones = new NotificationOptions
 			{

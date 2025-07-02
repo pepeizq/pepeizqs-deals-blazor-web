@@ -1207,6 +1207,11 @@ namespace BaseDatos.Juegos
 					busqueda = busqueda + " ORDER BY CASE WHEN precioMinimosHistoricos = 'null' OR precioMinimosHistoricos IS NULL THEN 0 ELSE CAST(JSON_VALUE(precioMinimosHistoricos, '$[0].Descuento') AS bigint) END DESC";
 				}
 
+				if (ordenar == 6)
+				{
+					busqueda = busqueda + " ORDER BY CASE WHEN precioMinimosHistoricos = 'null' OR precioMinimosHistoricos IS NULL THEN DATEADD(YEAR, -20, CAST(GETDATE() as date)) ELSE CAST(JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado') AS date) END DESC";
+				}
+
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
                     using (SqlDataReader lector = comando.ExecuteReader())

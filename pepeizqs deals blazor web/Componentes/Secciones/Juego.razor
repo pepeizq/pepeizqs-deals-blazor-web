@@ -331,12 +331,6 @@
     }
 </script>
 
-<script>
-    function cargarVideo() {
-        document.getElementById("juegoVideo").load();
-    }
-</script>
-
 <style>
     .boton-reseñas {
         display: inline-block;
@@ -2114,10 +2108,41 @@
                         <div class="juego-galeria-contenedor">
                             @if (mediaMostrarPosicion >= 99999 && difuminar == false)
                             {
-                                <video id="juegoVideo" style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                    <source src="@mediaMostrar" type="video/mp4" />
-                                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                </video>
+                                if (mediaMostrarPosicion == 99999)
+                                {
+                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
+                                        <source src="@mediaMostrar" type="video/mp4" />
+                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
+                                    </video>
+                                }
+                                else if (mediaMostrarPosicion == 100000)
+                                {
+                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
+                                        <source src="@mediaMostrar" type="video/mp4" />
+                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
+                                    </video>
+                                }
+                                else if (mediaMostrarPosicion == 100001)
+                                {
+                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
+                                        <source src="@mediaMostrar" type="video/mp4" />
+                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
+                                    </video>
+                                }
+                                else if (mediaMostrarPosicion == 100002)
+                                {
+                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
+                                        <source src="@mediaMostrar" type="video/mp4" />
+                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
+                                    </video>
+                                }
+                                else if (mediaMostrarPosicion == 100003)
+                                {
+                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
+                                        <source src="@mediaMostrar" type="video/mp4" />
+                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
+                                    </video>
+                                }
                             }
                             else
                             {
@@ -2126,11 +2151,11 @@
                                     
                                     @if (difuminar == false)
                                     {
-                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(mediaMostrar)" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain;" alt="@juego.Nombre" loading="lazy">
+                                        <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain;" alt="@juego.Nombre" loading="lazy">
                                     }
                                     else
                                     {
-                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(mediaMostrar)" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain; filter: blur(10px);" alt="@juego.Nombre" loading="lazy">
+                                        <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain; filter: blur(10px);" alt="@juego.Nombre" loading="lazy">
                                     } 
                                 </div>
 
@@ -5437,32 +5462,27 @@
     private int mediaMostrarPosicion = 0;
     private string mediaMostrar = string.Empty;
 
-    private async void CambiarMediaMostrar(MouseEventArgs e, int nuevaCaptura)
+    private void CambiarMediaMostrar(MouseEventArgs e, int nuevaCaptura)
     {
         if (nuevaCaptura == 99999)
         {
             mediaMostrar = juego.Media.Videos[0].Enlace;
-            await JavaScript.InvokeVoidAsync("cargarVideo");
         }
         else if (nuevaCaptura == 100000)
         {
             mediaMostrar = juego.Media.Videos[1].Enlace;
-            await JavaScript.InvokeVoidAsync("cargarVideo");
         }
         else if (nuevaCaptura == 100001)
         {
             mediaMostrar = juego.Media.Videos[2].Enlace;
-            await JavaScript.InvokeVoidAsync("cargarVideo");
         }
         else if (nuevaCaptura == 100002)
         {
             mediaMostrar = juego.Media.Videos[3].Enlace;
-            await JavaScript.InvokeVoidAsync("cargarVideo");
         }
         else if (nuevaCaptura == 100003)
         {
             mediaMostrar = juego.Media.Videos[4].Enlace;
-            await JavaScript.InvokeVoidAsync("cargarVideo");
         }
         else if (nuevaCaptura < 99999)
         {

@@ -336,8 +336,8 @@
                             </div>
                         </button>
                     </div>
-                    
-                    <Virtualize @ref="juegosVirtualizados" Context="juego" Items="resultadosMostrar" ItemSize="107" OverscanCount="5">
+
+                    <Virtualize @ref="juegosVirtualizados" Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="5">
                         <ItemContent>
                             @{
                                 string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
@@ -438,6 +438,14 @@
             enseñarBuscador = true;
             TextoCambiaBuscador();
         }
+    }
+
+    private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
+    {
+        await Task.Yield();
+        int numeroJuegos = Math.Min(peticion.Count, resultadosMostrar.Count - peticion.StartIndex);
+        IEnumerable<Juegos.Juego> cargarJuegos = resultadosMostrar.Skip(peticion.StartIndex).Take(numeroJuegos);
+        return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, resultadosMostrar.Count);
     }
 
     #region Buscador

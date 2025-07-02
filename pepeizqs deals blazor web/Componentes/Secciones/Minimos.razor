@@ -121,6 +121,9 @@ else
 							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarDescuento(true))">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "HistoricalLows")
 							</button>
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarFechaDetectado(true))">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows")
+							</button>
 						</div>
 					</div>
 				</div>
@@ -226,7 +229,19 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesDRMs" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "HistoricalLows")
+									@{
+										int contadorDRMs = 0;
+
+										foreach (var drm in drmsListado)
+										{
+											if (drm.Estado == true)
+											{
+												contadorDRMs += 1;
+											}
+										}
+									}
+
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "HistoricalLows") (@contadorDRMs.ToString())
 
 									@if (enseñarDRMs == false)
 									{
@@ -249,7 +264,19 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesTiendas" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "HistoricalLows")
+									@{
+										int contadorTiendas = 0;
+
+										foreach (var tienda in tiendas)
+										{
+											if (tienda.Estado == true)
+											{
+												contadorTiendas += 1;
+											}
+										}
+									}
+									
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "HistoricalLows") (@contadorTiendas.ToString())
 
 									@if (enseñarTiendas == false)
 									{
@@ -272,7 +299,19 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesCategorias" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "HistoricalLows")
+									@{
+										int contadorCategorias = 0;
+
+										foreach (var categoria in categorias)
+										{
+											if (categoria.Estado == true)
+											{
+												contadorCategorias += 1;
+											}
+										}
+									}
+
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "HistoricalLows") (@contadorCategorias.ToString())
 
 									@if (enseñarCategorias == false)
 									{
@@ -295,7 +334,19 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesSteamDeck" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "HistoricalLows")
+									@{
+										int contadorDeck = 0;
+
+										foreach (var deck2 in deckListado)
+										{
+											if (deck2.Estado == true)
+											{
+												contadorDeck += 1;
+											}
+										}
+									}
+
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String24", "HistoricalLows") (@contadorDeck.ToString())
 
 									@if (enseñarSteamDeck == false)
 									{
@@ -987,6 +1038,10 @@ else
 			{
 				OrdenarDescuento(true);
 			}
+			else if (opcionesMinimos.HistoricalLowsSort == 6)
+			{
+				OrdenarFechaDetectado(true);
+			}
 		}
 	}
 
@@ -1030,7 +1085,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 0;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1062,7 +1120,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 1;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1094,7 +1155,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 2;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1126,7 +1190,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 3;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1158,7 +1225,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 4;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1190,7 +1260,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSort = 5;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
+			}
 		}
 
 		if (juegosVirtualizados != null)
@@ -1199,6 +1272,42 @@ else
 			StateHasChanged();
 		}
 	}
+
+	private async void OrdenarFechaDetectado(bool buscar = true)
+	{
+		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows");
+
+		if (buscar == true)
+		{
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 6, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+
+			if (juegosGestor.Count > 0)
+			{
+				juegosFiltrados = await Filtros(juegosGestor);
+			}
+		}
+		else
+		{
+			juegosFiltrados = await Filtros(juegosGestor);
+		}
+
+		if (opcionesMinimos != null)
+		{
+			opcionesMinimos.HistoricalLowsSort = 6;
+
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 6, usuarioId);
+			}
+		}
+
+		if (juegosVirtualizados != null)
+		{
+			await juegosVirtualizados.RefreshDataAsync();
+			StateHasChanged();
+		}
+	}
+
 
 	#endregion
 
@@ -1326,6 +1435,11 @@ else
 			OrdenarDescuento(buscar);
 		}
 
+		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows"))
+		{
+			OrdenarFechaDetectado(buscar);
+		}
+
 		await CambiarEnlace();
 	}
 
@@ -1447,7 +1561,10 @@ else
 				ocultarJuegosUsuarioSteam = "checked";
 			}
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption1", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
+			}
 
 			ElegirOrdenamiento(false);
 
@@ -1476,7 +1593,10 @@ else
 				ocultarJuegosUsuarioGog = "checked";
 			}
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption4", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption4", (bool)opcionesMinimos.HistoricalLowsOption1, usuarioId);
+			}
 
 			ElegirOrdenamiento(false);
 
@@ -1503,7 +1623,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsOption2 = minimoDescuento;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption2", (int)opcionesMinimos.HistoricalLowsOption2, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption2", (int)opcionesMinimos.HistoricalLowsOption2, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1525,7 +1648,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsOption3 = maximoPrecio;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption3", (decimal)opcionesMinimos.HistoricalLowsOption3, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsOption3", (decimal)opcionesMinimos.HistoricalLowsOption3, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1560,7 +1686,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsDRMs = JsonSerializer.Serialize(drmsListado);
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsDRMs", opcionesMinimos.HistoricalLowsDRMs, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsDRMs", opcionesMinimos.HistoricalLowsDRMs, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1627,7 +1756,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsStores = JsonSerializer.Serialize(tiendas);
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsStores", opcionesMinimos.HistoricalLowsStores, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsStores", opcionesMinimos.HistoricalLowsStores, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1706,7 +1838,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsCategories = JsonSerializer.Serialize(categorias);
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsCategories", opcionesMinimos.HistoricalLowsCategories, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsCategories", opcionesMinimos.HistoricalLowsCategories, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1770,7 +1905,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsSteamDeck = JsonSerializer.Serialize(deckListado);
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSteamDeck", opcionesMinimos.HistoricalLowsSteamDeck, usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSteamDeck", opcionesMinimos.HistoricalLowsSteamDeck, usuarioId);
+			}
 		}
 
 		ElegirOrdenamiento(true);
@@ -1862,7 +2000,10 @@ else
 		{
 			opcionesMinimos.HistoricalLowsRelease = lanzamientoElegido;
 
-			BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsRelease", opcionesMinimos.HistoricalLowsRelease.ToString(), usuarioId);
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsRelease", opcionesMinimos.HistoricalLowsRelease.ToString(), usuarioId);
+			}		
 		}
 
 		ElegirOrdenamiento(true);

@@ -691,7 +691,7 @@ else
 
 		<div style="width: 100%;">
 			<div class="caja-diseño" style="padding: 0px 20px; display: flex; flex-direction: column; gap: 20px;">
-				<Virtualize Context="juego" Items="resultadosGestor" ItemSize="107" OverscanCount="6">
+				<Virtualize Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="20">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" />
 					</ItemContent>
@@ -784,6 +784,14 @@ else
 		resultadosGestor = BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
 
 		cargado = true;
+	}
+
+	private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
+	{
+		await Task.Yield();
+		int numeroJuegos = Math.Min(peticion.Count, resultadosGestor.Count - peticion.StartIndex);
+		IEnumerable<Juegos.Juego> cargarJuegos = resultadosGestor.Skip(peticion.StartIndex).Take(numeroJuegos);
+		return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, resultadosGestor.Count);
 	}
 
 	private class FiltroItem

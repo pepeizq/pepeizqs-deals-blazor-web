@@ -43,6 +43,9 @@ namespace Herramientas.RedesSociales
 
 				try
 				{
+					string tituloEn = noticia.TituloEn;
+					tituloEn = tituloEn.Replace("'", null);
+
 					string imagenEnlace = noticia.Imagen;
 					HttpClient clienteWeb = new HttpClient();
 
@@ -57,13 +60,13 @@ namespace Herramientas.RedesSociales
 								Image imagen = new Image
 								{
 									Content = imageBytes,
-									Alt = noticia.TituloEn,
+									Alt = tituloEn,
 									MimeType = "image/jpeg"
 								};
 
 								var post = new Post
 								{
-									Text = noticia.TituloEn + Environment.NewLine + Environment.NewLine + enlaceFinal,
+									Text = tituloEn + Environment.NewLine + Environment.NewLine + enlaceFinal,
 									Images = new[]
 									{
 										imagen

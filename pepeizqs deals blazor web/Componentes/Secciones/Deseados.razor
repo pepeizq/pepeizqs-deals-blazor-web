@@ -1195,7 +1195,7 @@
 			deseadosSuscripciones.Remove(juegoMostrar);
 		}
 
-        await deseadosVirtualizados.RefreshDataAsync();
+		await deseadosVirtualizados.RefreshDataAsync();
 		StateHasChanged();
 	}
 
@@ -1644,7 +1644,7 @@
 		if (estadoCompartir != null)
 		{
 			opcionesDeseados.WishlistPublic = estadoCompartir;
-		
+
 			BaseDatos.Usuarios.Actualizar.Opcion("WishlistPublic", (bool)estadoCompartir, usuarioId);
 		}
 	}
@@ -1668,8 +1668,11 @@
 				compartirEnlace = "https://pepeizqdeals.com/wishlist/" + Herramientas.Buscador.LimpiarNombre(compartirNombre, true) + "/";
 
 				opcionesDeseados.WishlistNickname = Herramientas.Buscador.LimpiarNombre(compartirNombre, true);
-		
-				BaseDatos.Usuarios.Actualizar.Opcion("WishlistNickname", Herramientas.Buscador.LimpiarNombre(compartirNombre, true), usuarioId);
+
+				if (string.IsNullOrEmpty(usuarioId) == false)
+				{
+					BaseDatos.Usuarios.Actualizar.Opcion("WishlistNickname", Herramientas.Buscador.LimpiarNombre(compartirNombre, true), usuarioId);
+				}
 			}
 		}
 	}

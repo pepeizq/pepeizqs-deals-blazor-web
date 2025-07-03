@@ -570,7 +570,7 @@
 			</div>
 
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-bottom: 25px;">
-				<Virtualize @ref="juegosVirtualizados" Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
+				<Virtualize Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Portada" />
 					</ItemContent>
@@ -1133,7 +1133,6 @@
 
 	private List<Juegos.Juego> juegosMinimosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosMinimosMostrar = new List<Juegos.Juego>();
-	private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
 	private async void Filtros()
 	{
@@ -1194,11 +1193,7 @@
 				juegosMinimosMostrar = juegosMinimosMostrar.OrderBy(j => j.PrecioMinimosHistoricos[0].FechaDetectado).Reverse().ToList();
 			}
 
-			if (juegosVirtualizados != null)
-			{
-				await juegosVirtualizados.RefreshDataAsync();
-				StateHasChanged();
-			}
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 

@@ -337,7 +337,7 @@
                         </button>
                     </div>
 
-                    <Virtualize @ref="juegosVirtualizados" Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="5">
+                    <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="5">
                         <ItemContent>
                             @{
                                 string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
@@ -440,19 +440,10 @@
         }
     }
 
-    private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
-    {
-        await Task.Yield();
-        int numeroJuegos = Math.Min(peticion.Count, resultadosMostrar.Count - peticion.StartIndex);
-        IEnumerable<Juegos.Juego> cargarJuegos = resultadosMostrar.Skip(peticion.StartIndex).Take(numeroJuegos);
-        return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, resultadosMostrar.Count);
-    }
-
     #region Buscador
 
     private bool encontroAlgo = false;
     private List<Juegos.Juego> resultadosMostrar = new List<Juegos.Juego>();
-    private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
     private bool enseñarBuscador = false;
 
@@ -542,11 +533,7 @@
                 {
                     encontroAlgo = true;
 
-                    if (juegosVirtualizados != null)
-			        {
-				        await juegosVirtualizados.RefreshDataAsync();
-				        StateHasChanged();
-			        }
+                    await InvokeAsync(StateHasChanged);
                 }
                 else
                 {

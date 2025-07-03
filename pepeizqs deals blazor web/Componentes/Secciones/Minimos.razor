@@ -643,7 +643,7 @@ else
 		@if (juegosFiltrados.Count > 0)
 		{
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -15px;">
-				<Virtualize @ref="juegosVirtualizados" Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="10">
+				<Virtualize Context="juego" Items="@juegosFiltrados" ItemSize="107" OverscanCount="10">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
 					</ItemContent>
@@ -688,7 +688,6 @@ else
 
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosFiltrados = new List<Juegos.Juego>();
-	private Virtualize<Juegos.Juego> juegosVirtualizados { get; set; }
 
 	private string ordenamientoElegido = string.Empty;
 
@@ -1053,14 +1052,6 @@ else
 		}
 	}
 
-	private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest peticion)
-	{
-		await Task.Yield(); 
-		int numeroJuegos = Math.Min(peticion.Count, juegosFiltrados.Count - peticion.StartIndex);
-		IEnumerable<Juegos.Juego> cargarJuegos = juegosFiltrados.Skip(peticion.StartIndex).Take(numeroJuegos);
-		return new ItemsProviderResult<Juegos.Juego>(cargarJuegos, juegosFiltrados.Count);
-	}
-
 	#region Ordenar
 
 	private async void OrdenarReseñasPorcentaje(bool buscar = true)
@@ -1089,12 +1080,6 @@ else
 			{
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 0, usuarioId);
 			}
-		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
 		}
 	}
 
@@ -1125,12 +1110,6 @@ else
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 1, usuarioId);
 			}
 		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private async void OrdenarNombreAZ(bool buscar = true)
@@ -1159,12 +1138,6 @@ else
 			{
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 2, usuarioId);
 			}
-		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
 		}
 	}
 
@@ -1195,12 +1168,6 @@ else
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 3, usuarioId);
 			}
 		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private async void OrdenarPrecio(bool buscar = true)
@@ -1229,12 +1196,6 @@ else
 			{
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 4, usuarioId);
 			}
-		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
 		}
 	}
 
@@ -1265,12 +1226,6 @@ else
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 5, usuarioId);
 			}
 		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private async void OrdenarFechaDetectado(bool buscar = true)
@@ -1299,12 +1254,6 @@ else
 			{
 				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 6, usuarioId);
 			}
-		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
 		}
 	}
 
@@ -1392,12 +1341,6 @@ else
 			}
 
 			cargado = true;
-		}
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
 		}
 
 		return nuevaLista;
@@ -1532,12 +1475,6 @@ else
 	private async void TextoCambiaBuscador()
 	{
 		ElegirOrdenamiento(false);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private string ocultarJuegosUsuarioSteam = null;
@@ -1546,7 +1483,7 @@ else
 
 	#region Opciones Usuario
 
-	private async void OcultarJuegosUsuarioSteam()
+	private void OcultarJuegosUsuarioSteam()
 	{
 		if (opcionesMinimos != null)
 		{
@@ -1567,18 +1504,12 @@ else
 			}
 
 			ElegirOrdenamiento(false);
-
-			if (juegosVirtualizados != null)
-			{
-				await juegosVirtualizados.RefreshDataAsync();
-				StateHasChanged();
-			}
 		}
 	}
 
 	private string ocultarJuegosUsuarioGog = null;
 
-	private async void OcultarJuegosUsuarioGog()
+	private void OcultarJuegosUsuarioGog()
 	{
 		if (opcionesMinimos != null)
 		{
@@ -1599,12 +1530,6 @@ else
 			}
 
 			ElegirOrdenamiento(false);
-
-			if (juegosVirtualizados != null)
-			{
-				await juegosVirtualizados.RefreshDataAsync();
-				StateHasChanged();
-			}
 		}
 	}
 
@@ -1630,12 +1555,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private decimal? maximoPrecio = 90;
@@ -1655,12 +1574,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
@@ -1693,12 +1606,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private List<MostrarJuegoDRM> drmsListado = CrearListaDRMs();
@@ -1763,12 +1670,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private List<MostrarJuegoTienda> tiendas = GenerarListaTiendas();
@@ -1845,12 +1746,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private List<MostrarJuegoCategoria> categorias = CrearListaCategorias();
@@ -1912,12 +1807,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	private List<MostrarJuegoSteamDeck> deckListado = CrearListaSteamDeck();
@@ -2007,12 +1896,6 @@ else
 		}
 
 		ElegirOrdenamiento(true);
-
-		if (juegosVirtualizados != null)
-		{
-			await juegosVirtualizados.RefreshDataAsync();
-			StateHasChanged();
-		}
 	}
 
 	#endregion

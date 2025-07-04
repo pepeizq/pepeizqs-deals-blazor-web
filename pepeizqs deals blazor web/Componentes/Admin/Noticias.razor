@@ -804,6 +804,10 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
             {
                 noticia.Enlace = BaseDatos.Gratis.Buscar.UnGratis(cantidadIds[0]).Enlace;
             }
+            else if (cantidadIds.Count > 0)
+            {
+                noticia.Enlace = null;
+            }
         }
     }
 

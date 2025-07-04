@@ -48,12 +48,19 @@ namespace Herramientas
 
 		public static string? AlargarEnlace(string codigoCorto)
 		{
-			if (diccionario.TryGetValue(codigoCorto, out string? enlaceLargo))
+			if (string.IsNullOrEmpty(codigoCorto) == false)
 			{
-				return enlaceLargo;
-			}
+				try
+				{
+					if (diccionario.TryGetValue(codigoCorto, out string? enlaceLargo))
+					{
+						return enlaceLargo;
+					}
+				}
+				catch { }
+			}			
 
-			return default;
+			return dominio;
 		}
 
 		#nullable disable

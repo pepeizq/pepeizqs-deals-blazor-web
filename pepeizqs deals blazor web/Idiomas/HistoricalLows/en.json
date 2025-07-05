@@ -33,5 +33,6 @@
   "String31": "Last 6 months",
   "String32": "Last year",
   "String33": "Last 2 years",
-  "String34": "Date Detected"
+  "String34": "Date (Deal Detected)",
+  "String35": "Date (Game Release)"
 }

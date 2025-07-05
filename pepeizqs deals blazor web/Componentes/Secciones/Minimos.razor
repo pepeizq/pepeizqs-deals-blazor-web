@@ -121,8 +121,12 @@ else
 							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarDescuento(true))">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "HistoricalLows")
 							</button>
+							<hr />
 							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarFechaDetectado(true))">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows")
+							</button>
+							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => OrdenarFechaLanzamiento(true))">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "HistoricalLows")
 							</button>
 						</div>
 					</div>
@@ -712,6 +716,11 @@ else
 			{
 				#region Filtrado
 
+				if (opcionesMinimos.HistoricalLowsSort != null)
+				{
+					opcionesMinimos.HistoricalLowsSort = 1;
+				}
+
 				if (opcionesMinimos.HistoricalLowsOption1 == true)
 				{
 					ocultarJuegosUsuarioSteam = "checked";
@@ -993,8 +1002,6 @@ else
 			}
 		}
 
-
-
 		cargado = true;
 	}
 
@@ -1257,6 +1264,34 @@ else
 		}
 	}
 
+	private async void OrdenarFechaLanzamiento(bool buscar = true)
+	{
+		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String35", "HistoricalLows");
+
+		if (buscar == true)
+		{
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 7, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+
+			if (juegosGestor.Count > 0)
+			{
+				juegosFiltrados = await Filtros(juegosGestor);
+			}
+		}
+		else
+		{
+			juegosFiltrados = await Filtros(juegosGestor);
+		}
+
+		if (opcionesMinimos != null)
+		{
+			opcionesMinimos.HistoricalLowsSort = 7;
+
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsSort", 7, usuarioId);
+			}
+		}
+	}
 
 	#endregion
 
@@ -1343,6 +1378,8 @@ else
 			cargado = true;
 		}
 
+		await InvokeAsync(StateHasChanged);
+
 		return nuevaLista;
 	}
 
@@ -1381,6 +1418,11 @@ else
 		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows"))
 		{
 			OrdenarFechaDetectado(buscar);
+		}
+
+		if (ordenamientoElegido == Herramientas.Idiomas.BuscarTexto(idioma, "String35", "HistoricalLows"))
+		{
+			OrdenarFechaLanzamiento(buscar);
 		}
 
 		await CambiarEnlace();
@@ -1472,7 +1514,7 @@ else
 		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto + categoriasTexto + minimoDescuentoTexto + maximoPrecioTexto + deckTexto + lanzamientoTexto);
 	}
 
-	private async void TextoCambiaBuscador()
+	private void TextoCambiaBuscador()
 	{
 		ElegirOrdenamiento(false);
 	}
@@ -1535,7 +1577,7 @@ else
 
 	private int? minimoDescuento = 1;
 
-	private async void CambiarMinimoDescuento(ChangeEventArgs e)
+	private void CambiarMinimoDescuento(ChangeEventArgs e)
 	{
 		minimoDescuento = int.Parse(e.Value.ToString());
 
@@ -1559,7 +1601,7 @@ else
 
 	private decimal? maximoPrecio = 90;
 
-	private async void CambiarMaximoPrecio(ChangeEventArgs e)
+	private void CambiarMaximoPrecio(ChangeEventArgs e)
 	{
 		maximoPrecio = decimal.Parse(e.Value.ToString());
 
@@ -1576,7 +1618,7 @@ else
 		ElegirOrdenamiento(true);
 	}
 
-	private async void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
+	private void EnseñarJuegosDRM(ChangeEventArgs e, JuegoDRM drmElegido)
 	{
 		foreach (var drm in drmsListado)
 		{
@@ -1640,7 +1682,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
+	private void EnseñarJuegosTienda(ChangeEventArgs e, string tiendaElegida)
 	{
 		foreach (var tienda in tiendas)
 		{
@@ -1716,7 +1758,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
+	private void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
 	{
 		foreach (var categoria in categorias)
 		{
@@ -1777,7 +1819,7 @@ else
 		return nuevaLista;
 	}
 
-	private async void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
+	private void EnseñarJuegosSteamDeck(ChangeEventArgs e, JuegoDeck tipoElegido)
 	{
 		foreach (var steamdeck in deckListado)
 		{
@@ -1859,7 +1901,7 @@ else
 	private string lanzamientoChecked2 = null;
 	private string lanzamientoChecked3 = null;
 
-	private async void CambiarLanzamiento(ChangeEventArgs e, int nuevoLanzamiento)
+	private void CambiarLanzamiento(ChangeEventArgs e, int nuevoLanzamiento)
 	{
 		lanzamientoElegido = nuevoLanzamiento;
 

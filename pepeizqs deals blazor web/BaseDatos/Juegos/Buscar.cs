@@ -1021,7 +1021,9 @@ namespace BaseDatos.Juegos
                 string busqueda = "SELECT * FROM seccionMinimos";
                 string dondeTiendas = string.Empty;
 
-                if (tiendas != null)
+				#region Where
+
+				if (tiendas != null)
 				{
 					if (tiendas.Count > 0)
 					{
@@ -1177,6 +1179,10 @@ namespace BaseDatos.Juegos
 					busqueda = busqueda + " AND (JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') > DATEADD(MONTH, -24, CAST(GETDATE() as date)) OR JSON_VALUE(caracteristicas, '$.FechaLanzamientoOriginal') > DATEADD(MONTH, -24, CAST(GETDATE() as date))) ";
 				}
 
+				#endregion
+
+				#region Order
+
 				if (ordenar == 0)
 				{
 					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
@@ -1211,6 +1217,13 @@ namespace BaseDatos.Juegos
 				{
 					busqueda = busqueda + " ORDER BY CASE WHEN precioMinimosHistoricos = 'null' OR precioMinimosHistoricos IS NULL THEN DATEADD(YEAR, -20, CAST(GETDATE() as date)) ELSE CAST(JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado') AS date) END DESC";
 				}
+
+				if (ordenar == 7)
+				{
+					busqueda = busqueda + " ORDER BY CASE WHEN caracteristicas = 'null' OR caracteristicas IS NULL THEN DATEADD(YEAR, -20, CAST(GETDATE() as date)) ELSE CAST(JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') AS date) END DESC";
+				}
+
+				#endregion
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {

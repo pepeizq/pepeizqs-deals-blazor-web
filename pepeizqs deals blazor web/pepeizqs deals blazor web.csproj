@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <None Remove="appsettings.json~RF176fcf2.TMP" />
+    <None Remove="appsettings.json~RFb1864a.TMP" />
     <None Remove="appsettings.json~RFb69296.TMP" />
     <None Remove="Componentes\Secciones\Minimos.razor~RFf76502.TMP" />
     <None Remove="Herramientas\Decompiladores.cs~RF1a14f4c.TMP" />

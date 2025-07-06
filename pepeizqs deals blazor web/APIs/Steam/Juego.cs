@@ -1458,8 +1458,17 @@ namespace APIs.Steam
 
 	public class SteamCMDAPIDatos
 	{
+		[JsonPropertyName("common")]
+		public SteamCMDAPICommon Common { get; set; }
+
 		[JsonPropertyName("depots")]
 		public SteamCMDAPIDepots Depots { get; set; }
+	}
+
+	public class SteamCMDAPICommon
+	{
+		[JsonPropertyName("aicontenttype")]
+		public string InteligenciaArtificial { get; set; }
 	}
 
 	public class SteamCMDAPIDepots

@@ -61,6 +61,7 @@ namespace Juegos
 		public DateTime? UltimaActualizacionSteam { get; set; }
 		public DateTime? UltimaActualizacionGOG { get; set; }
 		public DateTime? UltimaActualizacion { get; set; }
+		public bool InteligenciaArtificial { get; set; }
 	}
 
 	public static class JuegoCrear

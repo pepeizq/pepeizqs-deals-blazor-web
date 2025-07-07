@@ -1306,7 +1306,7 @@ namespace BaseDatos.Juegos
 			}
 		}
 
-		public static void UltimasActualizaciones(int idJuego, DateTime? fechaSteam, DateTime? fechaGOG, SqlConnection conexion = null)
+		public static void UltimasActualizacioneseInteligenciaArticial(int idJuego, DateTime? fechaSteam, DateTime? fechaGOG, bool inteligenciaArtificial = false, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -1337,11 +1337,12 @@ namespace BaseDatos.Juegos
 			using (conexion)
 			{
 				string sqlActualizar = "UPDATE juegos " +
-					"SET ultimaActualizacion=@ultimaActualizacion" + añadirFechaSteam + añadirFechaGOG + " WHERE id=@id";
+					"SET inteligenciaArtificial=@inteligenciaArtificial, ultimaActualizacion=@ultimaActualizacion" + añadirFechaSteam + añadirFechaGOG + " WHERE id=@id";
 
 				using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 				{
 					comando.Parameters.AddWithValue("@id", idJuego);
+					comando.Parameters.AddWithValue("@inteligenciaArtificial", inteligenciaArtificial);
 					comando.Parameters.AddWithValue("@ultimaActualizacion", DateTime.Now);
 
 					if (fechaSteam != null)
@@ -1354,14 +1355,13 @@ namespace BaseDatos.Juegos
 						comando.Parameters.AddWithValue("@ultimaActualizacionGOG", fechaGOG);
 					}
 
-					comando.ExecuteNonQuery();
 					try
 					{
-
+						comando.ExecuteNonQuery();
 					}
-					catch
+					catch (Exception ex)
 					{
-
+						BaseDatos.Errores.Insertar.Mensaje("Actualizar SteamCMD " + idJuego.ToString(), ex);
 					}
 				}
 			}

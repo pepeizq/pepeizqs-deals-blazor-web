@@ -1,6 +1,7 @@
 ﻿@page "/game/{juegoId:int}/"
 @page "/game/{juegoId:int}/{juegoNombre?}/"
 
+@using APIs.Steam
 @using ApexCharts
 @using Bundles2
 @using Gratis2
@@ -3740,11 +3741,11 @@
                     }
                     else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(120) < DateTime.Now)
                     {
-                        tiempoComprobar = TimeSpan.FromDays(15);
+                        tiempoComprobar = TimeSpan.FromDays(30);
                     }
                     else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(365) < DateTime.Now)
                     {
-                        tiempoComprobar = TimeSpan.FromDays(30);
+                        tiempoComprobar = TimeSpan.FromDays(60);
                     }
                 }
 
@@ -3795,7 +3796,7 @@
                     }
                     else
                     {
-                        if (juego.CantidadJugadores.Fecha.AddMinutes(5) < DateTime.Now)
+                        if (juego.CantidadJugadores.Fecha.AddMinutes(30) < DateTime.Now)
                         {
                             actualizarCantidadJugadores = true;
                         }
@@ -4098,7 +4099,7 @@
                                 }
                                 else
                                 {
-                                    if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(90))
+                                    if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(180))
                                     {
                                         global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
                                     }
@@ -4127,7 +4128,7 @@
                 }
                 else
                 {
-                    if (((DateTime)juego.UltimaActualizacion).AddDays(7) < DateTime.Now)
+                    if (((DateTime)juego.UltimaActualizacion).AddDays(30) < DateTime.Now)
                     {
                         actualizarUltimaActualizacion = true;
                     }
@@ -4135,11 +4136,25 @@
 
                 if (actualizarUltimaActualizacion == true)
                 {
+                    bool inteligenciaArtificial = false;
                     DateTime? fechaSteam = null;
 
                     if (juego.IdSteam > 0)
                     {
-                        fechaSteam = await APIs.Steam.Juego.UltimaActualizacion(juego.IdSteam);
+                        SteamCMDDatos datosCmd = await APIs.Steam.Juego.UltimaActualizacioneInteligenciaArtificial(juego.IdSteam);
+
+                        if (datosCmd != null)
+                        {
+                            if (datosCmd.UltimaActualizacion != null)
+                            {
+                                fechaSteam = datosCmd.UltimaActualizacion;
+                            }
+
+                            if (datosCmd.InteligenciaArtificial == true)
+                            {
+                                inteligenciaArtificial = true;
+                            }
+                        }
                     }
 
                     DateTime? fechaGOG = null;
@@ -4149,7 +4164,7 @@
                         fechaGOG = await APIs.GOG.Juego.UltimaActualizacion(juego.IdGog.ToString());
                     }
 
-                    global::BaseDatos.Juegos.Actualizar.UltimasActualizaciones(juego.Id, fechaSteam, fechaGOG);
+                    global::BaseDatos.Juegos.Actualizar.UltimasActualizacioneseInteligenciaArticial(juego.Id, fechaSteam, fechaGOG, inteligenciaArtificial);
                 }
             }
 
@@ -4498,7 +4513,7 @@
         {
             if (historicosOrdenados[0] != null)
             {
-                List<Tienda> tiendas = TiendasCargar.GenerarListado();
+                List<Tiendas2.Tienda> tiendas = TiendasCargar.GenerarListado();
                 string tiendaFinal = string.Empty;
 
                 foreach (var tienda in tiendas)
@@ -4757,7 +4772,7 @@
     {
         string imagen = string.Empty;
 
-        List<Tienda> tiendas = TiendasCargar.GenerarListado();
+        List<Tiendas2.Tienda> tiendas = TiendasCargar.GenerarListado();
 
         foreach (var tienda in tiendas)
         {

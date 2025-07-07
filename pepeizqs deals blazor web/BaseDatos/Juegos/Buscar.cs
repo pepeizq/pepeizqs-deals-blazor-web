@@ -521,6 +521,15 @@ namespace BaseDatos.Juegos
 			}
 			catch { }
 
+			try
+			{
+				if (lector.IsDBNull(46) == false)
+				{
+					juego.InteligenciaArtificial = lector.GetBoolean(46);
+				}
+			}
+			catch { }
+
 			return juego;
 		}
 

@@ -793,7 +793,7 @@ namespace APIs.Steam
 			return null;
 		}
 
-		public static async Task<DateTime?> UltimaActualizacion(int id)
+		public static async Task<SteamCMDDatos> UltimaActualizacioneInteligenciaArtificial(int id)
 		{
 			if (id > 0)
 			{
@@ -808,16 +808,32 @@ namespace APIs.Steam
 						if (api.Datos != null)
 						{
 							if (api.Datos.Count > 0)
-							{
+							{			
 								foreach (var dato in api.Datos)
 								{
+									SteamCMDDatos datos = new SteamCMDDatos();
+
+									if (string.IsNullOrEmpty(dato.Value.Common?.InteligenciaArtificial) == false)
+									{
+										if (dato.Value.Common?.InteligenciaArtificial == "1")
+										{
+											datos.InteligenciaArtificial = true;
+										}
+										else
+										{
+											datos.InteligenciaArtificial = false;
+										}
+									}
+
 									if (dato.Value.Depots?.Branches?.Publico?.Ticks != null)
 									{
 										DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(long.Parse(dato.Value.Depots?.Branches?.Publico?.Ticks));
 										DateTime fechaCreado = fecha.UtcDateTime;
 
-										return fechaCreado;
+										datos.UltimaActualizacion = fechaCreado;
 									}
+
+									return datos;
 								}
 							}
 						}
@@ -1448,7 +1464,13 @@ namespace APIs.Steam
 
 	#endregion
 
-	#region Clases Ultima Actualizacion
+	#region Clases CMD Ultima Actualizacion e IA
+
+	public class SteamCMDDatos
+	{
+		public bool InteligenciaArtificial { get; set; }
+		public DateTime? UltimaActualizacion { get; set; }
+	}
 
 	public class SteamCMDAPI
 	{

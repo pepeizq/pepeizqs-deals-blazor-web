@@ -144,7 +144,7 @@
 
             decimal estrellasJson = 1;
             string cantidadJson = "10";
-            
+
             if (juego.Analisis != null)
             {
                 if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false && string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
@@ -157,6 +157,11 @@
                     }
 
                     cantidadJson = juego.Analisis.Cantidad.Replace(",", null);
+
+                    if (cantidadJson.Length == 1)
+                    {
+                        cantidadJson = "10";
+                    }
                 }
             }
             

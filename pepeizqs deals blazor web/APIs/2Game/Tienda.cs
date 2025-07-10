@@ -1,14 +1,11 @@
 ﻿#nullable disable
 
 using Herramientas;
-using Herramientas.Redireccionador;
 using Juegos;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Data.SqlClient;
-using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Serialization;
 
 namespace APIs._2Game
 {
@@ -35,12 +32,14 @@ namespace APIs._2Game
 		{
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
-            int paginas = 10;
+			int juegos2 = 0;
+
+			int paginas = 10;
 
             int i = 1;
             while (i <= paginas)
             {
-                string html = await Decompiladores.Estandar("https://2game.com/graphql?hash=2427175844&sort_1={%22bestsellers%22:%22DESC%22}&filter_1={%22price%22:{},%22special_price%22:{%22from%22:0.01},%22category_id%22:{%22eq%22:510}}&pageSize_1=48&currentPage_1=" + i.ToString() + "&popularBlockPageSize_1=12&storeCode=%22en_es%22");
+                string html = await Decompiladores.GZipFormato("https://2game.com/graphql?hash=2427175844&sort_1={%22bestsellers%22:%22DESC%22}&filter_1={%22price%22:{},%22special_price%22:{%22from%22:0.01},%22category_id%22:{%22eq%22:510}}&pageSize_1=48&currentPage_1=" + i.ToString() + "&popularBlockPageSize_1=12&storeCode=%22en_es%22");
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
@@ -64,7 +63,8 @@ namespace APIs._2Game
 									string imagen = juego.Imagen.Enlace;
 
 									string enlace = "https://2game.com" + juego.Enlace;
-									//enlace = enlace.Replace("/en_gb/", "/");
+									enlace = enlace.Replace("/en_gb/", "/");
+									enlace = enlace.Replace("/en_es/", "/");
 
 									JuegoPrecio oferta = new JuegoPrecio
 									{
@@ -80,9 +80,24 @@ namespace APIs._2Game
 										FechaActualizacion = DateTime.Now
 									};
 
-									if (i == 1)
+									try
 									{
-										BaseDatos.Errores.Insertar.Mensaje("2game", JsonSerializer.Serialize(oferta));
+										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+									}
+									catch (Exception ex)
+									{
+										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+									}
+
+									juegos2 += 1;
+
+									try
+									{
+										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+									}
+									catch (Exception ex)
+									{
+										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
 									}
 								}
 							}

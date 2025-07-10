@@ -187,7 +187,7 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "HistoricalLows")
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "HistoricalLows") (@minimoDescuento.ToString()%)
 
 									@if (enseñarDescuentoMinimo == false)
 									{
@@ -210,7 +210,7 @@ else
 
 							<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
 								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "HistoricalLows")
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "HistoricalLows") (@maximoPrecio.ToString()€)
 
 									@if (enseñarPrecioMaximo == false)
 									{
@@ -1006,6 +1006,13 @@ else
 	protected override async Task OnInitializedAsync()
 	{
         await Task.Yield();
+
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			opcionesMinimos = BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
+		}
 
 		if (opcionesMinimos == null)
 		{

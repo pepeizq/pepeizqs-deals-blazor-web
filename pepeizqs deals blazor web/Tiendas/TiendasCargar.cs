@@ -36,7 +36,8 @@ namespace Tiendas2
 				APIs.Playsum.Tienda.Generar(),
 				APIs.PlanetPlay.Tienda.Generar(),
 				APIs.EA.Tienda.Generar(),
-				APIs.Nexus.Tienda.Generar()
+				APIs.Nexus.Tienda.Generar(),
+				APIs._2Game.Tienda.Generar()
 			};
 
 			return tiendas;

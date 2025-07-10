@@ -48,6 +48,8 @@
 
 		@if (string.IsNullOrEmpty(descripcion) == false)
 		{
+			descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+
 			string descripcionMeta = descripcion;
 
 			if (descripcionMeta.Length > 150)

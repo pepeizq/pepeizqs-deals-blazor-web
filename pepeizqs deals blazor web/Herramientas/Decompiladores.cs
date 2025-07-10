@@ -2,6 +2,7 @@
 
 using System.IO.Compression;
 using System.Net;
+using System.Text;
 
 namespace Herramientas
 {
@@ -85,44 +86,50 @@ namespace Herramientas
 
 		public static async Task<string> GZipFormato(string enlace) 
         {
-            await Task.Delay(1000);
-
-            string html = string.Empty;
+            await Task.Yield();
 
 			HttpRequestMessage mensaje = new HttpRequestMessage();
-            mensaje.RequestUri = new Uri(enlace);
-			mensaje.Headers.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
-			mensaje.Headers.AcceptEncoding.ParseAdd("gzip, deflate, br");
-			mensaje.Headers.AcceptLanguage.ParseAdd("es,en-US;q=0.7,en;q=0.3");
+			mensaje.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue() { NoCache = true, NoStore = true };
+			mensaje.Headers.Pragma.ParseAdd("no-cache");
+			mensaje.RequestUri = new Uri(enlace);
+			mensaje.Headers.Accept.ParseAdd("application/json, text/plain, */*");
+			mensaje.Headers.AcceptEncoding.ParseAdd("gzip, deflate, br, zstd");
+			mensaje.Headers.AcceptLanguage.ParseAdd("es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
 			mensaje.Headers.Connection.ParseAdd("keep-alive");
 			mensaje.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Linux; Android 10; Generic Android-x86_64 Build/QD1A.190821.014.C2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/79.0.3945.36 Safari/537.36");
+			mensaje.Headers.Add("Sec-Fetch-Dest", "empty");
+			mensaje.Headers.Add("Sec-Fetch-Mode", "cors");
+			mensaje.Headers.Add("Sec-Fetch-Site", "same-origin");
+			mensaje.Headers.TE.ParseAdd("trailers");
 
-			var cookieContainer = new CookieContainer();
+			CookieContainer cookieContainer = new CookieContainer();
 
-			using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true })
+			if (enlace.Contains("https://2game.com") == true)
+			{
+				cookieContainer.Add(new Uri(enlace), new Cookie("store", "en_es"));
+			}
+			
+			using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate })
 			{
 				using (HttpClient cliente = new HttpClient(handler) { BaseAddress = new Uri(enlace) })
 				{
-					Task<HttpResponseMessage> tarea = cliente.SendAsync(mensaje);
-					tarea.Wait();
+					cliente.DefaultRequestHeaders.Accept.Clear();
 
-					Task<Stream> respuesta = tarea.Result.Content.ReadAsStreamAsync();
-					respuesta.Wait();
-
-					Stream stream = respuesta.Result;
-
-					using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
+					using (HttpResponseMessage respuesta = await cliente.GetAsync(enlace, HttpCompletionOption.ResponseContentRead))
 					{
-						using (StreamReader lector = new StreamReader(descompresion))
+						Stream stream = await respuesta.Content.ReadAsStreamAsync();
+
+						using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
 						{
-							html = lector.ReadToEnd();
+							using (StreamReader lector = new StreamReader(stream, Encoding.UTF8))
+							{
+								return await lector.ReadToEndAsync();
+							}
 						}
-					}
+					}				
 				}
 			}
-
-            return html;
-        }
+		}
 
 		public static async Task<string> GZipFormato2(string enlace)
 		{
@@ -146,9 +153,9 @@ namespace Herramientas
 
 					Stream stream = await respuesta.Content.ReadAsStreamAsync();
 
-					using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress))
+					using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
 					{
-						using (StreamReader lector = new StreamReader(stream))
+						using (StreamReader lector = new StreamReader(stream, Encoding.UTF8))
 						{
 							return await lector.ReadToEndAsync();
 						}

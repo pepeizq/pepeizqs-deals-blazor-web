@@ -618,34 +618,37 @@
                                 {
                                     if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false && string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false)
                                     {
-                                        <button onclick="moverScroll('reviews')" class="boton boton-reseñas" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
-                                            <div style="@fondoCajas border: 1px solid var(--fondoBotonPequeño); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; gap: 10px;">
-                                                <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
-                                                    @if (int.Parse(juego.Analisis.Porcentaje) > 74)
-                                                    {
-                                                        <img src="/imagenes/analisis/positivo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                        if (juego.Analisis.Cantidad.Length > 1)
+                                        {
+                                            <button onclick="moverScroll('reviews')" class="boton boton-reseñas" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
+                                                <div style="@fondoCajas border: 1px solid var(--fondoBotonPequeño); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; gap: 10px;">
+                                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                                                        @if (int.Parse(juego.Analisis.Porcentaje) > 74)
+                                                        {
+                                                            <img src="/imagenes/analisis/positivo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                        }
 
-                                                    @if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
-                                                    {
-                                                        <img src="/imagenes/analisis/meh3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                                        @if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
+                                                        {
+                                                            <img src="/imagenes/analisis/meh3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                        }
 
-                                                    @if (int.Parse(juego.Analisis.Porcentaje) < 50)
-                                                    {
-                                                        <img src="/imagenes/analisis/negativo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                                        @if (int.Parse(juego.Analisis.Porcentaje) < 50)
+                                                        {
+                                                            <img src="/imagenes/analisis/negativo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                        }
 
-                                                    <div style="font-size: 17px;">
-                                                        @juego.Analisis.Porcentaje%
+                                                        <div style="font-size: 17px;">
+                                                            @juego.Analisis.Porcentaje%
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="font-size: 14px;">
+                                                        @Herramientas.Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad)
                                                     </div>
                                                 </div>
-
-                                                <div style="font-size: 14px;">
-                                                    @Herramientas.Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad)
-                                                </div>
-                                            </div>
-                                        </button>
+                                            </button>
+                                        }
                                     }
                                 }
 
@@ -2344,7 +2347,14 @@
                                             <div style="display: flex; align-items: center; gap: 10px;">
                                                 <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.Steam)" style="max-width: 20px; max-height: 20px;" alt="Steam" loading="lazy" />
 
-                                                <label>@juego.Caracteristicas.FechaLanzamientoSteam.Day/@juego.Caracteristicas.FechaLanzamientoSteam.Month/@juego.Caracteristicas.FechaLanzamientoSteam.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.Caracteristicas.FechaLanzamientoSteam, idioma))</label>
+                                                @if (DateTime.Today < juego.Caracteristicas.FechaLanzamientoSteam)
+                                                {
+                                                    <label>@juego.Caracteristicas.FechaLanzamientoSteam.Day/@juego.Caracteristicas.FechaLanzamientoSteam.Month/@juego.Caracteristicas.FechaLanzamientoSteam.Year</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>@juego.Caracteristicas.FechaLanzamientoSteam.Day/@juego.Caracteristicas.FechaLanzamientoSteam.Month/@juego.Caracteristicas.FechaLanzamientoSteam.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.Caracteristicas.FechaLanzamientoSteam, idioma))</label>
+                                                }
                                             </div>
                                         }
 
@@ -2353,7 +2363,14 @@
                                              <div style="display: flex; align-items: center; gap: 10px;">
                                                 <img src="@Juegos.JuegoDRM2.SacarImagen(JuegoDRM.GOG)" style="max-width: 20px; max-height: 20px;" alt="GOG" loading="lazy" />
 
-                                                <label>@juego.GalaxyGOG.FechaLanzamiento.Day/@juego.GalaxyGOG.FechaLanzamiento.Month/@juego.GalaxyGOG.FechaLanzamiento.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.GalaxyGOG.FechaLanzamiento, idioma))</label>
+                                                @if (DateTime.Today < juego.GalaxyGOG?.FechaLanzamiento)
+                                                {
+                                                    <label>@juego.GalaxyGOG?.FechaLanzamiento.Day/@juego.GalaxyGOG?.FechaLanzamiento.Month/@juego.GalaxyGOG?.FechaLanzamiento.Year</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>@juego.GalaxyGOG?.FechaLanzamiento.Day/@juego.GalaxyGOG?.FechaLanzamiento.Month/@juego.GalaxyGOG?.FechaLanzamiento.Year (@Herramientas.Calculadora.DiferenciaTiempo(juego.GalaxyGOG?.FechaLanzamiento, idioma))</label>
+                                                }  
                                             </div>
                                         }
                                     </div> 
@@ -2856,7 +2873,7 @@
                 }
             }
 
-            @if (juego.IdSteam > 0)
+            @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam)
             {
                 <div id="reviews" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
                     <div>

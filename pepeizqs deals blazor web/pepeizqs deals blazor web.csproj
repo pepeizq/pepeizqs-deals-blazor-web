@@ -20,6 +20,7 @@
     <None Remove="Componentes\Secciones\Minimos.razor~RFf76502.TMP" />
     <None Remove="Herramientas\Decompiladores.cs~RF1a14f4c.TMP" />
     <None Remove="Herramientas\NotificacionesPush.cs~RFde2e6b.TMP" />
+    <None Remove="Idiomas\HistoricalLows\pt.json~RF16f099b.TMP" />
   </ItemGroup>
 
   <ItemGroup>

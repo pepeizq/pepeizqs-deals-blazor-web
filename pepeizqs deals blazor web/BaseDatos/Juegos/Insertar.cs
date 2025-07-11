@@ -121,6 +121,15 @@ namespace BaseDatos.Juegos
 				añadirSteamOS2 = ", @steamOS";
 			}
 
+			string añadirInteligenciaArtificial1 = null;
+			string añadirInteligenciaArtificial2 = null;
+
+			if (juego.InteligenciaArtificial == true)
+			{
+				añadirInteligenciaArtificial1 = ", inteligenciaArtificial";
+				añadirInteligenciaArtificial2 = ", @inteligenciaArtificial";
+			}
+
 			string añadirIdMaestra1 = null;
 			string añadirIdMaestra2 = null;
 
@@ -140,8 +149,8 @@ namespace BaseDatos.Juegos
 			}
 
 			string sqlAñadir = "INSERT INTO " + tabla + " " +
-					"(idSteam, idGog, nombre, tipo, fechaSteamAPIComprobacion, imagenes, precioMinimosHistoricos, precioActualesTiendas, analisis, caracteristicas, media, nombreCodigo, categorias" + añadirBundles1 + añadirGratis1 + añadirSuscripciones1 + añadirMaestro1 + añadirF2P1 + añadirMayorEdad1 + añadirEtiquetas1 + añadirIdiomas1 + añadirDeck1 + añadirSteamOS1 + añadirIdMaestra1 + añadirOcultarPortada1 + ") VALUES " +
-					"(@idSteam, @idGog, @nombre, @tipo, @fechaSteamAPIComprobacion, @imagenes, @precioMinimosHistoricos, @precioActualesTiendas, @analisis, @caracteristicas, @media, @nombreCodigo, @categorias" + añadirBundles2 + añadirGratis2 + añadirSuscripciones2 + añadirMaestro2 + añadirF2P2 + añadirMayorEdad2 + añadirEtiquetas2 + añadirIdiomas2 + añadirDeck2 + añadirSteamOS2 + añadirIdMaestra2 + añadirOcultarPortada2 + ") ";
+					"(idSteam, idGog, nombre, tipo, fechaSteamAPIComprobacion, imagenes, precioMinimosHistoricos, precioActualesTiendas, analisis, caracteristicas, media, nombreCodigo, categorias" + añadirBundles1 + añadirGratis1 + añadirSuscripciones1 + añadirMaestro1 + añadirF2P1 + añadirMayorEdad1 + añadirEtiquetas1 + añadirIdiomas1 + añadirDeck1 + añadirSteamOS1 + añadirInteligenciaArtificial1 + añadirIdMaestra1 + añadirOcultarPortada1 + ") VALUES " +
+					"(@idSteam, @idGog, @nombre, @tipo, @fechaSteamAPIComprobacion, @imagenes, @precioMinimosHistoricos, @precioActualesTiendas, @analisis, @caracteristicas, @media, @nombreCodigo, @categorias" + añadirBundles2 + añadirGratis2 + añadirSuscripciones2 + añadirMaestro2 + añadirF2P2 + añadirMayorEdad2 + añadirEtiquetas2 + añadirIdiomas2 + añadirDeck2 + añadirSteamOS2 + añadirInteligenciaArtificial2 + añadirIdMaestra2 + añadirOcultarPortada2 + ") ";
 
 			if (noExiste == true)
 			{
@@ -221,6 +230,11 @@ namespace BaseDatos.Juegos
 				if (juego.SteamOS != JuegoSteamOS.Desconocido)
 				{
 					comando.Parameters.AddWithValue("@steamOS", juego.SteamOS);
+				}
+
+				if (juego.InteligenciaArtificial == true)
+				{
+					comando.Parameters.AddWithValue("@inteligenciaArtificial", juego.InteligenciaArtificial);
 				}
 
 				if (tabla == "seccionMinimos")

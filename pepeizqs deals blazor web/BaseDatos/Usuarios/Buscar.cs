@@ -472,7 +472,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT HistoricalLowsOption1, HistoricalLowsOption4, HistoricalLowsOption2, HistoricalLowsOption3, HistoricalLowsDRMs, HistoricalLowsStores, HistoricalLowsCategories, HistoricalLowsSteamDeck, HistoricalLowsSort, HistoricalLowsRelease FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT HistoricalLowsOption1, HistoricalLowsOption4, HistoricalLowsOption2, HistoricalLowsOption3, HistoricalLowsDRMs, HistoricalLowsStores, HistoricalLowsCategories, HistoricalLowsSteamDeck, HistoricalLowsSort, HistoricalLowsRelease, HistoricalLowsAI FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -530,6 +530,11 @@ namespace BaseDatos.Usuarios
 							if (lector.IsDBNull(9) == false)
 							{
 								opciones.HistoricalLowsRelease = lector.GetInt32(9);
+							}
+
+							if (lector.IsDBNull(10) == false)
+							{
+								opciones.HistoricalLowsAI = lector.GetInt32(10);
 							}
 						}
 					}

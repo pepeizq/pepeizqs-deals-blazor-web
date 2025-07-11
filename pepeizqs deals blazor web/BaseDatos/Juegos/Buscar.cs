@@ -1009,7 +1009,7 @@ namespace BaseDatos.Juegos
             return juegos;
         }
 
-        public static List<Juego> Minimos(SqlConnection conexion = null, int ordenar = 0, List<MostrarJuegoTienda> tiendas = null, List<MostrarJuegoDRM> drms = null, List<MostrarJuegoCategoria> categorias = null, int? minimoDescuento = null, decimal? maximoPrecio = null, List<MostrarJuegoSteamDeck> deck = null, int lanzamiento = 0)
+        public static List<Juego> Minimos(SqlConnection conexion = null, int ordenar = 0, List<MostrarJuegoTienda> tiendas = null, List<MostrarJuegoDRM> drms = null, List<MostrarJuegoCategoria> categorias = null, int? minimoDescuento = null, decimal? maximoPrecio = null, List<MostrarJuegoSteamDeck> deck = null, int lanzamiento = 0, int inteligenciaArtificial = 0, int? minimoReseñas = 0)
 		{
             if (conexion == null)
             {
@@ -1186,6 +1186,24 @@ namespace BaseDatos.Juegos
 				if (lanzamiento == 3)
 				{
 					busqueda = busqueda + " AND (JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') > DATEADD(MONTH, -24, CAST(GETDATE() as date)) OR JSON_VALUE(caracteristicas, '$.FechaLanzamientoOriginal') > DATEADD(MONTH, -24, CAST(GETDATE() as date))) ";
+				}
+
+				if (inteligenciaArtificial == 1)
+				{
+					busqueda = busqueda + " AND (inteligenciaArtificial = 'true')";
+				}
+
+				if (inteligenciaArtificial == 2)
+				{
+					busqueda = busqueda + " AND (inteligenciaArtificial = 'false' OR inteligenciaArtificial IS NULL)";
+				}
+
+				if (minimoReseñas != null)
+				{
+					if (minimoReseñas > 0)
+					{
+						busqueda = busqueda + " AND analisis IS NOT NULL and CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > " + minimoReseñas.ToString();
+					}
 				}
 
 				#endregion

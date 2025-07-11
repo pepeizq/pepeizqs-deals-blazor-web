@@ -130,6 +130,14 @@ public class Usuario : IdentityUser
 	public int? HistoricalLowsRelease { get; set; }
 
 	[PersonalData]
+	[Column(TypeName = "int(4)")]
+	public int? HistoricalLowsAI { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "int(4)")]
+	public int? HistoricalLowsReviews { get; set; }
+
+	[PersonalData]
 	[Column(TypeName = "bit(1)")]
 	public bool? IndexOption1 { get; set; }
 

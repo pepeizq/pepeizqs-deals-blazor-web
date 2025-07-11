@@ -133,515 +133,644 @@ else
 				</div>
 			</div>
 
-			@if (juegosGestor.Count > 0)
-			{
-				<div class="caja-diseño" style="padding: 20px; width: 100%; margin: 15px 0px 25px 0px; display: flex; flex-direction: column; gap: 30px;">
-					<div style="display: flex; align-items: center; gap: 20px;">
-						<div style="max-width: 20px;">
-							<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-								<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-							</svg>
-						</div>
-
-						<input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "HistoricalLows")" />
-
-						<div style="font-size: 14px; text-align: right; padding-left: 20px;">
-							@if (juegosFiltrados.Count == 1)
-							{
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "HistoricalLows"), juegosFiltrados.Count)
-							}
-							else
-							{
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "HistoricalLows"), juegosFiltrados.Count)
-							}
-						</div>
+			<div class="caja-diseño" style="padding: 20px; width: 100%; margin: 15px 0px 25px 0px; display: flex; flex-direction: column; gap: 30px;">
+				<div style="display: flex; align-items: center; gap: 20px;">
+					<div style="max-width: 20px;">
+						<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+						</svg>
 					</div>
 
-					<div style="display: flex; flex-direction: column; gap: 10px;">
-						<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
-							@if (string.IsNullOrEmpty(usuarioId) == false)
-							{
-								<button class="boton-pequeño" @onclick="OpcionesOcultar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-									<div style="display: flex; align-items: center; gap: 10px;">
-										@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "HistoricalLows")
+					<input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "HistoricalLows")" />
 
-										@if (enseñarOcultar == false)
+					<div style="font-size: 14px; text-align: right; padding-left: 20px;">
+						@if (juegosFiltrados.Count == 1)
+						{
+							@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "HistoricalLows"), juegosFiltrados.Count)
+						}
+						else
+						{
+							@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "HistoricalLows"), juegosFiltrados.Count)
+						}
+					</div>
+				</div>
+
+				<div style="display: flex; flex-direction: column; gap: 10px;">
+					<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
+						@if (string.IsNullOrEmpty(usuarioId) == false)
+						{
+							<button class="boton-pequeño" @onclick="OpcionesOcultar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+								<div style="display: flex; align-items: center; gap: 10px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "HistoricalLows")
+
+									@if (enseñarOcultar == false)
+									{
+										<div style="max-width: 9px;">
+											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+											</svg>
+										</div>
+									}
+									else
+									{
+										<div style="max-width: 9px;">
+											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+											</svg>
+										</div>
+									}
+								</div>
+							</button>
+						}
+
+						<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "HistoricalLows") (@minimoDescuento.ToString()%)
+
+								@if (enseñarDescuentoMinimo == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "HistoricalLows") (@maximoPrecio.ToString()€)
+
+								@if (enseñarPrecioMaximo == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesDRMs" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									int contadorDRMs = 0;
+
+									foreach (var drm in drmsListado)
+									{
+										if (drm.Estado == true)
 										{
-											<div style="max-width: 9px;">
-												<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-													<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-												</svg>
+											contadorDRMs += 1;
+										}
+									}
+								}
+
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "HistoricalLows") (@contadorDRMs.ToString())
+
+								@if (enseñarDRMs == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesTiendas" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									int contadorTiendas = 0;
+
+									foreach (var tienda in tiendas)
+									{
+										if (tienda.Estado == true)
+										{
+											contadorTiendas += 1;
+										}
+									}
+								}
+									
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "HistoricalLows") (@contadorTiendas.ToString())
+
+								@if (enseñarTiendas == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesMinimoReseñas" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String40", "HistoricalLows") (@minimoReseñas.ToString())
+
+								@if (enseñarMinimoReseñas == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesCategorias" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									int contadorCategorias = 0;
+
+									foreach (var categoria in categorias)
+									{
+										if (categoria.Estado == true)
+										{
+											contadorCategorias += 1;
+										}
+									}
+								}
+
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "HistoricalLows") (@contadorCategorias.ToString())
+
+								@if (enseñarCategorias == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesSteamDeck" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									int contadorDeck = 0;
+
+									foreach (var deck2 in deckListado)
+									{
+										if (deck2.Estado == true)
+										{
+											contadorDeck += 1;
+										}
+									}
+								}
+
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "String24", "HistoricalLows") (@contadorDeck.ToString())
+
+								@if (enseñarSteamDeck == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesLanzamiento" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									string lanzamientoElegidoTexto = string.Empty;
+
+									if (lanzamientoElegido == 0)
+									{
+										lanzamientoElegidoTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows");
+									}
+									else if (lanzamientoElegido == 1)
+									{
+										lanzamientoElegidoTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows");
+									}
+									else if (lanzamientoElegido == 2)
+									{
+										lanzamientoElegidoTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows");
+									}
+									else if (lanzamientoElegido == 3)
+									{
+										lanzamientoElegidoTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows");
+									}
+								}
+
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String29", "HistoricalLows") (@lanzamientoElegidoTexto)
+
+								@if (enseñarLanzamiento == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+
+						<button class="boton-pequeño" @onclick="OpcionesInteligenciaArtificial" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								@{
+									string inteligenciaArtificialElegidaTexto = string.Empty;
+
+									if (inteligenciaArtificialElegida == 0)
+									{
+										inteligenciaArtificialElegidaTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows");
+									}
+									else if (inteligenciaArtificialElegida == 1)
+									{
+										inteligenciaArtificialElegidaTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows");
+									}
+									else if (inteligenciaArtificialElegida == 2)
+									{
+										inteligenciaArtificialElegidaTexto = Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows");
+									}
+								}
+
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String36", "HistoricalLows") (@inteligenciaArtificialElegidaTexto)
+
+								@if (enseñarLanzamiento == false)
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+										</svg>
+									</div>
+								}
+								else
+								{
+									<div style="max-width: 9px;">
+										<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+											<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+										</svg>
+									</div>
+								}
+							</div>
+						</button>
+					</div>
+
+					@if (enseñarOcultar == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
+							<div style="display: flex; align-items: center; gap: 20px;">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+								</div>
+
+								<div style="padding-bottom: 5px;">
+									Steam
+								</div>
+							</div>
+
+							<div style="display: flex; align-items: center; gap: 20px;">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
+								</div>
+
+								<div style="padding-bottom: 5px;">
+									GOG
+								</div>
+							</div>
+						</div>
+					}
+
+					@if (enseñarDescuentoMinimo == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: flex; align-items: center; gap: 30px;">
+								<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
+
+								<label style="min-width: 65px; text-align: center;">@minimoDescuento%</label>
+							</div>
+						</div>
+					}
+
+					@if (enseñarPrecioMaximo == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: flex; align-items: center; gap: 30px;">
+								<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
+
+								<label style="min-width: 65px; text-align: center;">@maximoPrecio€</label>
+							</div>
+						</div>
+					}
+
+					@if (enseñarDRMs == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
+								@foreach (var drm in drmsListado)
+								{
+									string iconoDRM = string.Empty;
+									string nombreDRM = string.Empty;
+
+									foreach (var drm2 in JuegoDRM2.GenerarListado())
+									{
+										if (drm2.Id == drm.DRMId)
+										{
+											iconoDRM = drm2.Imagen;
+											nombreDRM = drm2.Nombre;
+										}
+									}
+
+									<div style="display: flex; align-items: center;" title="@nombreDRM">
+										<div class="checkbox-caja">
+											<input type="checkbox" class="checkbox-interior" checked="@drm.Checkbox" @onchange="@(e => EnseñarJuegosDRM(e, drm.DRMId))">
+										</div>
+
+										@if (drm.DRMId != JuegoDRM.DRMFree)
+										{
+											<div style="margin-left: 20px; padding-bottom: 10px;">
+												<img src="@iconoDRM" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" />
 											</div>
 										}
 										else
 										{
-											<div style="max-width: 9px;">
-												<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-													<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-												</svg>
+											<div style="margin-left: 20px; padding-bottom: 5px;">
+												<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
 											</div>
 										}
 									</div>
-								</button>
-							}
-
-							<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "HistoricalLows") (@minimoDescuento.ToString()%)
-
-									@if (enseñarDescuentoMinimo == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "HistoricalLows") (@maximoPrecio.ToString()€)
-
-									@if (enseñarPrecioMaximo == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesDRMs" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@{
-										int contadorDRMs = 0;
-
-										foreach (var drm in drmsListado)
-										{
-											if (drm.Estado == true)
-											{
-												contadorDRMs += 1;
-											}
-										}
-									}
-
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "HistoricalLows") (@contadorDRMs.ToString())
-
-									@if (enseñarDRMs == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesTiendas" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@{
-										int contadorTiendas = 0;
-
-										foreach (var tienda in tiendas)
-										{
-											if (tienda.Estado == true)
-											{
-												contadorTiendas += 1;
-											}
-										}
-									}
-									
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "HistoricalLows") (@contadorTiendas.ToString())
-
-									@if (enseñarTiendas == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesCategorias" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@{
-										int contadorCategorias = 0;
-
-										foreach (var categoria in categorias)
-										{
-											if (categoria.Estado == true)
-											{
-												contadorCategorias += 1;
-											}
-										}
-									}
-
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "HistoricalLows") (@contadorCategorias.ToString())
-
-									@if (enseñarCategorias == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesSteamDeck" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@{
-										int contadorDeck = 0;
-
-										foreach (var deck2 in deckListado)
-										{
-											if (deck2.Estado == true)
-											{
-												contadorDeck += 1;
-											}
-										}
-									}
-
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String24", "HistoricalLows") (@contadorDeck.ToString())
-
-									@if (enseñarSteamDeck == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
-
-							<button class="boton-pequeño" @onclick="OpcionesLanzamiento" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-								<div style="display: flex; align-items: center; gap: 10px;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String29", "HistoricalLows")
-
-									@if (enseñarLanzamiento == false)
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-											</svg>
-										</div>
-									}
-									else
-									{
-										<div style="max-width: 9px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-												<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-											</svg>
-										</div>
-									}
-								</div>
-							</button>
+								}
+							</div>
 						</div>
+					}
 
-						@if (enseñarOcultar == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
-								<div style="display: flex; align-items: center; gap: 20px;">
+					@if (enseñarTiendas == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
+								@foreach (var tienda in tiendas)
+								{
+									string iconoTienda = string.Empty;
+									string nombreTienda = string.Empty;
+
+									foreach (var tienda2 in Tiendas2.TiendasCargar.GenerarListado())
+									{
+										if (tienda2.Id == tienda.TiendaId)
+										{
+											iconoTienda = tienda2.ImagenIcono;
+											nombreTienda = tienda2.Nombre;
+										}
+									}
+
+									<div style="display: flex; align-items: center; gap: 20px;" title="@nombreTienda">
+										<div class="checkbox-caja">
+											<input type="checkbox" class="checkbox-interior" checked="@tienda.Checkbox" @onchange="@(e => EnseñarJuegosTienda(e, tienda.TiendaId))">
+										</div>
+
+										<div style="padding-bottom: 10px;">
+											<img src="@iconoTienda" style="width: 24px; height: 24px;" title="@nombreTienda" />
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+
+					@if (enseñarMinimoReseñas == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: flex; align-items: center; gap: 30px;">
+								<input type="range" min="0" max="10000" value="@minimoReseñas" step="1" @onchange="@(e => CambiarMinimoReseñas(e))" class="deslizador">
+
+								<label style="min-width: 65px; text-align: center;">@minimoReseñas</label>
+							</div>
+						</div>
+					}
+
+					@if (enseñarCategorias == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
+								@foreach (var categoria in categorias)
+								{
+									string nombreCategoria = string.Empty;
+
+									if (categoria.Categoria == JuegoTipo.Game)
+									{
+										nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "HistoricalLows");
+									}
+									else if (categoria.Categoria == JuegoTipo.DLC)
+									{
+										nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "HistoricalLows");
+									}
+									else if (categoria.Categoria == JuegoTipo.Music)
+									{
+										nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "HistoricalLows");
+									}
+									else if (categoria.Categoria == JuegoTipo.Software)
+									{
+										nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String21", "HistoricalLows");
+									}
+
+									<div style="display: flex; align-items: center;" title="@nombreCategoria">
+										<div class="checkbox-caja">
+											<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
+										</div>
+
+										<div style="margin-left: 15px; padding-bottom: 8px;">
+											<label style="font-size: 14px;">@nombreCategoria</label>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+
+					@if (enseñarSteamDeck == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
+								@foreach (var steamdeck in deckListado)
+								{
+									string nombreTipo = string.Empty;
+
+									if (steamdeck.Tipo == JuegoDeck.Verificado)
+									{
+										nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String25", "HistoricalLows");
+									}
+									else if (steamdeck.Tipo == JuegoDeck.Jugable)
+									{
+										nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String26", "HistoricalLows");
+									}
+									else if (steamdeck.Tipo == JuegoDeck.NoSoportado)
+									{
+										nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String27", "HistoricalLows");
+									}
+									else if (steamdeck.Tipo == JuegoDeck.Desconocido)
+									{
+										nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String28", "HistoricalLows");
+									}
+
+									<div style="display: flex; align-items: center;" title="@nombreTipo">
+										<div class="checkbox-caja">
+											<input type="checkbox" class="checkbox-interior" checked="@steamdeck.Checkbox" @onchange="@(e => EnseñarJuegosSteamDeck(e, steamdeck.Tipo))">
+										</div>
+
+										<div style="margin-left: 15px; padding-bottom: 8px;">
+											<label style="font-size: 14px;">@nombreTipo</label>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+
+					@if (enseñarLanzamiento == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")">
 									<div class="checkbox-caja">
-										<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+										<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked0" @onchange="@(e => CambiarLanzamiento(e, 0))">
 									</div>
 
-									<div style="padding-bottom: 5px;">
-										Steam
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")</label>
 									</div>
 								</div>
 
-								<div style="display: flex; align-items: center; gap: 20px;">
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")">
 									<div class="checkbox-caja">
-										<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
+										<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked1" @onchange="@(e => CambiarLanzamiento(e, 1))">
 									</div>
 
-									<div style="padding-bottom: 5px;">
-										GOG
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")</label>
 									</div>
 								</div>
-							</div>
-						}
 
-						@if (enseñarDescuentoMinimo == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: flex; align-items: center; gap: 30px;">
-									<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
-
-									<label style="min-width: 65px; text-align: center;">@minimoDescuento%</label>
-								</div>
-							</div>
-						}
-
-						@if (enseñarPrecioMaximo == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: flex; align-items: center; gap: 30px;">
-									<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
-
-									<label style="min-width: 65px; text-align: center;">@maximoPrecio€</label>
-								</div>
-							</div>
-						}
-
-						@if (enseñarDRMs == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
-									@foreach (var drm in drmsListado)
-									{
-										string iconoDRM = string.Empty;
-										string nombreDRM = string.Empty;
-
-										foreach (var drm2 in JuegoDRM2.GenerarListado())
-										{
-											if (drm2.Id == drm.DRMId)
-											{
-												iconoDRM = drm2.Imagen;
-												nombreDRM = drm2.Nombre;
-											}
-										}
-
-										<div style="display: flex; align-items: center;" title="@nombreDRM">
-											<div class="checkbox-caja">
-												<input type="checkbox" class="checkbox-interior" checked="@drm.Checkbox" @onchange="@(e => EnseñarJuegosDRM(e, drm.DRMId))">
-											</div>
-
-											@if (drm.DRMId != JuegoDRM.DRMFree)
-											{
-												<div style="margin-left: 20px; padding-bottom: 10px;">
-													<img src="@iconoDRM" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" />
-												</div>
-											}
-											else
-											{
-												<div style="margin-left: 20px; padding-bottom: 5px;">
-													<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
-												</div>
-											}
-										</div>
-									}
-								</div>
-							</div>
-						}
-
-						@if (enseñarTiendas == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
-									@foreach (var tienda in tiendas)
-									{
-										string iconoTienda = string.Empty;
-										string nombreTienda = string.Empty;
-
-										foreach (var tienda2 in Tiendas2.TiendasCargar.GenerarListado())
-										{
-											if (tienda2.Id == tienda.TiendaId)
-											{
-												iconoTienda = tienda2.ImagenIcono;
-												nombreTienda = tienda2.Nombre;
-											}
-										}
-
-										<div style="display: flex; align-items: center; gap: 20px;" title="@nombreTienda">
-											<div class="checkbox-caja">
-												<input type="checkbox" class="checkbox-interior" checked="@tienda.Checkbox" @onchange="@(e => EnseñarJuegosTienda(e, tienda.TiendaId))">
-											</div>
-
-											<div style="padding-bottom: 10px;">
-												<img src="@iconoTienda" style="width: 24px; height: 24px;" title="@nombreTienda" />
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-						}
-
-						@if (enseñarCategorias == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-									@foreach (var categoria in categorias)
-									{
-										string nombreCategoria = string.Empty;
-
-										if (categoria.Categoria == JuegoTipo.Game)
-										{
-											nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "HistoricalLows");
-										}
-										else if (categoria.Categoria == JuegoTipo.DLC)
-										{
-											nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "HistoricalLows");
-										}
-										else if (categoria.Categoria == JuegoTipo.Music)
-										{
-											nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "HistoricalLows");
-										}
-										else if (categoria.Categoria == JuegoTipo.Software)
-										{
-											nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String21", "HistoricalLows");
-										}
-
-										<div style="display: flex; align-items: center;" title="@nombreCategoria">
-											<div class="checkbox-caja">
-												<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
-											</div>
-
-											<div style="margin-left: 15px; padding-bottom: 8px;">
-												<label style="font-size: 14px;">@nombreCategoria</label>
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-						}
-
-						@if (enseñarSteamDeck == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-									@foreach (var steamdeck in deckListado)
-									{
-										string nombreTipo = string.Empty;
-
-										if (steamdeck.Tipo == JuegoDeck.Verificado)
-										{
-											nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String25", "HistoricalLows");
-										}
-										else if (steamdeck.Tipo == JuegoDeck.Jugable)
-										{
-											nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String26", "HistoricalLows");
-										}
-										else if (steamdeck.Tipo == JuegoDeck.NoSoportado)
-										{
-											nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String27", "HistoricalLows");
-										}
-										else if (steamdeck.Tipo == JuegoDeck.Desconocido)
-										{
-											nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String28", "HistoricalLows");
-										}
-
-										<div style="display: flex; align-items: center;" title="@nombreTipo">
-											<div class="checkbox-caja">
-												<input type="checkbox" class="checkbox-interior" checked="@steamdeck.Checkbox" @onchange="@(e => EnseñarJuegosSteamDeck(e, steamdeck.Tipo))">
-											</div>
-
-											<div style="margin-left: 15px; padding-bottom: 8px;">
-												<label style="font-size: 14px;">@nombreTipo</label>
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-						}
-
-						@if (enseñarLanzamiento == true)
-						{
-							<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-								<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-									<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")">
-										<div class="checkbox-caja">
-											<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked0" @onchange="@(e => CambiarLanzamiento(e, 0))">
-										</div>
-
-										<div style="margin-left: 15px; padding-bottom: 8px;">
-											<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")</label>
-										</div>
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")">
+									<div class="checkbox-caja">
+										<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked2" @onchange="@(e => CambiarLanzamiento(e, 2))">
 									</div>
 
-									<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")">
-										<div class="checkbox-caja">
-											<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked1" @onchange="@(e => CambiarLanzamiento(e, 1))">
-										</div>
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")</label>
+									</div>
+								</div>
 
-										<div style="margin-left: 15px; padding-bottom: 8px;">
-											<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")</label>
-										</div>
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")">
+									<div class="checkbox-caja">
+										<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked3" @onchange="@(e => CambiarLanzamiento(e, 3))">
 									</div>
 
-									<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")">
-										<div class="checkbox-caja">
-											<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked2" @onchange="@(e => CambiarLanzamiento(e, 2))">
-										</div>
-
-										<div style="margin-left: 15px; padding-bottom: 8px;">
-											<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")</label>
-										</div>
-									</div>
-
-									<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")">
-										<div class="checkbox-caja">
-											<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked3" @onchange="@(e => CambiarLanzamiento(e, 3))">
-										</div>
-
-										<div style="margin-left: 15px; padding-bottom: 8px;">
-											<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")</label>
-										</div>
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")</label>
 									</div>
 								</div>
 							</div>
-						}
-					</div>
+						</div>
+					}
+
+					@if (enseñarInteligenciaArtificial == true)
+					{
+						<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
+							<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")">
+									<div class="checkbox-caja">
+										<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked0" @onchange="@(e => CambiarInteligenciaArtificial(e, 0))">
+									</div>
+
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")</label>
+									</div>
+								</div>
+
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows")">
+									<div class="checkbox-caja">
+										<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked1" @onchange="@(e => CambiarInteligenciaArtificial(e, 1))">
+									</div>
+
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows")</label>
+									</div>
+								</div>
+
+								<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows")">
+									<div class="checkbox-caja">
+										<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked2" @onchange="@(e => CambiarInteligenciaArtificial(e, 2))">
+									</div>
+
+									<div style="margin-left: 15px; padding-bottom: 8px;">
+										<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows")</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
 				</div>
-			}
+			</div>
 		</div>
 
 		@if (juegosFiltrados.Count > 0)
@@ -689,6 +818,12 @@ else
 
 	[SupplyParameterFromQuery]
 	private string Release { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string AI { get; set; }
+
+	[SupplyParameterFromQuery]
+	private string MinReviews { get; set; }
 
 	private List<Juegos.Juego> juegosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosFiltrados = new List<Juegos.Juego>();
@@ -828,6 +963,43 @@ else
 					lanzamientoChecked1 = null;
 					lanzamientoChecked2 = null;
 					lanzamientoChecked3 = "checked";
+				}
+
+				if (opcionesMinimos.HistoricalLowsAI == null)
+				{
+					inteligenciaArtificialElegida = 0;
+				}
+				else
+				{
+					inteligenciaArtificialElegida = (int)opcionesMinimos.HistoricalLowsAI;
+				}
+
+				if (inteligenciaArtificialElegida == 0)
+				{
+					inteligenciaArtificialChecked0 = "checked";
+					inteligenciaArtificialChecked1 = null;
+					inteligenciaArtificialChecked2 = null;
+				}
+				else if (inteligenciaArtificialElegida == 1)
+				{
+					inteligenciaArtificialChecked0 = null;
+					inteligenciaArtificialChecked1 = "checked";
+					inteligenciaArtificialChecked2 = null;
+				}
+				else if (inteligenciaArtificialElegida == 2)
+				{
+					inteligenciaArtificialChecked0 = null;
+					inteligenciaArtificialChecked1 = null;
+					inteligenciaArtificialChecked2 = "checked";
+				}
+
+				if (opcionesMinimos.HistoricalLowsReviews == null)
+				{
+					minimoReseñas = 0;
+				}
+				else
+				{
+					minimoReseñas = opcionesMinimos.HistoricalLowsReviews;
 				}
 
 				#endregion
@@ -1000,12 +1172,59 @@ else
 				lanzamientoChecked2 = null;
 				lanzamientoChecked3 = null;
 			}
-		}	
+		}
+
+		if (string.IsNullOrEmpty(AI) == false)
+		{
+			if (int.TryParse(AI, out int inteligencia))
+			{
+				inteligenciaArtificialElegida = inteligencia;
+
+				if (inteligenciaArtificialElegida == 0)
+				{
+					inteligenciaArtificialChecked0 = "checked";
+					inteligenciaArtificialChecked1 = null;
+					inteligenciaArtificialChecked2 = null;
+				}
+				else if (inteligenciaArtificialElegida == 1)
+				{
+					inteligenciaArtificialChecked0 = null;
+					inteligenciaArtificialChecked1 = "checked";
+					inteligenciaArtificialChecked2 = null;
+				}
+				else if (inteligenciaArtificialElegida == 2)
+				{
+					inteligenciaArtificialChecked0 = null;
+					inteligenciaArtificialChecked1 = null;
+					inteligenciaArtificialChecked2 = "checked";
+				}
+			}
+			else
+			{
+				inteligenciaArtificialElegida = 0;
+
+				inteligenciaArtificialChecked0 = "checked";
+				inteligenciaArtificialChecked1 = null;
+				inteligenciaArtificialChecked2 = null;
+			}
+		}
+
+		if (string.IsNullOrEmpty(MinReviews) == false)
+		{
+			if (int.TryParse(MinReviews, out int reseñas))
+			{
+				minimoReseñas = reseñas;
+			}
+			else
+			{
+				minimoReseñas = 0;
+			}
+		}
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-        await Task.Yield();
+		await Task.Yield();
 
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 
@@ -1074,7 +1293,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 1, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 1, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1103,7 +1322,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 0, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 0, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1132,7 +1351,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 2, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 2, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1161,7 +1380,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 3, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 3, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1190,7 +1409,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 4, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 4, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1219,7 +1438,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 5, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 5, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1248,7 +1467,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 6, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 6, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1277,7 +1496,7 @@ else
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 7, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido);
+			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 7, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
 
 			if (juegosGestor.Count > 0)
 			{
@@ -1306,6 +1525,8 @@ else
 
 	private async Task<List<Juegos.Juego>> Filtros(List<Juegos.Juego> lista)
 	{
+		cargado = false;
+
 		List<Juegos.Juego> nuevaLista = new List<Juegos.Juego>();
 
 		foreach (var juego in lista)
@@ -1386,6 +1607,8 @@ else
 		}
 
 		await InvokeAsync(StateHasChanged);
+
+		cargado = true;
 
 		return nuevaLista;
 	}
@@ -1496,6 +1719,13 @@ else
 			maximoPrecioTexto = "&maxprice=" + maximoPrecio;
 		}
 
+		string minimoReseñasTexto = string.Empty;
+
+		if (minimoReseñas != null && minimoReseñas > 0)
+		{
+			minimoReseñasTexto = "&minreviews=" + minimoReseñas;
+		}
+
 		string deckTexto = string.Empty;
 
 		foreach (var deck in deckListado)
@@ -1518,7 +1748,14 @@ else
 			lanzamientoTexto = "&release=" + lanzamientoElegido.ToString();
 		}
 
-		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto + categoriasTexto + minimoDescuentoTexto + maximoPrecioTexto + deckTexto + lanzamientoTexto);
+		string inteligenciaArtificialTexto = string.Empty;
+
+		if (inteligenciaArtificialElegida >= 0)
+		{
+			inteligenciaArtificialTexto = "&ai=" + inteligenciaArtificialElegida.ToString();
+		}
+
+		await JavaScript.InvokeVoidAsync("ChangeUrl", "/historical-lows?" + drmsTexto + tiendasTexto + categoriasTexto + minimoDescuentoTexto + maximoPrecioTexto + minimoReseñasTexto + deckTexto + lanzamientoTexto + inteligenciaArtificialTexto);
 	}
 
 	private void TextoCambiaBuscador()
@@ -1765,6 +2002,25 @@ else
 		return nuevaLista;
 	}
 
+	private int? minimoReseñas = 0;
+
+	private void CambiarMinimoReseñas(ChangeEventArgs e)
+	{
+		minimoReseñas = int.Parse(e.Value.ToString());
+
+		if (opcionesMinimos != null)
+		{
+			opcionesMinimos.HistoricalLowsReviews = minimoReseñas;
+
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsReviews", (int)opcionesMinimos.HistoricalLowsReviews, usuarioId);
+			}
+		}
+
+		ElegirOrdenamiento(true);
+	}
+
 	private void EnseñarJuegosCategoria(ChangeEventArgs e, JuegoTipo categoriaElegida)
 	{
 		foreach (var categoria in categorias)
@@ -1947,6 +2203,46 @@ else
 		ElegirOrdenamiento(true);
 	}
 
+	private int inteligenciaArtificialElegida = 0;
+	private string inteligenciaArtificialChecked0 = null;
+	private string inteligenciaArtificialChecked1 = null;
+	private string inteligenciaArtificialChecked2 = null;
+
+	private void CambiarInteligenciaArtificial(ChangeEventArgs e, int nuevaInteligenciaArtificial)
+	{
+		inteligenciaArtificialElegida = nuevaInteligenciaArtificial;
+
+		inteligenciaArtificialChecked0 = null;
+		inteligenciaArtificialChecked1 = null;
+		inteligenciaArtificialChecked2 = null;
+
+		if (inteligenciaArtificialElegida == 0)
+		{
+			inteligenciaArtificialChecked0 = "checked";
+		}
+		else if (inteligenciaArtificialElegida == 1)
+		{
+			inteligenciaArtificialChecked1 = "checked";
+		}
+		else if (inteligenciaArtificialElegida == 2)
+		{
+			inteligenciaArtificialChecked2 = "checked";
+		}
+
+		if (opcionesMinimos != null)
+		{
+			opcionesMinimos.HistoricalLowsAI = inteligenciaArtificialElegida;
+
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("HistoricalLowsAI", opcionesMinimos.HistoricalLowsAI.ToString(), usuarioId);
+
+			}
+		}
+
+		ElegirOrdenamiento(true);
+	}
+
 	#endregion
 
 	#region Opciones Defecto
@@ -1958,9 +2254,11 @@ else
 		enseñarPrecioMaximo = false;
 		enseñarDRMs = false;
 		enseñarTiendas = false;
+		enseñarMinimoReseñas = false;
 		enseñarCategorias = false;
 		enseñarSteamDeck = false;
         enseñarLanzamiento = false;
+        enseñarInteligenciaArtificial = false;
 	}
 
 	private bool enseñarOcultar = false;
@@ -2043,6 +2341,21 @@ else
 		}
 	}
 
+	private bool enseñarMinimoReseñas = false;
+
+	private void OpcionesMinimoReseñas()
+	{
+		if (enseñarMinimoReseñas == false)
+		{
+			OpcionesPestañas();
+			enseñarMinimoReseñas = true;
+		}
+		else
+		{
+			enseñarMinimoReseñas = false;
+		}
+	}
+
 	private bool enseñarCategorias = false;
 
 	private void OpcionesCategorias()
@@ -2087,6 +2400,21 @@ else
 		else
 		{
 			enseñarLanzamiento = false;
+        }
+	}
+
+	private bool enseñarInteligenciaArtificial = false;
+
+	private void OpcionesInteligenciaArtificial()
+	{
+		if (enseñarInteligenciaArtificial == false)
+		{
+			OpcionesPestañas();
+			enseñarInteligenciaArtificial = true;
+		}
+		else
+		{
+			enseñarInteligenciaArtificial = false;
         }
 	}
 

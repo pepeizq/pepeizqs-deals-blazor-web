@@ -91,6 +91,11 @@
         }
     }
 
+    if (string.IsNullOrEmpty(descripcion) == true)
+    {
+        descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String104", "Game");
+    }
+
     if (juego.Imagenes != null)
     {
         if (string.IsNullOrEmpty(juego.Imagenes.Header_460x215) == false)
@@ -122,9 +127,9 @@
         {
             string descripcionMeta = descripcion;
 
-            if (descripcionMeta.Length > 147)
+            if (descripcionMeta.Length > 146)
             {
-                descripcionMeta = descripcionMeta.Substring(0, 147) + " ...";
+                descripcionMeta = descripcionMeta.Substring(0, 146) + " ...";
             }
 
             <meta name="description" content="@descripcionMeta" />
@@ -180,6 +185,11 @@
                     }
                 }
             } 
+
+            if (desarrolladorJson.Length > 96)
+            {
+                desarrolladorJson = desarrolladorJson.Substring(0, 96) + " ...";
+            }
         }
 
         <script type="application/ld+json">

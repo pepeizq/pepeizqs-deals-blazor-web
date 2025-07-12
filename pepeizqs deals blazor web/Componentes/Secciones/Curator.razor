@@ -52,9 +52,9 @@
 
 			string descripcionMeta = descripcion;
 
-			if (descripcionMeta.Length > 150)
+			if (descripcionMeta.Length > 146)
 			{
-				descripcionMeta = descripcionMeta.Substring(0, 150) + " ...";
+				descripcionMeta = descripcionMeta.Substring(0, 146) + " ...";
 			}
 
 			<meta name="description" content="@descripcionMeta" />
@@ -95,15 +95,6 @@
 
 		<link rel="canonical" href="@enlace" />
 	</HeadContent>
-
-	<style>
-		.caja-diseño {
-			background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-			border: 2px solid var(--fondoOscuro);
-			box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-			border-radius: 5px;
-		}
-	</style>
 
 	<div>
 		@if (string.IsNullOrEmpty(curator.ImagenFondo) == false)

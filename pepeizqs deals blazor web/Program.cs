@@ -41,9 +41,9 @@ builder.Services.AddWebOptimizer(opciones => {
 	{
 		CommentMode = NUglify.Css.CssComment.None,
 
-	}, "lib/bootstrap/dist/css/bootstrap.min.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css", "lib/font-awesome/css/all.css");
+	}, "lib/bootstrap/dist/css/bootstrap.css", "lib/bootstrap/dist/css/bootstrap-grid.css", "lib/bootstrap/dist/css/bootstrap-reboot.css", "lib/bootstrap/dist/css/bootstrap-utilities.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css");
 
-	opciones.AddJavaScriptBundle("/superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.bundle.min.js", "js/site.js");
+	opciones.AddJavaScriptBundle("/superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.js");
 });
 
 #endregion

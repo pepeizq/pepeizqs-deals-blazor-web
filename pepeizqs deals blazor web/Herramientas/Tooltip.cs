@@ -1,12 +1,13 @@
 ﻿#nullable disable
 
 using Juegos;
+using pepeizqs_deals_blazor_web.Componentes.Interfaz;
 
 namespace Herramientas
 {
     public static class Tooltip
     {
-        public static ToolTipDatos Generar(string idioma, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0)
+        public static ToolTipDatos Generar(string idioma, CajaJuego.Tipo tipo, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0)
         {
             ToolTipDatos datos = new ToolTipDatos
             {

@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.VisualBasic
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 @using pepeizqs_deals_web.Data
 
 @inject IHttpContextAccessor Contexto
@@ -204,113 +205,9 @@
     <div class="caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; gap: 30px; padding: 30px;">
         @foreach (var juego in juegosActuales)
         {
-            bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego.Juego, juego.DRM);
-            bool usuarioTieneDeseado = false;
+            string enlaceGratis = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
 
-            string fondoColor = string.Empty;
-
-            if (usuarioTieneJuego == true)
-            {
-                fondoColor = "background-color: var(--fondoBien);";
-            }
-            else
-            {
-                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego.Juego, juego.DRM);
-
-                if (usuarioTieneDeseado == true)
-                {
-                    fondoColor = "background-color: var(--fondoAlerta);";
-                }
-            }
-
-            bool usuarioConectado = false;
-
-            if (string.IsNullOrEmpty(usuarioId) == false)
-            {
-                usuarioConectado = true;
-            }
-
-            Herramientas.ToolTipDatos tooltipDatos = Herramientas.Tooltip.Generar(idioma, juego.Juego, juego.DRM, usuarioConectado, usuarioTieneJuego, usuarioTieneDeseado);
-
-            <div class="tooltip-juego" onmousemove="enseñarTooltip(event, 'tooltip-@juego.JuegoId.ToString()-@juego.Tipo.ToString()')">
-                <div id="tooltip-@juego.JuegoId.ToString()-@juego.Tipo.ToString()" class="tooltip-relleno" style="max-width: 460px;">
-                    @if (string.IsNullOrEmpty(tooltipDatos.Video) == false)
-                    {
-                        <video src="@tooltipDatos.Video" autoplay="autoplay" loop muted style="object-fit: cover; width: 100%;" />
-                    }
-
-                    <div style="padding: 15px;">
-                        <div style="text-align: left;">
-                            @tooltipDatos.Nombre
-                        </div>
-
-                        @{
-                            int gratisEstado = 0;
-
-                            if (juego.Juego.Gratis != null)
-                            {
-                                gratisEstado = juego.Juego.Gratis.Count;
-
-                                if (gratisEstado > 0)
-                                {
-                                    gratisEstado -= 1;
-                                }
-                            }
-
-                            if (gratisEstado > 0)
-                            {
-                                <hr />
-
-                                <div style="text-align: left;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Free")
-                                </div>
-                            }
-                            else if (gratisEstado == 0)
-                            {
-                                <hr />
-
-                                <div style="text-align: left;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Free")
-                                </div>
-                            }
-                        }
-
-                        @if (string.IsNullOrEmpty(tooltipDatos.ReviewsIcono) == false && string.IsNullOrEmpty(tooltipDatos.ReviewsCantidad) == false)
-                        {
-                            if (tooltipDatos.ReviewsCantidad.Length > 3)
-                            {
-                                <hr />
-
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <img src="@tooltipDatos.ReviewsIcono" style="width: 20px; height: 20px;" alt="Reviews" />
-                                    <label style="font-size: 14px;">@tooltipDatos.ReviewsCantidad</label>
-                                </div>
-                            }
-                        }
-                    </div>
-                </div>
-
-                <a href="@Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon)" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor" target="_blank">
-                    <div style="width: 100%; text-align: center; padding: 2px;">
-                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagen)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
-
-                        <div style="margin-top: 10px; margin-bottom: 5px; text-align: center; padding: 5px;">
-                            @{
-                                Gratis2.Gratis gratis = Gratis2.GratisCargar.DevolverGratis(juego.Tipo);
-                            }
-
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; height: 40px;">
-                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(gratis.ImagenLogo)" style="max-width: 140px; max-width: 140px;" alt="Store" />
-
-                                @if (gratis.DRMEnseñar == true)
-                                {
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(juego.DRM))" style="width: 28px; height: 28px;" alt="DRM" />
-                                }
-                            </div>                            
-                        </div>
-                    </div>
-                </a>
-            </div>
+            <CajaJuego enlaceGratis="@enlaceGratis" drmGratis="@juego.DRM" tipoGratis="@juego.Tipo" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Gratis"/> 
         }
     </div>
 }

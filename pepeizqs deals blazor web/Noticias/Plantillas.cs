@@ -39,7 +39,7 @@ namespace Noticias
 					#region Titulo
 
 					Random azarTitulo = new Random();
-					int azarTitulo2 = azarTitulo.Next(1, 3);
+					int azarTitulo2 = azarTitulo.Next(1, 5);
 
 					if (bundle.NombreBundle.ToLower().Contains("bundle") == false)
 					{

@@ -56,20 +56,29 @@
 	}
 </style>
 
-@* <script>
-	function enseñarTooltip(x, y, id) {
-        var tooltip = document.getElementById(id);
+<script>
+	function enseñarTooltip(e, id) {
+		if (matchMedia('(pointer:fine)').matches) 
+		{
+			var x = e.clientX,
+				y = e.clientY;
 
-        if (screen.width / 2 > x) {
-            tooltip.style.top = (y + 10) + 'px';
-            tooltip.style.left = (x + 20) + 'px';
-        }
-        else {
-            tooltip.style.top = (y - 10) + 'px';
-            tooltip.style.left = (x - 20 - tooltip.getBoundingClientRect().width) + 'px';
-        };
+			var tooltip = document.getElementById(id);
+
+			if (tooltip)
+			{
+				if (screen.width / 2 > x) {
+					tooltip.style.top = (y + 10) + 'px';
+					tooltip.style.left = (x + 20) + 'px';
+				}
+				else {
+					tooltip.style.top = (y - 10) + 'px';
+					tooltip.style.left = (x - 20 - tooltip.getBoundingClientRect().width) + 'px';
+				};
+			};
+		};
     };
-</script> *@
+</script>
 
 @{
 	int idMaestra = juego.IdMaestra;
@@ -191,8 +200,8 @@
 
 	Herramientas.ToolTipDatos tooltip = Herramientas.Tooltip.Generar(idioma, tipo, juego, drmUsar, usuarioConectado, usuarioTieneJuego, usuarioTieneDeseado, idBundle);
 
-	<div class="tooltip-juego" @onmousemove="(e => MostrarTooltip(e))" @onmouseout="OcultarTooltip">
-		<div id="tooltip-@idTooltip" class="tooltip-relleno" style="@estiloTooltip">
+	<div class="tooltip-juego" onmousemove="enseñarTooltip(event, 'tooltip-@idTooltip')" @onmouseenter="(e => MostrarTooltip(e))">
+		<div id="tooltip-@idTooltip" class="tooltip-relleno">
 			@if (enseñarTooltip == true)
 			{
 				if (string.IsNullOrEmpty(tooltip.Video) == false)
@@ -758,7 +767,7 @@
 	public JuegoDRM drmGratis { get; set; }
 
 	[Parameter]
-    public Gratis2.GratisTipo tipoGratis { get; set; }
+	public Gratis2.GratisTipo tipoGratis { get; set; }
 
 	[Parameter]
 	public string enlaceSuscripcion { get; set; }
@@ -792,18 +801,10 @@
 	#region Enseñar Ocultar Tooltip
 
 	bool enseñarTooltip = false;
-	string estiloTooltip = string.Empty;
 
 	private void MostrarTooltip(MouseEventArgs e)
 	{
 		enseñarTooltip = true;
-
-		estiloTooltip = "top: " + (e.ClientY + 10) + "px; left: " + (e.ClientX + 20) + "px;";
-    }
-
-	private void OcultarTooltip()
-	{
-		enseñarTooltip = false;
     }
 
 	#endregion

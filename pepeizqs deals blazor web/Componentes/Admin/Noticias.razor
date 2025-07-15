@@ -186,6 +186,14 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
         </div>
     }
 }
+else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas.ToString())
+{
+    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+        @* <input type="text" @oninput="TextoCambiarBuscadorDespedidas" class="entrada-texto" /> *@
+
+
+    </div>
+}
 
 <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
     <div>
@@ -563,6 +571,11 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
                 noticia.Imagen = "https://pepeizqdeals.com/logo/logoentradapatreon.webp";
                 noticia.Fecha = DateTime.Now.AddDays(7);
             }
+            else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas.ToString())
+            {
+                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+                noticia.Fecha = DateTime.Now.AddDays(3);
+            }
         }
     }
 
@@ -641,6 +654,10 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
                 else if (noticiaTipoSeleccionada == NoticiaTipo.Patreon.ToString())
                 {
                     noticiaAñadir.Tipo = NoticiaTipo.Patreon;
+                }
+                else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas.ToString())
+                {
+                    noticiaAñadir.Tipo = NoticiaTipo.Despedidas;
                 }
 
                 int id = BaseDatos.Noticias.Insertar.Ejecutar(noticiaAñadir);
@@ -731,36 +748,6 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones.ToString())
                 enviandoDiscord = false;
 
                 await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, noticiaAñadir);
-
-                // foreach (var usuario in BaseDatos.Usuarios.Buscar.UsuariosNotificacionesPush())
-                // {
-                //     try
-                //     {
-                //         if (usuario.NotificationPushBundles == true && noticiaAñadir.Tipo == NoticiaTipo.Bundles)
-                //         {
-                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones, usuario.Id, noticiaAñadir, usuario.Language);
-                //         }
-
-                //         if (usuario.NotificationPushFree == true && noticiaAñadir.Tipo == NoticiaTipo.Gratis)
-                //         {
-                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
-                //         }
-
-                //         if (usuario.NotificationPushSubscriptions == true && noticiaAñadir.Tipo == NoticiaTipo.Suscripciones)
-                //         {
-                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
-                //         }
-
-                //         if (usuario.NotificationPushOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
-                //         {
-                //             await Herramientas.NotificacionesPush.EnviarNoticia(ServicioNotificaciones,usuario.Id, noticiaAñadir, usuario.Language);
-                //         }
-                //     }
-                //     catch (Exception ex)
-                //     {
-                //         BaseDatos.Errores.Insertar.Mensaje("Enviar Notificaciones Push Noticia", ex);
-                //     }
-                // }
 
                 noticia = new Plantilla();
 

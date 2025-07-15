@@ -421,6 +421,31 @@ namespace Noticias
 
             return plantilla;
         }
+
+		public static Plantilla Despedidas(string enlace, int juegoId)
+		{
+			Plantilla plantilla = new Plantilla();
+
+			Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId.ToString());
+
+			if (juego != null)
+			{
+				plantilla.Juegos = juegoId.ToString();
+				plantilla.Fecha = DateTime.Now.AddDays(3);
+
+				plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "Goodbye1", "NewsTemplates"), juego.Nombre);
+				plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "Goodbye1", "NewsTemplates"), juego.Nombre);
+				plantilla.ContenidoEn = Idiomas.BuscarTexto("en", "Farewell2", "NewsTemplates");
+				plantilla.ContenidoEs = Idiomas.BuscarTexto("es", "Farewell2", "NewsTemplates");
+				
+				if (juego.Imagenes.Header_460x215 != null)
+				{
+					plantilla.Imagen = juego.Imagenes.Header_460x215;
+				}
+			}
+
+			return plantilla;
+		}
     }
 
     public class Plantilla

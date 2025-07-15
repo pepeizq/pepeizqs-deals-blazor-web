@@ -13,7 +13,8 @@ namespace Noticias
 		Rumores,
 		Otros,
 		Web,
-		Patreon
+		Patreon,
+		Despedidas
 	}
 
 	public static class NoticiasCargar
@@ -69,6 +70,14 @@ namespace Noticias
 			};
 
 			noticias.Add(patreon);
+
+			NoticiaMostrar despedidas = new NoticiaMostrar
+			{
+				Tipo = NoticiaTipo.Despedidas,
+				Mostrar = true
+			};
+
+			noticias.Add(despedidas);
 
 			return noticias;
 		}

@@ -338,23 +338,6 @@
     margin-bottom: 10px;
 }
 
-.juego-descuento-precio {
-    display: flex;
-    align-items: center;
-}
-
-.juego-descuento {
-    font-size: 18px;
-    margin: 10px;
-    padding: 10px;
-    background-color: darkgreen;
-}
-
-.juego-precio {
-    font-size: 18px;
-    margin: 20px;
-}
-
 .juego-galeria-contenedor {
     position: relative;
 }
@@ -520,8 +503,8 @@ select {
         position: absolute;
         top: 0;
         right: 0;
-        padding: 1em;
-        background-color: var(--fondoCuerpo);
+        padding: 10px 15px;
+        background-color: var(--fondoMinimo);
         transition: .25s all ease;
         pointer-events: none;
     }

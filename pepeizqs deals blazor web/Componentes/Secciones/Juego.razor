@@ -369,6 +369,23 @@
         max-height: 40px;
     }
 
+    .juego-descuento-precio {
+        display: flex;
+        align-items: center;
+    }
+
+    .juego-descuento {
+        font-size: 18px;
+        margin: 10px;
+        padding: 10px;
+        background-color: darkgreen;
+    }
+
+    .juego-precio {
+        font-size: 18px;
+        margin: 20px;
+    }
+
     @@media(max-width: 900px) {
         .boton-reseñas {
             display: none;
@@ -387,8 +404,23 @@
         }
 
         .juego-imagen-boton {
+            margin: 5px;
+            max-height: 25px;
+        }
+
+        .juego-hacetiempo {
+            display: none;
+        }
+
+        .juego-descuento {
+            font-size: 16px;
+            margin: 5px;
+            padding: 5px;
+        }
+
+        .juego-precio {
+            font-size: 16px;
             margin: 10px;
-            max-height: 30px;
         }
     }
 
@@ -1690,11 +1722,11 @@
                                                                     <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precio.Nombre)</span>
 
                                                                     <div class="juego-descuento-precio">
-                                                                        <div style="font-size: 14px; margin: 20px;">
+                                                                        <div class="juego-hacetiempo" style="font-size: 14px; margin: 20px;">
                                                                             @Herramientas.Calculadora.DiferenciaTiempo(precio.FechaDetectado, idioma)
                                                                         </div>
 
-                                                                        <div style="width: 75px; text-align: center;" class="juego-descuento">
+                                                                        <div class="juego-descuento" style="width: 75px; text-align: center;">
                                                                             @precio.Descuento.ToString()%
                                                                         </div>
 
@@ -1786,11 +1818,11 @@
                                                                     <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precioBajo.Nombre)</span>
 
                                                                     <div class="juego-descuento-precio">
-                                                                        <div style="font-size: 14px; margin: 20px;">
+                                                                        <div class="juego-hacetiempo" style="font-size: 14px; margin: 20px;">
                                                                             @Herramientas.Calculadora.DiferenciaTiempo(precioBajo.FechaDetectado, idioma)
                                                                         </div>
 
-                                                                        <div style="width: 75px; text-align: center;" class="juego-descuento">
+                                                                        <div class="juego-descuento" style="width: 75px; text-align: center;">
                                                                             @precioBajo.Descuento.ToString()%
                                                                         </div>
 

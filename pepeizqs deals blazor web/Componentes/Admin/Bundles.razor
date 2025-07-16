@@ -119,7 +119,7 @@
                         @foreach (var juego in juegosBuscador)
                         {
                             <div class="perfil-flexible-centrado perfil-espacio-top">
-                                <button @onclick="@(e => SeleccionarJuegoBuscador(e, @juego.Id.ToString(), juego.Imagenes.Capsule_231x87, @juego.Nombre))" class="boton-pequeño">
+                                <button @onclick="@(e => SeleccionarJuegoBuscador(e, juego.Id.ToString(), juego.Imagenes.Capsule_231x87, juego.Nombre))" class="boton-pequeño">
                                     <div class="perfil-flexible-centrado">
                                         <div style="width: 12%;">
                                             <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />

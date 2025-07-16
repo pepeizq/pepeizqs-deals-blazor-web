@@ -422,7 +422,7 @@ namespace Noticias
             return plantilla;
         }
 
-		public static Plantilla Despedidas(string enlace, int juegoId)
+		public static Plantilla Despedidas(string enlace, DateTime fecha, int juegoId)
 		{
 			Plantilla plantilla = new Plantilla();
 
@@ -431,13 +431,36 @@ namespace Noticias
 			if (juego != null)
 			{
 				plantilla.Juegos = juegoId.ToString();
-				plantilla.Fecha = DateTime.Now.AddDays(3);
+				plantilla.Fecha = fecha;
 
-				plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "Goodbye1", "NewsTemplates"), juego.Nombre);
-				plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "Goodbye1", "NewsTemplates"), juego.Nombre);
-				plantilla.ContenidoEn = Idiomas.BuscarTexto("en", "Farewell2", "NewsTemplates");
-				plantilla.ContenidoEs = Idiomas.BuscarTexto("es", "Farewell2", "NewsTemplates");
-				
+				string diaIngles = fecha.Day.ToString();
+
+				if (fecha.Day == 1 || fecha.Day == 21 || fecha.Day == 31)
+				{
+					diaIngles = diaIngles + "st";
+				}
+				else if (fecha.Day == 2 || fecha.Day == 22)
+				{
+					diaIngles = diaIngles + "nd";
+				}
+				else if (fecha.Day == 3 || fecha.Day == 23)
+				{
+					diaIngles = diaIngles + "rd";
+				}
+				else
+				{
+					diaIngles = diaIngles + "th";
+				}
+
+				plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "Goodbye1", "NewsTemplates"), juego.Nombre, Idiomas.BuscarTexto("en", "Month." + fecha.Month.ToString(), "Months"), diaIngles);
+				plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "Goodbye1", "NewsTemplates"), juego.Nombre, Idiomas.BuscarTexto("es", "Month." + fecha.Month.ToString(), "Months"), fecha.Day);
+
+				plantilla.ContenidoEn = "<div>" + string.Format(Idiomas.BuscarTexto("en", "Goodbye2", "NewsTemplates"), juego.Nombre, enlace) + "</div>";
+				plantilla.ContenidoEs = "<div>" + string.Format(Idiomas.BuscarTexto("es", "Goodbye2", "NewsTemplates"), juego.Nombre, enlace) + "</div>";
+
+				plantilla.ContenidoEn = plantilla.ContenidoEn + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("en", "Goodbye3", "NewsTemplates"), "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
+				plantilla.ContenidoEs = plantilla.ContenidoEs + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("es", "Goodbye3", "NewsTemplates"), "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
+
 				if (juego.Imagenes.Header_460x215 != null)
 				{
 					plantilla.Imagen = juego.Imagenes.Header_460x215;

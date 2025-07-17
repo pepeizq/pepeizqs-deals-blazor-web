@@ -80,7 +80,7 @@
 			<meta name="og:title" Content="@tituloSeo" />
 			<meta name="description" content="@descripcion" />
 			<meta name="og:description" content="@descripcion" />
-			<meta name="og:url" content="@enlace" />
+			<meta name="og:url" content="@enlaceIngles" />
 			<meta name="og:image" content="@fondo" />
 			<meta name="og:video" content="@video" />
 			<meta name="og:site_name" content="pepeizq's deals" />
@@ -106,7 +106,8 @@
 				@((MarkupString)seoJson)
 			</script>
 
-			<link rel="canonical" href="@enlace" hreflang="@idioma"/>
+			<link rel="canonical" href="@enlaceIngles" hreflang="en"/>
+			<link rel="alternate" href="@enlaceEspañol" hreflang="es-es" />
 		</HeadContent>
 	}
 }
@@ -408,7 +409,8 @@
 	private Noticias.Noticia noticiaPosterior = null;
 
 	private string titulo = string.Empty;
-	private string enlace = string.Empty;
+	private string enlaceIngles = string.Empty;
+	private string enlaceEspañol = string.Empty;
 	private string video = string.Empty;
 	private string fondo = string.Empty;
 
@@ -443,15 +445,8 @@
 				}
 
 				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-
-				if (Herramientas.Idiomas.ComprobarIdiomaUso("es", idioma) == true)
-				{
-					enlace = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/?language=" + idioma;
-				}
-				else
-				{
-					enlace = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(titulo) + "/";
-				}
+				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
+				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/?language=" + idioma;
 
 				List<string> juegosTexto = Herramientas.Listados.Generar(noticia.Juegos);
 
@@ -526,7 +521,13 @@
 			{
 				if (cambiarEnlace == true)
 				{
-					string cambiarEnlace = enlace;
+					string cambiarEnlace = enlaceIngles;
+
+					if (idioma == "es")
+					{
+                        cambiarEnlace = enlaceEspañol;
+					}
+
                     cambiarEnlace = cambiarEnlace.Replace("https://pepeizqdeals.com", null);
 
 					await JavaScript.InvokeVoidAsync("ChangeUrl", cambiarEnlace);

@@ -3847,12 +3847,7 @@
 
                 if (actualizarDatosAPI == true)
                 {
-                    global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
-
-                    if (nuevoJuego != null)
-                    {
-                        global::BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
-                    }
+                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdSteam, "SteamAPI");
                 }
 
                 #endregion
@@ -3992,19 +3987,13 @@
             {
                 if (juego.GalaxyGOG == null)
                 {
-                    juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
-                    juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
-
-                    global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
                 }
                 else
                 {
                     if (juego.GalaxyGOG.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
                     {
-                        juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(juego.IdGog.ToString());
-                        juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(juego.IdGog.ToString(), juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
                     }
                 }
             }

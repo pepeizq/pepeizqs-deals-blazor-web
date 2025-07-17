@@ -5,6 +5,9 @@
 //https://drop-api.ea.com/game/the-sims-3?locale=en&subscription-level=NON_SUBSCRIBER
 //https://drop-api.ea.com/addon/the-sims-3-university-life?locale=en&subscription-level=NON_SUBSCRIBER
 //https://drop-api.ea.com/game/mass-effect-legendary-edition?locale=es&subscription-level=NON_SUBSCRIBER
+//https://drop-api.ea.com/news-articles?locale=es&limit=500&typeSlug=game-updates
+//https://drop-api.ea.com/campaign/list?locale=es
+//https://drop-api.ea.com/usp/split-fiction
 //https://service-aggregation-layer.juno.ea.com/graphql?operationName=PlanSelection&variables=%7B%22overrideCountryCode%22%3A%22ES%22%2C%22locale%22%3A%22es%22%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22a60817e7ed053ce4467a20930d6a445a5e3e14533ab9316e60662db48a25f131%22%7D%7D
 
 #nullable disable
@@ -74,6 +77,7 @@ namespace APIs.EA
 			"fe",
 			"fc-24",
 			"fc-25",
+			"fc-26",
 			"grid-legends",
 			"immortals-of-aveum",
 			"it-takes-two",
@@ -86,6 +90,7 @@ namespace APIs.EA
 			"lost-in-random",
 			"madden-nfl-24",
 			"madden-nfl-25",
+			"madden-nfl-26",
 			"magic-carpet",
 			"mass-effect",
 			"mass-effect-2",
@@ -120,6 +125,7 @@ namespace APIs.EA
 			"simcity-2000",
 			"simcity-4",
 			"sid-meiers-alpha-centauri",
+			"skate",
 			"split-fiction",
 			"spore",
 			"super-mega-baseball-3",

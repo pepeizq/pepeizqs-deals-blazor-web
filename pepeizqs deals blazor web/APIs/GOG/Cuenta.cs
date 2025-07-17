@@ -132,7 +132,16 @@ namespace APIs.GOG
 			
 				if (string.IsNullOrEmpty(html) == false)
 				{
-					GOGDeseados deseados = JsonSerializer.Deserialize<GOGDeseados>(html);
+					GOGDeseados deseados = null;
+					
+					try
+					{
+						deseados = JsonSerializer.Deserialize<GOGDeseados>(html);
+					}
+					catch (JsonException ex)
+					{
+						BaseDatos.Errores.Insertar.Mensaje("GOG Deseados", ex);
+					}
 
 					if (deseados != null)
 					{

@@ -94,7 +94,7 @@ namespace APIs.Steam
 
 				if (mirarOfertas == true)
 				{
-					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&specials=1&hidef2p=1&ndl=1&infinite=1&ignore_preferences=1&l=english&category1=998%2C21%2C990%2C994" + añadirBundles);
+					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&specials=1&ndl=1&infinite=1&ignore_preferences=1&l=english&category1=998%2C21%2C990%2C994" + añadirBundles);
 
 					try
 					{
@@ -144,7 +144,7 @@ namespace APIs.Steam
 				}
 				else
 				{
-					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&hidef2p=1&ndl=1&infinite=1&l=english");
+					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&ndl=1&infinite=1&l=english");
 
 					try
 					{

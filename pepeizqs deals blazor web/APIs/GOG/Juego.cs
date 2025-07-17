@@ -252,11 +252,21 @@ namespace APIs.GOG
 		public static async Task<JuegoGalaxyGOG> GalaxyDatos(string id)
 		{
 			JuegoGalaxyGOG galaxy = new JuegoGalaxyGOG();
+
 			string html = await Decompiladores.Estandar("https://api.gog.com/products/" + id + "?expand=downloads,expanded_dlcs,description,screenshots,videos,related_products,changelog");
 
 			if (string.IsNullOrEmpty(html) == false)
 			{
-				GOGGalaxy datos = JsonSerializer.Deserialize<GOGGalaxy>(html);
+				GOGGalaxy datos = null;
+
+				try
+				{
+					datos = JsonSerializer.Deserialize<GOGGalaxy>(html);
+				}
+				catch (JsonException ex)
+				{
+					BaseDatos.Errores.Insertar.Mensaje("GOG Actualizar Datos", ex);
+				}		
 
 				if (datos != null)
 				{

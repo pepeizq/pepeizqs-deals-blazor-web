@@ -53,7 +53,9 @@
 		string descripcion = texto2;
 
 		if (descripcion.Length > 147)
-        {
+		{
+			descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+
             descripcion = descripcion.Substring(0, 147) + " ...";
         }
 

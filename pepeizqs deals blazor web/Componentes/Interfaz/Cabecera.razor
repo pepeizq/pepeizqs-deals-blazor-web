@@ -92,8 +92,6 @@
             {
                 if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
                 {
-                    adminMensaje = "Admin";
-
                     if (conexion == null)
                     {
                         conexion = Herramientas.BaseDatos.Conectar();
@@ -106,6 +104,8 @@
                         }
                     }
 
+                    bool añadirCorreo = false;
+
                     using (conexion)
                     {
                         int nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
@@ -113,12 +113,23 @@
 
                         if (nuevosCorreosDeals > 0 || nuevosCorreosApps > 0)
                         {
-                            adminMensaje = adminMensaje + " - Correo Nuevo";
+                            añadirCorreo = true;
                         }
                     }
 
                     <a class="texto-cabecera boton-superior" href="/admin" style="font-size: 15px;">
-                        @adminMensaje
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div>
+                                Admin
+                            </div>
+
+                            @if (añadirCorreo == true)
+                            {
+                                <div style="width: 20px; height: 20px;">
+                                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z" /></svg>
+                                </div>
+                            }
+                        </div>
                     </a>
                 }
             }
@@ -416,8 +427,6 @@
     private Usuario opcionesCabecera = null;
 
     private SqlConnection conexion = new SqlConnection();
-
-    private string adminMensaje = string.Empty;
 
     protected override void OnInitialized()
     {

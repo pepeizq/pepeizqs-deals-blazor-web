@@ -4002,19 +4002,13 @@
             {
                 if (juego.EpicGames == null)
                 {
-                    juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
-                    juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
-
-                    global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
+                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
                 }
                 else
                 {
                     if (juego.EpicGames.Fecha + TimeSpan.FromDays(240) < DateTime.Now)
                     {
-                        juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
-                        juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.EpicGames(juego);
+                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
                     }
                 }
             }

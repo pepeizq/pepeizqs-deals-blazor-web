@@ -73,10 +73,33 @@ namespace Tareas
 
 											if (juego != null)
 											{
-												juego.GalaxyGOG = await APIs.GOG.Juego.GalaxyDatos(ficha.IdPlataforma.ToString());
-												juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(ficha.IdPlataforma.ToString(), juego.Idiomas);
+												Juegos.JuegoGalaxyGOG datosGOG = await APIs.GOG.Juego.GalaxyDatos(ficha.IdPlataforma.ToString());
 
-												BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+												if (datosGOG != null)
+												{
+													juego.GalaxyGOG = datosGOG;
+													juego.Idiomas = await APIs.GOG.Juego.GalaxyIdiomas(ficha.IdPlataforma.ToString(), juego.Idiomas);
+
+													BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
+												}
+
+												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+											}
+										}
+
+										if (ficha.Metodo == "EpicAPI")
+										{
+											Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(ficha.IdJuego);
+
+											if (juego != null)
+											{
+												if (string.IsNullOrEmpty(juego.SlugEpic) == false)
+												{
+													juego.EpicGames = await APIs.EpicGames.Juego.EpicGamesDatos(juego.SlugEpic);
+													juego.Idiomas = await APIs.EpicGames.Juego.EpicGamesIdiomas(juego.SlugEpic, juego.Idiomas);
+
+													BaseDatos.Juegos.Actualizar.EpicGames(juego);
+												}
 
 												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
 											}

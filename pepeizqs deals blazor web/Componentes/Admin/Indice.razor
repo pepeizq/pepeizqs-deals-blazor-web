@@ -69,7 +69,6 @@
                     }
 
                     <button class="boton-pestañas" @onclick="(e => MostrarEnlaces(e))" style="@estiloEnlaces;">Enlaces</button>
-                    <button class="boton-pestañas" @onclick="(e => MostrarAvisos(e))" style="@estiloAvisos;">Avisos</button>
                     <button class="boton-pestañas" @onclick="(e => MostrarTareas(e))" style="@estiloTareas;">Tareas</button>
                     <button class="boton-pestañas" @onclick="(e => MostrarDivisas(e))" style="@estiloDivisas;">Divisas</button>          
                 </div>
@@ -95,11 +94,6 @@
                 @if (mostrarErrores == true)
                 {
                     <Errores/>
-                }
-
-                @if (mostrarAvisos == true)
-                {
-                    <Avisos/>
                 }
 
                 @if (mostrarTareas == true)
@@ -215,7 +209,6 @@
     private void CerrarPestañas()
     {
         mostrarEnlaces = false;
-        mostrarAvisos = false;
         mostrarErrores = false;
         mostrarTareas = false;
         mostrarDivisas = false;
@@ -229,7 +222,6 @@
         mostrarRecompensas = false;
 
         estiloEnlaces = null;
-        estiloAvisos = null;
         estiloErrores = null;
         estiloTareas = null;
         estiloDivisas = null;
@@ -282,20 +274,6 @@
         estiloErrores = fondo;
 
         ActualizarMensajeErrores(BaseDatos.Errores.Buscar.Todos(null).Count);
-    }
-
-    #endregion
-
-    #region Avisos
-
-    private bool mostrarAvisos = false;
-    private string estiloAvisos = null;
-
-    private void MostrarAvisos(MouseEventArgs e)
-    {
-        CerrarPestañas();
-        mostrarAvisos = true;
-        estiloAvisos = fondo;
     }
 
     #endregion

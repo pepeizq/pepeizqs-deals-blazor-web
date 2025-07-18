@@ -11,10 +11,16 @@ namespace Herramientas
 			TimeSpan actualizado = DateTime.Now.Subtract(precio.FechaActualizacion);
 
 			if (precio.Tienda == APIs.Steam.Tienda.Generar().Id || precio.Tienda == APIs.Steam.Tienda.GenerarBundles().Id ||
-				precio.Tienda == APIs.Humble.Tienda.Generar().Id || precio.Tienda == APIs.Humble.Tienda.GenerarChoice().Id ||
-				precio.Tienda == APIs.EpicGames.Tienda.Generar().Id)
+				precio.Tienda == APIs.Humble.Tienda.Generar().Id || precio.Tienda == APIs.Humble.Tienda.GenerarChoice().Id)
 			{
 				if (actualizado.TotalHours < 24)
+				{
+					return true;
+				}
+			}
+			else if (precio.Tienda == APIs.EpicGames.Tienda.Generar().Id)
+			{
+				if (actualizado.TotalHours < 48)
 				{
 					return true;
 				}

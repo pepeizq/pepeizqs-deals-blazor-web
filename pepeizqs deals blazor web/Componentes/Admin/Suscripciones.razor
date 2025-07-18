@@ -4,8 +4,8 @@
 
 @if (idSeleccionadaSuscripciones == null)
 {
-    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
-        <label style="margin-bottom: 10px;">Juego:</label>
+    <div class="caja-diseño" style="padding: 30px;">
+        <label style="margin-bottom: 10px;">Buscador:</label>
         <input type="text" @oninput="TextoCambiaBuscadorSuscripciones" class="entrada-texto" />
 
         @if (juegosBuscadorSuscripciones != null)
@@ -37,7 +37,7 @@
 }
 else
 {
-    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
+    <div class="caja-diseño" style="padding: 30px;">
         <div style="display: flex;">
             <div style="width: 15%;">
                 <img src="@imagenSeleccionadaSuscripciones" style="max-height: 100%; max-width: 100%;" />
@@ -91,16 +91,14 @@ else
         </div>
     </div>
 
-    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
         <label style="margin-bottom: 10px;">Imagen Noticia:</label>
         <input @onchange="@(e => CambiarImagenNoticiaSuscripciones(e))" class="entrada-texto" value="@imagenNoticiaSuscripciones">
         <img src="@imagenNoticiaSuscripciones" style="max-width: 300px; max-height: 300px; margin-top: 10px;" />
     </div>
 
-    <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
-        <div style="display: flex; width: 33%;">
-            <button @onclick="@(e => AñadirJuegoSuscripciones(e))" class="boton" style="text-align: center;">Añadir Suscripción</button>
-        </div>
+    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+        <button @onclick="@(e => AñadirJuegoSuscripciones(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">Añadir Suscripción</button>
     </div>
 }
 

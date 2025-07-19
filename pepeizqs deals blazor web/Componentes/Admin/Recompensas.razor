@@ -163,9 +163,11 @@ else
 
 	private List<RecompensaHistorial> entradas = new List<RecompensaHistorial>();
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		entradas = BaseDatos.Recompensas.Historial.Leer();
+
+        await Task.Yield();
 	}
 
 	private void CambiarBuscador(ChangeEventArgs texto)

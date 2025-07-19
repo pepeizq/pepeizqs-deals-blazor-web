@@ -2,6 +2,7 @@
 
 using Patreon.Net;
 using Patreon.Net.Models;
+using System.Text.Json;
 
 namespace Herramientas
 {
@@ -29,7 +30,7 @@ namespace Herramientas
 					{
 						foreach (var usuario in usuarios.Resources)
 						{
-							if (usuario.PatronStatus == Member.PatronStatusValue.ActivePatron)
+							if ((int)usuario.PatronStatus == 1 && usuario.CampaignLifetimeSupportCents > 0)
 							{
 								if (string.IsNullOrEmpty(usuario.Email) == false)
 								{

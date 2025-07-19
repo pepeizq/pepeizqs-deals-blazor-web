@@ -104,6 +104,24 @@ namespace Tareas
 												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
 											}
 										}
+
+										if (ficha.Metodo == "XboxAPI")
+										{
+											Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(ficha.IdJuego);
+
+											if (juego != null)
+											{
+												if (string.IsNullOrEmpty(juego.IdXbox) == false)
+												{
+													juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
+													juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
+
+													BaseDatos.Juegos.Actualizar.Xbox(juego);
+												}
+
+												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+											}
+										}
 									}
 								}
 							}

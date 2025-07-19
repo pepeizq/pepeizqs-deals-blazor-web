@@ -19,12 +19,20 @@ namespace BaseDatos.Recompensas
             RecompensaHistorial entrada = new RecompensaHistorial
             {
                 UsuarioId = lector.GetString(1),
-                Coins = lector.GetInt32(2),
-                Razon = lector.GetString(3),
-                Fecha = Convert.ToDateTime(lector.GetString(4))
-            };
+                Coins = lector.GetInt32(2)
+			};
 
-            return entrada;
+            if (lector.IsDBNull(3) == false)
+            {
+                entrada.Razon = lector.GetString(3);
+			}
+
+            if (lector.IsDBNull(4) == false)
+            {
+                entrada.Fecha = lector.GetDateTime(4);
+            }
+
+			return entrada;
         }
 
         public static void Insertar(string usuarioId, int coins, string razon, DateTime fecha)
@@ -42,7 +50,7 @@ namespace BaseDatos.Recompensas
                     comando.Parameters.AddWithValue("@usuarioId", usuarioId);
                     comando.Parameters.AddWithValue("@coins", coins.ToString());
                     comando.Parameters.AddWithValue("@razon", razon);
-                    comando.Parameters.AddWithValue("@fecha", fecha.ToString());
+                    comando.Parameters.AddWithValue("@fecha", fecha);
                   
                     try
                     {
@@ -56,45 +64,57 @@ namespace BaseDatos.Recompensas
             }
         }
 
-        public static List<RecompensaHistorial> Leer(string usuarioId = null)
+        public static List<RecompensaHistorial> Leer(string usuarioId = null, SqlConnection conexion = null)
         {
-            List<RecompensaHistorial> entradas = new List<RecompensaHistorial>();
-
-            SqlConnection conexion = Herramientas.BaseDatos.Conectar();
-
-            using (conexion)
-            {
-                string busqueda = "SELECT TOP 30 * FROM recompensasHistorial";
-
-                if (string.IsNullOrEmpty(usuarioId) == false)
-                {
-                    busqueda = busqueda + " WHERE usuarioId=@usuarioId";
-                }
-
-                busqueda = busqueda + " ORDER BY id DESC";
-
-                using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-                {
-                    if (string.IsNullOrEmpty(usuarioId) == false)
-                    {
-                        comando.Parameters.AddWithValue("@usuarioId", usuarioId);
-                    }
-                        
-                    using (SqlDataReader lector = comando.ExecuteReader())
-                    {
-                        while (lector.Read())
-                        {
-                            entradas.Add(Cargar(lector));
-                        }
-                    }
-                }
-            }
-
-			if (entradas.Count > 0)
-            {
-				return entradas.OrderByDescending(x => x.Fecha).ToList();
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
 			}
 
+			List<RecompensaHistorial> entradas = new List<RecompensaHistorial>();
+
+			try
+            {
+				using (conexion)
+				{
+					string busqueda = "SELECT TOP 30 * FROM recompensasHistorial";
+
+					if (string.IsNullOrEmpty(usuarioId) == false)
+					{
+						busqueda = busqueda + " WHERE usuarioId=@usuarioId";
+					}
+
+					busqueda = busqueda + " ORDER BY fecha DESC";
+
+					using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+					{
+						if (string.IsNullOrEmpty(usuarioId) == false)
+						{
+							comando.Parameters.AddWithValue("@usuarioId", usuarioId);
+						}
+
+						using (SqlDataReader lector = comando.ExecuteReader())
+						{
+							while (lector.Read())
+							{
+								entradas.Add(Cargar(lector));
+							}
+						}
+					}
+				}
+			}
+            catch (Exception ex)
+            {
+                BaseDatos.Errores.Insertar.Mensaje("Historial Recompensas", ex, conexion);
+			}
+			
             return entradas;
         }
     }

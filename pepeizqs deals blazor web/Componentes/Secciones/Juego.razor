@@ -2936,13 +2936,13 @@
                                     string idiomaGlobal = "global";
                                     string subrayadoGlobal = string.Empty;
 
-                                    if (idiomaAnalisis == idiomaGlobal)
+                                    if (idiomaReseñas == idiomaGlobal)
                                     {
                                         subrayadoGlobal = "border-bottom: 1px solid var(--colorEnlace);";
                                     }
                                 }
 
-                                <button @onclick="(e => AnalisisIdioma(e, idiomaGlobal))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+                                <button @onclick="(e => ReseñasIdioma(e, idiomaGlobal))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
                                     <div style="@subrayadoGlobal padding-bottom: 5px;">
                                         @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Reviews")
                                     </div>
@@ -2971,12 +2971,12 @@
                                         {
                                             string subrayado = string.Empty;
 
-                                            if (idiomaAnalisis == idioma2.SteamAPI)
+                                            if (idiomaReseñas == idioma2.SteamAPI)
                                             {
                                                 subrayado = "border-bottom: 1px solid var(--colorEnlace);";
                                             }
 
-                                            <button @onclick="(e => AnalisisIdioma(e, idioma2.SteamAPI))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
+                                            <button @onclick="(e => ReseñasIdioma(e, idioma2.SteamAPI))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
                                                 <div style="@subrayado padding-bottom: 5px;">
                                                     @idioma2.Traduccion
                                                 </div>
@@ -2987,22 +2987,22 @@
                             </div>
                         }
 
-                        @if (idiomaAnalisis == "global")
+                        @if (idiomaReseñas == "global")
                         {
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 20px; width: 100%;">
-                                @foreach (var analisisRegion in analisisRegiones)
+                                @foreach (var reseñasRegion in reseñasRegiones)
                                 {
-                                    if (analisisRegion != null)
+                                    if (reseñasRegion != null)
                                     {
-                                        int totalRegion = analisisRegion.CantidadPositivos + analisisRegion.CantidadNegativos;
-                                        int porcentajeRegion = Herramientas.Calculadora.SacarDescuento(analisisRegion.CantidadPositivos + analisisRegion.CantidadNegativos, analisisRegion.CantidadNegativos);
+                                        int totalRegion = reseñasRegion.CantidadPositivos + reseñasRegion.CantidadNegativos;
+                                        int porcentajeRegion = Herramientas.Calculadora.SacarDescuento(reseñasRegion.CantidadPositivos + reseñasRegion.CantidadNegativos, reseñasRegion.CantidadNegativos);
 
-                                        if (analisisRegion.CantidadPositivos > 0 && analisisRegion.CantidadNegativos == 0)
+                                        if (reseñasRegion.CantidadPositivos > 0 && reseñasRegion.CantidadNegativos == 0)
                                         {
                                             porcentajeRegion = 99;
                                         }
 
-                                        string imagenRegion = "/imagenes/banderas/" + analisisRegion.Idioma + ".svg";
+                                        string imagenRegion = "/imagenes/banderas/" + reseñasRegion.Idioma + ".svg";
 
                                         <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 10px; display: flex; align-items: center; gap: 10px; justify-content: center;">
                                             <img src="@imagenRegion" style="height: 26px;" loading="lazy" />
@@ -3034,17 +3034,17 @@
                         }
                         else
                         {
-                            if (analisisAmpliado.CantidadPositivos > 0)
+                            if (reseñasAmpliadas.CantidadPositivos > 0)
                             {
                                 <div style="width: 100%; display: flex; flex-direction: column; gap: 20px;">
                                     <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px;">
                                         <div style="margin-bottom: 10px;">
                                             @{
-                                                string idiomaTraduccion = idiomaAnalisis;
+                                                string idiomaTraduccion = idiomaReseñas;
 
                                                 foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
                                                 {
-                                                    if (idioma2.SteamAPI == idiomaAnalisis)
+                                                    if (idioma2.SteamAPI == idiomaReseñas)
                                                     {
                                                         idiomaTraduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
                                                     }
@@ -3056,10 +3056,10 @@
 
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             @{
-                                                int total = analisisAmpliado.CantidadPositivos + analisisAmpliado.CantidadNegativos;
-                                                int porcentaje = Herramientas.Calculadora.SacarDescuento(analisisAmpliado.CantidadPositivos + analisisAmpliado.CantidadNegativos, analisisAmpliado.CantidadNegativos);
+                                                int total = reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos;
+                                                int porcentaje = Herramientas.Calculadora.SacarDescuento(reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos, reseñasAmpliadas.CantidadNegativos);
 
-                                                if (analisisAmpliado.CantidadPositivos > 0 && analisisAmpliado.CantidadNegativos == 0)
+                                                if (reseñasAmpliadas.CantidadPositivos > 0 && reseñasAmpliadas.CantidadNegativos == 0)
                                                 {
                                                     porcentaje = 99;
                                                 }
@@ -3099,7 +3099,7 @@
                                                     </svg>
                                                 </div>
 
-                                                @analisisAmpliado.CantidadPositivos.ToString("N0")
+                                                @reseñasAmpliadas.CantidadPositivos.ToString("N0")
                                             </div>
 
                                             <div style="color: var(--colorTextoPeligro); display: flex; align-items: center; gap: 10px;">
@@ -3109,16 +3109,16 @@
                                                     </svg>
                                                 </div>
 
-                                                @analisisAmpliado.CantidadNegativos.ToString("N0")
+                                                @reseñasAmpliadas.CantidadNegativos.ToString("N0")
                                             </div>
                                         </div>
                                     </div>
 
-                                    @if (analisisAmpliado != null)
+                                    @if (reseñasAmpliadas != null)
                                     {
-                                        if (analisisAmpliado.Contenido != null)
+                                        if (reseñasAmpliadas.Contenido != null)
                                         {
-                                            foreach (var analisis in analisisAmpliado.Contenido)
+                                            foreach (var analisis in reseñasAmpliadas.Contenido)
                                             {
                                                 <a href="https://steamcommunity.com/profiles/@analisis.Autor.SteamID/recommended/@juego.IdSteam/" target="_blank" style="color: var(--colorTexto); text-decoration: none;">
                                                     <div class="boton-expandir2" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; border-radius: 5px;">
@@ -3816,13 +3816,9 @@
                     {
                         tiempoComprobar = TimeSpan.FromDays(30);
                     }
-                    else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(365) < DateTime.Now)
-                    {
-                        tiempoComprobar = TimeSpan.FromDays(60);
-                    }
                 }
 
-                if (juego.FechaSteamAPIComprobacion + tiempoComprobar < DateTime.Now)
+                if (juego.FechaSteamAPIComprobacion.Add(tiempoComprobar) < DateTime.Now)
                 {
                     actualizarDatosAPI = true;
                 }
@@ -3912,7 +3908,7 @@
                         }
                     }
 
-                    idiomaAnalisis = idiomaSteam;
+                    idiomaReseñas = idiomaSteam;
 
                     if (global::BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
                     {
@@ -3924,13 +3920,13 @@
                             {
                                 global::BaseDatos.Analisis.Insertar.Ejecutar(juego.Id, analisis.Sumario.TotalPositivas, analisis.Sumario.TotalNegativas, idiomaSteam, JsonSerializer.Serialize(analisis.Analisis));
 
-                                analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
+                                reseñasAmpliadas = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
                             }
                         }
                     }
                     else
                     {
-                        analisisAmpliado = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
+                        reseñasAmpliadas = global::BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
                     }
                 }
 
@@ -4017,19 +4013,13 @@
             {
                 if (juego.Xbox == null)
                 {
-                    juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
-                    juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
-
-                    global::BaseDatos.Juegos.Actualizar.Xbox(juego);
+                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
                 }
                 else
                 {
                     if (juego.Xbox.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
                     {
-                        juego.Xbox = await APIs.Xbox.Juego.XboxDatos(juego.IdXbox);
-                        juego.Idiomas = await APIs.Xbox.Juego.XboxIdiomas(juego.IdXbox, juego.Idiomas);
-
-                        global::BaseDatos.Juegos.Actualizar.Xbox(juego);
+                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
                     }
                 }
             }
@@ -6030,40 +6020,44 @@
 
     #endregion
 
-    #region Analisis
+    #region Reseñas
 
-    private JuegoAnalisisAmpliado analisisAmpliado = new JuegoAnalisisAmpliado();
-    private List<JuegoAnalisisAmpliadoIdioma> analisisRegiones = new List<JuegoAnalisisAmpliadoIdioma>();
-    private string idiomaAnalisis = string.Empty;
+    private JuegoAnalisisAmpliado reseñasAmpliadas = new JuegoAnalisisAmpliado();
+    private List<JuegoAnalisisAmpliadoIdioma> reseñasRegiones = new List<JuegoAnalisisAmpliadoIdioma>();
+    private string idiomaReseñas = string.Empty;
 
-    private async Task AnalisisIdioma(MouseEventArgs e, string idiomaSteam)
+    private async Task ReseñasIdioma(MouseEventArgs e, string idiomaSteam)
     {
-        idiomaAnalisis = idiomaSteam;
+        idiomaReseñas = idiomaSteam;
 
-        if (idiomaAnalisis != "global")
+        if (idiomaReseñas != "global")
         {
-            analisisAmpliado = await AnalisisCargarIdioma(idiomaAnalisis);
+            reseñasAmpliadas = await ReseñasCargarIdioma(idiomaReseñas);
         }
         else
         {
-            analisisRegiones.Clear();
+            reseñasRegiones.Clear();
 
             foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
             {
-                if (idioma2.SteamReseñas == true && idiomaSteam == idioma2.SteamAPI)
+                if (idioma2.SteamReseñas == true)
                 {
-                    JuegoAnalisisAmpliado analisisRegion = await AnalisisCargarIdioma(idioma2.SteamAPI);
-                    JuegoAnalisisAmpliadoIdioma analisisRegion2 = new JuegoAnalisisAmpliadoIdioma();
-                    analisisRegion2.CantidadPositivos = analisisRegion.CantidadPositivos;
-                    analisisRegion2.CantidadNegativos = analisisRegion.CantidadNegativos;
-                    analisisRegion2.Idioma = idioma2.SteamAPI;
-                    analisisRegiones.Add(analisisRegion2);
+                    JuegoAnalisisAmpliado reseñasRegion = await ReseñasCargarIdioma(idioma2.SteamAPI);
+                    JuegoAnalisisAmpliadoIdioma reseñasRegion2 = new JuegoAnalisisAmpliadoIdioma();
+                    reseñasRegion2.CantidadPositivos = reseñasRegion.CantidadPositivos;
+                    reseñasRegion2.CantidadNegativos = reseñasRegion.CantidadNegativos;
+                    reseñasRegion2.Idioma = idioma2.SteamAPI;
+                    reseñasRegiones.Add(reseñasRegion2);
+
+                    await InvokeAsync(StateHasChanged);
                 }
             }
         }
+
+        await InvokeAsync(StateHasChanged);
     }
 
-    private async Task<JuegoAnalisisAmpliado> AnalisisCargarIdioma(string idiomaSteam)
+    private async Task<JuegoAnalisisAmpliado> ReseñasCargarIdioma(string idiomaSteam)
     {
         if (global::BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
         {

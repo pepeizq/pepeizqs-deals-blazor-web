@@ -59,13 +59,20 @@ namespace Tareas.Tiendas
 							}
 							else
 							{
-								siguienteComprobacion = TimeSpan.FromMinutes(10);
+								siguienteComprobacion = TimeSpan.FromMinutes(5);
 							}
 						}
 
 						if (DateTime.Now.Hour == 20)
 						{
-							siguienteComprobacion = TimeSpan.FromMinutes(30);
+							if (DateTime.Now.Minute < 30)
+							{
+								siguienteComprobacion = TimeSpan.FromMinutes(10);
+							}
+							else
+							{
+								siguienteComprobacion = TimeSpan.FromMinutes(20);
+							}	
 						}
 
 						bool sePuedeUsar = BaseDatos.Admin.Buscar.TiendasPosibleUsar(siguienteComprobacion, id, conexion);

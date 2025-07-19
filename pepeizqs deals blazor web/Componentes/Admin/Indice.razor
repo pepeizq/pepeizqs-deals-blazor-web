@@ -39,6 +39,11 @@
         <div style="display: flex; align-items: start; width: 100%; font-size: 17px; gap: 40px;">
             <div style="width: 15%;">
                 <div>
+                    @if (nuevosDuplicadosCantidad > 0)
+                    {
+                        <button class="boton-pestañas" @onclick="(e => MostrarDuplicados(e))" style="@estiloDuplicados;">Duplicados (@nuevosDuplicadosCantidad)</button>
+                    }
+
                     @if (nuevosErroresCantidad > 0)
                     {
                         <button class="boton-pestañas" @onclick="(e => MostrarErrores(e))" style="@estiloErrores;">Errores @nuevosErroresMensaje</button>
@@ -81,7 +86,7 @@
                     <button class="boton-pestañas" @onclick="(e => MostrarBundles(e))" style="@estiloBundles;">Bundles</button>
                     <button class="boton-pestañas" @onclick="(e => MostrarGratis(e))" style="@estiloGratis;">Gratis</button>
                     <button class="boton-pestañas" @onclick="(e => MostrarSuscripciones(e))" style="@estiloSuscripciones;">Suscripciones</button>
-                    <button class="boton-pestañas" @onclick="(e => MostrarRecompensas(e))" style="@estiloRecompensas;">Tienda Patreon</button>
+                    <button class="boton-pestañas" @onclick="(e => MostrarRecompensas(e))" style="@estiloRecompensas;">Recompensas</button>
                 </div>
             </div>
 
@@ -89,6 +94,11 @@
                 @if (mostrarEnlaces == true)
                 {
                     <Enlaces correosDeals="nuevosCorreosDeals" correosApps="nuevosCorreosApps" />
+                }
+
+                @if (mostrarDuplicados == true)
+                {
+                    <Duplicados/>
                 }
 
                 @if (mostrarErrores == true)
@@ -181,6 +191,7 @@
             {
                 ActualizarMensajeErrores(BaseDatos.Admin.Buscar.CantidadErrores(conexion));
 
+                nuevosDuplicadosCantidad = int.Parse(BaseDatos.Admin.Buscar.Dato("duplicados", conexion));
                 nuevosPendientesCantidad = int.Parse(BaseDatos.Admin.Buscar.Dato("pendientes", conexion));
                 nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
                 nuevosCorreosApps = int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion));
@@ -209,6 +220,7 @@
     private void CerrarPestañas()
     {
         mostrarEnlaces = false;
+        mostrarDuplicados = false;
         mostrarErrores = false;
         mostrarTareas = false;
         mostrarDivisas = false;
@@ -222,6 +234,7 @@
         mostrarRecompensas = false;
 
         estiloEnlaces = null;
+        estiloDuplicados = null;
         estiloErrores = null;
         estiloTareas = null;
         estiloDivisas = null;
@@ -245,6 +258,22 @@
         CerrarPestañas();
         mostrarEnlaces = true;
         estiloEnlaces = fondo;
+    }
+
+    #endregion
+
+    #region Duplicados
+
+    private bool mostrarDuplicados = false;
+    private string estiloDuplicados = null;
+
+    private int nuevosDuplicadosCantidad = 0;
+
+    private void MostrarDuplicados(MouseEventArgs e)
+    {
+        CerrarPestañas();
+        mostrarDuplicados = true;
+        estiloDuplicados = fondo;
     }
 
     #endregion

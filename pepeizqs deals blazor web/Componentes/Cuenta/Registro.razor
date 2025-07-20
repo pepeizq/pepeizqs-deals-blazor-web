@@ -16,14 +16,16 @@
 @inject IEmailSender<Usuario> EmailSender
 @inject NavigationManager NavManager
 
+@{
+    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Register") + " • pepeizq's deals";
+}
+
+<HeadContent>
+    <PageTitle>@titulo</PageTitle>
+</HeadContent>
+
 @if (string.IsNullOrEmpty(usuarioId) == true)
 {
-    string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Register") + " • pepeizq's deals";
-
-    <HeadContent>
-        <PageTitle>@titulo</PageTitle>
-    </HeadContent>
-
     <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: auto;">
         @if (string.IsNullOrEmpty(mensajeError) == false)
         {

@@ -104,7 +104,11 @@
         {
             if (HttpMethods.IsGet(Contexto.HttpContext.Request.Method))
             {
-                await Contexto.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                try
+                {
+                    await Contexto.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                }
+                catch { }
             }
         } 
     }

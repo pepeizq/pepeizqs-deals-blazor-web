@@ -190,8 +190,8 @@ public class Usuario : IdentityUser
 	public DateTime? PatreonLastLogin { get; set; }
 
 	[PersonalData]
-	[Column(TypeName = "bit(1)")]
-	public bool? MailSummary { get; set; }
+	[Column(TypeName = "int(4)")]
+	public int? PatreonContribution { get; set; }
 
 	[PersonalData]
 	[Column(TypeName = "nvarchar(256)")]

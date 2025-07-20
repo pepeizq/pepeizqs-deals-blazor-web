@@ -178,7 +178,6 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
-    private string enlace = null;
     private string codigoFuente = null;
 
     protected override async Task OnInitializedAsync()
@@ -195,7 +194,6 @@
             idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext.Request.Headers.UserAgent.ToString();
-            enlace = HttpContext.Request.Path.ToString();
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)
@@ -249,7 +247,7 @@
                     }
                 }
 
-                if (usuario.PatreonLastLogin == null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true)
+                if (usuario.PatreonLastLogin == null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true && usuario.PatreonContribution > 0)
                 {
                     usuario.PatreonLastLogin = DateTime.Now;
                     usuario.PatreonCoins = 2;
@@ -259,14 +257,30 @@
 
                 if (usuario.PatreonLastLogin != null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true)
                 {
-                    if (usuario.PatreonCoins < 30)
+                    if (usuario.PatreonContribution > 0)
                     {
-                        if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                        if (usuario.PatreonCoins < 120)
                         {
-                            usuario.PatreonLastLogin = DateTime.Now;
-                            usuario.PatreonCoins = usuario.PatreonCoins + 2;
+                            if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                            {
+                                usuario.PatreonLastLogin = DateTime.Now;
+                                usuario.PatreonCoins = usuario.PatreonCoins + 2;
 
-                            global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                                global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (usuario.PatreonCoins < 10)
+                        {
+                            if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                            {
+                                usuario.PatreonLastLogin = DateTime.Now;
+                                usuario.PatreonCoins = usuario.PatreonCoins + 2;
+
+                                global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                            }
                         }
                     }
                 }

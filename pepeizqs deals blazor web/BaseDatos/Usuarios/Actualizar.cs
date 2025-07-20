@@ -6,7 +6,7 @@ namespace BaseDatos.Usuarios
 {
     public static class Actualizar
     {
-        public static void PatreonComprobacion(string correoBuscar, DateTime fechaActualizar, SqlConnection conexion = null)
+        public static void PatreonComprobacion(string correoBuscar, DateTime fechaActualizar, int contribucion, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -47,12 +47,13 @@ namespace BaseDatos.Usuarios
             if (string.IsNullOrEmpty(id) == false)
             {
 				string sqlActualizar = "UPDATE AspNetUsers " +
-					"SET PatreonLastCheck=@PatreonLastCheck WHERE Id=@Id";
+					"SET PatreonLastCheck=@PatreonLastCheck, PatreonContribution=@PatreonContribution WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 				{
 					comando.Parameters.AddWithValue("@Id", id);
 					comando.Parameters.AddWithValue("@PatreonLastCheck", fechaActualizar);
+					comando.Parameters.AddWithValue("@PatreonContribution", contribucion);
 
 					try
 					{

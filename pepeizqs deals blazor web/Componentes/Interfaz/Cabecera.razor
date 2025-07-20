@@ -45,10 +45,15 @@
         padding: 6px 12px;
         margin: 0px;
         transition: transform .2s;
+        text-decoration: none;
+        background-color: transparent;
+        border: 0;
+        color: var(--colorTexto);
     }
 
     .boton-superior:hover {
         transform: scale(1.01);
+        color: var(--colorEnlace);
     }
 
     @@media (max-width: 800px) {
@@ -117,8 +122,8 @@
                         }
                     }
 
-                    <a class="texto-cabecera boton-superior" href="/admin" style="font-size: 15px;">
-                        <div style="display: flex; align-items: center; gap: 15px;">
+                    <a class="boton-superior" href="/admin" style="font-size: 15px;">
+                        <div style="@GenerarEstilo("/admin") display: flex; align-items: center; gap: 15px;">
                             <div>
                                 Admin
                             </div>
@@ -149,25 +154,35 @@
         <div class="botones-superiores">
             @if (string.IsNullOrEmpty(usuarioId) == false)
             {
-                <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                <a class="boton-superior" href="/wishlist" style="font-size: 15px;">
+                    <div style="@GenerarEstilo("/wishlist")">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                    </div>
                 </a>
             }
 
-            <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+            <a class="boton-superior" href="/historical-lows" style="font-size: 15px;">
+                <div style="@GenerarEstilo("/historical-lows")">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+                </div>
             </a>
 
-            <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+            <a class="boton-superior" href="/bundles" style="font-size: 15px;">
+                <div style="@GenerarEstilo("/bundles")">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+                </div>
             </a>
 
-            <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+            <a class="boton-superior" href="/free" style="font-size: 15px;">
+                <div style="@GenerarEstilo("/free")">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+                </div>
             </a>
 
-            <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+            <a class="boton-superior" href="/subscriptions" style="font-size: 15px;">
+                <div style="@GenerarEstilo("/subscriptions")">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+                </div>
             </a>
 
             @* @if (ubicacionEnlace.Contains("/forum") == false)
@@ -233,12 +248,16 @@
                 </Authorized>
                 <NotAuthorized>
                     <div style="display: flex; align-items: center; margin-left: auto;">
-                        <a href="/account/login" target="_blank" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+                        <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                            <div style="@GenerarEstilo("/account/login")">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+                            </div>
                         </a>
 
-                        <a href="/account/register" target="_blank" class="texto-cabecera" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+                        <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                            <div style="@GenerarEstilo("/account/register")">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+                            </div>
                         </a>
                     </div>
                 </NotAuthorized>
@@ -418,6 +437,9 @@
     [Parameter]
     public string usuarioId { get; set; }
 
+    [Parameter]
+    public string enlace { get; set; }
+
     [SupplyParameterFromQuery]
     private string Search { get; set; }
 
@@ -448,6 +470,28 @@
             TextoCambiaBuscador();
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+         enlace = NavManager.Uri;
+         await InvokeAsync(StateHasChanged);
+    }
+
+    #region Botones Cabecera
+
+    private string GenerarEstilo(string enlaceBoton)
+    {
+        if (NavManager.Uri.Contains(enlaceBoton) == true)
+        {
+            return "border-bottom: 2px solid var(--colorEnlace); color: var(--colorEnlace);";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    #endregion
 
     #region Buscador
 

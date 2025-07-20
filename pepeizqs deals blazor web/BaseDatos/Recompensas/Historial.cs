@@ -24,7 +24,10 @@ namespace BaseDatos.Recompensas
 
             if (lector.IsDBNull(3) == false)
             {
-                entrada.Razon = lector.GetString(3);
+                if (string.IsNullOrEmpty(lector.GetString(3)) == false)
+                {
+                    entrada.Razon = lector.GetString(3);
+                }
 			}
 
             if (lector.IsDBNull(4) == false)

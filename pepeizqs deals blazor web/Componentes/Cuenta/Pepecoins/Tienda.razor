@@ -44,7 +44,7 @@
 
 <div style="max-width: 1200px; margin: auto;">
 	<div style="width: 100%; display: flex; flex-direction: column; gap: 20px;">
-		@if (usuario?.PatreonCoins >= 30)
+		@if (usuario?.PatreonCoins >= 120)
 		{
 			<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px 30px; display: flex; align-items: center; gap: 20px;">
 				<div style="max-width: 26px;">
@@ -254,8 +254,6 @@
 	private RecompensaJuego juegoSeleccionado = new RecompensaJuego();
 	private string nombreJuegoSeleccionado = null;
 	private string claveJuegoSeleccionado = null;
-
-	
 
 	protected override async Task OnInitializedAsync()
 	{

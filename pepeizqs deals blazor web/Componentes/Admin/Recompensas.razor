@@ -47,7 +47,7 @@
 }
 else
 {
-	<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px;">
+	<div class="caja-diseño" style="padding: 30px;">
 		<div style="margin-bottom: 10px; text-align: left;">
 			<label>Buscar Juego</label>
 		</div>
@@ -94,7 +94,7 @@ else
 		</div>
 	</div>
 
-	<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+	<div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
 		@if (entradas != null)
 		{
 			if (entradas.Count > 0)
@@ -124,19 +124,7 @@ else
 						</div>
 
 						<div>
-							@if (string.IsNullOrEmpty(entrada.Razon) == false)
-							{
-								string cadena = entrada.Razon;
-								string juego = string.Empty;
-
-								if (cadena.Contains("Buy") == true)
-								{
-									juego = cadena.Remove(0, 4);
-									cadena = "Buy2";
-								}
-
-								<label>@Herramientas.Idiomas.BuscarTexto("es-ES", cadena, "Rewards") @juego</label>
-							}
+							@entrada.Razon
 						</div>
 					</div>
 
@@ -163,11 +151,9 @@ else
 
 	private List<RecompensaHistorial> entradas = new List<RecompensaHistorial>();
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		entradas = BaseDatos.Recompensas.Historial.Leer();
-
-        await Task.Yield();
 	}
 
 	private void CambiarBuscador(ChangeEventArgs texto)

@@ -123,203 +123,224 @@
 	}
 </style>
 
-@if (bundlesActuales != null)
+@if (mostrarBundleSeleccionado == false)
 {
-	if (bundlesActuales.Count > 0)
-	{
-		if (mostrarBundleSeleccionado == false)
-		{
-			<h1 style="font-size: 23px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Bundle")
-			</h1>
+	<div style="width: 100vw; position: relative; margin-left: -50vw; left: 50%; background-color: #222b44; margin-top: -40px;">
+		<div class="cuerpo-ancho" style="padding: 15px 0px; font-size: 18px; display: flex; align-items: center; gap: 20px;">
+			<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, false))">
+				<h1 style="font-size: 18px; margin: 0px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Bundle")
+				</h1>
+			</button>
 
-			<hr>
-
-			<div class="bundles-grid caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-items: center; margin-bottom: 70px; padding: 30px;">
-				@foreach (var bundle in bundlesActuales)
-				{
-					<button @onclick="@(e => SeleccionarBundle(e, bundle))" class="boton-pequeño" style="padding: 0px;">
-						<div style="width: 100%; text-align: center; padding: 2px;">
-							@if (bundle.Tipo == Bundles2.BundleTipo.HumbleBundle)
-							{
-								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenNoticia, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
-							}
-							else
-							{
-								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenBundle, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
-							}
-
-							<div style="margin-top: 10px; margin-bottom: 5px; text-align: center;">
-								@MostrarFecha(bundle.FechaEmpieza, bundle.FechaTermina)
-							</div>
-						</div>
-					</button>
-				}		
-			</div>
-		}
-		else
-		{
-			@if (bundleSeleccionado != null)
+			@if (tiposActuales.Count > 0 && mostrarArchivo == false)
 			{
-				<div style="margin-bottom: 40px; position: -webkit-sticky; position: sticky; top: 70px; z-index: 3; overflow: hidden;">
-					<div class="caja-diseño" style="padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
-						<button @onclick="@(e => CerrarBundle(e))" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
-							<div style="max-width: 24px; max-height: 24px;">
-								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-									<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-								</svg>
-							</div>
+				foreach (var tipo in tiposActuales)
+				{
+					if (tipo != Bundles2.BundleTipo.Desconocido)
+					{
+						<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(tipo).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store"/>
+						</button>
+					}
+				}
+			}
+
+			<div style="width: 100%; display: flex; justify-content: right;">
+				<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, true))">
+					<div style="font-size: 16px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Bundle")
+					</div>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	@if (mostrarArchivo == false)
+	{
+		<div class="bundles-grid caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-items: center; margin-top: 40px; padding: 30px;">
+			@foreach (var bundle in bundlesActuales)
+			{
+				<button @onclick="@(e => SeleccionarBundle(e, bundle))" class="boton-pequeño" style="padding: 0px;">
+					<div style="width: 100%; text-align: center; padding: 2px;">
+						@if (bundle.Tipo == Bundles2.BundleTipo.HumbleBundle)
+						{
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenNoticia, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
+						}
+						else
+						{
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(bundle.ImagenBundle, 395, 222)" style="max-width: 100%;" alt="@bundle.NombreBundle" />
+						}
+
+						<div style="margin-top: 10px; margin-bottom: 5px; text-align: center;">
+							@MostrarFecha(bundle.FechaEmpieza, bundle.FechaTermina)
+						</div>
+					</div>
+				</button>
+			}		
+		</div>
+	}
+	else
+	{
+		<div class="caja-diseño" style="padding: 30px; margin-top: 40px;">
+			<div style="display: flex; align-items: start;">
+				@foreach (var año in años)
+				{
+					<div style="margin-right: 15px;">
+						<button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
+							@año
 						</button>
 
-						<div style="display: flex; align-items: center; flex-direction: row;">
-							<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" style="width: auto;" target="_blank">
-								<div style="height: 60px; padding-left: 40px; padding-right: 20px;">
-									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleSeleccionado.Tipo).ImagenTienda)" style="height: 100%;" alt="@bundleSeleccionado.NombreBundle" />
+						@if (añoSeleccionado == año)
+						{
+							<div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
+							</div>
+
+							<div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
+								@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+								{
+									List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+									foreach (var bundlePasado in bundlesPasados)
+									{
+										if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
+										{
+											bundlesAño.Add(bundlePasado);
+										}
+									}
+
+									if (bundlesAño.Count > 0)
+									{
+										<div style="margin-right: 15px; font-size: 14px;">
+											<a onclick="moverScroll('pasado-@bundleTipo.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
+												<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenIcono)" style="width: 22px; height: 22px;" alt="Store"/> (@bundlesAño.Count.ToString())
+											</a>
+										</div>
+									}
+								}
+							</div>
+						}
+					</div>
+				}
+			</div>
+			
+			@if (string.IsNullOrEmpty(añoSeleccionado) == false)
+			{
+				<div style="margin-top: 55px;">
+					@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+					{
+						List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+						foreach (var bundlePasado in bundlesPasados)
+						{
+							if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
+							{
+								bundlesAño.Add(bundlePasado);
+							}
+						}
+
+						if (bundlesAño.Count > 0)
+						{
+							<hr>
+
+							<div id="pasado-@bundleTipo.ToString()" style="display: flex; align-items: start; gap: 40px;">
+								<div style="width: 20%;">
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenTienda)" alt="Store" style="width: 100%; height: 100%;"/>
+								</div>
+
+								<div style="width: 80%;">
+									@{
+										int i = 1;
+										while (i < 13)
+										{
+											List<Bundles2.Bundle> bundlesMensual = new List<Bundles2.Bundle>();
+
+											foreach (var bundle in bundlesAño)
+											{
+												if (bundle.FechaEmpieza.Month == i)
+												{
+													bundlesMensual.Add(bundle);
+												}
+											}
+
+											if (bundlesMensual.Count > 0)
+											{
+												bundlesMensual = bundlesMensual.OrderBy(x => x.NombreBundle).ToList();
+
+												<label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
+
+												<ul>
+													@foreach (var bundleMensual in bundlesMensual)
+													{
+														<li>
+															<a @onclick="@(e => SeleccionarBundle(e, bundleMensual))" class="enlace-falso">
+																@bundleMensual.NombreBundle
+															</a>
+														</li>
+													}
+												</ul>
+											}
+
+											i += 1;
+										}
+									}
+								</div>
+							</div>
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+}
+else
+{
+	if (bundleSeleccionado != null)
+	{
+		<div style="margin-bottom: 40px; position: -webkit-sticky; position: sticky; top: 70px; z-index: 3; overflow: hidden;">
+			<div class="caja-diseño" style="padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
+				<button @onclick="@(e => CerrarBundle(e))" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
+					<div style="max-width: 24px; max-height: 24px;">
+						<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+						</svg>
+					</div>
+				</button>
+
+				<div style="display: flex; align-items: center; flex-direction: row;">
+					<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" style="width: auto;" target="_blank">
+						<div style="height: 60px; padding-left: 40px; padding-right: 20px;">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleSeleccionado.Tipo).ImagenTienda)" style="height: 100%;" alt="@bundleSeleccionado.NombreBundle" />
+						</div>
+					</a>
+
+					<div style="padding-left: 20px; padding-right: 20px;">
+						<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="background-color: transparent; padding: 0px; font-size: 20px; margin-bottom: 10px;" target="_blank">
+							@bundleSeleccionado.NombreBundle
+						</a>
+
+						<div style="display: flex; align-items: center; gap: 20px; flex-direction: row; font-size: 14px;">
+							<a href="/bundle/@bundleSeleccionado.Id/@Herramientas.EnlaceAdaptador.Nombre(bundleSeleccionado.NombreBundle)/" class="boton-pequeño" style="padding: 0px; width: fit-content; background-color: transparent;">
+								<div style="max-width: 20px; max-height: 20px;">
+									<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+										<path d="M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z" />
+									</svg>
 								</div>
 							</a>
 
-							<div style="padding-left: 20px; padding-right: 20px;">
-								<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="background-color: transparent; padding: 0px; font-size: 20px; margin-bottom: 10px;" target="_blank">
-									@bundleSeleccionado.NombreBundle
-								</a>
-
-								<div style="display: flex; align-items: center; gap: 20px; flex-direction: row; font-size: 14px;">
-									<a href="/bundle/@bundleSeleccionado.Id/@Herramientas.EnlaceAdaptador.Nombre(bundleSeleccionado.NombreBundle)/" class="boton-pequeño" style="padding: 0px; width: fit-content; background-color: transparent;">
-										<div style="max-width: 20px; max-height: 20px;">
-											<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-												<path d="M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z" />
-											</svg>
-										</div>
-									</a>
-
-									@MostrarFecha(bundleSeleccionado.FechaEmpieza, bundleSeleccionado.FechaTermina)
-								</div>
-							</div>
+							@MostrarFecha(bundleSeleccionado.FechaEmpieza, bundleSeleccionado.FechaTermina)
 						</div>
 					</div>
-
-					<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Bundle")
-					</a>
-				</div>		
-
-				<Bundle bundleId="@bundleSeleccionado.Id" tipo="@Bundle.Tipo.Bundles" />
-			}
-		}
-	}
-
-}
-
-@if (mostrarBundleSeleccionado == false)
-{
-	<div id="bundles-archivo" style="font-size: 23px;">
-		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Bundle")
-	</div>
-
-	<div style="display: flex; align-items: start; margin-top: 10px;">
-		@foreach (var año in años)
-		{
-			<div style="margin-right: 15px;">
-				<button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
-					@año
-				</button>
-
-				@if (añoSeleccionado == año)
-				{
-					<div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
-					</div>
-
-					<div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
-						@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
-						{
-							List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
-
-							foreach (var bundlePasado in bundlesPasados)
-							{
-								if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
-								{
-									bundlesAño.Add(bundlePasado);
-								}
-							}
-
-							if (bundlesAño.Count > 0)
-							{
-								<div style="margin-right: 15px; font-size: 14px;">
-									<a onclick="moverScroll('pasado-@bundleTipo.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
-										<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenIcono)" style="width: 22px; height: 22px;" alt="Store"/> (@bundlesAño.Count.ToString())
-									</a>
-								</div>
-							}
-						}
-					</div>
-				}
-			</div>
-		}
-	</div>
-
-	<div style="margin-top: 55px;">
-		@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
-		{
-			List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
-
-			foreach (var bundlePasado in bundlesPasados)
-			{
-				if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
-				{
-					bundlesAño.Add(bundlePasado);
-				}
-			}
-
-			if (bundlesAño.Count > 0)
-			{
-				<hr>
-
-				<div id="pasado-@bundleTipo.ToString()" style="display: flex; align-items: start;">
-					<div class="perfil" style="width: 20%;">
-						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenTienda)" alt="Store"/>
-					</div>
-
-					<div class="perfil" style="width: 80%;">
-						@{
-							int i = 1;
-							while (i < 13)
-							{
-								List<Bundles2.Bundle> bundlesMensual = new List<Bundles2.Bundle>();
-
-								foreach (var bundle in bundlesAño)
-								{
-									if (bundle.FechaEmpieza.Month == i)
-									{
-										bundlesMensual.Add(bundle);
-									}
-								}
-
-								if (bundlesMensual.Count > 0)
-								{
-									bundlesMensual = bundlesMensual.OrderBy(x => x.NombreBundle).ToList();
-
-									<label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
-
-									<ul>
-										@foreach (var bundleMensual in bundlesMensual)
-										{
-											<li>
-												<a @onclick="@(e => SeleccionarBundle(e, bundleMensual))" class="enlace-falso">
-													@bundleMensual.NombreBundle
-												</a>
-											</li>
-										}
-									</ul>
-								}
-
-								i += 1;
-							}
-						}
-					</div>
 				</div>
-			}
-		}
-	</div>
+			</div>
+
+			<a href="@Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Bundle")
+			</a>
+		</div>		
+
+		<Bundle bundleId="@bundleSeleccionado.Id" tipo="@Bundle.Tipo.Bundles" />
+	}
 }
 
 @code {
@@ -378,8 +399,72 @@
 		if (bundlesActuales.Count > 0)
 		{
 			bundleSeleccionado = bundlesActuales[0];
+
+			foreach (var bundle in bundlesActuales)
+			{
+				bool añadirTipo = true;
+
+				if (tiposActuales.Count > 0)
+				{
+					foreach (var tipoActual in tiposActuales)
+					{
+						if (tipoActual == bundle.Tipo)
+						{
+							añadirTipo = false;
+						}
+					}
+				}
+
+				if (añadirTipo == true)
+				{
+					tiposActuales.Add(bundle.Tipo);
+				}
+			}
 		}
 	}
+
+	private Bundles2.BundleTipo tipoSeleccionado = Bundles2.BundleTipo.Desconocido;
+	private List<Bundles2.BundleTipo> tiposActuales = new List<Bundles2.BundleTipo>();
+	private bool mostrarArchivo = false;
+
+	private void CambiarTipo(MouseEventArgs e, Bundles2.BundleTipo nuevoTipo, bool esArchivo)
+	{
+		mostrarArchivo = esArchivo;
+
+		if (esArchivo == false)
+		{
+			tipoSeleccionado = nuevoTipo;
+			bundlesActuales = BaseDatos.Bundles.Buscar.Actuales(nuevoTipo);
+		}
+	}
+
+	private string CambiarEstilo(Bundles2.BundleTipo nuevoTipo, bool esArchivo)
+	{
+		if (mostrarArchivo == true && esArchivo == true)
+		{
+			if (nuevoTipo != Bundles2.BundleTipo.Desconocido)
+			{
+				return "background-color: transparent;";
+			}
+			else
+			{
+				return "background-color: #4b619d;";
+			}
+		}
+		else
+		{
+			if (tipoSeleccionado == nuevoTipo && mostrarArchivo == false && esArchivo == false)
+			{
+				return "background-color: #4b619d;";
+			}
+			else
+			{
+				return "background-color: transparent;";
+			}
+		}
+	}
+
+	#region Archivo
 
 	private void CambiarAño(MouseEventArgs e, string nuevoAño)
 	{
@@ -410,6 +495,8 @@
 
 		return Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Bundle") + " • " + fechaEmpieza.Day.ToString() + "/" + fechaEmpieza.Month.ToString() + "/" + fechaEmpieza.Year.ToString() + " • " + fechaTermina.Day.ToString() + "/" + fechaTermina.Month.ToString() + "/" + fechaTermina.Year.ToString();
 	}
+
+	#endregion
 
 	private async void SeleccionarBundle(MouseEventArgs e, Bundles2.Bundle nuevoBundle)
 	{

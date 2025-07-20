@@ -34,7 +34,7 @@ namespace Herramientas
 							{
 								if (string.IsNullOrEmpty(usuario.Email) == false)
 								{
-									global::BaseDatos.Usuarios.Actualizar.PatreonComprobacion(usuario.Email, DateTime.Now);
+									global::BaseDatos.Usuarios.Actualizar.PatreonComprobacion(usuario.Email, DateTime.Now, usuario.CampaignLifetimeSupportCents);
 								}
 							}	
 						}

@@ -57,7 +57,7 @@ namespace BaseDatos.Bundles
 			return bundle;
         }
 
-		public static List<Bundles2.Bundle> Actuales(SqlConnection conexion = null)
+		public static List<Bundles2.Bundle> Actuales(Bundles2.BundleTipo tipo = Bundles2.BundleTipo.Desconocido, SqlConnection conexion = null)
 		{
 			List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
 
@@ -75,7 +75,14 @@ namespace BaseDatos.Bundles
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM bundles WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
+				string busqueda = "SELECT * FROM bundles WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina)";
+
+				if (tipo != Bundles2.BundleTipo.Desconocido)
+				{
+					busqueda = busqueda + " AND (bundleTipo=" + (int)tipo + ")";
+				}
+
+				busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

@@ -13,7 +13,8 @@ namespace Suscripciones2
 		PCGamePass,
 		UbisoftPlusClassics,
 		UbisoftPlusPremium,
-		AmazonLunaPlus
+		AmazonLunaPlus,
+		Desconocido
 	}
 
 	public class SuscripcionesCargar

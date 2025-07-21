@@ -31,6 +31,10 @@
     --fondoOpcionesTransparente: rgba(13, 22, 33, 0.95);
     --fondoBandaSonora: #ab4364;
     --fondoPeligro: #842029;
+    --botonSubcabecera: #324968;
+    --fondoSubcabecera: #222b44;
+    --buscadorSubcabecera: #141b2b;
+    --fondoSubsubcabecera: #293751;
 }
 
 @font-face {

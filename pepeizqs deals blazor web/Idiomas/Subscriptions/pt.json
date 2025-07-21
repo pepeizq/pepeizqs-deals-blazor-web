@@ -1,7 +1,7 @@
 {
   "Title": "Assinaturas",
   "Subtitle": "Confira todas as assinaturas de jogos para PC disponíveis.",
-  "String1": "Arquivo de assinaturas",
+  "String1": "Arquivo",
   "String2": "Com esta assinatura, se você pagar por um mês, terá os jogos disponíveis para sempre.",
   "String3": "Com esta assinatura você é obrigado a pagar todos os meses se quiser ter os jogos disponíveis.",
   "String4": "{0} jogos",
@@ -11,6 +11,7 @@
   "String8": "{0} / cada mês",
   "String9": "Todos",
   "String10": "Filtrar por DRM",
-  "String11": "Assinaturas adicionadas recentemente",
-  "String12": "Nenhum novo jogo foi adicionado às assinaturas nos últimos 7 dias."
+  "String11": "Adicionadas recentemente",
+  "String12": "Nenhum novo jogo foi adicionado às assinaturas nos últimos 7 dias.",
+  "String13": "Procurar"
 }

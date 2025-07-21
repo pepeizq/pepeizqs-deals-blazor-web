@@ -1,7 +1,7 @@
 {
   "Title": "Abonnements",
   "Subtitle": "Découvrez tous les abonnements de jeux PC disponibles.",
-  "String1": "Archives des abonnements",
+  "String1": "Archives",
   "String2": "Avec cet abonnement, si vous payez un mois, vous aurez les jeux disponibles pour toujours.",
   "String3": "Avec cet abonnement vous êtes obligé de payer chaque mois si vous souhaitez avoir les jeux disponibles.",
   "String4": "{0} jeux",
@@ -11,6 +11,7 @@
   "String8": "{0} / chaque mois",
   "String9": "Tous",
   "String10": "Filtrer par DRM",
-  "String11": "Abonnements récemment ajoutés",
-  "String12": "Aucun nouveau jeu n'a été ajouté aux abonnements au cours des 7 derniers jours."
+  "String11": "Récemment ajoutés",
+  "String12": "Aucun nouveau jeu n'a été ajouté aux abonnements au cours des 7 derniers jours.",
+  "String13": "Recherche"
 }

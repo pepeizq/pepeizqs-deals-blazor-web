@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <None Remove="BaseDatos\Recompensas\Historial.cs~RF3394682.TMP" />
+    <None Remove="Componentes\Secciones\Suscripciones.razor~RF15053f9.TMP" />
   </ItemGroup>
 
   <ItemGroup>

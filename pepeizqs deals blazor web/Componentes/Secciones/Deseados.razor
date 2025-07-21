@@ -91,7 +91,7 @@
 {
 	if (cargado == false)
 	{
-		<div style="text-align: center; width: 100%;">
+		<div style="min-height: 200px; display: flex; align-items: center; justify-content: space-around;">
 			<div class="cargando" />
 		</div>		
 	}
@@ -108,303 +108,281 @@
 
 		if (deseadosGestor.Count > 0)
 		{
-			<div style="max-width: 1000px; margin: auto;">
-				<div style="background-color: var(--fondoCuerpo);">
-					<div style="display: flex; align-items: center; width: 100%;">
-						<div style="width: 100%; font-size: 23px; text-align: left;">
-							@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Wishlist")
+			<div class="subcabecera">
+				<div class="cuerpo-ancho sub-subcabecera" style="gap: 10px;">
+					<button class="boton-pequeño" style="@CambiarEstilo(0) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 0))">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<h1 style="font-size: 16px; margin: 0px;">
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Wishlist") (@cantidadOfertas)
+							</h1>
 
 							@if (string.IsNullOrEmpty(otroUsuario) == false)
 							{
-								<label style="font-size: 14px; margin-left: 10px;">(@otroUsuario)</label>
+								<div style="font-size: 14px;">(@otroUsuario)</div>
 							}
 						</div>
-					</div>
-				</div>
+					</button>
 
-				<div style="margin-top: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-					<div style="display: flex; align-items: center; gap: 20px;">
-						@{
-							string subrayadoOfertas = string.Empty;
-							string subrayadoMinimos = string.Empty;
-							string subrayadoBundles = string.Empty;
-							string subrayadoSuscripciones = string.Empty;
+					<button class="boton-pequeño" style="@CambiarEstilo(1) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 1))">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Wishlist"), cantidadMinimos)
+						</div>
+					</button>
 
-							if (pestañaMostrar == 0)
-							{
-								subrayadoOfertas = "border-bottom: 1px solid var(--colorEnlace);";
-							}
-							else if (pestañaMostrar == 1)
-							{
-								subrayadoMinimos = "border-bottom: 1px solid var(--colorEnlace);";
-							}
-							else if (pestañaMostrar == 2)
-							{
-								subrayadoBundles = "border-bottom: 1px solid var(--colorEnlace);";
-							}
-							else if (pestañaMostrar == 3)
-							{
-								subrayadoSuscripciones = "border-bottom: 1px solid var(--colorEnlace);";
-							}
-						}
-
-						<button @onclick="(e => CambiarPestaña(e, 0))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-							<div style="@subrayadoOfertas padding-bottom: 5px;">
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Wishlist"), cantidadOfertas)
-							</div>
-						</button>
-
-						<button @onclick="(e => CambiarPestaña(e, 1))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-							<div style="@subrayadoMinimos padding-bottom: 5px;">
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Wishlist"), cantidadMinimos)
-							</div>
-						</button>
-
-						<button @onclick="(e => CambiarPestaña(e, 2))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-							<div style="@subrayadoBundles padding-bottom: 5px;">
+					@if (string.IsNullOrEmpty(otroUsuario) == true)
+					{
+						<button class="boton-pequeño" style="@CambiarEstilo(2) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 2))">
+							<div style="display: flex; align-items: center; gap: 10px;">
 								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String29", "Wishlist"), deseadosBundles.Count)
 							</div>
 						</button>
 
-						<button @onclick="(e => CambiarPestaña(e, 3))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-							<div style="@subrayadoSuscripciones padding-bottom: 5px;">
+						<button class="boton-pequeño" style="@CambiarEstilo(3) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 3))">
+							<div style="display: flex; align-items: center; gap: 10px;">
 								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Wishlist"), deseadosSuscripciones.Count)
 							</div>
 						</button>
-					</div>
+					}			
 
-					<div class="menu-dropdown" style="width: auto;">
-						<button class="boton-pequeño" style="display: flex; align-items: center; width: 100%; padding: 10px 15px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
-							<div style="font-size: 14px; padding-right: 5px;">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Wishlist"):
-							</div>
+					<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 10px;">
+						<div class="menu-dropdown" style="width: auto; margin: 0px 20px;">
+							<button class="boton-pequeño" style="background-color: var(--buscadorSubcabecera); display: flex; align-items: center; width: 100%; padding: 8px 15px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+								<div style="font-size: 14px; padding-right: 5px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Wishlist"):
+								</div>
 
-							<div style="font-size: 14px; color: var(--colorEnlace); padding-right: 15px;">
-								@ordenamientoElegido
-							</div>
+								<div style="font-size: 14px; color: var(--colorEnlace); padding-right: 15px;">
+									@ordenamientoElegido
+								</div>
 
-							<div style="max-width: 9px;">
-								<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-									<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-								</svg>
-							</div>
-						</button>
-
-						<div class="menu-dropdown-contenido" style="right: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
-							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasPorcentaje">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Wishlist")
-							</button>
-							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasCantidad">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Wishlist")
-							</button>
-							<hr />
-							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreAZ">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Wishlist")
-							</button>
-							<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreZA">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Wishlist")
+								<div style="max-width: 9px;">
+									<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+										<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+									</svg>
+								</div>
 							</button>
 
-							@if (pestañaMostrar == 0 || pestañaMostrar == 1)
-							{
-								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarPrecio">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Wishlist")
+							<div class="menu-dropdown-contenido" style="right: 0; width: 100%; background-color: var(--buscadorSubcabecera);">
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasPorcentaje">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Wishlist")
 								</button>
-								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarDescuento">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Wishlist")
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasCantidad">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Wishlist")
 								</button>
-							}			
+								<hr />
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreAZ">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Wishlist")
+								</button>
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarNombreZA">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "Wishlist")
+								</button>
+
+								@if (pestañaMostrar == 0 || pestañaMostrar == 1)
+								{
+									<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarPrecio">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Wishlist")
+									</button>
+									<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarDescuento">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Wishlist")
+									</button>
+								}			
+							</div>
 						</div>
+
+						@if (pestañaMostrar == 0 || pestañaMostrar == 1)
+						{
+							<div style="background-color: var(--buscadorSubcabecera); padding-right: 10px; display: flex; align-items: center; gap: 10px;">
+								<input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px; padding: 8px 10px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Wishlist")" />
+
+								<div style="max-width: 16px;">
+									<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+										<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+									</svg>
+								</div>
+							</div>
+						}	
 					</div>
 				</div>
+			</div>
 
-				@if (pestañaMostrar == 0 || pestañaMostrar == 1)
-				{
-					<div class="caja-diseño" style="padding: 20px; width: 100%; margin: 15px 0px 25px 0px; display: flex; flex-direction: column; gap: 30px;">
-						<div style="display: flex; align-items: center; gap: 20px;">
-							<div style="max-width: 20px;">
-								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-									<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-								</svg>
-							</div>
+			<AuthorizeView>
+				<Authorized>
+					@if (string.IsNullOrEmpty(otroUsuario) == true)
+					{
+						<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+							<div class="cuerpo-ancho" style="padding: 20px 0px;">
+								<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
+									<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "Wishlist")">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String19", "Wishlist") (@minimoDescuento%)
 
-							<input type="text" @onchange="(e => TextoCambiaBusqueda(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Wishlist")" />
-						</div>
-
-						<AuthorizeView>
-							<Authorized>
-								@if (string.IsNullOrEmpty(otroUsuario) == true)
-								{
-									<div style="display: flex; flex-direction: column; gap: 10px;">
-										<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
-											<button class="boton-pequeño" @onclick="OpcionesDescuentoMinimo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-												<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "Wishlist")">
-													@Herramientas.Idiomas.BuscarTexto(idioma, "String19", "Wishlist")
-
-													@if (enseñarDescuentoMinimo == false)
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-															</svg>
-														</div>
-													}
-													else
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-															</svg>
-														</div>
-													}
+											@if (enseñarDescuentoMinimo == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
 												</div>
-											</button>
-
-											<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-												<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "Wishlist")">
-													@Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Wishlist")
-
-													@if (enseñarPrecioMaximo == false)
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-															</svg>
-														</div>
-													}
-													else
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-															</svg>
-														</div>
-													}
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
 												</div>
-											</button>
-
-											<button class="boton-pequeño" @onclick="OpcionesCompartir" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-												<div style="display: flex; align-items: center; gap: 10px;">
-													@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Wishlist")
-
-													@if (enseñarCompartir == false)
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-															</svg>
-														</div>
-													}
-													else
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-															</svg>
-														</div>
-													}
-												</div>
-											</button>
-
-											<button class="boton-pequeño" @onclick="OpcionesExportar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
-												<div style="display: flex; align-items: center; gap: 10px;">
-													@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Wishlist")
-
-													@if (enseñarExportar == false)
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-															</svg>
-														</div>
-													}
-													else
-													{
-														<div style="max-width: 9px;">
-															<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-																<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
-															</svg>
-														</div>
-													}
-												</div>
-											</button>
+											}
 										</div>
+									</button>
 
-										@if (enseñarDescuentoMinimo == true)
-										{
-											<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-												<div style="display: flex; align-items: center; gap: 30px;">
-													<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
+									<button class="boton-pequeño" @onclick="OpcionesPrecioMaximo" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "Wishlist")">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Wishlist") (@maximoPrecio€)
 
-													<label style="min-width: 65px; text-align: center;">@minimoDescuento%</label>
+											@if (enseñarPrecioMaximo == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
 												</div>
-											</div>
-										}
-
-										@if (enseñarPrecioMaximo == true)
-										{
-											<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-												<div style="display: flex; align-items: center; gap: 30px;">
-													<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
-
-													<label style="min-width: 65px; text-align: center;">@maximoPrecio€</label>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
 												</div>
-											</div>
-										}
+											}
+										</div>
+									</button>
 
-										@if (enseñarCompartir == true)
-										{
-											<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-												<div style="display: flex; align-items: center; gap: 30px;">
-													<div class="checkbox-caja">
-														<input type="checkbox" class="checkbox-interior" checked="@estadoCompartir" @onchange="CompartirDeseados">
-													</div>
+									<button class="boton-pequeño" @onclick="OpcionesCompartir" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Wishlist")
 
-													<div style="display: flex; flex-direction: column; gap: 10px; width: 100%; font-size: 15px;">
-														@if (estadoCompartir == false)
-														{
-															<div>
-																@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Wishlist")
-															</div>
-														}
-														else
-														{
-															<div>
-																@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Wishlist")
-															</div>
-
-															<input type="text" value="@compartirNombre" @onchange="(e => TextoCambiaDeseados(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Wishlist")" />
-
-															@if (string.IsNullOrEmpty(compartirEnlace) == false)
-															{
-																<a href="@compartirEnlace" target="_blank">@compartirEnlace</a>
-															}
-														}
-													</div>
+											@if (enseñarCompartir == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
 												</div>
-											</div>
-										}
-
-										@if (enseñarExportar == true)
-										{
-											<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px;">
-												<div style="font-size: 15px;">
-													<div style="margin-bottom: 15px;">
-														@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Wishlist")
-													</div>
-
-													<button @onclick="@(e => DescargarJson())" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
-														@Herramientas.Idiomas.BuscarTexto(idioma, "String25", "Wishlist")
-													</button>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
 												</div>
-											</div>
-										}
+											}
+										</div>
+									</button>
+
+									<button class="boton-pequeño" @onclick="OpcionesExportar" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTextoVisitado);">
+										<div style="display: flex; align-items: center; gap: 10px;">
+											@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Wishlist")
+
+											@if (enseñarExportar == false)
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+													</svg>
+												</div>
+											}
+											else
+											{
+												<div style="max-width: 9px;">
+													<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+														<path d="M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z" />
+													</svg>
+												</div>
+											}
+										</div>
+									</button>
+								</div>
+
+								@if (enseñarDescuentoMinimo == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
+
+											<label style="min-width: 65px; text-align: center;">@minimoDescuento%</label>
+										</div>
 									</div>
 								}
-							</Authorized>
-						</AuthorizeView>
-					</div>
 
+								@if (enseñarPrecioMaximo == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
+
+											<label style="min-width: 65px; text-align: center;">@maximoPrecio€</label>
+										</div>
+									</div>
+								}
+
+								@if (enseñarCompartir == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+										<div style="display: flex; align-items: center; gap: 30px;">
+											<div class="checkbox-caja">
+												<input type="checkbox" class="checkbox-interior" checked="@estadoCompartir" @onchange="CompartirDeseados">
+											</div>
+
+											<div style="display: flex; flex-direction: column; gap: 10px; width: 100%; font-size: 15px;">
+												@if (estadoCompartir == false)
+												{
+													<div>
+														@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Wishlist")
+													</div>
+												}
+												else
+												{
+													<div>
+														@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Wishlist")
+													</div>
+
+													<input type="text" value="@compartirNombre" @onchange="(e => TextoCambiaDeseados(e))" class="entrada-texto" style="flex: 1; min-width: 150px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Wishlist")" />
+
+													@if (string.IsNullOrEmpty(compartirEnlace) == false)
+													{
+														<a href="@compartirEnlace" target="_blank">@compartirEnlace</a>
+													}
+												}
+											</div>
+										</div>
+									</div>
+								}
+
+								@if (enseñarExportar == true)
+								{
+									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+										<div style="font-size: 15px;">
+											<div style="margin-bottom: 15px;">
+												@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Wishlist")
+											</div>
+
+											<button @onclick="@(e => DescargarJson())" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
+												@Herramientas.Idiomas.BuscarTexto(idioma, "String25", "Wishlist")
+											</button>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+				</Authorized>
+			</AuthorizeView>
+
+			<div style="max-width: 1000px; margin: 20px auto;">
+				@if (pestañaMostrar == 0 || pestañaMostrar == 1)
+				{
 					List<JuegoDeseadoMostrar> deseadosFinales = new List<JuegoDeseadoMostrar>();
 
 					if (pestañaMostrar == 0)
@@ -419,7 +397,7 @@
 
 					if (deseadosFinales.Count > 0)
 					{
-						<Virtualize @ref="deseadosVirtualizados" Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
+						<Virtualize Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
 							<ItemContent>
 								<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
 									<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
@@ -721,7 +699,6 @@
 	private List<JuegoDeseadoMostrar> deseadosHistoricos = new List<JuegoDeseadoMostrar>();
 	private List<JuegoDeseadoMostrar> deseadosBundles = new List<JuegoDeseadoMostrar>();
 	private List<JuegoDeseadoMostrar> deseadosSuscripciones = new List<JuegoDeseadoMostrar>();
-	private Virtualize<JuegoDeseadoMostrar> deseadosVirtualizados { get; set; }
 
 	private List<string> deseadosSteam = new List<string>();
 	private List<JuegoDeseado> deseadosWeb = new List<JuegoDeseado>();
@@ -981,6 +958,18 @@
 		deseadosGog.Clear();
 	}
 
+	private string CambiarEstilo(int pestañaClickeada)
+	{
+		if (pestañaClickeada == pestañaMostrar)
+		{
+			return "background-color: var(--botonSubcabecera);";
+		}
+		else
+		{
+			return "background-color: transparent;";
+		}
+	}
+
 	private void CambiarPestaña(MouseEventArgs e, int nuevaPestaña)
 	{
 		pestañaMostrar = nuevaPestaña;
@@ -1195,8 +1184,7 @@
 			deseadosSuscripciones.Remove(juegoMostrar);
 		}
 
-		await deseadosVirtualizados.RefreshDataAsync();
-		StateHasChanged();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	#region Ordenar
@@ -1577,17 +1565,8 @@
 		}
 	}
 
-	private void TextoCambiaBusqueda(ChangeEventArgs texto)
+	private void TextoCambiaBuscador()
 	{
-		if (string.IsNullOrEmpty(texto.Value.ToString().Trim()) == false)
-		{
-			textoBuscador = texto.Value.ToString().Trim();
-		}
-		else
-		{
-			textoBuscador = null;
-		}
-
 		ElegirOrdenamiento();
 	}
 

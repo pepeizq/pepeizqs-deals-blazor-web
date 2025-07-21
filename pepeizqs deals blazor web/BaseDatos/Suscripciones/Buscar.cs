@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Gratis2;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Suscripciones2;
@@ -35,7 +36,7 @@ namespace BaseDatos.Suscripciones
             return suscripcion;
 		}
 
-		public static List<JuegoSuscripcion> Actuales(SqlConnection conexion = null)
+		public static List<JuegoSuscripcion> Actuales(SuscripcionTipo tipo = SuscripcionTipo.Desconocido, SqlConnection conexion = null)
         {
             List<JuegoSuscripcion> suscripciones = new List<JuegoSuscripcion>();
 
@@ -53,9 +54,16 @@ namespace BaseDatos.Suscripciones
 
 			using (conexion)
             {
-                string busqueda = "SELECT * FROM suscripciones WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina";
+				string busqueda = "SELECT * FROM suscripciones WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina)";
 
-                using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				if (tipo != SuscripcionTipo.Desconocido)
+				{
+					busqueda = busqueda + " AND (suscripcion=" + (int)tipo + ")";
+				}
+
+				busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
                     using (SqlDataReader lector = comando.ExecuteReader())
                     {
@@ -66,11 +74,6 @@ namespace BaseDatos.Suscripciones
                     }
                 }
             } 
-
-			if (suscripciones.Count > 0)
-			{
-				suscripciones.Reverse();
-			}
 
             return suscripciones;
         }

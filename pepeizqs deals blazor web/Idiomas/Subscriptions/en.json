@@ -1,7 +1,7 @@
 {
   "Title": "Subscriptions",
   "Subtitle": "Check out all the PC gaming subscriptions available.",
-  "String1": "Subscriptions Archive",
+  "String1": "Archive",
   "String2": "With this subscription, if you pay for one month, you will have the games that are available forever.",
   "String3": "With this subscription you are forced to pay every month if you want to have the games that are available.",
   "String4": "{0} games",
@@ -11,6 +11,7 @@
   "String8": "{0} / each month",
   "String9": "All",
   "String10": "Filter by DRM",
-  "String11": "Subscriptions Recently Added",
-  "String12": "No new games have been added to subscriptions in the last 7 days."
+  "String11": "Recently Added",
+  "String12": "No new games have been added to subscriptions in the last 7 days.",
+  "String13": "Search"
 }

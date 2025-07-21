@@ -1,7 +1,7 @@
 {
   "Title": "Suscripciones",
   "Subtitle": "Comprueba todas las suscripciones que hay disponibles de videojuegos para PC.",
-  "String1": "Suscripciones Archivo",
+  "String1": "Archivo",
   "String2": "Con esta suscripción si pagas un mes los juegos que estén disponibles los tendrás para siempre.",
   "String3": "Con esta suscripción estás obligado a pagar todos los meses si quieres tener los juegos que haya disponibles.",
   "String4": "{0} juegos",
@@ -11,6 +11,7 @@
   "String8": "{0} / cada mes",
   "String9": "Todo",
   "String10": "Filtrar por DRM",
-  "String11": "Suscripciones Recién Añadidas",
-  "String12": "No se han añadido nuevos juegos a las suscripciones en los últimos 7 días."
+  "String11": "Recién Añadidas",
+  "String12": "No se han añadido nuevos juegos a las suscripciones en los últimos 7 días.",
+  "String13": "Buscar"
 }

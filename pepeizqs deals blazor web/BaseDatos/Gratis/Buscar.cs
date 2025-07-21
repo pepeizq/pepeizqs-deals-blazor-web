@@ -35,7 +35,7 @@ namespace BaseDatos.Gratis
 			return gratis;
         }
 
-		public static List<JuegoGratis> Actuales(SqlConnection conexion = null)
+		public static List<JuegoGratis> Actuales(GratisTipo tipo = GratisTipo.Desconocido, SqlConnection conexion = null)
 		{
 			List<JuegoGratis> listaGratis = new List<JuegoGratis>();
 
@@ -51,7 +51,14 @@ namespace BaseDatos.Gratis
                 }
             }
 
-			string busqueda = "SELECT * FROM gratis WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina";
+			string busqueda = "SELECT * FROM gratis WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina)";
+
+			if (tipo != GratisTipo.Desconocido)
+			{
+				busqueda = busqueda + " AND (gratis=" + (int)tipo + ")";
+			}
+
+			busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 			{
@@ -62,11 +69,6 @@ namespace BaseDatos.Gratis
 						listaGratis.Add(Cargar(lector));
 					}
 				}
-			}
-
-			if (listaGratis.Count > 0)
-			{
-				listaGratis.Reverse();
 			}
 
 			return listaGratis;

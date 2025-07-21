@@ -835,3 +835,20 @@ select {
         display: flex;
     }
 }
+
+.subcabecera {
+    width: 100vw;
+    position: relative;
+    margin-left: -50vw;
+    left: 50%;
+    background-color: var(--fondoSubcabecera);
+}
+
+.sub-subcabecera {
+    padding: 15px 0px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}

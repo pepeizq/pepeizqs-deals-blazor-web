@@ -42,7 +42,7 @@
         </nav>
     </header>
 
-    <main id="cuerpazo" role="main" class="cuerpo-ancho cuerpo-espacio">
+    <main id="cuerpazo" role="main" class="cuerpo-ancho">
         <Routes @rendermode="renderizacion" />
     </main>
 
@@ -107,29 +107,6 @@
         <script>navigator.serviceWorker.register('service-worker.js');</script>
     }
 
-@*     <script>
-        function delay(milliseconds) {
-            return new Promise(resolve => {
-                setTimeout(resolve, milliseconds)
-            });
-        }
-
-        async function boot() {
-            await Blazor.start()
-
-            if (document.location.href.indexOf("https://pepeizqdeals.com/admin") == -1) {
-                while (Blazor.defaultReconnectionHandler === undefined) {
-                    await delay(100)
-                }
-                Blazor.defaultReconnectionHandler._reconnectCallback = function (d) {
-                    document.location.reload()
-                }
-            }
-        }
-
-        boot()
-    </script> *@
-
     <script>
         function moverScroll(id) {
             const element = document.getElementById(id);
@@ -160,8 +137,6 @@
 
         gtag('config', 'G-02PL2Q3GQX');
     </script>
-
-   @*  <div id="components-reconnect-modal" style="display: none" /> *@
 </body>
 
 </html>

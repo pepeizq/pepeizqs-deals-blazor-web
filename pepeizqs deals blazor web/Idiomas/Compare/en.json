@@ -1,11 +1,8 @@
 {
   "Title": "Compare Games",
   "String1": "search",
-  "String2": "Search the first game to compare",
-  "String3": "Search the second game to compare",
-  "String4": "Search the third game to compare",
-  "String5": "Search the fourth game game to compare",
-  "String6": "Search games to compare",
+  "String2": "There are no results for that search.",
+  "String3": "Use the search to start comparing games",
   "String7": "Reviews (Quantity)",
   "String8": "Reviews (Rating)",
   "String9": "Playing Now",

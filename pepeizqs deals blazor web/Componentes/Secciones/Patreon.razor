@@ -29,14 +29,22 @@
 	</HeadContent>
 }
 
-<div style="max-width: 1200px; margin: auto;">
-	<h1 style="font-size: 23px;">
-		@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Patreon")
-	</h1>
+<div class="subcabecera">
+	<div class="cuerpo-ancho sub-subcabecera">
+		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Patreon")
+		</h1>
 
-	<hr>
+		<div style="max-width: 20px;">
+			<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+				<path d="M489.7 153.8c-.1-65.4-51-119-110.7-138.3C304.8-8.5 207-5 136.1 28.4C50.3 68.9 23.3 157.7 22.3 246.2C21.5 319 28.7 510.6 136.9 512c80.3 1 92.3-102.5 129.5-152.3c26.4-35.5 60.5-45.5 102.4-55.9c72-17.8 121.1-74.7 121-150z"/>
+			</svg>
+		</div>
+	</div>
+</div>
 
-	<div class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
+<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div class="cuerpo-ancho" style="font-size: 16px; display: flex; flex-direction: column; gap: 20px; padding: 20px 0px;">
 		<div>
 			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Patreon")
 		</div>
@@ -49,77 +57,53 @@
 
 			<a href="@patreonEnlace">@patreonEnlace</a>
 		</div>
+
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Patreon")
+		</div>
 	</div>
+</div>
 
-	<div style="font-size: 18px; margin-top: 50px; margin-bottom: 15px;">
-		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Patreon")
-	</div>
-
-	<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
-		<div class="caja-diseño" style="padding: 30px;">
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Patreon")
-			</div>
-
-			<hr />
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Patreon")
-			</div>
+<div style="margin: 40px auto; display: flex; flex-direction: column; gap: 30px;">
+	<div style="display: flex; flex-direction: column; gap: 10px; background-color: var(--fondoSubcabecera); padding: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Patreon")
 		</div>
 
-		<div class="caja-diseño" style="padding: 30px;">
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Patreon")
-			</div>
-
-			<hr />
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Patreon")
-			</div>
-		</div>
-
-		<div class="caja-diseño" style="padding: 30px;">
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Patreon")
-			</div>
-
-			<hr />
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Patreon")
-			</div>
-		</div>
-
-		<div class="caja-diseño" style="padding: 30px;">
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Patreon")
-			</div>
-
-			<hr />
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Patreon")
-			</div>
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Patreon")
 		</div>
 	</div>
 
-	@if (noticias.Count > 0)
-	{
-		<div style="font-size: 18px; margin-top: 50px; margin-bottom: 15px;">
-			@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Patreon")
+	<div style="display: flex; flex-direction: column; gap: 10px; background-color: var(--fondoSubcabecera); padding: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Patreon")
 		</div>
 
-		<div class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 15px;">
-			@foreach (var noticia in noticias)
-			{
-				<div>
-					<a href="/news/@noticia.Id/">@noticia.FechaEmpieza.Day/@noticia.FechaEmpieza.Month/@noticia.FechaEmpieza.Year • @Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs)</a>
-				</div>
-			}
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Patreon")
 		</div>
-	}
+	</div>
+
+	<div style="display: flex; flex-direction: column; gap: 10px; background-color: var(--fondoSubcabecera); padding: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Patreon")
+		</div>
+
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Patreon")
+		</div>
+	</div>
+
+	<div style="display: flex; flex-direction: column; gap: 10px; background-color: var(--fondoSubcabecera); padding: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Patreon")
+		</div>
+
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Patreon")
+		</div>
+	</div>
 </div>
 
 @code {

@@ -214,7 +214,7 @@ namespace Herramientas
 
 				List<SyndicationItem> items = new List<SyndicationItem>();
 
-				List<Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.UltimosMinimos(50, null, drmsUsar, null, cantidadAnalisis);
+				List<Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.Minimos(0, 50, null, drmsUsar, null, cantidadAnalisis);
 
 				if (juegos.Count > 0)
 				{

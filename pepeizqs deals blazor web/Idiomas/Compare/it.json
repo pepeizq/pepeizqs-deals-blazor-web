@@ -1,11 +1,8 @@
 {
   "Title": "Confronta i giochi",
   "String1": "ricerca",
-  "String2": "Cerca il primo gioco da confrontare",
-  "String3": "Cerca nel secondo gioco per confrontare",
-  "String4": "Cerca al terzo gioco da confrontare",
-  "String5": "Cerca il quarto gioco da confrontare",
-  "String6": "Cerca giochi da confrontare",
+  "String2": "Non ci sono risultati per quella ricerca.",
+  "String3": "Usa la ricerca per iniziare a confrontare i giochi",
   "String7": "Recensioni (quantità)",
   "String8": "Recensioni (valutazione)",
   "String9": "Suonando adesso",

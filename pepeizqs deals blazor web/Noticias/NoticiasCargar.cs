@@ -14,7 +14,8 @@ namespace Noticias
 		Otros,
 		Web,
 		Patreon,
-		Despedidas
+		Despedidas,
+		Desconocido
 	}
 
 	public static class NoticiasCargar

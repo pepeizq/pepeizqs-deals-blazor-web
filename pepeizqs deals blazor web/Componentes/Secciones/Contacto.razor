@@ -27,22 +27,29 @@
 	</HeadContent>
 }
 
-<div style="max-width: 1000px; margin: auto;">
-	<h1 style="font-size: 23px;">@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Contact")</h1>
-	<hr />
+<div class="subcabecera">
+	<div class="cuerpo-ancho sub-subcabecera">
+		<h1 style="font-size: 18px; margin: 0px; width: fit-content; padding: 9px 0px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Contact")
+		</h1>
+	</div>
+</div>
 
-	<div style="display: flex; flex-direction: column; gap: 40px;">
-		<div class="caja-diseño" style="display: flex; align-items: center; gap: 20px; padding: 20px;">
-			<div style="max-width: 26px;">
-				<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-					<path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-				</svg>
-			</div>
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Contact") @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Contact"), "admin@pepeizqdeals.com")
-			</div>
+<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+		<div style="max-width: 26px;">
+			<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+				<path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+			</svg>
 		</div>
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Contact") @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Contact"), "admin@pepeizqdeals.com")
+		</div>
+	</div>
+</div>
 
+<div style="max-width: 1000px; margin: 40px auto;">
+	<div style="display: flex; flex-direction: column; gap: 40px;">
 		<div class="caja-diseño" style="padding: 20px;">
 			<div style="margin-left: 8px; margin-bottom: 8px;">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Contact")

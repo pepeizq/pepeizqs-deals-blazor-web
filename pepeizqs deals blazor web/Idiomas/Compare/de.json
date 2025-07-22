@@ -1,11 +1,8 @@
 {
   "Title": "Vergleiche Spiele",
   "String1": "suchen",
-  "String2": "Suchen Sie das erste Spiel, um zu vergleichen",
-  "String3": "Suchen Sie das zweite Spiel, um zu vergleichen",
-  "String4": "Suchen Sie nach dem dritten Spiel, um zu vergleichen",
-  "String5": "Suchen Sie das vierte Spielspiel, um es zu vergleichen",
-  "String6": "Suchspiele zum Vergleichen",
+  "String2": "Es gibt keine Ergebnisse für diese Suche.",
+  "String3": "Verwenden Sie die Suche, um Spiele zu vergleichen",
   "String7": "Bewertungen (Menge)",
   "String8": "Bewertungen (Bewertung)",
   "String9": "Jetzt spielen",

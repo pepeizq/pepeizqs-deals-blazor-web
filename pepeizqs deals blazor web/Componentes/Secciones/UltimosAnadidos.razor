@@ -59,52 +59,48 @@
 	</HeadContent>
 }
 
+<div class="subcabecera">
+	<div class="cuerpo-ancho sub-subcabecera">
+		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 10px 0px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded")
+		</h1>
+	</div>
+</div>
+
 @if (juegosMostrar.Count > 0)
 {
-	<div style="max-width: 1000px; margin: auto;">
-		<div style="background-color: var(--fondoCuerpo);">
-			<div style="display: flex; align-items: center; width: 100%;">
-				<div style="width: 100%; font-size: 23px; text-align: left;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded")
-				</div>
-			</div>
-		</div>
-
-		<hr />
-
-		<div>
-			<Virtualize Context="juego" Items="juegosMostrar" ItemSize="107" OverscanCount="6">
-				<ItemContent>
-					<div class="perfil-flexible-centrado" style="margin-top: 25px; margin-bottom: 25px;">
-						<a class="boton-pequeño" style="padding: 0px;" href="/game/@juego.Id/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/">
-							<div class="perfil-flexible-centrado">
-								<div>
-									<img src="@juego.Imagenes.Header_460x215" style="width: 230px; height: 107px;" />
-								</div>
-
-								<div style="width: 100%; padding: 5px 20px;">
-									<div style="font-size: 18px;">@juego.Nombre</div>
-
-									@if (string.IsNullOrEmpty(usuarioId) == false)
-									{
-										if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
-										{
-											<div class="perfil-flexible-centrado" style="justify-content: left; margin-top: 10px;">
-												<div style="font-size: 13px;">@juego.Id</div>
-											</div>
-										}
-									}									
-								</div>
-
-								<div style="width: 250px; padding: 5px 15px; text-align: center; font-size: 17px;">
-									@GenerarMensaje(juego)
-								</div>
+	<div style="max-width: 1000px; margin: 40px auto;">
+		<Virtualize Context="juego" Items="juegosMostrar" ItemSize="107" OverscanCount="6">
+			<ItemContent>
+				<div class="perfil-flexible-centrado" style="margin-top: 25px; margin-bottom: 25px;">
+					<a class="boton-pequeño" style="padding: 0px;" href="/game/@juego.Id/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/">
+						<div class="perfil-flexible-centrado">
+							<div>
+								<img src="@juego.Imagenes.Header_460x215" style="width: 230px; height: 107px;" />
 							</div>
-						</a>
-					</div>
-				</ItemContent>
-			</Virtualize>
-		</div>
+
+							<div style="width: 100%; padding: 5px 20px;">
+								<div style="font-size: 18px;">@juego.Nombre</div>
+
+								@if (string.IsNullOrEmpty(usuarioId) == false)
+								{
+									if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+									{
+										<div class="perfil-flexible-centrado" style="justify-content: left; margin-top: 10px;">
+											<div style="font-size: 13px;">@juego.Id</div>
+										</div>
+									}
+								}
+							</div>
+
+							<div style="width: 250px; padding: 5px 15px; text-align: center; font-size: 17px;">
+								@GenerarMensaje(juego)
+							</div>
+						</div>
+					</a>
+				</div>
+			</ItemContent>
+		</Virtualize>
 	</div>
 }
 

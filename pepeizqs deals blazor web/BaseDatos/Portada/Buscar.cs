@@ -8,7 +8,7 @@ namespace BaseDatos.Portada
 {
 	public static class Buscar
 	{
-		public static List<Juego> Minimos(SqlConnection conexion = null)
+		public static List<Juego> BuscarMinimos(SqlConnection conexion = null)
 		{
 			List<Juego> resultados = new List<Juego>();
 
@@ -179,7 +179,7 @@ ORDER BY NEWID()";
 			return resultados;
 		}
 
-		public static List<Juego> UltimosMinimos(int cantidadJuegos, List<string> categorias = null, List<string> drms = null, SqlConnection conexion = null, int cantidadAnalisis = 199)
+		public static List<Juego> Minimos(int tipo, int cantidadJuegos, List<string> categorias = null, List<string> drms = null, SqlConnection conexion = null, int cantidadAnalisis = 199)
 		{
 			List<Juego> resultados = new List<Juego>();
 
@@ -253,9 +253,17 @@ ORDER BY NEWID()";
 					}
 				}
 
-				string busqueda = @"SELECT DISTINCT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog, analisis FROM seccionMinimos 
-                                    WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis AND CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) > DATEADD(day, -7, CAST(GETDATE() AS date)) @categoria @drm
-                                    ORDER BY Fecha DESC";
+				string busqueda = @"SELECT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog, analisis FROM seccionMinimos 
+                                    WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis AND CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) > DATEADD(day, -7, CAST(GETDATE() AS date)) @categoria @drm";
+
+				if (tipo == 0)
+				{
+					busqueda = busqueda + " ORDER BY Fecha DESC";
+				}
+				else if (tipo == 1)
+				{
+					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+				}
 
 				busqueda = busqueda.Replace("@cantidadJuegos", cantidadJuegos.ToString());
 				busqueda = busqueda.Replace("@categoria", categoria);

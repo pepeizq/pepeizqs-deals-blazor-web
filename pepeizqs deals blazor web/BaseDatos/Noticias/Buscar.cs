@@ -198,7 +198,7 @@ namespace BaseDatos.Noticias
 			return null;
 		}
 
-		public static List<Noticia> Actuales(SqlConnection conexion = null, int ultimosDias = 0)
+		public static List<Noticia> Actuales(NoticiaTipo tipo = NoticiaTipo.Desconocido, int ultimosDias = 0, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -216,12 +216,19 @@ namespace BaseDatos.Noticias
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM noticias WHERE GETDATE() BETWEEN fechaEmpieza AND fechaTermina ORDER BY id DESC";
+				string busqueda = "SELECT * FROM noticias WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina)";
 
 				if (ultimosDias > 0)
 				{
-					busqueda = "SELECT * FROM noticias WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina) AND (GETDATE() - " + ultimosDias.ToString() + " < fechaEmpieza) ORDER BY id DESC";
-                }
+					busqueda = busqueda + " AND (GETDATE()-" + ultimosDias.ToString() + " < fechaEmpieza)";
+				}
+
+				if (tipo != NoticiaTipo.Desconocido)
+				{
+					busqueda = busqueda + " AND (noticiaTipo=" + (int)tipo + ")";
+				}
+
+				busqueda = busqueda + " ORDER BY id DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

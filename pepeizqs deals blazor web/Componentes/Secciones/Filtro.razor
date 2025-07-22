@@ -158,129 +158,133 @@
 }
 else
 {
-	<h1 style="font-size: 23px;">
-		@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter")
-	</h1>
-
-	<hr>
+	<div class="subcabecera">
+		<div class="cuerpo-ancho sub-subcabecera">
+			<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter")
+			</h1>
+		</div>
+	</div>
 
 	@if (idsLista != null)
 	{
 		if (idsLista.Count > 0)
 		{
-			<div style="display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px; margin-bottom: 20px;">
-				@foreach (var id in idsLista)
-				{
-					if (id.Contains("d") == true)
+			<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+				<div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
+					@foreach (var id in idsLista)
 					{
-						string letra = "d";
-						string cadena = id.Replace(letra, null);
-						string deck = Herramientas.Idiomas.BuscarTexto(idioma, "Deck4", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
-
-						if (string.IsNullOrEmpty(deck) == false)
+						if (id.Contains("d") == true)
 						{
-							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
-								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-									<div style="font-size: 14px;">@deck</div>
-									<div style="max-width: 14px;">
-										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-										</svg>
+							string letra = "d";
+							string cadena = id.Replace(letra, null);
+							string deck = Herramientas.Idiomas.BuscarTexto(idioma, "Deck4", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+
+							if (string.IsNullOrEmpty(deck) == false)
+							{
+								<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+									<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+										<div style="font-size: 14px;">@deck</div>
+										<div style="max-width: 14px;">
+											<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+												<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+											</svg>
+										</div>
 									</div>
-								</div>
-							</button>
+								</button>
+							}
+						}
+
+						if (id.Contains("i") == true)
+						{
+							string letra = "i";
+							string cadena = id.Replace(letra, null);
+							string tipo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+
+							if (string.IsNullOrEmpty(tipo) == false)
+							{
+								<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+									<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+										<div style="font-size: 14px;">@tipo</div>
+										<div style="max-width: 14px;">
+											<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+												<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+											</svg>
+										</div>
+									</div>
+								</button>
+							}
+						}
+
+						if (id.Contains("s") == true)
+						{
+							string letra = "s";
+							string cadena = id.Replace(letra, null);
+							string sistema = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+
+							if (string.IsNullOrEmpty(sistema) == false)
+							{
+								<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+									<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+										<div style="font-size: 14px;">@sistema</div>
+										<div style="max-width: 14px;">
+											<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+												<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+											</svg>
+										</div>
+									</div>
+								</button>
+							}
+						}
+
+						if (id.Contains("t") == true)
+						{
+							string letra = "t";
+							string cadena = id.Replace(letra, null);
+							string etiqueta = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+
+							if (string.IsNullOrEmpty(etiqueta) == false)
+							{
+								<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+									<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+										<div style="font-size: 14px;">@etiqueta</div>
+										<div style="max-width: 14px;">
+											<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+												<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+											</svg>
+										</div>
+									</div>
+								</button>
+							}
+						}
+
+						if (id.Contains("c") == true)
+						{
+							string letra = "c";
+							string cadena = id.Replace(letra, null);
+							string categoria = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+
+							if (string.IsNullOrEmpty(categoria) == false)
+							{
+								<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
+									<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
+										<div style="font-size: 14px;">@categoria</div>
+										<div style="max-width: 14px;">
+											<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+												<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+											</svg>
+										</div>
+									</div>
+								</button>
+							}
 						}
 					}
-
-					if (id.Contains("i") == true)
-					{
-						string letra = "i";
-						string cadena = id.Replace(letra, null);
-						string tipo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
-
-						if (string.IsNullOrEmpty(tipo) == false)
-						{
-							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
-								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-									<div style="font-size: 14px;">@tipo</div>
-									<div style="max-width: 14px;">
-										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-										</svg>
-									</div>
-								</div>
-							</button>
-						}
-					}
-
-					if (id.Contains("s") == true)
-					{
-						string letra = "s";
-						string cadena = id.Replace(letra, null);
-						string sistema = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
-
-						if (string.IsNullOrEmpty(sistema) == false)
-						{
-							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
-								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-									<div style="font-size: 14px;">@sistema</div>
-									<div style="max-width: 14px;">
-										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-										</svg>
-									</div>
-								</div>
-							</button>
-						}
-					}
-
-					if (id.Contains("t") == true)
-					{
-						string letra = "t";
-						string cadena = id.Replace(letra, null);
-						string etiqueta = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
-
-						if (string.IsNullOrEmpty(etiqueta) == false)
-						{
-							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
-								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-									<div style="font-size: 14px;">@etiqueta</div>
-									<div style="max-width: 14px;">
-										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-										</svg>
-									</div>
-								</div>
-							</button>
-						}
-					}
-
-					if (id.Contains("c") == true)
-					{
-						string letra = "c";
-						string cadena = id.Replace(letra, null);
-						string categoria = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Filter") + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
-
-						if (string.IsNullOrEmpty(categoria) == false)
-						{
-							<button @onclick="(e => CambiarIDs(e, cadena, letra))" class="boton-expandir" style="color: var(--colorTexto); text-decoration: none; border: 0px; background-color: var(--fondoBotonPequeño);">
-								<div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; height: 100%;">
-									<div style="font-size: 14px;">@categoria</div>
-									<div style="max-width: 14px;">
-										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-											<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-										</svg>
-									</div>
-								</div>
-							</button>
-						}
-					}
-				}
+				</div>
 			</div>
 		}
 	}
 
-	<div style="display: flex; align-items: start; gap: 40px;">
+	<div style="display: flex; align-items: start; gap: 40px; margin: 40px auto;">
 		<div style="width: 30%; display: flex; flex-direction: column; gap: 20px;">
 			@if (decks.Count > 0)
 			{
@@ -690,7 +694,7 @@ else
 		</div>
 
 		<div style="width: 100%;">
-			<div class="caja-diseño" style="padding: 0px 20px; display: flex; flex-direction: column; gap: 20px;">
+			<div style="margin: -10px 0px; display: flex; flex-direction: column;">
 				<Virtualize Context="juego" Items="@resultadosGestor" ItemSize="107" OverscanCount="20">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" />

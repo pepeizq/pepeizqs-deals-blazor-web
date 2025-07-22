@@ -143,6 +143,10 @@
 }
 
 <style>
+	.destacado-espacio {
+		margin: 40px auto;
+	}
+
 	.destacado-fondo {
 		display: block;
 	}
@@ -222,6 +226,10 @@
 	}
 
 	@@media (max-width: 800px) {
+		.destacado-espacio {
+			margin: 00px auto;
+		}
+
 		.destacado-hueco {
 			padding: 40px 30px 15px 30px;
 		}
@@ -277,273 +285,200 @@
 	}
 </style>
 
-<div style="display: flex; flex-direction: column; gap: 60px; margin: 40px 0px;">
-	@if (juegosDestacadosMostrar.Count > 0)
-	{
-        <div>
-			@if (juegoSeleccionado != null)
+	
+@if (juegosDestacadosMostrar.Count > 0)
+{
+	<div class="destacado-espacio">
+		@if (juegoSeleccionado != null)
+		{
+			string colorSeleccionado = "var(--fondoOscuro)";
+
+			if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM) == true)
 			{
-				string colorSeleccionado = "var(--fondoOscuro)";
-
-				if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM) == true)
+				colorSeleccionado = "var(--fondoBien)";
+			}
+			else
+			{
+				if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
 				{
-					colorSeleccionado = "var(--fondoBien)";
+					colorSeleccionado = "var(--fondoAlerta)";
 				}
-				else
-				{
-					if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
-					{
-						colorSeleccionado = "var(--fondoAlerta)";
-					}
-				}
+			}
 
-				<a href="/game/@juegoSeleccionado.IdMaestra.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juegoSeleccionado.Nombre)/" style="cursor: pointer; border: 0px; padding: 0px; display: block; width: 100%;">
-					<div style="position: relative; padding: 3px; background-color: @colorSeleccionado;">
-						<div class="destacado-mostrar" @onmouseover="@(e => EnseñarDestacadoVideo(e, juegoSeleccionado))">
-							@if (string.IsNullOrEmpty(videoDestacado) == false)
-							{
-								<div class="destacado-fondo">
-									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%;" alt="@juegoSeleccionado.Nombre">
-								</div>
+			<a href="/game/@juegoSeleccionado.IdMaestra.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juegoSeleccionado.Nombre)/" style="cursor: pointer; border: 0px; padding: 0px; display: block; width: 100%;">
+				<div style="position: relative; padding: 3px; background-color: @colorSeleccionado;">
+					<div class="destacado-mostrar" @onmouseover="@(e => EnseñarDestacadoVideo(e, juegoSeleccionado))">
+						@if (string.IsNullOrEmpty(videoDestacado) == false)
+						{
+							<div class="destacado-fondo">
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%;" alt="@juegoSeleccionado.Nombre">
+							</div>
 
-								<div class="destacado-video">
-									<video onloadedmetadata="this.muted=true" playsinline autoplay loop muted style="height: 100%; width: 100%; overflow: hidden; aspect-ratio: 3.14/1; object-fit: cover;">
-										<source src="@videoDestacado" type="video/mp4" />
-										<source src="@videoDestacado.Replace(".mp4", ".webm")" type="video/webm" />	
-									</video>
-								</div>
-							}
-							else
-							{
-								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%; aspect-ratio: 96/31;" alt="@juegoSeleccionado.Nombre">
-							}
+							<div class="destacado-video">
+								<video onloadedmetadata="this.muted=true" playsinline autoplay loop muted style="height: 100%; width: 100%; overflow: hidden; aspect-ratio: 3.14/1; object-fit: cover;">
+									<source src="@videoDestacado" type="video/mp4" />
+									<source src="@videoDestacado.Replace(".mp4", ".webm")" type="video/webm" />
+								</video>
+							</div>
+						}
+						else
+						{
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%; aspect-ratio: 96/31;" alt="@juegoSeleccionado.Nombre">
+						}
 
-							<div style="position: absolute; left: 0; bottom: 0; background-image: linear-gradient(to bottom, rgba(255,0,0,0), @colorSeleccionado);
-										display: flex; align-items: end; justify-content: space-between; width: 100%;" class="destacado-hueco">
+						<div style="position: absolute; left: 0; bottom: 0; background-image: linear-gradient(to bottom, rgba(255,0,0,0), @colorSeleccionado);
+															display: flex; align-items: end; justify-content: space-between; width: 100%;" class="destacado-hueco">
 
-								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(logoDestacado)" class="destacado-logo-medidas" alt="@juegoSeleccionado.Nombre">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(logoDestacado)" class="destacado-logo-medidas" alt="@juegoSeleccionado.Nombre">
 
-								<div style="display: flex; align-items: center; margin-bottom: 30px; color: var(--colorTexto);">
-									<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juegoSeleccionado.PrecioMinimosHistoricos[0].DRM), 40, 40)" style="margin-right: 20px;" alt="DRM" />
+							<div style="display: flex; align-items: center; margin-bottom: 30px; color: var(--colorTexto);">
+								<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juegoSeleccionado.PrecioMinimosHistoricos[0].DRM), 40, 40)" style="margin-right: 20px;" alt="DRM" />
 
-									@{
-										string iconoTienda = string.Empty;
-										List<Tiendas2.Tienda> tiendas = Tiendas2.TiendasCargar.GenerarListado();
+								@{
+									string iconoTienda = string.Empty;
+									List<Tiendas2.Tienda> tiendas = Tiendas2.TiendasCargar.GenerarListado();
 
-										foreach (var tienda in tiendas)
+									foreach (var tienda in tiendas)
+									{
+										if (tienda.Id == juegoSeleccionado.PrecioMinimosHistoricos[0].Tienda)
 										{
-											if (tienda.Id == juegoSeleccionado.PrecioMinimosHistoricos[0].Tienda)
-											{
-												iconoTienda = tienda.ImagenIcono;
-												break;
-											}
+											iconoTienda = tienda.ImagenIcono;
+											break;
 										}
 									}
+								}
 
-									<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda, 40, 40)" style="margin-right: 40px;" alt="Store" />
+								<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda, 40, 40)" style="margin-right: 40px;" alt="Store" />
 
-									<div class="destacado-precio-descuento" style="background-color: darkgreen;">
-										@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
-									</div>
-									<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
-										@Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos[0].Precio)
-									</div>
+								<div class="destacado-precio-descuento" style="background-color: darkgreen;">
+									@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
+								</div>
+								<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
+									@Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos[0].Precio)
 								</div>
 							</div>
 						</div>
 					</div>
-				</a>
-			}
-
-			<div class="destacados-galeria-fila">
-				@foreach (var destacado in juegosDestacadosMostrar)
-				{
-					bool mostrarBarra = false;
-					string opacidad = string.Empty;
-
-					if (juegoSeleccionado != null)
-					{
-						if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
-						{
-							opacidad = "opacity: 1;";
-							mostrarBarra = true;
-						}
-					}
-
-					string colorFondoDestacado = "background-color: var(--fondoOscuro);";
-
-					if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM) == true)
-					{
-						colorFondoDestacado = "background-color: var(--fondoBien);";
-					}
-					else
-					{
-						if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
-						{
-							colorFondoDestacado = "background-color: var(--fondoAlerta);";
-						}
-					}
-
-					<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="@colorFondoDestacado">
-						<img @key="destacado.Id.ToString()" class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
-
-						@if (mostrarBarra == true)
-						{
-							<div style="height: 3px; width: 100%; background-color: transparent;">
-								<div class="destacado-progreso" style="height: 3px;" />
-							</div>
-						}
-					</div>
-				}
-			</div>
-		</div>
-	}
-
-	<div style="min-height: 50px;">
-		<div style="display: flex; align-items: center; gap: 30px; justify-content: space-around;">
-			<div class="caja-diseño" style="display: flex; align-items: center; gap: 30px; padding: 15px 25px; margin-bottom: 20px;">
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Index")
 				</div>
-
-				<div>
-					<RedesSociales idioma="@idioma"/>
-				</div>
-			</div>
-		</div>
-
-		@{
-			string noHayNoticiasEstilo = "max-width: 1000px; margin-left: auto; margin-right: auto;";
-
-			if (noticiasTresDias.Count > 0 && noticiasSemana.Count == 0)
-			{
-				noHayNoticiasEstilo = "";
-			}
-
-			if (noticiasSemana.Count > 0)
-			{
-				noHayNoticiasEstilo = "";
-			}
-
-			<div class="noticias-caja caja-diseño" style="display: flex; flex-direction: column; gap: 30px; @noHayNoticiasEstilo">
-				@if (noticiasTresDias.Count > 0 && noticiasSemana.Count == 0)
-				{
-					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")" style="margin-top: -30px;">
-						<Virtualize Context="noticia" Items="noticiasTresDias">
-							<ItemContent>
-								<CajaNoticia idioma="@idioma" noticia="@noticia" />
-							</ItemContent>
-						</Virtualize>
-					</div>
-				}
-
-				@if (noticiasSemana.Count > 0)
-				{
-					<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")" style="margin-top: -30px;">
-						<Virtualize Context="noticia" Items="noticiasSemana">
-							<ItemContent>
-								<CajaNoticia idioma="@idioma" noticia="@noticia" />
-							</ItemContent>
-						</Virtualize>
-					</div>
-				}
-
-				<div class="noticia-enlaces" style="display: flex; align-items: center; gap: 40px; justify-content: center;">
-					@if (noticiasSemana.Count == 0)
-					{
-						<button class="boton-pequeño" @onclick="CargarNoticiasSemana" style="padding: 15px 30px; width: fit-content;">
-							<div>
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Index")
-							</div>
-						</button>
-					}
-					else
-					{
-						<button class="boton-pequeño" @onclick="CerrarNoticiasSemana" style="padding: 0px; width: fit-content; background-color: transparent;">
-							<div style="max-width: 22px; max-height: 22px;">
-								<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-									<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-								</svg>
-							</div>
-						</button>
-					}
-
-					<a class="boton-pequeño" style="padding: 15px 30px; width: fit-content;" href="/last-news">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Index")
-					</a>
-				</div>
-			</div>
+			</a>
 		}
+
+		<div class="destacados-galeria-fila">
+			@foreach (var destacado in juegosDestacadosMostrar)
+			{
+				bool mostrarBarra = false;
+				string opacidad = string.Empty;
+
+				if (juegoSeleccionado != null)
+				{
+					if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
+					{
+						opacidad = "opacity: 1;";
+						mostrarBarra = true;
+					}
+				}
+
+				string colorFondoDestacado = "background-color: var(--fondoOscuro);";
+
+				if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM) == true)
+				{
+					colorFondoDestacado = "background-color: var(--fondoBien);";
+				}
+				else
+				{
+					if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
+					{
+						colorFondoDestacado = "background-color: var(--fondoAlerta);";
+					}
+				}
+
+				<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="@colorFondoDestacado">
+					<img @key="destacado.Id.ToString()" class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
+
+					@if (mostrarBarra == true)
+					{
+						<div style="height: 3px; width: 100%; background-color: transparent;">
+							<div class="destacado-progreso" style="height: 3px;" />
+						</div>
+					}
+				</div>
+			}
+		</div>
 	</div>
-@* 
-	@if (cargarForo == true)
-	{
-		if (postsUltimosForo.Count > 0)
+}
+
+<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+		<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido))">
+			<h1 style="font-size: 18px; margin: 0px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")
+			</h1>
+		</button>
+
+		@if (tiposActualesNoticias.Count > 1)
 		{
-			<div style="min-height: 50px;">
-				<div style="display: flex; align-items: center; gap: 30px; justify-content: space-around; margin-bottom: 15px;">
-					<a href="/forum" style="font-size: 18px; text-decoration: none; color: var(--colorEnlace);">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Index") (@Herramientas.Idiomas.BuscarTexto(idioma, "Language" + idiomaForo.ToString(), "Forum"))
-					</a>
-				</div>
+			foreach (var tipo in tiposActualesNoticias)
+			{
+				if (tipo != NoticiaTipo.Desconocido)
+				{
+					<button class="boton-pequeño" style="@CambiarEstilo(tipo) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo))" title="@Noticias.NoticiasCargar.Traduccion(tipo, idioma)">
+						@Noticias.NoticiasCargar.Traduccion(tipo, idioma)
+					</button>
+				}
+			}
+		}
 
-				<div class="caja-diseño" style="max-width: 1000px; width: 100%; margin-left: auto; margin-right: auto; padding: 10px 20px;">
-					<Virtualize Context="post" Items="postsUltimosForo">
-						<ItemContent>
-							@{
-								Usuario? usuario = null;
-								DateTime fechaUsar = post.FechaCreacion;
+		<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
+			<RedesSociales idioma="@idioma" />
+		</div>
+	</div>
+</div>
 
-								if (string.IsNullOrEmpty(post.AutorIdUltimaRespuesta) == false)
-								{
-									usuario = UserManager.FindByIdAsync(post.AutorIdUltimaRespuesta).Result;
-									fechaUsar = post.FechaUltimaRespuesta;
-								}
-								else
-								{
-									usuario = UserManager.FindByIdAsync(post.AutorId).Result;
-								}
-
-								<button @onclick="@(e => AbrirPost(e, post.CategoriaId, post.Id, post.RespuestaId))" class="boton-pequeño" style="padding: 15px 20px; margin-top: 10px; margin-bottom: 10px;">
-									<div style="display: flex; align-items: center; gap: 20px;">
-										<div>
-											<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(usuario?.Avatar)" style="width: 26px; height: 26px;" alt="@usuario?.Nickname" />
-										</div>
-
-										<div style="width: 100%;">
-											@{
-												string contenido = post.Contenido;
-
-												if (contenido.Length > 40)
-												{
-													contenido = contenido.Remove(40, contenido.Length - 40) + "...";
-												}
-											}
-
-											@contenido
-										</div>
-
-										<div style="flex-shrink: 0;">
-											@Herramientas.Calculadora.DiferenciaTiempo(fechaUsar, idioma)
-										</div>
-									</div>
-								</button>
-							}                           
-						</ItemContent>
-					</Virtualize>
-				</div>
+<div class="subcabecera" style="background-color: var(--fondoPortadaNoticias);">
+	<div class="cuerpo-ancho" style="padding: 20px 0px;">
+		@if (noticias.Count > 0)
+		{
+			<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")">
+				<Virtualize Context="noticia" Items="noticias">
+					<ItemContent>
+						<CajaNoticia idioma="@idioma" noticia="@noticia" tipo="@CajaNoticia.Tipo.Portada" />
+					</ItemContent>
+				</Virtualize>
 			</div>
 		}
-		else
-		{
-			<div class="caja-diseño" style="display: flex; align-items: center; gap: 30px; justify-content: space-around; max-width: 1000px; width: 100%; margin-left: auto; margin-right: auto; padding: 20px;">
-				<a href="/forum" style="text-decoration: none; color: var(--colorEnlace);">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Index")
-				</a>
-			</div>
-		}
-	} *@
 
+		<div class="noticia-enlaces" style="display: flex; align-items: center; gap: 40px; justify-content: center; margin: 40px 10px 20px 10px;">
+			<a class="boton-pequeño" style="padding: 15px 30px; width: fit-content;" href="/last-news">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Index")
+			</a>
+		</div>
+	</div>
+</div>
+
+@if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+{
+	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+		<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+			<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Nuevos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Nuevos))">
+				<h1 style="font-size: 18px; margin: 0px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Index")
+				</h1>
+			</button>
+
+			<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Populares) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Populares))">
+				<h1 style="font-size: 18px; margin: 0px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Index")
+				</h1>
+			</button>
+
+			<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
+				@tipoMinimos.ToString()
+			</div>
+		</div>
+	</div>
+}
+
+<div style="display: flex; flex-direction: column; gap: 60px; margin: 40px 0px;">
 	@if (juegosMinimosMostrar.Count > 0)
 	{
 		<div style="max-width: 1000px; width: 100vw; margin: auto;">
@@ -785,13 +720,6 @@
 
 	private SqlConnection conexion = new SqlConnection();
 
-	private List<Noticias.Noticia> noticiasTresDias = new List<Noticias.Noticia>();
-	private List<Noticias.Noticia> noticiasSemana = new List<Noticias.Noticia>();
-
-	private bool cargarForo = true;
-	private List<BaseDatos.Foro.ForoPost> postsUltimosForo = new List<BaseDatos.Foro.ForoPost>();
-	private int idiomaForo = 0;
-
 	protected override void OnInitialized()
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
@@ -840,15 +768,6 @@
 				}
 
 				#endregion
-
-				if (opciones.ForumIndex == true)
-				{
-					cargarForo = true;
-				}
-				else
-				{
-					cargarForo = false;
-				}
 			}
 		}
 
@@ -883,15 +802,42 @@
 
 			try
 			{
-				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
+				noticias = BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
+
+				if (noticias != null)
+				{
+					if (noticias.Count > 0)
+					{
+						foreach (var noticia in noticias)
+						{
+							bool añadirTipo = true;
+
+							if (tiposActualesNoticias.Count > 0)
+							{
+								foreach (var tipoActual in tiposActualesNoticias)
+								{
+									if (tipoActual == noticia.Tipo)
+									{
+										añadirTipo = false;
+									}
+								}
+							}
+
+							if (añadirTipo == true)
+							{
+								tiposActualesNoticias.Add(noticia.Tipo);
+							}
+						}
+					}
+				}
 
 				if (string.IsNullOrEmpty(usuarioId) == false)
 				{
-					int limiteTiempoNoticias = 300;
+					int limiteTiempoNoticias = 90;
 
 					if (usuarioPatreon == true || usuarioAdmin == true)
 					{
-						limiteTiempoNoticias = 60;
+						limiteTiempoNoticias = 30;
 					}
 
 					CronometroNoticias(limiteTiempoNoticias);
@@ -900,25 +846,6 @@
 			catch (Exception ex)
 			{
 				BaseDatos.Errores.Insertar.Mensaje("Portada Noticias", ex);
-			}
-
-			#endregion
-
-			#region Foro
-
-			if (cargarForo == true)
-			{
-				idiomaForo = 0;
-
-				foreach (var codigo in Herramientas.Idiomas.ListadoIdiomasGenerar()[1].Codigos)
-				{
-					if (codigo == idioma)
-					{
-						idiomaForo = 1;
-					}
-				}
-
-				postsUltimosForo = BaseDatos.Foro.Buscar.UltimosPostsTodoForo(idiomaForo, 5, conexion);
 			}
 
 			#endregion
@@ -1090,7 +1017,15 @@
 				}
 			}
 
-			juegosMinimosGestor = BaseDatos.Portada.Buscar.UltimosMinimos(cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+			if (tipoMinimos == MinimosTipo.Nuevos)
+			{
+				juegosMinimosGestor = BaseDatos.Portada.Buscar.Minimos(0, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+			}
+			else if (tipoMinimos == MinimosTipo.Populares)
+			{
+				juegosMinimosGestor = BaseDatos.Portada.Buscar.Minimos(1, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+			}
+
 		}
 		catch (Exception ex)
 		{
@@ -1127,12 +1062,40 @@
 		}
 	}
 
+	private MinimosTipo tipoSeleccionadoMinimos = MinimosTipo.Nuevos;
+
+	private void CambiarTipo(MouseEventArgs e, MinimosTipo nuevoTipo)
+	{
+		tipoSeleccionadoMinimos = nuevoTipo;
+
+		Filtros();
+	}
+
+	private string CambiarEstilo(MinimosTipo nuevoTipo)
+	{
+		if (nuevoTipo != tipoSeleccionadoMinimos)
+		{
+			return "background-color: transparent;";
+		}
+		else
+		{
+			return "background-color: var(--botonSubcabecera);";
+		}
+	}
+
 	#endregion
 
 	#region Minimos Filtrado
 
 	private List<Juegos.Juego> juegosMinimosGestor = new List<Juegos.Juego>();
 	private List<Juegos.Juego> juegosMinimosMostrar = new List<Juegos.Juego>();
+    private MinimosTipo tipoMinimos = MinimosTipo.Nuevos;
+
+	private enum MinimosTipo
+	{
+		Nuevos,
+		Populares
+	}
 
 	private async void Filtros()
 	{
@@ -1190,10 +1153,8 @@
 		{
 			if (juegosMinimosMostrar.Count > 0)
 			{
-				juegosMinimosMostrar = juegosMinimosMostrar.OrderBy(j => j.PrecioMinimosHistoricos[0].FechaDetectado).Reverse().ToList();
+				await InvokeAsync(StateHasChanged);
 			}
-
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -1391,18 +1352,10 @@
 
 	#region Noticias
 
+	private List<Noticias.Noticia> noticias = new List<Noticias.Noticia>();
+
 	private PeriodicTimer cronometroNoticias = null;
 	private int cronometroNoticiasContador = 0;
-
-	private void CargarNoticiasSemana()
-	{
-		noticiasSemana = BaseDatos.Noticias.Buscar.Actuales(conexion, 7);
-	}
-
-	private void CerrarNoticiasSemana()
-	{
-		noticiasSemana.Clear();
-	}
 
 	private async void CronometroNoticias(int limite)
 	{
@@ -1414,7 +1367,7 @@
 
 			if (cronometroNoticiasContador >= limite)
 			{
-				noticiasTresDias = BaseDatos.Noticias.Buscar.Actuales(conexion, 3);
+				noticias = BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
 
 				cronometroNoticiasContador = 0;
 			}
@@ -1423,25 +1376,26 @@
 		}
 	}
 
-	#endregion
+	private NoticiaTipo tipoSeleccionadoNoticias = NoticiaTipo.Desconocido;
+	private List<NoticiaTipo> tiposActualesNoticias = new List<NoticiaTipo>();
 
-	#region Foro
-
-	private void AbrirPost(MouseEventArgs e, int categoria, int postId, int respuestaId)
+	private void CambiarTipo(MouseEventArgs e, NoticiaTipo nuevoTipo)
 	{
-		int postId2 = postId;
-		string añadirRespuesta = string.Empty;
+		tipoSeleccionadoNoticias = nuevoTipo;
+		noticias = BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
+	}
 
-		if (respuestaId > 0)
+	private string CambiarEstilo(NoticiaTipo nuevoTipo)
+	{
+		if (nuevoTipo != tipoSeleccionadoNoticias)
 		{
-			postId2 = respuestaId;
-
-			int respuestaId2 = postId;
-			añadirRespuesta = "#message-" + respuestaId2.ToString();
+			return "background-color: transparent;";
 		}
-
-        NavManager.NavigateTo("/forum/" + categoria.ToString() + "/" + postId2.ToString() + añadirRespuesta, true);
-    }
+		else
+		{
+			return "background-color: var(--botonSubcabecera);";
+		}
+	}
 
 	#endregion
 }

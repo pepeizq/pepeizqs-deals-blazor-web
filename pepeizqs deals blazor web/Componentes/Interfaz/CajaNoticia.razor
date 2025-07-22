@@ -19,12 +19,34 @@
 <div style="margin-top: 30px;">
 	<a href="/news/@noticia.Id/@Herramientas.EnlaceAdaptador.Nombre(titulo)/" style="cursor: pointer; text-decoration: none; color: var(--colorTexto);">
 		<div class="cnoticia-expandir" style="background-color: var(--fondoBotonPequeño); display: flex; align-items: center;" title="@titulo">
+			@{
+				string tamañoFuente = "16px;";
+				string gapCaja = "10px;";
+
+				int anchoImagen = 200;
+				int altoImagen = 110;
+
+				if (tipo == Tipo.Portada)
+				{
+					if (DateTime.Now.Subtract(noticia.FechaEmpieza).TotalDays < 1)
+					{
+						tamañoFuente = "18px;";
+						gapCaja = "15px;";
+
+						anchoImagen = 250;
+						altoImagen = 140;
+					}
+				}
+
+				string estiloImagen = "width: " + anchoImagen.ToString() + "px; height: " + altoImagen.ToString() + "px;";
+			}
+			
 			<div>
-				<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(noticia.Imagen, 200, 110)" style="width: 200px; height: 110px; object-fit: cover; opacity: 0.8;" alt="@titulo" loading="lazy" />
+				<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(noticia.Imagen, anchoImagen, anchoImagen)" style="@estiloImagen object-fit: cover; opacity: 0.8;" alt="@titulo" loading="lazy" />
 			</div>
 
-			<div style="padding: 10px 20px; display: flex; flex-direction: column; gap: 10px;">
-				<div style="font-size: 17px;">@titulo</div>
+			<div style="padding: 10px 20px; display: flex; flex-direction: column; gap: @gapCaja">
+				<div style="font-size: @tamañoFuente">@titulo</div>
 
 				<div style="display: flex; align-items: center; gap: 15px;">
 					@{
@@ -73,4 +95,14 @@
 
 	[Parameter]
 	public Noticias.Noticia noticia { get; set; }
+
+	[Parameter]
+	public Tipo tipo { get; set; } = Tipo.Desconocido;
+
+	public enum Tipo
+	{
+        Desconocido,
+		Portada,
+		UltimasNoticias
+	}
 }

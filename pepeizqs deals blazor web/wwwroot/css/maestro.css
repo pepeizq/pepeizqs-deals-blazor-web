@@ -35,6 +35,7 @@
     --fondoSubcabecera: #222b44;
     --buscadorSubcabecera: #141b2b;
     --fondoSubsubcabecera: #293751;
+    --fondoPortadaNoticias: #131f2f;
 }
 
 @font-face {
@@ -55,6 +56,10 @@ a {
 
 dl, ol, ul {
     margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+li {
     margin-bottom: 15px;
 }
 

@@ -1,11 +1,11 @@
 {
   "Title": "Privacidade e seus dados",
+  "Subtitle": "Verifique a política do site sobre a segurança e a privacidade de seus dados.",
   "String1": "Biscoitos",
-  "String2": "Como desenvolvedor deste site e de outros projetos, estou ciente do uso prejudicial que pode ser feito da coleta de dados através do uso de cookies. ",
-  "String3": "Se você decidir usar este site sem registrar uma conta, o site não usará nenhum cookie.",
-  "String4": "Se você decidir usar este site registrando uma conta, o site precisará apenas de 3 cookies para funcionar corretamente. ",
-  "String5": "Nota: Este site é multilingue mas a identificação do idioma do utilizador não é feita através de nenhum cookie, mas sim através do pedido enviado pelo navegador web.",
+  "String2": "Como desenvolvedor deste site e de outros projetos, estou ciente do uso prejudicial que pode ser feito de coleta de dados através do uso de cookies. ",
+  "String3": "Se você optar por usar o site sem se registrar para uma conta, o site definirá um cookie chamado 'aspnetcore.antiforgergy'. ",
+  "String4": "Se você optar por usar o site registrando uma conta, além do cookie acima mencionado, um cookie adicional chamado 'CookiepepeizQ' será adicionado para que o site possa reconhecer seu usuário. ",
+  "String5": "Quando você visita meu site, seu navegador da Web me envia uma série de dados por padrão, como seu idioma e o navegador que você está usando. ",
   "String6": "Seus dados",
-  "String7": "Se você decidir registrar uma conta no site, quero ser o mais transparente possível e prometo que usarei seus dados apenas ‘dentro do site, não fora’. ",
-  "String8": "Na verdade, neste site não vou utilizar serviços como o Google Analytics, embora o Google certamente me punirá em seu mecanismo de busca por isso."
+  "String7": "Se você decidir registrar uma conta no site, quero ser o mais transparente possível e prometo que só usarei seus dados 'dentro do site, não fora'. "
 }

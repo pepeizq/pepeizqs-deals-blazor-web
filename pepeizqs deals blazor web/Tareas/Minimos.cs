@@ -49,7 +49,7 @@ namespace Tareas
                     {
                         try
                         {
-							List<Juego> juegos = BaseDatos.Portada.Buscar.Minimos(conexion);
+							List<Juego> juegos = BaseDatos.Portada.Buscar.BuscarMinimos(conexion);
 
 							if (juegos != null)
 							{

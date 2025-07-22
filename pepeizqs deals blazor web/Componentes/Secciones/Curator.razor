@@ -14,7 +14,7 @@
 {
 	string titulo = curator.Nombre + " (Curator) • pepeizq's deals";
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Curators");
-	string enlace = "https://pepeizqdeals.com/curator/" + curator.Slug?.ToLower() + "/";
+	string enlace = "https://pepeizqdeals.com/curator/" + slug + "/";
 	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
 
 	if (string.IsNullOrEmpty(curator.Descripcion) == false)
@@ -96,34 +96,36 @@
 		<link rel="canonical" href="@enlace" />
 	</HeadContent>
 
+	<div class="subcabecera">
+		<div class="cuerpo-ancho sub-subcabecera" style="padding: 5px 0px;">
+			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Imagen)" style="width: 60px; height: 60px;" alt="@curator.Nombre" />
+
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
+					@if (curator.Web != null)
+					{
+						<a href="@curator.Web.Enlace" target="_blank" style="text-decoration: none;">@curator.Nombre</a>
+					}
+					else
+					{
+						@curator.Nombre
+					}
+				</h1>
+
+				<div style="font-size: 14px;">
+					@curator.Descripcion
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div>
 		@if (string.IsNullOrEmpty(curator.ImagenFondo) == false)
 		{
 			<img class="juego-fondo" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.ImagenFondo)" alt="Background" loading="lazy" />
 		}
 
-		<div style="position: relative; display: flex; flex-direction: column; gap: 40px;">
-			<div class="caja-diseño" style="display: flex; align-items: center;">
-				<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Imagen)" style="width: 140px; height: 140px;" alt="@curator.Nombre" />
-
-				<div style="display: flex; flex-direction: column; gap: 15px; padding: 25px;">
-					<div style="font-size: 20px;">
-						@if (curator.Web != null)
-						{
-							<a href="@curator.Web.Enlace" target="_blank">@curator.Nombre</a>
-						}
-						else
-						{
-							@curator.Nombre
-						}
-					</div>
-
-					<div>
-						@curator.Descripcion
-					</div>
-				</div>
-			</div>
-
+		<div style="position: relative; display: flex; flex-direction: column; gap: 40px; margin: 40px auto;">
 			@if (juegosDestacados.Count > 1)
 			{
 				<div>

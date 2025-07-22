@@ -1,11 +1,11 @@
 {
-  "Title": "Datenschutz und Ihre Daten",
+  "Title": "Privatsphäre und Ihre Daten",
+  "Subtitle": "Überprüfen Sie die Richtlinien der Website bezüglich der Sicherheit und Privatsphäre Ihrer Daten.",
   "String1": "Kekse",
-  "String2": "Als Entwickler dieser Website und anderer Projekte bin ich mir des schädlichen Nutzens bewusst, der durch die Datenerhebung durch den Einsatz von Cookies entstehen kann. ",
-  "String3": "Wenn Sie sich entscheiden, diese Website ohne Registrierung eines Kontos zu nutzen, verwendet die Website keine Cookies.",
-  "String4": "Wenn Sie sich für die Nutzung dieser Website entscheiden, indem Sie ein Konto registrieren, benötigt die Website nur 3 Cookies, um ordnungsgemäß zu funktionieren. ",
-  "String5": "Hinweis: Diese Website ist mehrsprachig, die Identifizierung der Sprache des Benutzers erfolgt jedoch nicht über ein Cookie, sondern über die vom Webbrowser gesendete Anfrage.",
+  "String2": "Als Entwickler dieser Website und anderer Projekte bin ich mir der schädlichen Nutzung bewusst, die durch die Verwendung von Cookies über die Datenerfassung hergestellt werden kann. ",
+  "String3": "Wenn Sie die Website verwenden, ohne sich für ein Konto zu registrieren, setzt die Website ein Cookie mit dem Namen \"Aspnetcore.Antiforgery\". ",
+  "String4": "Wenn Sie die Website durch Registrieren für ein Konto verwenden, wird zusätzlich zum oben genannten Cookie ein zusätzliches Cookie mit dem Namen \"Cookiepeizq\" hinzugefügt, damit die Website Ihren Benutzer erkennen kann. ",
+  "String5": "Wenn Sie meine Website besuchen, sendet Ihr Webbrowser mir standardmäßig eine Datenreihe wie Ihre Sprache und den Browser, den Sie verwenden. ",
   "String6": "Ihre Daten",
-  "String7": "Wenn Sie sich entscheiden, ein Konto auf der Website zu registrieren, möchte ich so transparent wie möglich sein und verspreche, dass ich Ihre Daten nur „innerhalb der Website, nicht außerhalb“ verwende. ",
-  "String8": "Tatsächlich werde ich auf dieser Website keine Dienste wie Google Analytics nutzen, obwohl Google mich in seiner Suchmaschine dafür sicherlich abstrafen wird."
+  "String7": "Wenn Sie sich entscheiden, ein Konto auf der Website zu registrieren, möchte ich so transparent wie möglich sein und ich verspreche, dass ich Ihre Daten nur \"innerhalb der Website, nicht außerhalb\" verwenden werde. "
 }

@@ -27,67 +27,72 @@
 	</HeadContent>
 }
 
-<div style="max-width: 1200px; margin: auto;">
-	<h1 style="font-size: 23px;">@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS")</h1>
-	<hr />
+<div class="subcabecera">
+	<div class="cuerpo-ancho sub-subcabecera">
+		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS")
+		</h1>
+	</div>
+</div>
 
-	<div style="display: flex; flex-direction: column; gap: 40px;">
-		<div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
-			<div style="font-size: 18px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "RSS")
-			</div>
+<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "RSS")
+	</div>
+</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "RSS")
-			</div>
+<div style="display: flex; flex-direction: column; gap: 20px; margin: 40px auto;">
+	<div>
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "RSS")
+	</div>
 
-			<div style="display: flex; flex-direction: column; gap: 5px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "RSS")
+	<div style="display: flex; flex-direction: column; gap: 5px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "RSS")
 
-				<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
-					<label style="text-decoration: none;">https://pepeizqdeals.com/rss-en.xml</label>
-				</div>
-			</div>
-
-			<div style="display: flex; flex-direction: column; gap: 5px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "RSS")
-
-				<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
-					<label style="text-decoration: none;">https://pepeizqdeals.com/rss-es.xml</label>
-				</div>
-			</div>
+		<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
+			<label style="text-decoration: none;">https://pepeizqdeals.com/rss-en.xml</label>
 		</div>
+	</div>
 
-		<div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
-			<div style="font-size: 18px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "RSS")
-			</div>
+	<div style="display: flex; flex-direction: column; gap: 5px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "RSS")
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "RSS")
-			</div>
-
-			<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
-				<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam/1000</label>
-			</div>
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "RSS")
-			</div>
-
-			<div style="padding: 10px 15px; background-color: var(--fondoCodigo);">
-				<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam,gog/1000</label>
-			</div>
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "RSS")
-			</div>
-
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "RSS")
-			</div>
+		<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
+			<label style="text-decoration: none;">https://pepeizqdeals.com/rss-es.xml</label>
 		</div>
-	</div>	
+	</div>
+</div>
+
+<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "RSS")
+	</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px; margin: 40px auto;">
+	<div>
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "RSS")
+	</div>
+
+	<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
+		<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam/1000</label>
+	</div>
+
+	<div>
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "RSS")
+	</div>
+
+	<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
+		<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam,gog/1000</label>
+	</div>
+
+	<div>
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "RSS")
+	</div>
+
+	<div>
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "RSS")
+	</div>
 </div>
 
 @code {

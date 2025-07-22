@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Microsoft.AspNetCore.Mvc;
+using Noticias;
 
 namespace Herramientas.Redireccionador
 {
@@ -15,7 +16,7 @@ namespace Herramientas.Redireccionador
 
 			if (clave == claveAndroid)
 			{
-				List<global::Noticias.Noticia> noticias = global::BaseDatos.Noticias.Buscar.Actuales(null, 3);
+				List<global::Noticias.Noticia> noticias = global::BaseDatos.Noticias.Buscar.Actuales(NoticiaTipo.Desconocido, 3, null);
 
 				if (noticias != null)
 				{
@@ -38,7 +39,7 @@ namespace Herramientas.Redireccionador
 
 			if (clave == claveAndroid)
 			{
-				List<global::Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.UltimosMinimos(50, null, new List<string>() { "0", "8", "2", "11" });
+				List<global::Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.Minimos(0, 50, null, new List<string>() { "0", "8", "2", "11" });
 
 				if (juegos != null)
 				{

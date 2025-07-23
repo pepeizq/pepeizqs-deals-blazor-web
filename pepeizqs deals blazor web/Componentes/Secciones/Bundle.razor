@@ -17,9 +17,9 @@
 	{
 		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda + " • pepeizq's deals";
 
-		if (titulo.Length > 67)
+		if (titulo.Length > 66)
 		{
-			titulo = titulo.Substring(0, 67) + " ...";
+			titulo = titulo.Substring(0, 66) + " ...";
 		}
 
 		string descripcion = string.Empty;
@@ -186,7 +186,7 @@
 	if (tipo == Tipo.Noticia)
 	{
 		<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
-			<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px; margin-bottom: 40px;" target="_blank">
+			<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
 			</a>
 		</div>

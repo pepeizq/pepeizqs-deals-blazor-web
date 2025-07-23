@@ -254,7 +254,7 @@ ORDER BY NEWID()";
 				}
 
 				string busqueda = @"SELECT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), bundles, gratis, suscripciones, idSteam, CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) AS Fecha, idGog, analisis FROM seccionMinimos 
-                                    WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis AND CONVERT(datetime2, JSON_VALUE(precioMinimosHistoricos, '$[0].FechaDetectado')) > DATEADD(day, -7, CAST(GETDATE() AS date)) @categoria @drm";
+                                    WHERE CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > @cantidadAnalisis @categoria @drm";
 
 				if (tipo == 0)
 				{
@@ -263,6 +263,10 @@ ORDER BY NEWID()";
 				else if (tipo == 1)
 				{
 					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+				}
+				else if (tipo == 2)
+				{
+					busqueda = busqueda + " AND CONVERT(datetime2, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam')) > DATEADD(DAY,-15,GetDate()) ORDER BY Fecha DESC";
 				}
 
 				busqueda = busqueda.Replace("@cantidadJuegos", cantidadJuegos.ToString());

@@ -852,3 +852,9 @@ select {
     gap: 20px;
     flex-wrap: wrap;
 }
+
+@@media (max-width: 800px) {
+    .sub-subcabecera {
+        padding: 15px 5px;
+    }
+}

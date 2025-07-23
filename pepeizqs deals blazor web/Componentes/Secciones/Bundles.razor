@@ -129,6 +129,15 @@
 	}
 </style>
 
+<style>
+	.caja-archivo-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 40px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 @if (mostrarBundleSeleccionado == false)
 {
 	<div class="subcabecera">
@@ -164,7 +173,7 @@
 
 	@if (mostrarArchivo == false)
 	{
-		<div class="bundles-grid caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-items: center; margin: 40px 0px; padding: 30px;">
+		<div class="bundles-grid caja-archivo-contenido" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-items: center; margin: 40px 0px; padding: 30px;">
 			@if (bundlesActuales != null)
 			{
 				foreach (var bundle in bundlesActuales)
@@ -191,115 +200,114 @@
 	}
 	else
 	{
-		<div class="caja-diseño" style="padding: 30px; margin: 40px 0px;">
-			<div style="display: flex; align-items: start;">
-				@foreach (var año in años)
-				{
-					<div style="margin-right: 15px;">
-						<button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
-							@año
-						</button>
+		<div style="display: flex; align-items: start; gap: 15px; margin: 40px 0px 20px 0px; flex-wrap: wrap;">
+			@foreach (var año in años)
+			{
+				<div>
+					<button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
+						@año
+					</button>
 
-						@if (añoSeleccionado == año)
-						{
-							<div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
-							</div>
+					@if (añoSeleccionado == año)
+					{
+						<div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;" />
 
-							<div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
-								@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+						<div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
+							@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+							{
+								List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+								foreach (var bundlePasado in bundlesPasados)
 								{
-									List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
-
-									foreach (var bundlePasado in bundlesPasados)
+									if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
 									{
-										if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
-										{
-											bundlesAño.Add(bundlePasado);
-										}
-									}
-
-									if (bundlesAño.Count > 0)
-									{
-										<div style="margin-right: 15px; font-size: 14px;">
-											<a onclick="moverScroll('pasado-@bundleTipo.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
-												<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenIcono)" style="width: 22px; height: 22px;" alt="Store"/> (@bundlesAño.Count.ToString())
-											</a>
-										</div>
+										bundlesAño.Add(bundlePasado);
 									}
 								}
-							</div>
-						}
-					</div>
-				}
-			</div>
-			
-			@if (string.IsNullOrEmpty(añoSeleccionado) == false)
-			{
-				<div style="margin-top: 55px;">
-					@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
-					{
-						List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
 
-						foreach (var bundlePasado in bundlesPasados)
-						{
-							if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
-							{
-								bundlesAño.Add(bundlePasado);
+								if (bundlesAño.Count > 0)
+								{
+									<div style="margin-right: 15px; font-size: 14px;">
+										<a onclick="moverScroll('pasado-@bundleTipo.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
+											<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenIcono)" style="width: 22px; height: 22px;" alt="Store" /> (@bundlesAño.Count.ToString())
+										</a>
+									</div>
+								}
 							}
-						}
+						</div>
+					}
+				</div>
+			}
+		</div>
 
-						if (bundlesAño.Count > 0)
+		@if (string.IsNullOrEmpty(añoSeleccionado) == false)
+		{
+			<div style="display: flex; flex-direction: column; gap: 40px; margin: 55px auto 40px auto;">
+				@foreach (var bundleTipo in Bundles2.BundlesCargar.CargarBundles())
+				{
+					List<Bundles2.Bundle> bundlesAño = new List<Bundles2.Bundle>();
+
+					foreach (var bundlePasado in bundlesPasados)
+					{
+						if (bundlePasado.FechaEmpieza.Year.ToString() == añoSeleccionado && bundleTipo == bundlePasado.Tipo)
 						{
+							bundlesAño.Add(bundlePasado);
+						}
+					}
+
+					if (bundlesAño.Count > 0)
+					{
+						<div class="caja-archivo-contenido">
+							<div id="pasado-@bundleTipo.ToString()" style="max-width: 200px;">
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenTienda)" alt="Store" style="width: 100%; max-height: 70px; object-fit: contain;" />
+							</div>
+
 							<hr>
 
-							<div id="pasado-@bundleTipo.ToString()" style="display: flex; align-items: start; gap: 40px;">
-								<div style="width: 20%; padding: 0px 20px;">
-									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(bundleTipo).ImagenTienda)" alt="Store" style="width: 100%; max-height: 70px; object-fit: contain;"/>
-								</div>
+							<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-content: flex-start;">
+								@{
+									int i = 1;
+									while (i < 13)
+									{
+										List<Bundles2.Bundle> bundlesMensual = new List<Bundles2.Bundle>();
 
-								<div style="width: 80%;">
-									@{
-										int i = 1;
-										while (i < 13)
+										foreach (var bundle in bundlesAño)
 										{
-											List<Bundles2.Bundle> bundlesMensual = new List<Bundles2.Bundle>();
-
-											foreach (var bundle in bundlesAño)
+											if (bundle.FechaEmpieza.Month == i)
 											{
-												if (bundle.FechaEmpieza.Month == i)
-												{
-													bundlesMensual.Add(bundle);
-												}
+												bundlesMensual.Add(bundle);
 											}
+										}
 
-											if (bundlesMensual.Count > 0)
-											{
-												bundlesMensual = bundlesMensual.OrderBy(x => x.NombreBundle).ToList();
+										if (bundlesMensual.Count > 0)
+										{
+											bundlesMensual = bundlesMensual.OrderBy(x => x.NombreBundle).ToList();
 
-												<label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
+											<div>
+												<label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months") (@bundlesMensual.Count.ToString())</label>
 
 												<ul>
 													@foreach (var bundleMensual in bundlesMensual)
 													{
-														<li>
+														<li style="margin-bottom: 5px;">
 															<a @onclick="@(e => SeleccionarBundle(e, bundleMensual))" class="enlace-falso">
 																@bundleMensual.NombreBundle
 															</a>
 														</li>
 													}
 												</ul>
-											}
-
-											i += 1;
+											</div>
 										}
+
+										i += 1;
 									}
-								</div>
+								}
 							</div>
-						}
+						</div>
 					}
-				</div>
-			}
-		</div>
+				}
+			</div>
+		}
 	}
 }
 else
@@ -420,9 +428,9 @@ else
 		}
 
 		if (tiposActuales.Count > 0)
-        {
-            tiposActuales = tiposActuales.OrderBy(x => (int)x).ToList();
-        }
+		{
+			tiposActuales = tiposActuales.OrderBy(x => (int)x).ToList();
+		}
 	}
 
 	private Bundles2.BundleTipo tipoSeleccionado = Bundles2.BundleTipo.Desconocido;
@@ -437,6 +445,11 @@ else
 		{
 			tipoSeleccionado = nuevoTipo;
 			bundlesActuales = BaseDatos.Bundles.Buscar.Actuales(nuevoTipo);
+		}
+		else
+		{
+			añoSeleccionado = DateTime.Now.Year.ToString();
+			bundlesPasados = BaseDatos.Bundles.Buscar.Año(añoSeleccionado);
 		}
 	}
 

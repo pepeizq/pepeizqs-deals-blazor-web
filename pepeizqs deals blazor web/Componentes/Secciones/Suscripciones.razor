@@ -189,6 +189,15 @@
     }
 </style>
 
+<style>
+    .caja-archivo-contenido {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 40px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
 <div class="subcabecera">
     <div class="cuerpo-ancho sub-subcabecera">
         <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, false))">
@@ -318,7 +327,7 @@
         if (tipoSeleccionado == Suscripciones2.SuscripcionTipo.Desconocido)
         {
             <div style="margin: 40px 0px; display: flex; flex-direction: column; gap: 30px;">
-                <div class="caja-diseño" style="display: flex; align-items: center; padding: 20px; gap: 20px;">
+                <div class="caja-archivo-contenido" style="display: flex; align-items: center; padding: 20px; gap: 20px;">
                     <div style="max-width: 26px;">
                         <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                             <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
@@ -330,7 +339,7 @@
                     </div>
                 </div>
 
-                <div class="suscripciones-grid caja-diseño" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 30px;">
+                <div class="suscripciones-grid caja-archivo-contenido" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 30px;">
                     @if (suscripcionesActuales != null)
                     {
                         if (suscripcionesActuales.Count > 0)
@@ -409,7 +418,7 @@
                     </div>
                 }
 
-                <div class="caja-diseño" style="margin: 40px 0px; padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px;">
+                <div class="caja-archivo-contenido" style="margin: 40px 0px; padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px;">
                     @foreach (var juego in suscripcionSeleccionadaJuegosMostrar)
                     {
                         string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
@@ -427,7 +436,7 @@
     }
     else
     {
-        <div class="caja-diseño" style="padding: 30px; margin: 40px 0px; display: flex; flex-direction: column; gap: 20px;">
+        <div class="caja-archivo-contenido" style="padding: 30px; margin: 40px 0px; display: flex; flex-direction: column; gap: 20px;">
             @if (suscripcionesUltimas.Count > 0)
             {
                 foreach (var juego in suscripcionesUltimas)
@@ -465,113 +474,112 @@
 }
 else
 {
-    <div class="caja-diseño" style="padding: 30px; margin: 40px 0px;">
-        <div style="display: flex; align-items: start;">
-            @foreach (var año in años)
-            {
-                <div style="margin-right: 15px;">
-                    <button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
-                        @año
-                    </button>
+    <div style="display: flex; align-items: start; gap: 15px; margin: 40px 0px 20px 0px; flex-wrap: wrap;">
+        @foreach (var año in años)
+        {
+            <div>
+                <button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
+                    @año
+                </button>
 
-                    @if (añoSeleccionado == año)
-                    {
-                        <div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;">
-                        </div>
+                @if (añoSeleccionado == año)
+                {
+                    <div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;" />
 
-                        <div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
-                            @foreach (var suscripcionPasada in suscripcionesPasadas)
+                    <div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
+                        @foreach (var suscripcionPasada in suscripcionesPasadas)
+                        {
+                            List<Juegos.JuegoSuscripcion> suscripcionAño = new List<Juegos.JuegoSuscripcion>();
+
+                            foreach (var juego in suscripcionPasada.Juegos)
                             {
-                                List<Juegos.JuegoSuscripcion> suscripcionAño = new List<Juegos.JuegoSuscripcion>();
-
-                                foreach (var juego in suscripcionPasada.Juegos)
+                                if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
                                 {
-                                    if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
-                                    {
-                                        suscripcionAño.Add(juego);
-                                    }
-                                }
-
-                                if (suscripcionAño.Count > 0)
-                                {
-                                    <div style="margin-right: 15px; font-size: 14px;">
-                                        <a onclick="moverScroll('pasado-@suscripcionPasada.Tipo.Id.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
-                                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(suscripcionPasada.Tipo.ImagenIcono, 22, 22)" style="width: 22px; height: 22px;" alt="Store" /> (@suscripcionAño.Count.ToString())
-                                        </a>
-                                    </div>
+                                    suscripcionAño.Add(juego);
                                 }
                             }
-                        </div>
-                    }
-                </div>
-            }
-        </div>
 
-        @if (string.IsNullOrEmpty(añoSeleccionado) == false)
-        {
-            <div style="margin-top: 55px;">
-                @foreach (var suscripcionPasada in suscripcionesPasadas)
-                {
-                    List<Juegos.JuegoSuscripcion> suscripcionesAño = new List<Juegos.JuegoSuscripcion>();
-
-                    foreach (var juego in suscripcionPasada.Juegos)
-                    {
-                        if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
-                        {
-                            suscripcionesAño.Add(juego);
+                            if (suscripcionAño.Count > 0)
+                            {
+                                <div style="margin-right: 15px; font-size: 14px;">
+                                    <a onclick="moverScroll('pasado-@suscripcionPasada.Tipo.Id.ToString()')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
+                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(suscripcionPasada.Tipo.ImagenIcono, 22, 22)" style="width: 22px; height: 22px;" alt="Store" /> (@suscripcionAño.Count.ToString())
+                                    </a>
+                                </div>
+                            }
                         }
-                    }
+                    </div>
+                }
+            </div>
+        }
+    </div>
 
-                    if (suscripcionesAño.Count > 0)
+    @if (string.IsNullOrEmpty(añoSeleccionado) == false)
+    {
+        <div style="display: flex; flex-direction: column; gap: 40px; margin: 55px auto 40px auto;">
+            @foreach (var suscripcionPasada in suscripcionesPasadas)
+            {
+                List<Juegos.JuegoSuscripcion> suscripcionesAño = new List<Juegos.JuegoSuscripcion>();
+
+                foreach (var juego in suscripcionPasada.Juegos)
+                {
+                    if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
                     {
+                        suscripcionesAño.Add(juego);
+                    }
+                }
+
+                if (suscripcionesAño.Count > 0)
+                {
+                    <div class="caja-archivo-contenido">
+                        <div id="pasado-@suscripcionPasada.Tipo.Id.ToString()" style="max-width: 200px;">
+                            <img src="@suscripcionPasada.Tipo.ImagenLogo" alt="Store" style="width: 100%; max-height: 70px; object-fit: contain;" />
+                        </div>
+
                         <hr>
 
-                        <div id="pasado-@suscripcionPasada.Tipo.Id.ToString()" style="display: flex; align-items: start; gap: 40px;">
-                            <div style="width: 20%; padding: 0px 20px;">
-                                <img src="@suscripcionPasada.Tipo.ImagenLogo" alt="Store" style="width: 100%; max-height: 70px; object-fit: contain;" />
-                            </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-content: flex-start;">
+                            @{
+                                int i = 1;
+                                while (i < 13)
+                                {
+                                    List<Juegos.JuegoSuscripcion> suscripcionesMensual = new List<Juegos.JuegoSuscripcion>();
 
-                            <div style="width: 80%;">
-                                @{
-                                    int i = 1;
-                                    while (i < 13)
+                                    foreach (var juego in suscripcionesAño)
                                     {
-                                        List<Juegos.JuegoSuscripcion> suscripcionesMensual = new List<Juegos.JuegoSuscripcion>();
-
-                                        foreach (var juego in suscripcionesAño)
+                                        if (juego.FechaEmpieza.Month == i)
                                         {
-                                            if (juego.FechaEmpieza.Month == i)
-                                            {
-                                                suscripcionesMensual.Add(juego);
-                                            }
+                                            suscripcionesMensual.Add(juego);
                                         }
+                                    }
 
-                                        if (suscripcionesMensual.Count > 0)
-                                        {
-                                            <label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months")</label>
+                                    if (suscripcionesMensual.Count > 0)
+                                    {
+                                        <div>
+                                            <label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months") (@suscripcionesMensual.Count.ToString())</label>
 
                                             <ul>
                                                 @foreach (var juegoMensual in suscripcionesMensual)
                                                 {
-                                                    <li>
+                                                    <li style="margin-bottom: 5px;">
                                                         <a href="/game/@juegoMensual.JuegoId/@Herramientas.EnlaceAdaptador.Nombre(juegoMensual.Nombre)/" style="text-decoration: none;">
                                                             @juegoMensual.Nombre (@Juegos.JuegoDRM2.DevolverDRM(juegoMensual.DRM))
                                                         </a>
                                                     </li>
                                                 }
                                             </ul>
-                                        }
-
-                                        i += 1;
+                                        </div>
                                     }
+
+                                    i += 1;
                                 }
-                            </div>
+                            }
                         </div>
-                    }
+                    </div>
                 }
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 }
 
 @code {
@@ -867,6 +875,11 @@ else
                 await JavaScript.InvokeVoidAsync("ChangeUrl", "/subscriptions/");
             }
         }
+        else
+        {
+            añoSeleccionado = DateTime.Now.Year.ToString();
+            GenerarArchivo();
+        }
     }
 
     private string CambiarEstilo(Suscripciones2.SuscripcionTipo nuevoTipo, bool esArchivo, bool esUltimas)
@@ -912,7 +925,11 @@ else
     private void CambiarAño(MouseEventArgs e, string nuevoAño)
     {
         añoSeleccionado = nuevoAño;
+        GenerarArchivo();
+    }
 
+    private void GenerarArchivo()
+    {
         List<Juegos.JuegoSuscripcion> juegosPasados = BaseDatos.Suscripciones.Buscar.Año(añoSeleccionado);
 
         if (juegosPasados.Count > 0)

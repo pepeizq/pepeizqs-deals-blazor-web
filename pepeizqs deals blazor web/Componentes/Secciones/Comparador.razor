@@ -113,6 +113,15 @@
 		}
 </style>
 
+<style>
+	.caja-comparador {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 10px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 <div class="subcabecera">
 	<div class="cuerpo-ancho sub-subcabecera">
 		<h1 style="font-size: 18px; margin: 0px; width: fit-content; padding: 9px 0px;">
@@ -214,7 +223,7 @@ else
 			anchoImagenes = "300%";
 		}
 
-		<div class="caja-diseño" style="position: sticky; top: 70px; z-index: 3; margin-top: 40px;">
+		<div class="caja-comparador" style="position: sticky; top: 70px; z-index: 3; margin-top: 40px;">
 			<div class="cuerpo-ancho" style="font-size: 18px; padding: 5px 0px; display: flex; align-items: center; gap: 20px;">
 				<div style="width: 200%; font-size: 22px;">
 					<button @onclick="@(e => ClickearLimpieza(e))" class="boton-expandir boton-pequeño" style="background-color: transparent; padding: 12px 15px; margin: auto;">
@@ -266,7 +275,7 @@ else
 			</div>
 		</div>
 
-	    <div class="caja-diseño" style="margin: 40px auto;"> 
+		<div class="caja-comparador" style="margin: 40px auto;">
 			<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
 				<div style="display: flex; align-items: center; gap: 15px; width: 100%;">
 					<img src="@Juegos.JuegoDRM2.SacarImagen(Juegos.JuegoDRM.Steam)" style="max-width: 24px; max-height: 24px;"/>
@@ -682,7 +691,7 @@ else
 			</div>
 		</div>
 
-		<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+		<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 			@foreach (var drmHistorico in preciosHistoricos)
 			{
 				<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -777,7 +786,7 @@ else
 			</div>
 		</div>
 
-		<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+		<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 			@foreach (var drmActual in preciosActuales)
 			{
 				<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1026,7 +1035,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var bundle in bundlesActuales)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1176,7 +1185,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var bundle in bundlesAntiguos)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1326,7 +1335,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var gratis in gratisActuales)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1476,7 +1485,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var gratis in gratisAntiguos)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1626,7 +1635,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var suscripcion in suscripcionesActuales)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">
@@ -1832,7 +1841,7 @@ else
 				</div>
 			</div>
 
-			<div class="caja-diseño" style="margin: 20px auto 40px auto;">
+			<div class="caja-comparador" style="margin: 20px auto 40px auto;">
 				@foreach (var suscripcion in suscripcionesAntiguas)
 				{
 					<div style="display: flex; align-items: center; gap: 20px; padding: 20px; width: 100%;">

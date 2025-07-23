@@ -120,6 +120,16 @@
 	}
 </script>
 
+<style>
+	.caja-noticia-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 40px;
+		margin: 40px 0px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 @if (noticia != null)
 {
 	if (usuarioAdmin == true)
@@ -127,64 +137,48 @@
 		<pepeizqs_deals_blazor_web.Componentes.Admin.Noticia idioma="@idioma" noticiaId="@noticia.Id" />
 	}
 
+	<div class="subcabecera">
+		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
+			@{
+				string imagenCabecera = string.Empty;
+
+				if (noticia.Tipo == NoticiaTipo.Bundles)
+				{
+					imagenCabecera = BundlesCargar.DevolverBundle(noticia.BundleTipo).ImagenTienda;
+				}
+				else if (noticia.Tipo == NoticiaTipo.Gratis)
+				{
+					imagenCabecera = GratisCargar.DevolverGratis(noticia.GratisTipo).ImagenLogo;
+				}
+				else if (noticia.Tipo == NoticiaTipo.Suscripciones)
+				{
+					imagenCabecera = SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenLogo;
+				}
+
+				if (string.IsNullOrEmpty(imagenCabecera) == false)
+				{
+					<div>
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCabecera)" style="max-width: 150px; max-height: 70px;" alt="Logo" />
+					</div>
+				}
+			}
+
+			<h1 style="font-size: 18px; margin: 0px; padding: 9px 20px; line-height: 30px;">
+				@titulo
+			</h1>
+
+			<div style="margin-left: auto; display: flex; justify-content: right;">
+				<div style="font-size: 15px;">
+					@noticia.FechaEmpieza.ToString("d/M/yyyy")
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div>
 		<img class="juego-fondo" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondo, 1536, 496)" alt="Background" loading="lazy" />
 
-		<div style="position: relative; display: flex; flex-direction: column; gap: 40px;">
-			@if (cambiarEnlace == true)
-			{
-				<div class="caja-diseño" style="display: flex; align-items: center; gap: 40px; padding: 20px;">
-					<a href="/last-news" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: fit-content;">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "Back", "News")
-					</a>
-
-					<a href="/" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: fit-content;">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "Back2", "News")
-					</a>
-				</div>
-			}
-
-			@if (tipo != Tipo.Portada)
-			{
-				<div class="caja-diseño" style="padding: 40px;">
-					<div style="display: flex; flex-direction: row; align-items: center; gap: 40px;">
-						@{
-							string imagenCabecera = string.Empty;
-
-							if (noticia.Tipo == NoticiaTipo.Bundles)
-							{
-								imagenCabecera = BundlesCargar.DevolverBundle(noticia.BundleTipo).ImagenTienda;
-							}
-							else if (noticia.Tipo == NoticiaTipo.Gratis)
-							{
-								imagenCabecera = GratisCargar.DevolverGratis(noticia.GratisTipo).ImagenLogo;
-							}
-							else if (noticia.Tipo == NoticiaTipo.Suscripciones)
-							{
-								imagenCabecera = SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenLogo;
-							}
-
-							if (string.IsNullOrEmpty(imagenCabecera) == false)
-							{
-								<div>
-									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCabecera)" style="max-width: 200px; max-height: 80px;" alt="Logo" />
-								</div>
-							}
-						}
-
-						<div style="display: flex; flex-direction: column; gap: 10px;">
-							<h1 style="font-size: 22px; line-height: 1.3;">
-								@titulo
-							</h1>
-
-							<div style="font-size: 15px;">
-								@noticia.FechaEmpieza.ToString("d/M/yyyy")	
-							</div>
-						</div>
-					</div>
-				</div>
-			}
-
+		<div style="position: relative; display: flex; flex-direction: column;">
 			@if (noticia.Tipo == NoticiaTipo.Bundles)
 			{
 				if (noticia.BundleId > 0)
@@ -226,7 +220,7 @@
 					}
 				}
 
-				<div class="caja-diseño" style="padding: 40px;">
+				<div class="caja-noticia-contenido">
 					<div>
 						@texto
 					</div>
@@ -293,7 +287,7 @@
 					}
 				}
 
-				<div class="caja-diseño" style="padding: 40px;">
+				<div class="caja-noticia-contenido">
 					<div>
 						@texto
 					</div>
@@ -330,7 +324,7 @@
 			}
 			else
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				<div class="caja-noticia-contenido">
 					@((MarkupString)Herramientas.Idiomas.ElegirTexto(idioma, noticia.ContenidoEn, noticia.ContenidoEs))
 				</div>
 			}
@@ -396,6 +390,9 @@
 	[SupplyParameterFromQuery]
 	private string Language { get; set; }
 
+	[SupplyParameterFromQuery]
+	private string Source { get; set; }
+
 	[Parameter]
 	public int id { get; set; }
 
@@ -450,7 +447,7 @@
 
 				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
 				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
-				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/?language=" + idioma;
+				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
 
 				List<string> juegosTexto = Herramientas.Listados.Generar(noticia.Juegos);
 

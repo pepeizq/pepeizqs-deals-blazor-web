@@ -3,7 +3,6 @@
 @using Microsoft.JSInterop
 @using Microsoft.VisualBasic
 
-@inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
 
 <style>
@@ -96,7 +95,7 @@
 	string codigoTexto = string.Empty;
 	DateTime fechaDetectado = DateTime.Now;
 
-	if (tipo == Tipo.Portada || tipo == Tipo.MinimosHistoricos)
+	if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.MinimosHistoricos)
 	{
 		JuegoPrecio oferta = juego.PrecioMinimosHistoricos[0];
 
@@ -219,7 +218,7 @@
 						@tooltip.Nombre
 					</div>
 
-					@if (tipo == Tipo.Portada || tipo == Tipo.MinimosHistoricos)
+					@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.MinimosHistoricos)
 					{
 						<div style="display: flex; align-items: center; padding: 5px; text-align: left; justify-content: left;">
 							<div style="margin-right: 20px;">
@@ -379,7 +378,7 @@
 			}	
 		</div>
 
-		@if (tipo == Tipo.Portada)
+		@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos)
 		{
 			if (string.IsNullOrEmpty(fondoColor) == true)
 			{
@@ -396,9 +395,13 @@
 						<div class="minimo-fuente">@juego.Nombre</div>
 
 						<div style="margin-top: 15px; display: flex; align-items: center;">
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 16px; height: 16px; margin-right: 10px;" alt="DRM" loading="lazy" />
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 16px; height: 16px; margin-right: 10px;" alt="Store" loading="lazy" />
-							<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(fechaDetectado, idioma)</div>
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 20px; height: 20px; margin-right: 10px;" alt="DRM" loading="lazy" />
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 20px; height: 20px; margin-right: 10px;" alt="Store" loading="lazy" />
+							
+							@if (tipo == Tipo.PortadaNuevos)
+							{
+								<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(fechaDetectado, idioma)</div>
+							}
 						</div>
 					</div>
 
@@ -777,7 +780,7 @@
 
 	public enum Tipo
 	{
-		Portada,
+		PortadaNuevos,
 		MinimosHistoricos,
 		Bundle,
 		Noticia,
@@ -786,7 +789,9 @@
 		CuratorLista,
 		CuratorJuego,
 		Gratis,
-		Suscripciones
+		Suscripciones,
+		PortadaPopulares,
+		PortadaLanzamientos
 	}
 
 	#region Portapapeles

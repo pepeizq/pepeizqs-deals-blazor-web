@@ -285,29 +285,32 @@ namespace APIs.GOG
 
 				if (datos != null)
 				{
-					if (datos.Caracteristicas.Producto != null)
+					if (datos.Caracteristicas != null)
 					{
-						galaxy.FechaLanzamiento = DateTime.Parse(datos.Caracteristicas.Producto.FechaLanzamiento);
-					}
-
-					foreach (var caracteristica in datos.Caracteristicas.Datos)
-					{
-						if (caracteristica.Id == "achievements")
+						if (datos.Caracteristicas.Producto != null)
 						{
-							galaxy.Logros = true;
+							galaxy.FechaLanzamiento = DateTime.Parse(datos.Caracteristicas.Producto.FechaLanzamiento);
 						}
 
-						if (caracteristica.Id == "cloud_saves")
+						foreach (var caracteristica in datos.Caracteristicas.Datos)
 						{
-							galaxy.GuardadoNube = true;
-						}
-					}
+							if (caracteristica.Id == "achievements")
+							{
+								galaxy.Logros = true;
+							}
 
-					foreach (var propiedad in datos.Caracteristicas.Propiedades)
-					{
-						if (propiedad.Slug == "good-old-game")
+							if (caracteristica.Id == "cloud_saves")
+							{
+								galaxy.GuardadoNube = true;
+							}
+						}
+
+						foreach (var propiedad in datos.Caracteristicas.Propiedades)
 						{
-							galaxy.Preservacion = true;
+							if (propiedad.Slug == "good-old-game")
+							{
+								galaxy.Preservacion = true;
+							}
 						}
 					}
 				}
@@ -328,69 +331,72 @@ namespace APIs.GOG
 
 				if (datos != null)
 				{
-					List<JuegoIdioma> idiomas = Herramientas.Idiomas.GogSacarIdiomas(datos.Caracteristicas.Idiomas);
-
-					if (listadoIdiomas == null)
+					if (datos.Caracteristicas != null)
 					{
-						listadoIdiomas = idiomas;
-					}
-					else
-					{
-						List<JuegoIdioma> listadoActualizar = listadoIdiomas;
+						List<JuegoIdioma> idiomas = Herramientas.Idiomas.GogSacarIdiomas(datos.Caracteristicas.Idiomas);
 
-						//Limpiar en un futuro
-
-						int i = 0;
-						while (i < 30)
+						if (listadoIdiomas == null)
 						{
-							int j = 0;
-							bool borrar = false;
+							listadoIdiomas = idiomas;
+						}
+						else
+						{
+							List<JuegoIdioma> listadoActualizar = listadoIdiomas;
 
-							foreach (var viejoIdioma in listadoActualizar)
+							//Limpiar en un futuro
+
+							int i = 0;
+							while (i < 30)
 							{
-								if (viejoIdioma.DRM == JuegoDRM.GOG)
+								int j = 0;
+								bool borrar = false;
+
+								foreach (var viejoIdioma in listadoActualizar)
 								{
-									borrar = true;
-									break;
+									if (viejoIdioma.DRM == JuegoDRM.GOG)
+									{
+										borrar = true;
+										break;
+									}
+
+									j += 1;
 								}
 
-								j += 1;
-							}
-
-							if (borrar == true)
-							{
-								listadoActualizar.RemoveAt(j);
-							}
-
-							i += 1;
-						}
-
-						//----------------------------
-
-						foreach (var nuevoIdioma in idiomas)
-						{
-							bool existe = false;
-
-							foreach (var viejoIdioma in listadoActualizar)
-							{
-								if (viejoIdioma.DRM == nuevoIdioma.DRM && nuevoIdioma.Idioma == viejoIdioma.Idioma)
+								if (borrar == true)
 								{
-									existe = true;
+									listadoActualizar.RemoveAt(j);
+								}
 
-									viejoIdioma.Audio = nuevoIdioma.Audio;
-									viejoIdioma.Texto = nuevoIdioma.Texto;
+								i += 1;
+							}
 
-									break;
+							//----------------------------
+
+							foreach (var nuevoIdioma in idiomas)
+							{
+								bool existe = false;
+
+								foreach (var viejoIdioma in listadoActualizar)
+								{
+									if (viejoIdioma.DRM == nuevoIdioma.DRM && nuevoIdioma.Idioma == viejoIdioma.Idioma)
+									{
+										existe = true;
+
+										viejoIdioma.Audio = nuevoIdioma.Audio;
+										viejoIdioma.Texto = nuevoIdioma.Texto;
+
+										break;
+									}
+								}
+
+								if (existe == false)
+								{
+									listadoActualizar.Add(nuevoIdioma);
 								}
 							}
 
-							if (existe == false)
-							{
-								listadoActualizar.Add(nuevoIdioma);
-							}
+							return listadoActualizar;
 						}
-
-						return listadoActualizar;
 					}
 				}
 			}

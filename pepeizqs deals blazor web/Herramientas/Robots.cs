@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-using ImageProcessor.Imaging.Quantizers.WuQuantizer;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -9,6 +8,7 @@ namespace Herramientas
 	public static class RobotsUserAgents
 	{
 		public static List<string> bots = [
+			"AhrefsBot",
 			"Applebot",
 			"Applebot-Extended",
 			"archive.org_bot",
@@ -17,12 +17,15 @@ namespace Herramientas
 			"Barkrowler",
 			"Bingbot",
 			"BingPreview",
+			"CCBot",
 			"Chrome-Lighthouse",
 			"Discordbot",
+			"DotBot",
 			"DuckAssistBot",
 			"DuckDuckBot",
 			"Ecosia",
 			"Exabot",
+			"facebook",
 			"feedburner",
 			"fetcher",
 			"Feedfetcher-Google",
@@ -37,7 +40,9 @@ namespace Herramientas
 			"Google Web Preview",
 			"ia_archiver",
 			"Lighthouse",
+			"MJ12bot",
 			"MojeekBot",
+			"nbot",
 			"OpenWebSearchBot",
 			"Owler",
 			"Qwantify",
@@ -48,7 +53,8 @@ namespace Herramientas
 			"Valve Client",
 			"Valve Steam",
 			"YandexBot",
-			"Yeti"
+			"Yeti",
+			"zoominfobot"
 		];
 
 		public static bool EsBotVerificado(string userAgent)

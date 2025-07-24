@@ -2,7 +2,6 @@
   "Title": "Patreon",
   "Subtitle": "Ayuda económicamente a mantener la web libre de anuncios y que pueda seguir siendo de código abierto.",
   "String1": "Para ayudarme con el coste monetario de mantener esta web he desarrollado una serie de ventajas a los usuarios que me ayudan a través de Patreon. Si queréis acceder a las ventajas es necesario pagar cada mes el tier más bajo.",
-  "String2": "A continuación os detallo las ventajas por ayudarme en Patreon cada mes:",
   "String3": "Navegación sin afiliados",
   "String4": "Puedes navegar libremente por la web sin que se incrusten afiliados en los enlaces a ofertas, bundles o juegos gratis.",
   "String5": "Pepe Coins para gastar en la Tienda",
@@ -10,8 +9,6 @@
   "String7": "Últimas Actualizaciones",
   "String8": "Cambiar de idioma en las reseñas de usuarios de Steam",
   "String9": "Puedes cambiar de idiomas en las reseñas a tu elección, ademas de mostrar como esta valorado el juego en cada región.",
-  "String10": "Enlaces a otras webs",
-  "String11": "Soy realista, no puedo tener toda la información útil sobre los juegos así que tenéis una sección con enlaces directos a sus fichas en webs como SteamDB, PCGamingWiki o IsThereAnyDeal.",
-  "String12": "Preferencia de conexión",
-  "String13": "En caso de saturación de esta web seras el primero de la cola en poder conectarte. Y ademas podrás actualizar tantas veces como quieras la web sin que tengas restricción alguna."
+  "String10": "Preferencia de conexión",
+  "String11": "En caso de saturación de esta web seras el primero de la cola en poder conectarte. Y ademas podrás actualizar tantas veces como quieras la web sin que tengas restricción alguna."
 }

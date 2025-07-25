@@ -41,6 +41,15 @@
 	</HeadContent>
 }
 
+<style>
+	.caja-coste-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 30px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 <div class="subcabecera">
 	<div class="cuerpo-ancho sub-subcabecera">
 		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
@@ -50,7 +59,7 @@
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
 		<div>
 			@Herramientas.Idiomas.BuscarTexto(idioma, "String16", "CostWeb")
 		</div>
@@ -70,7 +79,7 @@
 	</div>
 </div>
 
-<div style="margin: 40px auto;">
+<div class="caja-coste-contenido" style="margin: 40px auto;">
 	<div>
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "CostWeb")
 	</div>
@@ -119,14 +128,14 @@
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
 		<div>
 			@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "CostWeb")
 		</div>
 	</div>
 </div>
 
-<div style="margin: 40px auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;">
+<div class="caja-coste-contenido" style="margin: 40px auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;">
 	<div>
 		<div>
 			@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "CostWeb")
@@ -201,14 +210,14 @@
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho" style="font-size: 18px; padding: 20px 0px; display: flex; align-items: center; gap: 20px;">
+	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
 		<div>
 			@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "CostWeb")
 		</div>
 	</div>
 </div>
 
-<div style="margin: 40px auto;">
+<div class="caja-coste-contenido" style="margin: 40px auto;">
 	<ul>
 		<li>
             @Herramientas.Idiomas.BuscarTexto(idioma, "String19", "CostWeb")

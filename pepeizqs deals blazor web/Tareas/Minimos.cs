@@ -76,20 +76,6 @@ namespace Tareas
 															añadir = false;
 														}
 
-														if (juego.Gratis != null)
-														{
-															if (juego.Gratis.Count > 0)
-															{
-																foreach (var gratis in juego.Gratis)
-																{
-																	if (gratis.DRM == historico.DRM)
-																	{
-																		añadir = false;
-																	}
-																}
-															}
-														}
-
 														if (añadir == true)
 														{
 															MinimoListado minimoListado = new MinimoListado();
@@ -110,8 +96,6 @@ namespace Tareas
 										if (juegosConMinimos.Count > 0)
 										{
 											BaseDatos.Portada.Limpiar.Ejecutar("seccionMinimos", conexion);
-
-											juegosConMinimos = juegosConMinimos.OrderByDescending(x => int.Parse(x.Juego.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Juego.Nombre).ToList();
 
 											foreach (var minimo in juegosConMinimos)
 											{

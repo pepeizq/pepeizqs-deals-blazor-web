@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using APIs.Steam;
 using Herramientas;
 using Microsoft.Data.SqlClient;
 
@@ -121,6 +122,41 @@ namespace Tareas
 
 												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
 											}
+										}
+
+										if (ficha.Metodo == "SteamCMD")
+										{
+											Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(ficha.IdJuego);
+
+											bool inteligenciaArtificial = false;
+											DateTime? fechaSteam = null;
+
+											if (juego.IdSteam > 0)
+											{
+												SteamCMDDatos datosCmd = await APIs.Steam.Juego.UltimaActualizacioneInteligenciaArtificial(juego.IdSteam);
+
+												if (datosCmd != null)
+												{
+													if (datosCmd.UltimaActualizacion != null)
+													{
+														fechaSteam = datosCmd.UltimaActualizacion;
+													}
+
+													if (datosCmd.InteligenciaArtificial == true)
+													{
+														inteligenciaArtificial = true;
+													}
+												}
+											}
+
+											DateTime? fechaGOG = null;
+
+											if (juego.IdGog > 0)
+											{
+												fechaGOG = await APIs.GOG.Juego.UltimaActualizacion(juego.IdGog.ToString());
+											}
+
+											global::BaseDatos.Juegos.Actualizar.UltimasActualizacioneseInteligenciaArticial(juego.Id, fechaSteam, fechaGOG, inteligenciaArtificial);
 										}
 									}
 								}

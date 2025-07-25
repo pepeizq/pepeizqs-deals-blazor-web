@@ -257,24 +257,31 @@ namespace APIs.GOG
 
 			if (string.IsNullOrEmpty(html) == false)
 			{
-				GOGGalaxy datos = null;
-
-				try
+				if (html.Contains("error404__img") == true)
 				{
-					datos = JsonSerializer.Deserialize<GOGGalaxy>(html);
-				}
-				catch (JsonException ex)
-				{
-					BaseDatos.Errores.Insertar.Mensaje("GOG Actualizar Datos " + id, ex, null, false);
 					return null;
-				}		
-
-				if (datos != null)
-				{
-					galaxy.Windows = datos.Sistemas.Windows;
-					galaxy.Mac = datos.Sistemas.Mac;
-					galaxy.Linux = datos.Sistemas.Linux;
 				}
+				else
+				{
+					GOGGalaxy datos = null;
+
+					try
+					{
+						datos = JsonSerializer.Deserialize<GOGGalaxy>(html);
+					}
+					catch (JsonException ex)
+					{
+						BaseDatos.Errores.Insertar.Mensaje("GOG Actualizar Datos " + id, ex, null, false);
+						return null;
+					}
+
+					if (datos != null)
+					{
+						galaxy.Windows = datos.Sistemas.Windows;
+						galaxy.Mac = datos.Sistemas.Mac;
+						galaxy.Linux = datos.Sistemas.Linux;
+					}
+				}	
 			}
 
 			string html2 = await Decompiladores.Estandar("https://api.gog.com/v2/games/" + id);

@@ -395,7 +395,7 @@
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 	<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
-		@if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+		@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
 		{
 			<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido))">
 				<h1 style="font-size: 18px; margin: 0px;">
@@ -415,6 +415,12 @@
 					}
 				}
 			}
+		}
+		else
+		{
+			<h1 style="font-size: 18px; margin: 0px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Index")
+			</h1>
 		}
 
 		<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
@@ -448,7 +454,7 @@
 {
 	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
-			@if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+			@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
 			{
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Nuevos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Nuevos))">
 					<h1 style="font-size: 18px; margin: 0px;">
@@ -477,6 +483,12 @@
 						</div>
 					</button>
 				</div>
+			}
+			else
+			{
+				<h1 style="font-size: 18px; margin: 0px;">
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Index")
+				</h1>
 			}
 		</div>
 	</div>

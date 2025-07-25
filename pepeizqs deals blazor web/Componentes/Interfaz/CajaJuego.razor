@@ -394,9 +394,9 @@
 					<div class="cjuego-titulo" style="width: 100%; display: flex; flex-flow: column wrap;">
 						<div class="minimo-fuente">@juego.Nombre</div>
 
-						<div style="margin-top: 15px; display: flex; align-items: center;">
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 20px; height: 20px; margin-right: 10px;" alt="DRM" loading="lazy" />
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 20px; height: 20px; margin-right: 10px;" alt="Store" loading="lazy" />
+						<div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 18px; height: 18px;" alt="DRM" loading="lazy" />
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 18px; height: 18px;" alt="Store" loading="lazy" />
 							
 							@if (tipo == Tipo.PortadaNuevos)
 							{
@@ -621,7 +621,7 @@
 		{
 			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" target="_blank" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
 				<div style="display: flex; flex-direction: column; padding: 2px; height: 100%;" title="@juego.Nombre">
-					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 186px; max-height: 278px; object-fit: cover;" alt="@juego.Nombre" />
+					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-height: 278px; object-fit: cover;" alt="@juego.Nombre" />
 
 					@{
 						string mensaje = Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true);

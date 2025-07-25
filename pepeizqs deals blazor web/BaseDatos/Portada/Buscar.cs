@@ -29,8 +29,12 @@ namespace BaseDatos.Portada
 				string busqueda = @"SELECT * FROM juegos
 									WHERE ultimaModificacion >= DATEADD(day, -3, GETDATE()) AND JSON_PATH_EXISTS(analisis, '$.Cantidad') > 0 AND 
 									CONVERT(bigint, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',','')) > 99 AND 
+									(gratis IS NULL) AND (nombre IS NOT NULL AND LEN(nombre) > 0) AND (imagenes IS NOT NULL) AND
 									((mayorEdad IS NOT NULL AND mayorEdad = 'false') OR (mayorEdad IS NULL)) AND 
-									(freeToPlay = 'false' OR freeToPlay IS NULL)";
+									(freeToPlay = 'false' OR freeToPlay IS NULL)
+									 ORDER BY CASE
+									 WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))
+									 END DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

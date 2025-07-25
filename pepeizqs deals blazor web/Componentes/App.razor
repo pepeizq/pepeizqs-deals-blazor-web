@@ -34,10 +34,10 @@
 </head>
 
 <body class="cuerpo" id="cuerpazo" style="margin: 0px;">
-    <header style="height: var(--alturaCabecera); background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px; display: flex; width: 100%;">
+    <header style="height: var(--alturaCabecera); background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px; display: flex; width: 100%; border-bottom: 1px solid var(--fondoBotonPequeño);">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" style="padding: 0px; width: 100%;">
             <div class="cabecera-poner">
-                <Cabecera idioma="@idioma" usuarioId="@usuarioId"/>
+                <Cabecera idioma="@idioma" usuarioId="@usuarioId" userAgent="@userAgent"/>
             </div>
         </nav>
     </header>
@@ -99,7 +99,7 @@
 
     <script async src="@Assets["~/superjs.js"]"></script>
 
-    @if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+    @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
     {
         <div id="reconnect-modal" style="display: none;"></div>
         <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>

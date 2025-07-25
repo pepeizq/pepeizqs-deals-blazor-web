@@ -182,32 +182,41 @@
 
 <div class="subcabecera">
     <div class="cuerpo-ancho sub-subcabecera">
-        <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, false))">
+        @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+        {
+            <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, false))">
+                <h1 style="font-size: 18px; margin: 0px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Free")
+                </h1>
+            </button>
+
+            @if (tiposActuales.Count > 0 && mostrarArchivo == false)
+            {
+                foreach (var tipo in tiposActuales)
+                {
+                    if (tipo != Gratis2.GratisTipo.Desconocido)
+                    {
+                        <button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Gratis2.GratisCargar.DevolverGratis(tipo).Nombre">
+                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Gratis2.GratisCargar.DevolverGratis(tipo).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
+                        </button>
+                    }
+                }
+            }
+
+            <div style="margin-left: auto; display: flex; justify-content: right;">
+                <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, true))">
+                    <div style="font-size: 16px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Free")
+                    </div>
+                </button>
+            </div>
+        }
+        else
+        {
             <h1 style="font-size: 18px; margin: 0px;">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Free")
             </h1>
-        </button>
-
-        @if (tiposActuales.Count > 0 && mostrarArchivo == false)
-        {
-            foreach (var tipo in tiposActuales)
-            {
-                if (tipo != Gratis2.GratisTipo.Desconocido)
-                {
-                    <button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Gratis2.GratisCargar.DevolverGratis(tipo).Nombre">
-                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Gratis2.GratisCargar.DevolverGratis(tipo).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
-                    </button>
-                }
-            }
         }
-
-        <div style="margin-left: auto; display: flex; justify-content: right;">
-            <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, true))">
-                <div style="font-size: 16px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Free")
-                </div>
-            </button>
-        </div>
     </div>
 </div>
 
@@ -343,6 +352,7 @@ else
 
     private string idioma = "en";
     private string usuarioId = null;
+    private string userAgent = null;
 
     private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
     private Usuario deseadosUsuario = null;
@@ -358,6 +368,7 @@ else
     {
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
         usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+        userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
         if (string.IsNullOrEmpty(usuarioId) == false)
         {

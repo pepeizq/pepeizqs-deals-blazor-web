@@ -144,6 +144,14 @@
         <meta name="robots" content="index, follow" />
         <meta name="keywords" content="@keywords" />
 
+        @if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+        {
+            if (juego.MayorEdad.ToLower() == "true")
+            {
+                <meta name="rating" content="adult">
+            }
+        }
+
         @{
             string nombreJson = juego.Nombre.Replace(Strings.ChrW(34).ToString(), null);
 
@@ -323,17 +331,6 @@
             tooltip.style.top = (y - 10) + 'px';
             tooltip.style.left = (x - 20 - tooltip.getBoundingClientRect().width) + 'px';
         };
-    };
-
-    function moverScroll(id) {
-        const element = document.getElementById(id);
-        const y = element.getBoundingClientRect().top + window.pageYOffset;
-
-        window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-
-    function ocultar(id) {
-        document.getElementById(id).style.display = 'none';
     }
 </script>
 
@@ -997,9 +994,12 @@
                                         }
                                     </Authorized>
                                     <NotAuthorized>
-                                        <button @onclick="(e => LogearEnseñar(e))" class="boton-pequeño" style="width: auto; padding: 20px 40px; margin-left: 5px;">
-                                            @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Game")
-                                        </button>
+                                        @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                        {
+                                            <button @onclick="(e => LogearEnseñar(e))" class="boton-pequeño" style="width: auto; padding: 20px 40px; margin-left: 5px;">
+                                                @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Game")
+                                            </button>                                            
+                                        } 
                                     </NotAuthorized>
                                 </AuthorizeView>
                             }
@@ -2915,7 +2915,7 @@
                 }
             }
 
-            @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam)
+            @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
             {
                 <div id="reviews" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
                     <div>
@@ -3882,7 +3882,7 @@
 
                 #region Reseñas
 
-                if (Herramientas.RobotsUserAgents.EsBotVerificado(userAgent) == false)
+                if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
                 {
                     string idiomaSteam = "english";
 
@@ -4182,35 +4182,7 @@
 
                 if (actualizarUltimaActualizacion == true)
                 {
-                    bool inteligenciaArtificial = false;
-                    DateTime? fechaSteam = null;
-
-                    if (juego.IdSteam > 0)
-                    {
-                        SteamCMDDatos datosCmd = await APIs.Steam.Juego.UltimaActualizacioneInteligenciaArtificial(juego.IdSteam);
-
-                        if (datosCmd != null)
-                        {
-                            if (datosCmd.UltimaActualizacion != null)
-                            {
-                                fechaSteam = datosCmd.UltimaActualizacion;
-                            }
-
-                            if (datosCmd.InteligenciaArtificial == true)
-                            {
-                                inteligenciaArtificial = true;
-                            }
-                        }
-                    }
-
-                    DateTime? fechaGOG = null;
-
-                    if (juego.IdGog > 0)
-                    {
-                        fechaGOG = await APIs.GOG.Juego.UltimaActualizacion(juego.IdGog.ToString());
-                    }
-
-                    global::BaseDatos.Juegos.Actualizar.UltimasActualizacioneseInteligenciaArticial(juego.Id, fechaSteam, fechaGOG, inteligenciaArtificial);
+                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "SteamCMD");
                 }
             }
 

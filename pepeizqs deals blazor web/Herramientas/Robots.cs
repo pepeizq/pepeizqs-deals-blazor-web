@@ -17,6 +17,7 @@ namespace Herramientas
 			"Barkrowler",
 			"Bingbot",
 			"BingPreview",
+			"bot",
 			"CCBot",
 			"Chrome-Lighthouse",
 			"Discordbot",
@@ -47,7 +48,9 @@ namespace Herramientas
 			"Owler",
 			"Qwantify",
 			"SeznamBot",
+			"sift",
 			"Slurp",
+			"spider",
 			"TelegramBot",
 			"Twitterbot",
 			"Valve Client",
@@ -57,7 +60,7 @@ namespace Herramientas
 			"zoominfobot"
 		];
 
-		public static bool EsBotVerificado(string userAgent)
+		public static bool EsBot(string userAgent)
 		{
 			if (string.IsNullOrEmpty(userAgent) == false)
 			{
@@ -68,7 +71,11 @@ namespace Herramientas
 						return true;
 					}
 				}
-			}			
+			}
+			else
+			{
+				return true;
+			}
 
 			return false;
 		}
@@ -97,7 +104,7 @@ namespace Herramientas
 				//				}
 
 				sb.Append(@"Sitemap: https://pepeizqdeals.com/sitemap.xml");
-				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*");
+				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*\\r\nDisallow: /es/*");
 			}
             else
             {

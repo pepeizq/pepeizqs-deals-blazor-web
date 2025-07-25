@@ -129,35 +129,48 @@
 	{
 		<div class="subcabecera">
 			<div class="cuerpo-ancho sub-subcabecera">
-				<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, false))">
+				@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+				{
+					<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, false))">
+						<h1 style="font-size: 18px; margin: 0px;">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")
+						</h1>
+					</button>
+
+					<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
+						<div style="margin-left: auto; display: flex; justify-content: right;">
+							<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, true))">
+								<div style="font-size: 16px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastNews")
+								</div>
+							</button>
+						</div>
+					</div>
+				}
+				else
+				{
 					<h1 style="font-size: 18px; margin: 0px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")
 					</h1>
-				</button>	
-
-				<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
-					<div style="margin-left: auto; display: flex; justify-content: right;">
-						<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, true))">
-							<div style="font-size: 16px;">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastNews")
-							</div>
-						</button>
-					</div>
-				</div>
+				}
+				
 			</div>
 		</div>
 
 		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 			<div class="cuerpo-ancho sub-subcabecera">
-				@if (tiposActuales.Count > 0)
+				@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
 				{
-					foreach (var tipo in tiposActuales)
+					if (tiposActuales.Count > 0)
 					{
-						if (tipo != Noticias.NoticiaTipo.Desconocido)
+						foreach (var tipo in tiposActuales)
 						{
-							<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Noticias.NoticiasCargar.Traduccion(tipo, idioma)">
-								@Noticias.NoticiasCargar.Traduccion(tipo, idioma)
-							</button>
+							if (tipo != Noticias.NoticiaTipo.Desconocido)
+							{
+								<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Noticias.NoticiasCargar.Traduccion(tipo, idioma)">
+									@Noticias.NoticiasCargar.Traduccion(tipo, idioma)
+								</button>
+							}
 						}
 					}
 				}
@@ -321,6 +334,7 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string userAgent = null;
 
 	private List<string> fechas = new List<string>();
 	private List<Noticias.Noticia> noticiasMostrar = new List<Noticias.Noticia>();
@@ -333,6 +347,7 @@
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

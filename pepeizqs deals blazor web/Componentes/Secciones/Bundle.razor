@@ -283,7 +283,7 @@
 
 					if (bundle.Pick == true)
 					{
-						<div class="caja-diseño" style="padding: 30px; font-size: 18px; display: flex; align-items: center; flex-direction: row; gap: 40px; justify-content: center; margin-bottom: 30px;">
+						<div class="caja-diseño" style="border-radius: 0px; padding: 30px; font-size: 18px; display: flex; align-items: center; flex-direction: row; gap: 40px; justify-content: center; margin-bottom: 30px;">
 							@foreach (var tier2 in OrdenarTiers(bundle.Tiers))
 							{
 								<div style="text-align: center; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 15px 30px;">
@@ -310,7 +310,7 @@
 						espacioFondo = string.Empty;
 					}
 
-					<div class="caja-diseño" style="padding: 30px; @espacioFondo">
+					<div class="caja-diseño" style="border-radius: 0px; padding: 30px; @espacioFondo">
 						@if (bundle.Pick == false)
 						{
 							<div style="font-size: 18px; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; margin-bottom: 30px; border-radius: 5px;">

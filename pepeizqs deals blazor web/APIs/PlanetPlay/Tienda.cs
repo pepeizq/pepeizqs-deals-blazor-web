@@ -38,7 +38,7 @@ namespace APIs.PlanetPlay
 			int i = 0;
 			while (i < tope)
 			{
-				string html = await Decompiladores.Estandar("https://api.planetplay.com/platform/fetch?order=relevancy&offer=discount&page=" + i.ToString());
+				string html = await Decompiladores.Estandar("https://prod-ecs-api.planetplay.com/assets/fetch-new?order=relevancy&offer=discount&page=" + i.ToString());
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
@@ -54,65 +54,62 @@ namespace APIs.PlanetPlay
 							{
 								foreach (var juego in datos.Juegos)
 								{
-									if (juego.Activo == true)
+									decimal precioBase = juego.PrecioBase;
+									decimal precioRebajado = juego.PrecioRebajado;
+
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+
+									if (descuento > 0)
 									{
-										decimal precioBase = juego.PrecioBase;
-										decimal precioRebajado = juego.PrecioRebajado;
+										string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-										int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+										string enlace = juego.Enlace;
 
-										if (descuento > 0)
+										bool parar = false;
+
+										if (enlace.Contains("/store-mobile/games/") == true)
 										{
-											string nombre = WebUtility.HtmlDecode(juego.Nombre);
+											parar = true;
+										}
 
-											string enlace = juego.Enlace;
+										if (parar == false)
+										{
+											string imagen = juego.Imagen;
 
-											bool parar = false;
+											JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
 
-											if (enlace.Contains("/store-mobile/games/") == true)
+											JuegoPrecio oferta = new JuegoPrecio
 											{
-												parar = true;
+												Nombre = nombre,
+												Enlace = enlace,
+												Imagen = imagen,
+												Moneda = JuegoMoneda.Euro,
+												Precio = precioRebajado,
+												Descuento = descuento,
+												Tienda = Generar().Id,
+												DRM = drm,
+												FechaDetectado = DateTime.Now,
+												FechaActualizacion = DateTime.Now
+											};
+
+											try
+											{
+												BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+											}
+											catch (Exception ex)
+											{
+												BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
 											}
 
-											if (parar == false)
+											juegos2 += 1;
+
+											try
 											{
-												string imagen = juego.Imagen;
-
-												JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM.Nombre, Generar().Id);
-
-												JuegoPrecio oferta = new JuegoPrecio
-												{
-													Nombre = nombre,
-													Enlace = enlace,
-													Imagen = imagen,
-													Moneda = JuegoMoneda.Euro,
-													Precio = precioRebajado,
-													Descuento = descuento,
-													Tienda = Generar().Id,
-													DRM = drm,
-													FechaDetectado = DateTime.Now,
-													FechaActualizacion = DateTime.Now
-												};
-
-												try
-												{
-													BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-												}
-												catch (Exception ex)
-												{
-													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-												}
-
-												juegos2 += 1;
-
-												try
-												{
-													BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-												}
-												catch (Exception ex)
-												{
-													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-												}
+												BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+											}
+											catch (Exception ex)
+											{
+												BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
 											}
 										}
 									}
@@ -154,15 +151,6 @@ namespace APIs.PlanetPlay
 		public decimal PrecioRebajado { get; set; }
 
 		[JsonPropertyName("platform")]
-		public PlanetPlayJuegoPlataforma DRM { get; set; }
-
-		[JsonPropertyName("enabled")]
-		public bool Activo { get; set; }
-	}
-
-	public class PlanetPlayJuegoPlataforma
-	{
-		[JsonPropertyName("name")]
-		public string Nombre { get; set; }
+		public string DRM { get; set; }
 	}
 }

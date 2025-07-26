@@ -104,17 +104,20 @@
         }
     }
 
-    string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
-    List<string> keywordsLista = new List<string>();
-    keywordsLista.AddRange(keywordsEnBruto);
-
     string keywords = "deals";
 
-    foreach (string keyword in keywordsLista)
+    if (string.IsNullOrEmpty(juego.Nombre) == false)
     {
-        if (keyword.Length > 3)
+        string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
+        List<string> keywordsLista = new List<string>();
+        keywordsLista.AddRange(keywordsEnBruto);
+
+        foreach (string keyword in keywordsLista)
         {
-            keywords = keywords + ", " + keyword;
+            if (keyword.Length > 3)
+            {
+                keywords = keywords + ", " + keyword;
+            }
         }
     }
 

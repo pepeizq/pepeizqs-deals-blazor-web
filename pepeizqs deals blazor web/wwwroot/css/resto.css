@@ -48,6 +48,10 @@
     font-size: 14px;
 }
 
+.entrada-texto:focus {
+    outline: none;
+}
+
 .boton {
     color: var(--colorTexto);
     background-color: var(--fondoBoton);

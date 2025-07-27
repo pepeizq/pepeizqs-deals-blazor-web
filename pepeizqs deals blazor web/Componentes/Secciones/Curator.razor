@@ -156,6 +156,10 @@
 			@if (juegosCurator.Count > 0)
 			{
 				<div style="display: flex; align-items: start; gap: 40px;">
+					@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+					{
+
+					}
 					<div class="caja-curator-contenido" style="width: 30%; display: flex; flex-direction: column; gap: 10px; padding: 20px;">
 						<div>
 							<div style="margin: 0px 10px 10px 10px; font-size: 18px;">
@@ -268,6 +272,7 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string userAgent = null;
 
 	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
 	private Usuario deseadosUsuario = null;
@@ -291,6 +296,7 @@
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

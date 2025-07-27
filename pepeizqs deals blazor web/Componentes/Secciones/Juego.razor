@@ -2804,7 +2804,7 @@
                 }
             </div>
 
-            @if (curators.Count > 0)
+            @if (curators.Count > 0 && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
             {
                 foreach (var curator in curators)
                 {
@@ -4126,7 +4126,7 @@
                 }
             }
 
-            if (curatorsBuscar != null)
+            if (curatorsBuscar != null && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
             {
                 if (curatorsBuscar.Count > 0)
                 {

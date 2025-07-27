@@ -42,7 +42,7 @@
 
     .boton-superior {
         display: block;
-        padding: 6px 12px;
+        padding: 4px 12px;
         margin: 0px;
         transition: transform .2s;
         text-decoration: none;
@@ -141,296 +141,283 @@
         </Authorized>
     </AuthorizeView>
 
-    @if (enseñarBuscador == false)
+    @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
     {
-        if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
-        {
-            <button class="texto-cabecera boton-superior" @onclick="@(e => MostrarBuscador(e))" style="cursor: pointer; border: 0px;" title="Search">
-                <div style="width: 18px; height: 18px;">
-                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-                    </svg>
-                </div>
-            </button>
-        }
-        
-        <div class="botones-superiores">
-            @if (string.IsNullOrEmpty(usuarioId) == false)
-            {
-                <a class="boton-superior" href="/wishlist" style="font-size: 15px;">
-                    <div style="@GenerarEstilo("/wishlist")">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                    </div>
-                </a>
-            }
+        <div style="background-color: var(--fondoEntrada); padding-right: 10px; display: flex; align-items: center; gap: 10px;">
+            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
 
-            <a class="boton-superior" href="/historical-lows" style="font-size: 15px;">
-                <div style="@GenerarEstilo("/historical-lows")">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
-                </div>
-            </a>
-
-            <a class="boton-superior" href="/bundles" style="font-size: 15px;">
-                <div style="@GenerarEstilo("/bundles")">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
-                </div>
-            </a>
-
-            <a class="boton-superior" href="/free" style="font-size: 15px;">
-                <div style="@GenerarEstilo("/free")">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
-                </div>
-            </a>
-
-            <a class="boton-superior" href="/subscriptions" style="font-size: 15px;">
-                <div style="@GenerarEstilo("/subscriptions")">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
-                </div>
-            </a>
-
-            <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" title="@Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")">
-                <div style="width: 22px; height: 22px;">
-                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M0 256C0 209.4 12.5 165.6 34.3 127.1L144.1 318.3C166 357.5 207.9 384 256 384C270.3 384 283.1 381.7 296.8 377.4L220.5 509.6C95.9 492.3 0 385.3 0 256zM365.1 321.6C377.4 302.4 384 279.1 384 256C384 217.8 367.2 183.5 340.7 160H493.4C505.4 189.6 512 222.1 512 256C512 397.4 397.4 511.1 256 512L365.1 321.6zM477.8 128H256C193.1 128 142.3 172.1 130.5 230.7L54.2 98.5C101 38.5 174 0 256 0C350.8 0 433.5 51.5 477.8 128V128zM168 256C168 207.4 207.4 168 256 168C304.6 168 344 207.4 344 256C344 304.6 304.6 344 256 344C207.4 344 168 304.6 168 256z" />
-                    </svg>
-                </div>
-            </a>
-
-            @if (usuarioPatreon == false)
-            {
-                <a class="boton-superior" href="/patreon" style="font-size: 15px;" title="Patreon">
-                    <div style="width: 22px; height: 22px;">
-                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                            <path d="M489.7 153.8c-.1-65.4-51-119-110.7-138.3C304.8-8.5 207-5 136.1 28.4C50.3 68.9 23.3 157.7 22.3 246.2C21.5 319 28.7 510.6 136.9 512c80.3 1 92.3-102.5 129.5-152.3c26.4-35.5 60.5-45.5 102.4-55.9c72-17.8 121.1-74.7 121-150z" />
-                        </svg>
-                    </div>
-                </a>
-            }
-
-            <AuthorizeView>
-                <Authorized>
-                    <div style="display: flex; align-items: center; margin-left: auto;">
-                        <div class="menu-dropdown">
-                            <div style="display: flex; align-items: center; font-size: 14px; cursor: pointer; gap: 15px;">
-                                @if (opcionesCabecera != null)
-                                {
-                                    if (string.IsNullOrEmpty(opcionesCabecera.Avatar) == true)
-                                    {
-                                        <div>@opcionesCabecera.Email</div>
-                                    }
-                                    else
-                                    {
-                                        @if (opcionesCabecera.Avatar.ToLower().Contains(".jpg") == true || 
-                                            opcionesCabecera.Avatar.ToLower().Contains(".jpeg") == true || 
-                                            opcionesCabecera.Avatar.ToLower().Contains(".png") == true || 
-                                            opcionesCabecera.Avatar.ToLower().Contains(".webp") == true)
-                                        {
-                                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(opcionesCabecera.Avatar)" style="max-height: 32px; max-width: 32px;" title="@opcionesCabecera.Nickname"/>
-                                        }
-                                        else
-                                        {
-                                            <div>@opcionesCabecera.Email</div>
-                                        }
-                                    }
-                                }
-
-                                <div style="max-width: 10px;">
-                                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                        <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div class="menu-dropdown-contenido" style="right: -10px;">
-                                <a href="/account" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
-                                </a>
-
-                                <a href="/account/logout" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <div style="display: flex; align-items: center; margin-left: auto;">
-                        <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-                            <div style="@GenerarEstilo("/account/login")">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
-                            </div>
-                        </a>
-
-                        <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
-                            <div style="@GenerarEstilo("/account/register")">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
-                            </div>
-                        </a>
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
-
-        <div class="botones-superiores2" style="cursor: pointer;">
-            <div class="menu-dropdown">
-                <div style="width: 18px; height: 18px;">
-                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
-                    </svg>
-                </div>
-
-                <div class="menu-dropdown-contenido" style="left: -200px;">
-                    @if (string.IsNullOrEmpty(usuarioId) == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                        </a>
-                    }   
-
-                    <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
-                    </a>
-
-                    <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
-                    </a>
-
-                    <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
-                    </a>
-
-                    <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
-                    </a>
-
-                    <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")
-                    </a>
-
-                    @if (usuarioPatreon == false)
-                    {
-                        <a class="texto-cabecera boton-superior" href="/patreon" style="font-size: 15px;">
-                            Patreon
-                        </a>
-                    }
-
-                    <hr/>
-
-                    <AuthorizeView>
-                        <Authorized>
-                            <a class="texto-cabecera boton-superior" href="/account" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
-                            </a>
-
-                            <a class="texto-cabecera boton-superior" href="/account/logout" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
-                            </a>
-                        </Authorized>
-                        <NotAuthorized>
-                            <a class="texto-cabecera boton-superior" href="/account/login" target="_blank" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
-                            </a>
-
-                            <a class="texto-cabecera boton-superior" href="/account/register" target="_blank" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
-                            </a>
-                        </NotAuthorized>
-                    </AuthorizeView>
-                </div>
-            </div>
-        </div>
-    }
-    else
-    {
-        <button class="texto-cabecera boton-superior" @onclick="@(e => MostrarBuscador(e))" style="cursor: pointer; border: 0px; background-color: transparent;" title="Search">
-            <div style="width: 18px; height: 18px;">
+            <div style="max-width: 16px;">
                 <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
                 </svg>
             </div>
-        </button>
-
-        <input type="text" @bind-value="cadenaBusqueda" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onblur="AdiosFocusBuscador" class="entrada-texto" style="min-width: 50px; margin-left: 5px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")"/>
-
-        @if (encontroAlgo == true)
+        </div>
+    }
+        
+    <div class="botones-superiores">
+        @if (string.IsNullOrEmpty(usuarioId) == false)
         {
-            <div class="buscador-panel" style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); background-color: var(--fondoCuerpo); display: flex; align-items: start; flex-direction: column;">
-                <div class="caja-diseño" style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%; padding: 0px 20px 20px 20px;">                   
-                    <div style="font-size: 14px; margin-top: 15px; display: flex; align-items: center; gap: 10px; justify-content: right;">
-                        <button @onclick="(e => CopiarAlClipboardEnlace(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Header")">
-                            <div style="max-width: 16px; max-height: 16px;">
-                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                    <path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/>
-                                </svg>
-                            </div>
-                        </button>
-                        
-                        <button @onclick="(e => LimpiarBusqueda(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Header")">
-                            <div style="max-width: 16px; max-height: 16px;">
-                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                                    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                                </svg>
-                            </div>
-                        </button>
-                    </div>
+            <a class="boton-superior" href="/wishlist" style="font-size: 15px;">
+                <div style="@GenerarEstilo("/wishlist")">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                </div>
+            </a>
+        }
 
-                    <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="5">
-                        <ItemContent>
-                            @{
-                                string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
+        <a class="boton-superior" href="/historical-lows" style="font-size: 15px;">
+            <div style="@GenerarEstilo("/historical-lows")">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+            </div>
+        </a>
 
-                                if (string.IsNullOrEmpty(usuarioId) == false)
+        <a class="boton-superior" href="/bundles" style="font-size: 15px;">
+            <div style="@GenerarEstilo("/bundles")">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+            </div>
+        </a>
+
+        <a class="boton-superior" href="/free" style="font-size: 15px;">
+            <div style="@GenerarEstilo("/free")">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+            </div>
+        </a>
+
+        <a class="boton-superior" href="/subscriptions" style="font-size: 15px;">
+            <div style="@GenerarEstilo("/subscriptions")">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+            </div>
+        </a>
+
+        <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" title="@Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")">
+            <div style="width: 22px; height: 22px;">
+                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M0 256C0 209.4 12.5 165.6 34.3 127.1L144.1 318.3C166 357.5 207.9 384 256 384C270.3 384 283.1 381.7 296.8 377.4L220.5 509.6C95.9 492.3 0 385.3 0 256zM365.1 321.6C377.4 302.4 384 279.1 384 256C384 217.8 367.2 183.5 340.7 160H493.4C505.4 189.6 512 222.1 512 256C512 397.4 397.4 511.1 256 512L365.1 321.6zM477.8 128H256C193.1 128 142.3 172.1 130.5 230.7L54.2 98.5C101 38.5 174 0 256 0C350.8 0 433.5 51.5 477.8 128V128zM168 256C168 207.4 207.4 168 256 168C304.6 168 344 207.4 344 256C344 304.6 304.6 344 256 344C207.4 344 168 304.6 168 256z" />
+                </svg>
+            </div>
+        </a>
+
+        @if (usuarioPatreon == false)
+        {
+            <a class="boton-superior" href="/patreon" style="font-size: 15px;" title="Patreon">
+                <div style="width: 22px; height: 22px;">
+                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M489.7 153.8c-.1-65.4-51-119-110.7-138.3C304.8-8.5 207-5 136.1 28.4C50.3 68.9 23.3 157.7 22.3 246.2C21.5 319 28.7 510.6 136.9 512c80.3 1 92.3-102.5 129.5-152.3c26.4-35.5 60.5-45.5 102.4-55.9c72-17.8 121.1-74.7 121-150z" />
+                    </svg>
+                </div>
+            </a>
+        }
+
+        <AuthorizeView>
+            <Authorized>
+                <div style="display: flex; align-items: center; margin-left: auto;">
+                    <div class="menu-dropdown">
+                        <div style="display: flex; align-items: center; font-size: 14px; cursor: pointer; gap: 15px;">
+                            @if (opcionesCabecera != null)
+                            {
+                                if (string.IsNullOrEmpty(opcionesCabecera.Avatar) == true)
                                 {
-                                    bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
-                                    bool usuarioTieneDeseado = false;
-
-                                    if (usuarioTieneJuego == true)
+                                    <div>@opcionesCabecera.Email</div>
+                                }
+                                else
+                                {
+                                    @if (opcionesCabecera.Avatar.ToLower().Contains(".jpg") == true || 
+                                        opcionesCabecera.Avatar.ToLower().Contains(".jpeg") == true || 
+                                        opcionesCabecera.Avatar.ToLower().Contains(".png") == true || 
+                                        opcionesCabecera.Avatar.ToLower().Contains(".webp") == true)
                                     {
-                                        fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
+                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(opcionesCabecera.Avatar)" style="max-height: 32px; max-width: 32px;" title="@opcionesCabecera.Nickname"/>
                                     }
                                     else
                                     {
-                                        usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
-
-                                        if (usuarioTieneDeseado == true)
-                                        {
-                                            fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
-                                        }
+                                        <div>@opcionesCabecera.Email</div>
                                     }
                                 }
                             }
-                         
-                            <div class="perfil-flexible-centrado" style="padding-top: 20px;">
-                                @{
-                                    int ancho = 230;
-                                    int alto = 107;
-                                    string imagen = "width: " + ancho.ToString() + "px; height: " + alto.ToString() + "px;";
-                                    string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
+
+                            <div style="max-width: 10px;">
+                                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                    <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="menu-dropdown-contenido" style="right: -10px;">
+                            <a href="/account" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
+                            </a>
+
+                            <a href="/account/logout" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div style="display: flex; align-items: center; margin-left: auto;">
+                    <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                        <div style="@GenerarEstilo("/account/login")">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+                        </div>
+                    </a>
+
+                    <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                        <div style="@GenerarEstilo("/account/register")">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+                        </div>
+                    </a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+
+    <div class="botones-superiores2" style="cursor: pointer;">
+        <div class="menu-dropdown">
+            <div style="width: 18px; height: 18px;">
+                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+                </svg>
+            </div>
+
+            <div class="menu-dropdown-contenido" style="left: -200px;">
+                @if (string.IsNullOrEmpty(usuarioId) == false)
+                {
+                    <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                    </a>
+                }   
+
+                <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+                </a>
+
+                <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+                </a>
+
+                <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+                </a>
+
+                <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+                </a>
+
+                <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" style="font-size: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")
+                </a>
+
+                @if (usuarioPatreon == false)
+                {
+                    <a class="texto-cabecera boton-superior" href="/patreon" style="font-size: 15px;">
+                        Patreon
+                    </a>
+                }
+
+                <hr/>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <a class="texto-cabecera boton-superior" href="/account" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="/account/logout" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
+                        </a>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a class="texto-cabecera boton-superior" href="/account/login" target="_blank" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="/account/register" target="_blank" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+                        </a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </div>
+
+    @if (encontroAlgo == true)
+    {
+        <div class="buscador-panel" style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); background-color: var(--fondoCuerpo); display: flex; align-items: start; flex-direction: column;">
+            <div class="caja-diseño" style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%; padding: 0px 20px 20px 20px;">                   
+                <div style="font-size: 14px; margin-top: 15px; display: flex; align-items: center; gap: 10px; justify-content: right;">
+                    <button @onclick="(e => CopiarAlClipboardEnlace(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Header")">
+                        <div style="max-width: 16px; max-height: 16px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/>
+                            </svg>
+                        </div>
+                    </button>
+                        
+                    <button @onclick="(e => LimpiarBusqueda(e))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Header")">
+                        <div style="max-width: 16px; max-height: 16px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="5">
+                    <ItemContent>
+                        @{
+                            string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
+
+                            if (string.IsNullOrEmpty(usuarioId) == false)
+                            {
+                                bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
+                                bool usuarioTieneDeseado = false;
+
+                                if (usuarioTieneJuego == true)
+                                {
+                                    fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
                                 }
+                                else
+                                {
+                                    usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+
+                                    if (usuarioTieneDeseado == true)
+                                    {
+                                        fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
+                                    }
+                                }
+                            }
+                        }
+                         
+                        <div class="perfil-flexible-centrado" style="padding-top: 20px;">
+                            @{
+                                int ancho = 230;
+                                int alto = 107;
+                                string imagen = "width: " + ancho.ToString() + "px; height: " + alto.ToString() + "px;";
+                                string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
+                            }
                                  
-                                <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
-                                    <div class="perfil-flexible-centrado">
+                            <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+                                <div class="perfil-flexible-centrado">
+                                    <div>
+                                        <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
+                                    </div>
+
+                                    <div style="width: 100%; padding-left: 20px; padding-right: 20px;">
                                         <div>
-                                            <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
+                                            @juego.Nombre
                                         </div>
 
-                                        <div style="width: 100%; padding-left: 20px; padding-right: 20px;">
-                                            <div>
-                                                @juego.Nombre
-                                            </div>
-
-                                            <div style="margin-top: 5px; font-size: 15px;">
-                                                @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
-                                            </div>
+                                        <div style="margin-top: 5px; font-size: 15px;">
+                                            @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
                                         </div>
                                     </div>
-                                </a>
-                            </div>
-                        </ItemContent>
-                    </Virtualize>
-                </div>
+                                </div>
+                            </a>
+                        </div>
+                    </ItemContent>
+                </Virtualize>
             </div>
-        }
+        </div>
     }
 </div>
 
@@ -475,7 +462,7 @@
     {
         if (string.IsNullOrEmpty(Search) == false)
         {
-            cadenaBusqueda = Search;
+            textoBuscador = Search;
             enseñarBuscador = true;
             TextoCambiaBuscador();
         }
@@ -483,8 +470,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-         enlace = NavManager.Uri;
-         await InvokeAsync(StateHasChanged);
+        enlace = NavManager.Uri;
+        await InvokeAsync(StateHasChanged);
     }
 
     #region Botones Cabecera
@@ -524,19 +511,20 @@
 
     private void AdiosFocusBuscador()
     {
-        if (string.IsNullOrEmpty(cadenaBusqueda) == true)
+        if (string.IsNullOrEmpty(textoBuscador) == true)
         {
             enseñarBuscador = false;
         }
     }
 
-    private string cadenaBusqueda = string.Empty;
+    private string textoBuscador = string.Empty;
 
     private async void TextoCambiaBuscador()
     {
-        cadenaBusqueda = cadenaBusqueda.Replace("'", null);
+        enseñarBuscador = true;
+        textoBuscador = textoBuscador.Replace("'", null);
 
-        if (cadenaBusqueda.Trim().Length > 3)
+        if (textoBuscador.Trim().Length > 3)
         {
             resultadosMostrar.Clear();
 
@@ -556,42 +544,42 @@
 
             using (conexion)
             {
-                if (APIs.Steam.Juego.Detectar(cadenaBusqueda) == true)
+                if (APIs.Steam.Juego.Detectar(textoBuscador) == true)
                 {
-                    cadenaBusqueda = APIs.Steam.Juego.LimpiarID(cadenaBusqueda);
+                    textoBuscador = APIs.Steam.Juego.LimpiarID(textoBuscador);
 
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, cadenaBusqueda) };
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, textoBuscador) };
 
                     if (resultadosMostrar.Count > 0)
                     {
-                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                        textoBuscador = resultadosMostrar[0].Nombre;
                     } 
                 }
-                else if (APIs.GOG.Juego.Detectar(cadenaBusqueda) == true)
+                else if (APIs.GOG.Juego.Detectar(textoBuscador) == true)
                 {
-                    cadenaBusqueda = APIs.GOG.Juego.LimpiarSlug(cadenaBusqueda);
+                    textoBuscador = APIs.GOG.Juego.LimpiarSlug(textoBuscador);
 
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, cadenaBusqueda) };
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, textoBuscador) };
 
                     if (resultadosMostrar.Count > 0)
                     {
-                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                        textoBuscador = resultadosMostrar[0].Nombre;
                     } 
                 }
-                else if (APIs.EpicGames.Juego.Detectar(cadenaBusqueda) == true)
+                else if (APIs.EpicGames.Juego.Detectar(textoBuscador) == true)
                 {
-                    cadenaBusqueda = APIs.EpicGames.Juego.LimpiarSlug(cadenaBusqueda);
+                    textoBuscador = APIs.EpicGames.Juego.LimpiarSlug(textoBuscador);
 
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, null, cadenaBusqueda) };
+                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, null, textoBuscador) };
 
                     if (resultadosMostrar.Count > 0)
                     {
-                        cadenaBusqueda = resultadosMostrar[0].Nombre;
+                        textoBuscador = resultadosMostrar[0].Nombre;
                     } 
                 }
                 else
                 {
-                    resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 50, false, -1);
+                    resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 50, false, -1);
                 }
                 
                 if (resultadosMostrar.Count > 0)
@@ -614,7 +602,7 @@
 
     private void LimpiarBusqueda(MouseEventArgs e)
 	{
-        cadenaBusqueda = string.Empty;
+        textoBuscador = string.Empty;
         resultadosMostrar.Clear();
         encontroAlgo = false;
         enseñarBuscador = false;
@@ -622,7 +610,7 @@
 
     private async Task CopiarAlClipboardEnlace(MouseEventArgs e)
     {
-        await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", "https://pepeizqdeals.com/?search=" + cadenaBusqueda);
+        await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", "https://pepeizqdeals.com/?search=" + textoBuscador);
     }
 
     #endregion

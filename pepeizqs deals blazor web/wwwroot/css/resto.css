@@ -52,6 +52,10 @@
     outline: none;
 }
 
+    .entrada-texto:hover {
+        border-bottom: 1px solid var(--colorEnlace);
+    }
+
 .boton {
     color: var(--colorTexto);
     background-color: var(--fondoBoton);

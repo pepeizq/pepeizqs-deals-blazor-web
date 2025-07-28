@@ -402,6 +402,10 @@
 							{
 								<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(fechaDetectado, idioma)</div>
 							}
+							else if (tipo == Tipo.PortadaLanzamientos)
+							{
+								<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(juego.Caracteristicas.FechaLanzamientoSteam, idioma)</div>
+							}
 						</div>
 					</div>
 

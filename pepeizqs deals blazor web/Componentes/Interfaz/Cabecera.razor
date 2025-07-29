@@ -276,13 +276,13 @@
             </Authorized>
             <NotAuthorized>
                 <div style="display: flex; align-items: center; margin-left: auto;">
-                    <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                    <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
                         <div style="@GenerarEstilo("/account/login")">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
                         </div>
                     </a>
 
-                    <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; padding: 8px 15px; margin: 0px; font-size: 14px;">
+                    <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
                         <div style="@GenerarEstilo("/account/register")">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
                         </div>
@@ -365,23 +365,39 @@
     {
         <div class="buscador-panel" style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); background-color: var(--fondoCuerpo); display: flex; align-items: start; flex-direction: column;">
             <div style="margin-left: auto; margin-right: auto; max-width: var(--anchoCuerpo); width: 100%;"> 
-               <Virtualize Context="juego" ItemsProvider="@CogerJuegos" ItemSize="107" OverscanCount="3">
+               <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="10">
                     <ItemContent>
                         @{
                             string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
 
                             if (string.IsNullOrEmpty(usuarioId) == false)
                             {
-                                bool usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
-                                bool usuarioTieneDeseado = false;
+                                bool? usuarioTieneJuego = false;
+
+                                usuarioTieneJuego = ComprobarSiTieneJuego(juego.Id);
+
+                                if (usuarioTieneJuego == null)
+                                {
+                                    usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
+                                }
+
+                                bool? usuarioTieneDeseado = false;
 
                                 if (usuarioTieneJuego == true)
                                 {
+                                    juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = true });
                                     fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
                                 }
                                 else
                                 {
-                                    usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                                    juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = false });
+
+                                    usuarioTieneDeseado = ComprobarSiDeseaJuego(juego.Id);
+
+                                    if (usuarioTieneDeseado == null)
+                                    {
+                                        usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                                    }
 
                                     if (usuarioTieneDeseado == true)
                                     {
@@ -390,8 +406,8 @@
                                 }
                             }
                         }
-                         
-                        <div class="perfil-flexible-centrado" style="padding-top: 25px;">
+
+                        <div style="display: flex; flex-direction: row; align-items: center; padding-top: 25px;">
                             @{
                                 int ancho = 230;
                                 int alto = 107;
@@ -566,29 +582,27 @@
                 else
                 {
                     encontroAlgo = false;
+                    juegosTieneUsuario.Clear();
+                    juegosDeseaUsuario.Clear();
                 }
             }
         }
         else
         {
             encontroAlgo = false;
+            juegosTieneUsuario.Clear();
+            juegosDeseaUsuario.Clear();
         }
     }
 
-    private async ValueTask<ItemsProviderResult<Juegos.Juego>> CogerJuegos(ItemsProviderRequest request)
-    {
-        await InvokeAsync(StateHasChanged); 
-        var numImages = Math.Min(request.Count, resultadosMostrar.Count - request.StartIndex);
-        var urls = resultadosMostrar.Skip(request.StartIndex).Take(numImages);
-        return new ItemsProviderResult<Juegos.Juego>(urls, resultadosMostrar.Count);
-    }
-
     private void LimpiarBusqueda(MouseEventArgs e)
-	{
+    {
         textoBuscador = string.Empty;
         resultadosMostrar.Clear();
         encontroAlgo = false;
-	}
+        juegosTieneUsuario.Clear();
+        juegosDeseaUsuario.Clear();
+    }
 
     private async Task CopiarAlClipboardEnlace(MouseEventArgs e)
     {
@@ -596,5 +610,46 @@
     }
 
     #endregion
+
+    private List<JuegoUsuarioTemporal> juegosTieneUsuario = new List<JuegoUsuarioTemporal>();
+    private List<JuegoUsuarioTemporal> juegosDeseaUsuario = new List<JuegoUsuarioTemporal>();
+
+    private bool? ComprobarSiTieneJuego(int idJuego)
+    {
+        if (juegosTieneUsuario.Count > 0)
+        {
+            foreach (var juegoTemporal in juegosTieneUsuario)
+            {
+                if (juegoTemporal.Id == idJuego)
+                {
+                    return juegoTemporal.Estado;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private bool? ComprobarSiDeseaJuego(int idJuego)
+    {
+        if (juegosDeseaUsuario.Count > 0)
+        {
+            foreach (var juegoTemporal in juegosDeseaUsuario)
+            {
+                if (juegoTemporal.Id == idJuego)
+                {
+                    return juegoTemporal.Estado;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public class JuegoUsuarioTemporal
+    {
+        public int Id { get; set; }
+        public bool Estado { get; set; }
+    }
 }
 

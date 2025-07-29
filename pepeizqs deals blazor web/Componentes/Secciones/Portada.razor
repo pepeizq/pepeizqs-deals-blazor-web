@@ -474,6 +474,12 @@
 					</h1>
 				</button>
 
+				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Proximamente) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Proximamente))">
+					<h1 style="font-size: 18px; margin: 0px;">
+						@CambiarTexto(MinimosTipo.Proximamente, Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Index"))
+					</h1>
+				</button>
+
 				<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
 					<button class="boton-pequeño" @onclick="EnseñarFiltrado" style="width: fit-content; padding: 10px 15px; border: 0px; background-color: transparent;">
 						<div style="width: 22px;">
@@ -505,7 +511,11 @@
 				else if (tipoSeleccionadoMinimos == MinimosTipo.Lanzamientos)
 				{
 					tipoJuego = CajaJuego.Tipo.PortadaLanzamientos;
-                }
+				}
+				else if (tipoSeleccionadoMinimos == MinimosTipo.Proximamente)
+				{
+					tipoJuego = CajaJuego.Tipo.PortadaProximamente;
+				}
 			}
 
 			<Virtualize Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
@@ -1033,6 +1043,10 @@
 			{
 				juegosMinimosGestor = BaseDatos.Portada.Buscar.Minimos(2, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 49);
 			}
+			else if (tipoSeleccionadoMinimos == MinimosTipo.Proximamente)
+			{
+                juegosMinimosGestor = BaseDatos.Portada.Buscar.Proximamente(cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -1112,7 +1126,8 @@
 	{
 		Nuevos,
 		Populares,
-		Lanzamientos
+		Lanzamientos,
+		Proximamente
 	}
 
 	private async void Filtros()

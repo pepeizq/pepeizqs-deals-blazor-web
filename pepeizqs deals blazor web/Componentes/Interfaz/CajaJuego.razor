@@ -82,7 +82,7 @@
 @{
 	int idMaestra = juego.IdMaestra;
 
-	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones)
+	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente)
 	{
 		idMaestra = juego.Id;
 	}
@@ -95,9 +95,29 @@
 	string codigoTexto = string.Empty;
 	DateTime fechaDetectado = DateTime.Now;
 
-	if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.MinimosHistoricos)
+	if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.PortadaProximamente || tipo == Tipo.MinimosHistoricos)
 	{
-		JuegoPrecio oferta = juego.PrecioMinimosHistoricos[0];
+		JuegoPrecio oferta = null;
+
+		if (juego.PrecioMinimosHistoricos != null)
+		{
+			oferta = juego.PrecioMinimosHistoricos[0];
+
+			if (tipo == Tipo.PortadaProximamente)
+			{
+				if (juego.PrecioMinimosHistoricos.Count > 1)
+				{
+					foreach (var historico in juego.PrecioMinimosHistoricos)
+					{
+						if (historico.DRM == JuegoDRM.Steam)
+						{
+							oferta = historico;
+						}
+					}
+				}
+			}
+		}
+	
 
 		if (oferta != null)
 		{
@@ -218,7 +238,7 @@
 						@tooltip.Nombre
 					</div>
 
-					@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.MinimosHistoricos)
+					@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.PortadaProximamente || tipo == Tipo.MinimosHistoricos)
 					{
 						<div style="display: flex; align-items: center; padding: 5px; text-align: left; justify-content: left;">
 							<div style="margin-right: 20px;">
@@ -378,7 +398,7 @@
 			}	
 		</div>
 
-		@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos)
+		@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.PortadaProximamente)
 		{
 			if (string.IsNullOrEmpty(fondoColor) == true)
 			{
@@ -395,8 +415,11 @@
 						<div class="minimo-fuente">@juego.Nombre</div>
 
 						<div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 18px; height: 18px;" alt="DRM" loading="lazy" />
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 18px; height: 18px;" alt="Store" loading="lazy" />
+							@if (drmUsar != JuegoDRM.NoEspecificado)
+							{
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="width: 18px; height: 18px;" alt="DRM" loading="lazy" />
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 18px; height: 18px;" alt="Store" loading="lazy" />
+							}
 							
 							@if (tipo == Tipo.PortadaNuevos)
 							{
@@ -410,10 +433,16 @@
 					</div>
 
 					<div style="display: flex; align-items: center;">
-						<div class="cjuego-descuento" style="text-align: center; margin: 0px; @fondoDescuento">
-							@descuento
-						</div>
-
+						@if (string.IsNullOrEmpty(descuento) == false)
+						{
+							if (descuento != "0%")
+							{
+								<div class="cjuego-descuento" style="text-align: center; margin: 0px; @fondoDescuento">
+									@descuento
+								</div>
+							}
+						}
+						
 						<div class="cjuego-precio" style="padding: 5px 15px; text-align: center;">
 							@precio
 						</div>
@@ -795,7 +824,8 @@
 		Gratis,
 		Suscripciones,
 		PortadaPopulares,
-		PortadaLanzamientos
+		PortadaLanzamientos,
+		PortadaProximamente
 	}
 
 	#region Portapapeles

@@ -406,69 +406,69 @@ ORDER BY NEWID()";
 
 			using (conexion)
 			{
-				string categoria = null;
+				//string categoria = null;
 
-				if (categorias != null)
-				{
-					if (categorias.Count > 0)
-					{
-						int i = 0;
-						foreach (var valor in categorias)
-						{
-							if (i == 0)
-							{
-								categoria = categoria + " AND (tipo = " + valor;
-							}
-							else if (i > 0)
-							{
-								categoria = categoria + " OR tipo = " + valor;
-							}
+				//if (categorias != null)
+				//{
+				//	if (categorias.Count > 0)
+				//	{
+				//		int i = 0;
+				//		foreach (var valor in categorias)
+				//		{
+				//			if (i == 0)
+				//			{
+				//				categoria = categoria + " AND (tipo = " + valor;
+				//			}
+				//			else if (i > 0)
+				//			{
+				//				categoria = categoria + " OR tipo = " + valor;
+				//			}
 
-							i += 1;
-						}
+				//			i += 1;
+				//		}
 
-						if (string.IsNullOrEmpty(categoria) == false)
-						{
-							categoria = categoria + ")";
-						}
-					}
-				}
+				//		if (string.IsNullOrEmpty(categoria) == false)
+				//		{
+				//			categoria = categoria + ")";
+				//		}
+				//	}
+				//}
 
-				string drm = null;
+				//string drm = null;
 
-				if (drms != null)
-				{
-					if (drms.Count > 0)
-					{
-						int i = 0;
-						foreach (var valor in drms)
-						{
-							if (i == 0)
-							{
-								drm = drm + " AND (JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + valor;
-							}
-							else if (i > 0)
-							{
-								drm = drm + " OR JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + valor;
-							}
+				//if (drms != null)
+				//{
+				//	if (drms.Count > 0)
+				//	{
+				//		int i = 0;
+				//		foreach (var valor in drms)
+				//		{
+				//			if (i == 0)
+				//			{
+				//				drm = drm + " AND (JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + valor;
+				//			}
+				//			else if (i > 0)
+				//			{
+				//				drm = drm + " OR JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + valor;
+				//			}
 
-							i += 1;
-						}
+				//			i += 1;
+				//		}
 
-						if (string.IsNullOrEmpty(drm) == false)
-						{
-							drm = drm + ")";
-						}
-					}
-				}
+				//		if (string.IsNullOrEmpty(drm) == false)
+				//		{
+				//			drm = drm + ")";
+				//		}
+				//	}
+				//}
 
-				string busqueda = @"SELECT TOP @cantidadJuegos idMaestra, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), idSteam, idGog FROM juegos 
-                                    WHERE ISJSON(caracteristicas) > 0 AND DATEDIFF(DAY, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam'), GETDATE()) < 0 @categoria @drm 
+				string busqueda = @"SELECT TOP @cantidadJuegos id, nombre, imagenes, precioMinimosHistoricos, JSON_VALUE(media, '$.Videos[0].Micro'), idSteam, idGog FROM juegos 
+                                    WHERE ISJSON(caracteristicas) > 0 AND DATEDIFF(DAY, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam'), GETDATE()) < 0
 ORDER BY CONVERT(datetime2, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam'))";
 
 				busqueda = busqueda.Replace("@cantidadJuegos", cantidadJuegos.ToString());
-				busqueda = busqueda.Replace("@categoria", categoria);
-				busqueda = busqueda.Replace("@drm", drm);
+				//busqueda = busqueda.Replace("@categoria", categoria);
+				//busqueda = busqueda.Replace("@drm", drm);
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

@@ -42,6 +42,7 @@
     width: 100%;
     min-width: 100%;
     vertical-align: middle;
+    border-bottom: 1px solid var(--fondoEntrada);
 }
 
 .entrada-texto::placeholder {

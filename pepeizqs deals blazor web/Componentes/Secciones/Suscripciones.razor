@@ -218,7 +218,7 @@
                         {
                             if (suscripcionActual.Tipo.Id != Suscripciones2.SuscripcionTipo.Desconocido)
                             {
-                                <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
+                                <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
                                 </button>
                             }
@@ -883,6 +883,7 @@ else
 
             if (nuevoTipo == Suscripciones2.SuscripcionTipo.Desconocido)
             {
+                suscripcionSeleccionadaTexto = null;
                 await JavaScript.InvokeVoidAsync("ChangeUrl", "/subscriptions/");
             }
         }
@@ -903,7 +904,7 @@ else
             }
             else
             {
-                return "background-color: var(--botonSubcabecera);";
+                return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
             }
         }
         else
@@ -912,11 +913,11 @@ else
             {
                 if (esUltimas == true && mostrarUltimas == true)
                 {
-                    return "background-color: var(--botonSubcabecera);";
+                    return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
                 }
                 else if (esUltimas == false && mostrarUltimas == false)
                 {
-                    return "background-color: var(--botonSubcabecera);";
+                    return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
                 }
 
                 return "background-color: transparent;";

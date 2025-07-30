@@ -580,8 +580,8 @@
 @if (mostrarFiltrado == true)
 {
 	<div class="opciones-panel">
-		<div class="caja-diseño" style="max-width: 800px; padding: 30px; margin: 20px auto; overflow-y: scroll; padding-right: 20px; scrollbar-color: var(--fondoCodigo) var(--fondoOscuro);">
-			<div style="display: flex; align-items: center; gap: 20px;">
+		<div style="max-width: 800px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoSubcabecera); margin: 20px auto; overflow-y: scroll; scrollbar-color: var(--fondoCodigo) var(--fondoOscuro); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+			<div style="display: flex; align-items: center; gap: 30px; padding: 20px; background-color: var(--fondoSubsubcabecera);">
 				<button class="boton-pequeño" @onclick="OcultarFiltrado" style="width: fit-content; padding: 10px 15px;">
 					<div style="max-width: 24px; max-height: 24px;">
 						<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -595,117 +595,113 @@
 				</div>
 			</div>
 
-			<hr style="margin-top: 30px;">
+			<div style="display: flex; flex-direction: column; gap: 30px; padding: 20px;">
+				<AuthorizeView>
+					<Authorized>
+						<div style="display: flex; flex-direction: column; gap: 30px; background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+							<div style="display: flex; align-items: center; gap: 20px;">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+								</div>
 
-			<AuthorizeView>
-				<Authorized>
-					<div style="display: flex; flex-direction: column; gap: 30px; margin-top: 30px;">
-						<div style="display: flex; align-items: center; gap: 20px;">
-							<div class="checkbox-caja">
-								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
+								<div style="padding-bottom: 5px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
+								</div>
 							</div>
 
-							<div style="padding-bottom: 5px;">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
+							<div style="display: flex; align-items: center; gap: 20px;">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
+								</div>
+
+								<div style="padding-bottom: 5px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
+								</div>
 							</div>
 						</div>
+					</Authorized>
+				</AuthorizeView>
 
-						<div style="display: flex; align-items: center; gap: 20px;">
-							<div class="checkbox-caja">
-								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
-							</div>
-
-							<div style="padding-bottom: 5px;">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
-							</div>
-						</div>
+				<div style="background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+					<div style="padding-bottom: 15px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption2", "Index")
 					</div>
 
-					<hr style="margin-top: 30px;">
-				</Authorized>
-			</AuthorizeView>
-
-			<div style="margin-top: 30px;">
-				<div style="padding-bottom: 15px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption2", "Index")
-				</div>
-
-				<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
-					@foreach (var drm in drms)
-					{
-						string iconoDRM = string.Empty;
-						string nombreDRM = string.Empty;
-
-						foreach (var drm2 in JuegoDRM2.GenerarListado())
+					<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
+						@foreach (var drm in drms)
 						{
-							if (drm2.Id == drm.DRMId)
+							string iconoDRM = string.Empty;
+							string nombreDRM = string.Empty;
+
+							foreach (var drm2 in JuegoDRM2.GenerarListado())
 							{
-								iconoDRM = drm2.Imagen;
-								nombreDRM = drm2.Nombre;
+								if (drm2.Id == drm.DRMId)
+								{
+									iconoDRM = drm2.Imagen;
+									nombreDRM = drm2.Nombre;
+								}
 							}
-						}
 
-						<div style="display: flex; align-items: center;" title="@nombreDRM">
-							<div class="checkbox-caja">
-								<input type="checkbox" class="checkbox-interior" checked="@drm.Checkbox" @onchange="@(e => EnseñarJuegosDRM(e, drm.DRMId))">
-							</div>
-
-							@if (drm.DRMId != JuegoDRM.DRMFree)
-							{
-								<div style="margin-left: 20px; padding-bottom: 10px;">
-									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoDRM)" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" loading="lazy" />
+							<div style="display: flex; align-items: center;" title="@nombreDRM">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@drm.Checkbox" @onchange="@(e => EnseñarJuegosDRM(e, drm.DRMId))">
 								</div>
-							}
-							else
+
+								@if (drm.DRMId != JuegoDRM.DRMFree)
+								{
+									<div style="margin-left: 20px; padding-bottom: 10px;">
+										<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoDRM)" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" loading="lazy" />
+									</div>
+								}
+								else
+								{
+									<div style="margin-left: 20px; padding-bottom: 5px;">
+										<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
+									</div>
+								}
+							</div>
+						}
+					</div>
+				</div>
+
+				<div style="background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+					<div style="padding-bottom: 15px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3", "Index")
+					</div>
+
+					<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+						@foreach (var categoria in categorias)
+						{
+							string nombreCategoria = string.Empty;
+
+							if (categoria.Categoria == JuegoTipo.Game)
 							{
-								<div style="margin-left: 20px; padding-bottom: 5px;">
-									<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
-								</div>
+								nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.1", "Index");
 							}
-						</div>
-					}
-				</div>
-			</div>
+							else if (categoria.Categoria == JuegoTipo.DLC)
+							{
+								nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.2", "Index");
+							}
+							else if (categoria.Categoria == JuegoTipo.Music)
+							{
+								nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.3", "Index");
+							}
+							else if (categoria.Categoria == JuegoTipo.Software)
+							{
+								nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.4", "Index");
+							}
 
-			<hr style="margin-top: 30px;">
+							<div style="display: flex; align-items: center;" title="@nombreCategoria">
+								<div class="checkbox-caja">
+									<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
+								</div>
 
-			<div style="margin-top: 30px;">
-				<div style="padding-bottom: 15px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3", "Index")
-				</div>
-
-				<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-					@foreach (var categoria in categorias)
-					{
-						string nombreCategoria = string.Empty;
-
-						if (categoria.Categoria == JuegoTipo.Game)
-						{
-							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.1", "Index");
-						}
-						else if (categoria.Categoria == JuegoTipo.DLC)
-						{
-							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.2", "Index");
-						}
-						else if (categoria.Categoria == JuegoTipo.Music)
-						{
-							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.3", "Index");
-						}
-						else if (categoria.Categoria == JuegoTipo.Software)
-						{
-							nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3.4", "Index");
-						}
-
-						<div style="display: flex; align-items: center;" title="@nombreCategoria">
-							<div class="checkbox-caja">
-								<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
+								<div style="margin-left: 15px; padding-bottom: 8px;">
+									<label style="font-size: 14px;">@nombreCategoria</label>
+								</div>
 							</div>
-
-							<div style="margin-left: 15px; padding-bottom: 8px;">
-								<label style="font-size: 14px;">@nombreCategoria</label>
-							</div>
-						</div>
-					}
+						}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1098,7 +1094,7 @@
 		}
 		else
 		{
-			return "background-color: var(--botonSubcabecera);";
+			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
 		}
 	}
 
@@ -1426,7 +1422,7 @@
 		}
 		else
 		{
-			return "background-color: var(--botonSubcabecera);";
+			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
 		}
 	}
 

@@ -8,9 +8,18 @@
 @inject UserManager<Usuario> UserManager
 @inject IHttpContextAccessor Contexto
 
+<style>
+    .caja-cuenta-contenido {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
 @if (usuario != null)
 {
-    <div class="caja-diseño" style="padding: 40px;">
+    <div class="caja-cuenta-contenido">
         @if (correoConfirmado == true)
         {
             <div class="input-group" style="margin-bottom: 25px;">

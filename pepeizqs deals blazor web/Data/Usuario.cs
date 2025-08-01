@@ -67,6 +67,14 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
+	public bool? NotificationWeb { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? NotificationDelisted { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
 	public bool? NotificationOthers { get; set; }
 
 	[PersonalData]

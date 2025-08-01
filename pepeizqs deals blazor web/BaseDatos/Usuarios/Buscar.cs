@@ -715,7 +715,7 @@ namespace BaseDatos.Usuarios
 				}
 			}
 
-			string busqueda = "SELECT Id, NotificationBundles, NotificationFree, NotificationSubscriptions, NotificationOthers, Email, Language FROM AspNetUsers";
+			string busqueda = "SELECT Id, NotificationBundles, NotificationFree, NotificationSubscriptions, NotificationOthers, NotificationWeb, NotificationDelisted, Email, Language FROM AspNetUsers";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 			{
@@ -759,13 +759,25 @@ namespace BaseDatos.Usuarios
 							if (lector.IsDBNull(5) == false)
 							{
 								añadir = true;
-								usuario.Email = lector.GetString(5);
+								usuario.NotificationWeb = lector.GetBoolean(5);
 							}
 
 							if (lector.IsDBNull(6) == false)
 							{
 								añadir = true;
-								usuario.Language = lector.GetString(6);
+								usuario.NotificationDelisted = lector.GetBoolean(6);
+							}
+
+							if (lector.IsDBNull(7) == false)
+							{
+								añadir = true;
+								usuario.Email = lector.GetString(7);
+							}
+
+							if (lector.IsDBNull(8) == false)
+							{
+								añadir = true;
+								usuario.Language = lector.GetString(8);
 							}
 
 							if (añadir == true)

@@ -755,7 +755,20 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
                             Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
                         }
 
-                        if (usuario.NotificationOthers == true && noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && noticiaAñadir.Tipo != NoticiaTipo.Suscripciones)
+                        if (usuario.NotificationWeb == true && noticiaAñadir.Tipo == NoticiaTipo.Web)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+
+                        if (usuario.NotificationDelisted == true && noticiaAñadir.Tipo == NoticiaTipo.Despedidas)
+                        {
+                            Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
+                        }
+
+                        if (usuario.NotificationOthers == true && 
+                            noticiaAñadir.Tipo != NoticiaTipo.Bundles && noticiaAñadir.Tipo != NoticiaTipo.Gratis && 
+                            noticiaAñadir.Tipo != NoticiaTipo.Suscripciones && noticiaAñadir.Tipo != NoticiaTipo.Web &&
+                            noticiaAñadir.Tipo != NoticiaTipo.Despedidas)
                         {
                             Herramientas.Correos.EnviarNuevaNoticia(noticiaAñadir, usuario.Email, conexion, usuario.Language);
                         }

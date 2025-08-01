@@ -51,6 +51,7 @@ namespace APIs.EA
 			"battlefield-3",
 			"battlefield-4",
 			"battlefield-5",
+			"battlefield-6",
 			"battlefield-2042",
 			"battlefield-hardline",
 			"bejeweled-3",

@@ -8,11 +8,11 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 <style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
+	.caja-cuenta-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 30px;
 		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
 	}
 </style>
 
@@ -41,8 +41,8 @@
 
 @if (usuario != null)
 {
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-        <div class="caja-diseño" style="padding: 30px;">
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        <div class="caja-cuenta-contenido">
             <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
                 <img src="@JuegoDRM2.SacarImagen(JuegoDRM.Epic)" style="max-width: 40px; max-height: 40px;" />
 
@@ -95,12 +95,14 @@
             </div>
         </div>
 
-        <div class="caja-diseño" style="padding: 30px;">
+        <div class="caja-cuenta-contenido">
             <div style="font-size: 18px;">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String15", "AccountGames")
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px; padding: 20px; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
+            <hr/>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
                 <label>@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String17", "AccountGames"), "Epic Games")</label>
 
                 @if (trabajando == false)

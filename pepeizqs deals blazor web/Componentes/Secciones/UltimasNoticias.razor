@@ -83,7 +83,7 @@
 							jsonAñadir = jsonAñadir.Replace("@titulo", noticia.TituloEn);
 							jsonAñadir = jsonAñadir.Replace("@enlace", "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn + "/"));
 
-							if (i < noticiasMostrar.Count - 1)
+							if (i < noticiasMostrar.Count)
 							{
 								jsonAñadir = jsonAñadir + ",";
 							}
@@ -153,7 +153,6 @@
 						@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")
 					</h1>
 				}
-				
 			</div>
 		</div>
 

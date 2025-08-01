@@ -6,16 +6,16 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 <style>
-	.caja-diseño {
-		background: linear-gradient(180deg, var(--fondoOscuro) 0%, var(--fondoMinimo) 211.07%);
-		border: 2px solid var(--fondoOscuro);
+	.caja-cuenta-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 30px;
 		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
-		border-radius: 5px;
 	}
 </style>
 
-<div style="display: flex; flex-direction: column; gap: 20px;">
-	<div class="caja-diseño" style="padding: 30px;">
+<div style="display: flex; flex-direction: column; gap: 30px;">
+	<div class="caja-cuenta-contenido">
 		<div style="display: flex; align-items: start; gap: 30px;">
 			<div class="checkbox-caja">
 				<input type="checkbox" class="checkbox-interior" checked="@estadoMinimos" @onchange="ClickearCambioMinimos" style="margin-top: 20px;">
@@ -39,7 +39,7 @@
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="display: flex; align-items: center; padding: 30px;">
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
 		<div class="checkbox-caja">
 			<input type="checkbox" class="checkbox-interior" checked="@estadoBundles" @onchange="ClickearCambioBundles">
 		</div>
@@ -55,7 +55,7 @@
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="display: flex; align-items: center; padding: 30px;">
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
 		<div class="checkbox-caja">
 			<input type="checkbox" class="checkbox-interior" checked="@estadoGratis" @onchange="ClickearCambioGratis">
 		</div>
@@ -71,7 +71,7 @@
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="display: flex; align-items: center; padding: 30px;">
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
 		<div class="checkbox-caja">
 			<input type="checkbox" class="checkbox-interior" checked="@estadoSuscripciones" @onchange="ClickearCambioSuscripciones">
 		</div>
@@ -87,7 +87,39 @@
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="display: flex; align-items: center; padding: 30px;">
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
+		<div class="checkbox-caja">
+			<input type="checkbox" class="checkbox-interior" checked="@estadoWeb" @onchange="ClickearCambioWeb">
+		</div>
+
+		<div style="padding-left: 30px;">
+			<div style="margin-bottom: 10px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail12", "Account")
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail13", "Account")
+			</div>
+		</div>
+	</div>
+
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
+		<div class="checkbox-caja">
+			<input type="checkbox" class="checkbox-interior" checked="@estadoDesvendido" @onchange="ClickearCambioDesvendido">
+		</div>
+
+		<div style="padding-left: 30px;">
+			<div style="margin-bottom: 10px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail14", "Account")
+			</div>
+
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail15", "Account")
+			</div>
+		</div>
+	</div>
+
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
 		<div class="checkbox-caja">
 			<input type="checkbox" class="checkbox-interior" checked="@estadoOtros" @onchange="ClickearCambioOtros">
 		</div>
@@ -119,6 +151,8 @@
 	private string estadoGratis = null;
 	private string estadoSuscripciones = null;
 	private string estadoOtros = null;
+	private string estadoWeb = null;
+	private string estadoDesvendido = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -203,6 +237,38 @@
 				else
 				{
 					estadoOtros = null;
+				}
+			}
+
+			if (usuario.NotificationWeb == null)
+			{
+				estadoWeb = null;
+			}
+			else
+			{
+				if (usuario.NotificationWeb == true)
+				{
+					estadoWeb = "checked";
+				}
+				else
+				{
+					estadoWeb = null;
+				}
+			}
+
+			if (usuario.NotificationDelisted == null)
+			{
+				estadoDesvendido = null;
+			}
+			else
+			{
+				if (usuario.NotificationDelisted == true)
+				{
+					estadoDesvendido = "checked";
+				}
+				else
+				{
+					estadoDesvendido = null;
 				}
 			}
 		}
@@ -318,6 +384,52 @@
 			}
 
 			usuario.NotificationOthers = estado;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private async void ClickearCambioWeb()
+	{
+		if (usuario != null)
+		{
+			bool estado = false;
+
+			if (estadoWeb == null)
+			{
+				estadoWeb = "checked";
+				estado = true;
+			}
+			else
+			{
+				estadoWeb = null;
+				estado = false;
+			}
+
+			usuario.NotificationWeb = estado;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private async void ClickearCambioDesvendido()
+	{
+		if (usuario != null)
+		{
+			bool estado = false;
+
+			if (estadoDesvendido == null)
+			{
+				estadoDesvendido = "checked";
+				estado = true;
+			}
+			else
+			{
+				estadoDesvendido = null;
+				estado = false;
+			}
+
+			usuario.NotificationDelisted = estado;
 
 			await UserManager.UpdateAsync(usuario);
 		}

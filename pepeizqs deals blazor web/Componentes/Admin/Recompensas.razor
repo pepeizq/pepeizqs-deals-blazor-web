@@ -4,7 +4,7 @@
 
 @if (string.IsNullOrEmpty(idSeleccionada) == false)
 {
-	<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
+	<div class="caja-diseño" style="padding: 40px;">
 		<div style="display: flex; align-items: center; gap: 15px;">
 			<label>@juegoSeleccionado (@idSeleccionada)</label>
 		</div>
@@ -39,10 +39,8 @@
 		</div>
 	</div>
 
-	<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 40px; margin-top: 20px;">
-		<div style="display: flex; width: 33%;">
-			<button @onclick="@(e => AñadirRecompensa(e))" class="boton" style="text-align: center;">Añadir Recompensa</button>
-		</div>
+	<div class="caja-diseño" style="padding: 40px; margin-top: 20px;">
+		<button @onclick="@(e => AñadirRecompensa(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">Añadir Recompensa</button>
 	</div>
 }
 else

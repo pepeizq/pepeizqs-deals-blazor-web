@@ -67,7 +67,7 @@ namespace Noticias
 			NoticiaMostrar patreon = new NoticiaMostrar
 			{
 				Tipo = NoticiaTipo.Patreon,
-				Mostrar = true
+				Mostrar = false
 			};
 
 			noticias.Add(patreon);

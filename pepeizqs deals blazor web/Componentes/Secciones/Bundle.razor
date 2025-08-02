@@ -175,8 +175,15 @@
 
 		@if (DateTime.Now < bundle.FechaTermina)
 		{
+            string enlaceBundle = bundle.Enlace;
+
+			if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+			{
+				enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
+			}
+
 			<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
-				<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
+				<a href="@enlaceBundle" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
 				</a>
 			</div>
@@ -185,8 +192,15 @@
 
 	if (tipo == Tipo.Noticia)
 	{
+		string enlaceBundle = bundle.Enlace;
+
+		if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+		{
+			enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
+		}
+
 		<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
-			<a href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
+			<a href="@enlaceBundle" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
 			</a>
 		</div>
@@ -389,6 +403,7 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string userAgent = null;
 
 	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
 	private Usuario deseadosUsuario = null;
@@ -410,6 +425,7 @@
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

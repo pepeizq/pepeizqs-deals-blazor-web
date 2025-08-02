@@ -759,7 +759,7 @@ namespace BaseDatos.Juegos
 
 			using (conexion)
 			{
-				juegos = Nombre(nombre, conexion, cantidad);
+				juegos = Nombre(nombre, conexion, cantidad, true, -1, true);
 			}
 
 			if (juegos.Count > 0)

@@ -491,18 +491,18 @@
                 string fondoBoton = "background-color: var(--fondoBotonPequeño);";
                 string fondoCajas = "background-color: var(--fondoMinimo);";
 
-                if (juego.Tipo == JuegoTipo.DLC)
-                {
-                    fondoCabecera = "background: linear-gradient(180deg, color-mix(in srgb, var(--fondoOscuro), transparent 5%), 0%, color-mix(in srgb, var(--fondoDlc), transparent 5%) 211.07%);";
-                    fondoBoton = "background: color-mix(in srgb, var(--fondoBotonPequeño) 70%, var(--fondoDlc));";
-                    fondoCajas = "background: color-mix(in srgb, var(--fondoMinimo), var(--fondoDlc) 60%);";
-                }
-                else if (juego.Tipo == JuegoTipo.Music)
-                {
-                    fondoCabecera = "background: linear-gradient(180deg, color-mix(in srgb, var(--fondoOscuro), transparent 5%), 0%, color-mix(in srgb, var(--fondoBandaSonora), transparent 5%) 211.07%);";
-                    fondoBoton = "background: color-mix(in srgb, var(--fondoBotonPequeño) 70%, var(--fondoBandaSonora));";
-                    fondoCajas = "background: color-mix(in srgb, var(--fondoMinimo), var(--fondoBandaSonora) 60%);";
-                }
+                // if (juego.Tipo == JuegoTipo.DLC)
+                // {
+                //     fondoCabecera = "background: linear-gradient(180deg, color-mix(in srgb, var(--fondoOscuro), transparent 5%), 0%, color-mix(in srgb, var(--fondoDlc), transparent 5%) 211.07%);";
+                //     fondoBoton = "background: color-mix(in srgb, var(--fondoBotonPequeño) 70%, var(--fondoDlc));";
+                //     fondoCajas = "background: color-mix(in srgb, var(--fondoMinimo), var(--fondoDlc) 60%);";
+                // }
+                // else if (juego.Tipo == JuegoTipo.Music)
+                // {
+                //     fondoCabecera = "background: linear-gradient(180deg, color-mix(in srgb, var(--fondoOscuro), transparent 5%), 0%, color-mix(in srgb, var(--fondoBandaSonora), transparent 5%) 211.07%);";
+                //     fondoBoton = "background: color-mix(in srgb, var(--fondoBotonPequeño) 70%, var(--fondoBandaSonora));";
+                //     fondoCajas = "background: color-mix(in srgb, var(--fondoMinimo), var(--fondoBandaSonora) 60%);";
+                // }
             }
 
             <div class="juego-cabecera caja-diseño" style="@fondoCabecera position: sticky; top: 70px; z-index: 3; border-radius: 5px; border: 1px solid var(--fondoOscuro);">
@@ -741,191 +741,55 @@
                 </div>
             </div>
 
-            <div style="margin-top: -30px; position: relative; display: flex; flex-direction: column; gap: 20px;">
-                @if (juego.Tipo == JuegoTipo.Game)
+            @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            {
+                if (avisos.Count > 0)
                 {
-                    if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
-                    {
-                        if (juego.FreeToPlay.ToLower() == "true")
+                    int contadorAvisos = 0;
+
+                    <div class="caja-diseño" style="display: flex; flex-direction: column; padding: 10px;">
+                        @foreach (var aviso in avisos)
                         {
-                            <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                                <div style="font-size: 18px; font-weight: bold;">
-                                    F2P
-                                </div>
-
-                                <div style="width: 100%;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Game")
-                                </div>
-                            </div>
-                        }
-                    }
-
-                    if (juego.InteligenciaArtificial == true)
-                    {
-                        <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                            <div style="font-size: 18px; font-weight: bold;">
-                                AI
-                            </div>
-
-                            <div style="width: 100%;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String103", "Game")
-                            </div>
-                        </div>
-                    }
-
-                    if (juego.Caracteristicas != null)
-                    {
-                        if (juego.Caracteristicas.AccesoAnticipado == true)
-                        {
-                            bool alarmaNoActualizacion = false;
-
-                            if (juego.UltimaActualizacionSteam != null)
-                            {
-                                if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-180))
-                                {
-                                    alarmaNoActualizacion = true;
-                                }
-                            }
-
-                            if (alarmaNoActualizacion == false)
-                            {
-                                <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                                    <div style="max-width: 26px;">
-                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
-                                        </svg>
-                                    </div>
-
-                                    <div style="width: 100%;">
-                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String97", "Game")
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="caja-diseño" style="background: var(--fondoPeligro); padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                                    <div style="max-width: 26px;">
-                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24l0 112c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-112c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
-                                        </svg>
-                                    </div>
-
-                                    <div style="width: 100%;">
-                                        @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String99", "Game"), Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam, idioma))
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                    {
-                        if (juego.MayorEdad.ToLower() == "true")
-                        {
-                            <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: var(--fondoAlerta);">
-                                <div style="font-size: 18px; font-weight: bold;">
-                                    +18
-                                </div>
-
-                                <div style="width: 100%;">
-                                    <AuthorizeView>
-                                        <Authorized>
-                                            @Herramientas.Idiomas.BuscarTexto(idioma, "String45", "Game")
-                                        </Authorized>
-                                        <NotAuthorized>
-                                            @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String45", "Game"), Herramientas.Idiomas.BuscarTexto(idioma, "String93", "Game"))
-                                        </NotAuthorized>
-                                    </AuthorizeView>
-                                </div>
-                            </div>
-                        }
-                    }
-
-                    if (juego.Categorias != null)
-                    {
-                        foreach (var categoria in juego.Categorias)
-                        {
-                            if (categoria == "54")
-                            {
-                                <div class="caja-diseño" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                                    <div style="max-width: 26px;">
-                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                                            <path d="M576 64L64 64C28.7 64 0 92.7 0 128L0 384c0 35.3 28.7 64 64 64l120.4 0c24.2 0 46.4-13.7 57.2-35.4l32-64c8.8-17.5 26.7-28.6 46.3-28.6s37.5 11.1 46.3 28.6l32 64c10.8 21.7 33 35.4 57.2 35.4L576 448c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64zM96 240a64 64 0 1 1 128 0A64 64 0 1 1 96 240zm384-64a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-                                        </svg>
-                                    </div>
-
-                                    <div style="width: 100%;">
-                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String79", "Game")
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }
-                }
-
-                @if (juego.Tipo == JuegoTipo.DLC)
-                {
-                    if (string.IsNullOrEmpty(juego.Maestro) == false)
-                    {
-                        if (juego.Maestro != "no")
-                        {
-                            Juegos.Juego juegoMaestro = global::BaseDatos.Juegos.Buscar.UnJuego(juego.Maestro);
-
-                            if (juegoMaestro != null)
-                            {
-                                string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
-                               
-                                <a href="@enlaceMaestro" style="text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
-                                    <div class="boton-expandir" style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background: color-mix(in srgb, var(--fondoOscuro), var(--fondoDlc) 70%); color: var(--colorTextoDlc); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
-                                        <div style="max-width: 26px; opacity: 0.5;">
-                                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                <path d="M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM127 297c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l71 71L232 120c0-13.3 10.7-24 24-24s24 10.7 24 24l0 214.1 71-71c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L273 409c-9.4 9.4-24.6 9.4-33.9 0L127 297z"/>
-                                            </svg>
+                            <div style="display: flex; align-items: center; gap: 30px;">
+                                <div style="width: 25%;">
+                                    @if (string.IsNullOrEmpty(aviso.Enlace) == false)
+                                    {
+                                        if (aviso.EnlaceNuevaPestaña == true)
+                                        {
+                                            <a href="@aviso.Enlace" target="_blank" class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); text-decoration: none; border: 1px solid var(--fondoBotonPequeño);">
+                                                <div>@aviso.Titulo</div>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@aviso.Enlace" class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); text-decoration: none; border: 1px solid var(--fondoBotonPequeño);">
+                                                <div>@aviso.Titulo</div>
+                                            </a>                                            
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        <div class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); border-radius: 5px; border: 1px solid var(--fondoBotonPequeño);">
+                                            <div>@aviso.Titulo</div>
                                         </div>
-
-                                        <div style="width: 100%;">
-                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), juegoMaestro.Nombre)
-                                        </div>
-                                    </div>
-                                </a>
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                    {
-                        if (juego.MayorEdad.ToLower() == "true")
-                        {
-                            <div style="padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px; background-color: var(--fondoAlerta); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px;">
-                                <div style="max-width: 26px;">
-                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                        <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z" />
-                                    </svg>
+                                    }
                                 </div>
 
-                                <div style="width: 100%;">
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String46", "Game")
+                                <div style="width: 75%;">
+                                    @aviso.Contenido
                                 </div>
                             </div>
+
+                            contadorAvisos += 1;
+
+                            if (contadorAvisos < avisos.Count)
+                            {
+                                <hr/>
+                            }
                         }
-                    }
-                }
-
-                @if (juego.Tipo == JuegoTipo.Music)
-                {
-                    <div style="background: color-mix(in srgb, var(--fondoOscuro), var(--fondoBandaSonora)); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px 30px; display: flex; flex-direction: row; align-items: center; gap: 30px;">
-                        <div style="max-width: 26px;">
-                            <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 72 0 264c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6L448 147 192 223.8 192 432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6L128 200l0-72c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 5z"/>
-                            </svg>
-                        </div>
-
-                        <div style="width: 100%;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "String78", "Game")
-                        </div>
                     </div>
                 }
-            </div>
+            }
 
             @foreach (DRM drm in JuegoDRM2.GenerarListado())
             {
@@ -4068,6 +3932,195 @@
                 }
             }
 
+            #region Avisos 
+
+            if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            {
+                avisos.Clear();
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
+                    {
+                        if (juego.FreeToPlay.ToLower() == "true")
+                        {
+                            avisos.Add(new JuegoAviso
+                            {
+                                Id = "f2p",
+                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
+                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
+                                Color = "fondoMinimo"
+                            });
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+                {
+                    if (juego.MayorEdad.ToLower() == "true")
+                    {
+                        string cadenaSexo = null;
+
+                        if (juego.Tipo == JuegoTipo.Game)
+                        {
+                            cadenaSexo = "String4";
+                        }
+                        else if (juego.Tipo == JuegoTipo.DLC)
+                        {
+                            cadenaSexo = "String5";
+                        }
+
+                        string contenidoSexo = Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages");
+
+                        if (string.IsNullOrEmpty(usuarioId) == true)
+                        {
+                            contenidoSexo = string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages"), Herramientas.Idiomas.BuscarTexto(idioma, "String6", "GameMessages"));
+                        }
+
+                        avisos.Add(new JuegoAviso
+                        {
+                            Id = "sexo",
+                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "GameMessages"),
+                            Contenido = contenidoSexo,
+                            Color = "fondoAlerta"
+                        });      
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.InteligenciaArtificial == true)
+                    {
+                        avisos.Add(new JuegoAviso
+                        {
+                            Id = "ia",
+                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "GameMessages"),
+                            Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "GameMessages"),
+                            Color = "fondoBotonPequeño",
+                            Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                            EnlaceNuevaPestaña = true
+                        });
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Caracteristicas != null)
+                    {
+                        if (juego.Caracteristicas.AccesoAnticipado == true)
+                        {
+                            bool alarmaNoActualizacion = false;
+
+                            if (juego.UltimaActualizacionSteam != null)
+                            {
+                                if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-180))
+                                {
+                                    alarmaNoActualizacion = true;
+                                }
+                            }
+
+                            if (alarmaNoActualizacion == false)
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "accesoanticipado",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String11", "GameMessages"),
+                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String12", "GameMessages"),
+                                    Color = "fondoMinimo"
+                                });
+                            }
+                            else
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "abandonado",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "GameMessages"),
+                                    Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String10", "GameMessages"), Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam, idioma)),
+                                    Color = "fondoPeligro"
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Categorias != null)
+                    {
+                        foreach (var categoria in juego.Categorias)
+                        {
+                            if (categoria == "54")
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "rv",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String13", "GameMessages"),
+                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String14", "GameMessages"),
+                                    Color = "fondoMinimo"
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.DLC)
+                {
+                    if (string.IsNullOrEmpty(juego.Maestro) == false)
+                    {
+                        if (juego.Maestro != "no")
+                        {
+                            Juegos.Juego juegoMaestro = global::BaseDatos.Juegos.Buscar.UnJuego(juego.Maestro);
+
+                            if (juegoMaestro != null)
+                            {
+                                string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
+
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "dlc",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String15", "GameMessages"),
+                                    Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "GameMessages"), juegoMaestro.Nombre),
+                                    Color = "fondoDlc",
+                                    Enlace = enlaceMaestro
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Music)
+                {
+                    avisos.Add(new JuegoAviso
+                    {
+                        Id = "musica",
+                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String17", "GameMessages"),
+                        Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "GameMessages"),
+                        Color = "fondoBandaSonora"
+                    });
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Caracteristicas != null)
+                    {
+                        if (juego.Caracteristicas.DemoIdSteam > 0)
+                        {
+                            avisos.Add(new JuegoAviso
+                            {
+                                Id = "demo",
+                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "GameMessages"),
+                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "GameMessages"),
+                                Color = "fondoDemo",
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                EnlaceNuevaPestaña = true
+                            });
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
             curators.Clear();
             List<string> curatorsBuscar = new List<string>();
 
@@ -6178,6 +6231,22 @@
     private void RVCerrar(MouseEventArgs e)
     {
         enseñarRV = false;
+    }
+
+    #endregion
+
+    #region Avisos
+
+    public List<JuegoAviso> avisos = new List<JuegoAviso>();
+
+    public class JuegoAviso
+    {
+        public string Id { get; set; }
+        public string Titulo { get; set; }
+        public string Contenido { get; set; }
+        public string Color { get; set; }
+        public string Enlace { get; set; }
+        public bool EnlaceNuevaPestaña { get; set; }
     }
 
     #endregion

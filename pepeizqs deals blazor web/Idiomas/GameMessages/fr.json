@@ -1,0 +1,22 @@
+{
+  "String1": "Libre de jouer",
+  "String2": "Ce jeu est gratuit, cela signifie qu'il peut être joué gratuitement, mais pour en profiter pleinement, il sera nécessaire d'acheter un ou plusieurs téléchargements de contenu (ou des DLC pour faire court).",
+  "String3": "Contenu sexuel",
+  "String4": "Ce jeu contient du contenu sexuel qui ne convient pas aux mineurs.",
+  "String5": "Ce DLC contient du contenu sexuel qui ne convient pas aux mineurs.",
+  "String6": "Pour afficher le contenu, vous devez enregistrer un compte sur le site Web.",
+  "String7": "Intelligence artificielle",
+  "String8": "Ce jeu a utilisé l'intelligence artificielle dans son développement. ",
+  "String9": "Abandonné",
+  "String10": "Ce jeu d'accès anticipé a été abandonné par le développeur car il n'a pas été mis à jour pour {0}.",
+  "String11": "Accès précoce",
+  "String12": "Ce jeu est dans un accès précoce, ce qui signifie qu'il est toujours en développement et il manquera des fonctionnalités.",
+  "String13": "Réalité virtuelle",
+  "String14": "Ce jeu ne peut être exécuté qu'avec un appareil de réalité virtuelle.",
+  "String15": "DLC",
+  "String16": "Il s'agit d'un DLC et nécessite que le jeu {0} fonctionne correctement (cliquez sur le bouton pour l'ouvrir).",
+  "String17": "Bande sonore",
+  "String18": "Il s'agit d'une bande originale de jeu vidéo, cela signifie que vous n'aurez accès qu'aux fichiers audio du jeu.",
+  "String19": "Démo",
+  "String20": "Une démo du jeu est disponible sur Steam (cliquez sur le bouton pour l'ouvrir)."
+}

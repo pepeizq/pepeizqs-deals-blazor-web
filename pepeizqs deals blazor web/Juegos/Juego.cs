@@ -135,6 +135,7 @@ namespace Juegos
 		public List<string> Enlaces { get; set; }
 		public bool AccesoAnticipado { get; set; }
 		public JuegoCaracteristicasRealidadVirtual RealidadVirtual { get; set; }
+		public int DemoIdSteam { get; set; }
 	}
 
 	public class JuegoCaracteristicasCurator

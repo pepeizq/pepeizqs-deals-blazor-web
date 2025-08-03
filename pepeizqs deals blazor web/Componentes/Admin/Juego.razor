@@ -1163,12 +1163,28 @@
 
 	private async Task ActualizarSteamApi()
 	{
-		global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
+		global::Juegos.Juego nuevoJuego = null;
+
+		try
+		{
+			nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(juego.IdSteam.ToString());
+		}
+		catch (Exception ex)
+		{
+			BaseDatos.Errores.Insertar.Mensaje("Admin Steam Cargar", ex);
+		}
 
 		if (nuevoJuego != null)
 		{
-			BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
-
+			try
+			{
+				BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
+			}
+			catch (Exception ex)
+			{
+				BaseDatos.Errores.Insertar.Mensaje("Admin Steam Actualizar", ex);
+			}
+		
 			await InvokeAsync(StateHasChanged);
 		}
 	}

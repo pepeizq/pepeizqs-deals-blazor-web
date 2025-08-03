@@ -185,6 +185,19 @@ namespace APIs.Steam
 								caracteristicas.AccesoAnticipado = false;
 							}
 
+							if (datos2.Respuesta.Juegos[0].Cosas != null)
+							{
+								if (datos2.Respuesta.Juegos[0].Cosas.DemoId.Count > 0)
+								{
+									caracteristicas.DemoIdSteam = datos2.Respuesta.Juegos[0].Cosas.DemoId[0];
+								}
+
+								if (datos2.Respuesta.Juegos[0].Cosas.DemoId2.Count > 0)
+								{
+									caracteristicas.DemoIdSteam = datos2.Respuesta.Juegos[0].Cosas.DemoId2[0];
+								}
+							}
+
 							#endregion
 
 							#region Imagenes
@@ -620,9 +633,9 @@ namespace APIs.Steam
 
 							#region DLC
 
-							if (datos2.Respuesta.Juegos[0].DLC != null)
+							if (datos2.Respuesta.Juegos[0].Cosas != null)
 							{
-								idMaestro = datos2.Respuesta.Juegos[0].DLC.MaestroId;
+								idMaestro = datos2.Respuesta.Juegos[0].Cosas.MaestroId;
 							}
 
 							#endregion
@@ -1111,7 +1124,7 @@ namespace APIs.Steam
 		public SteamJuegoAPI2JuegoPrecio Precio { get; set; }
 
 		[JsonPropertyName("related_items")]
-		public SteamJuegoAPI2JuegoDLC DLC { get; set; }
+		public SteamJuegoAPI2JuegoCosas Cosas { get; set; }
 	}
 
 	public class SteamJuegoAPI2JuegoImagenes
@@ -1321,10 +1334,16 @@ namespace APIs.Steam
 		public int Descuento { get; set; } = 0;
 	}
 
-	public class SteamJuegoAPI2JuegoDLC
+	public class SteamJuegoAPI2JuegoCosas
 	{
 		[JsonPropertyName("parent_appid")]
 		public int MaestroId { get; set; }
+
+		[JsonPropertyName("demo_appid")]
+		public List<int> DemoId { get; set; }
+
+		[JsonPropertyName("standalone_demo_appid")]
+		public List<int> DemoId2 { get; set; }
 	}
 
 	#endregion

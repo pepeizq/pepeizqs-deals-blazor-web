@@ -41,6 +41,7 @@ namespace Herramientas
 			"Google Web Preview",
 			"ia_archiver",
 			"Lighthouse",
+			"link",
 			"MJ12bot",
 			"MojeekBot",
 			"nbot",

@@ -187,12 +187,12 @@ namespace APIs.Steam
 
 							if (datos2.Respuesta.Juegos[0].Cosas != null)
 							{
-								if (datos2.Respuesta.Juegos[0].Cosas.DemoId.Count > 0)
+								if (datos2.Respuesta.Juegos[0].Cosas.DemoId?.Count > 0)
 								{
 									caracteristicas.DemoIdSteam = datos2.Respuesta.Juegos[0].Cosas.DemoId[0];
 								}
 
-								if (datos2.Respuesta.Juegos[0].Cosas.DemoId2.Count > 0)
+								if (datos2.Respuesta.Juegos[0].Cosas.DemoId2?.Count > 0)
 								{
 									caracteristicas.DemoIdSteam = datos2.Respuesta.Juegos[0].Cosas.DemoId2[0];
 								}

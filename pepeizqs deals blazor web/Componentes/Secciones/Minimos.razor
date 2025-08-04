@@ -79,7 +79,7 @@ else
 	<div class="subcabecera">
 		<div class="cuerpo-ancho sub-subcabecera">
 			<h1 style="font-size: 18px; margin: 0px; width: fit-content; padding: 9px 0px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "HistoricalLows")
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "HistoricalLows") (@juegosFiltrados.Count().ToString())
 			</h1>
 
 			@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)

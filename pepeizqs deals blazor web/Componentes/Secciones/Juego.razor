@@ -756,20 +756,20 @@
                                     {
                                         if (aviso.EnlaceNuevaPestaña == true)
                                         {
-                                            <a href="@aviso.Enlace" target="_blank" class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); text-decoration: none; border: 1px solid var(--fondoBotonPequeño);">
+                                            <a href="@aviso.Enlace" target="_blank" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
                                                 <div>@aviso.Titulo</div>
                                             </a>
                                         }
                                         else
                                         {
-                                            <a href="@aviso.Enlace" class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); text-decoration: none; border: 1px solid var(--fondoBotonPequeño);">
+                                            <a href="@aviso.Enlace" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
                                                 <div>@aviso.Titulo</div>
                                             </a>                                            
                                         } 
                                     }
                                     else
                                     {
-                                        <div class="boton-pequeño" style="text-align: center; padding: 10px 30px; background: radial-gradient(ellipse at top left, var(--fondoOscuro), var(--@aviso.Color); border-radius: 5px; border: 1px solid var(--fondoBotonPequeño);">
+                                        <div class="boton-pequeño" style="text-align: center; padding: 10px 30px; border-radius: 5px; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
                                             <div>@aviso.Titulo</div>
                                         </div>
                                     }
@@ -4110,7 +4110,7 @@
                                 Id = "demo",
                                 Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "GameMessages"),
                                 Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "GameMessages"),
-                                Color = "fondoDemo",
+                                Color = "fondoBotonPequeño",
                                 Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
                                 EnlaceNuevaPestaña = true
                             });

@@ -109,7 +109,7 @@
 		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
 			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Imagen)" style="width: 100px; height: 100px;" alt="@curator.Nombre" />
 
-			<div style="display: flex; flex-direction: column; gap: 5px;">
+			<div style="display: flex; flex-direction: column; gap: 10px;">
 				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
 					@if (curator.Web != null)
 					{
@@ -137,18 +137,18 @@
 		<div style="position: relative; display: flex; flex-direction: column; gap: 40px; margin: 40px auto;">
 			@if (juegosDestacados.Count > 1)
 			{
-				<div>
+				<div class="caja-curator-contenido">
 					<div style="font-size: 20px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Curators")
 					</div>
-					<hr />
-					<div class="caja-curator-contenido">
-						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; width: 100%;">
-							@foreach (var destacado in juegosDestacados)
-							{
-								<CajaJuego idioma="@idioma" juego="@destacado" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorDestacado" />
-							}
-						</div>
+
+					<hr/>
+
+					<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; width: 100%;">
+						@foreach (var destacado in juegosDestacados)
+						{
+							<CajaJuego idioma="@idioma" juego="@destacado" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorDestacado" />
+						}
 					</div>
 				</div>
 			}
@@ -158,98 +158,97 @@
 				<div style="display: flex; align-items: start; gap: 40px;">
 					@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
 					{
-
-					}
-					<div class="caja-curator-contenido" style="width: 30%; display: flex; flex-direction: column; gap: 10px; padding: 20px;">
-						<div>
-							<div style="margin: 0px 10px 10px 10px; font-size: 18px;">
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Curators")
+						<div class="caja-curator-contenido" style="width: 30%; display: flex; flex-direction: column; gap: 10px; padding: 20px;">
+							<div>
+								<div style="margin: 0px 10px 10px 10px; font-size: 18px;">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Curators")
+								</div>
+								<hr style="margin: 0px;" />
 							</div>
-							<hr style="margin: 0px;" />
+
+							@{
+								string fondoJuegos = string.Empty;
+
+								if (filtrado == 1)
+								{
+									fondoJuegos = "background-color: var(--fondoBotonPequeño);";
+								}
+								else
+								{
+									fondoJuegos = "background-color: transparent;";
+								}
+
+								string fondoDLCs = string.Empty;
+
+								if (filtrado == 2)
+								{
+									fondoDLCs = "background-color: var(--fondoBotonPequeño);";
+								}
+								else
+								{
+									fondoDLCs = "background-color: transparent;";
+								}
+
+								string fondoBandasSonoras = string.Empty;
+
+								if (filtrado == 3)
+								{
+									fondoBandasSonoras = "background-color: var(--fondoBotonPequeño);";
+								}
+								else
+								{
+									fondoBandasSonoras = "background-color: transparent;";
+								}
+
+								string fondoSoftware = string.Empty;
+
+								if (filtrado == 4)
+								{
+									fondoSoftware = "background-color: var(--fondoBotonPequeño);";
+								}
+								else
+								{
+									fondoSoftware = "background-color: transparent;";
+								}
+							}
+
+							@if (juegosCuratorJuegos.Count > 0)
+							{
+								<button @onclick="(e => MostrarListado(e, juegosCuratorJuegos, 1))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoJuegos">
+									<div style="display: flex; align-items: center;">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Curators") (@juegosCuratorJuegos.Count.ToString())
+									</div>
+								</button>
+							}
+
+							@if (juegosCuratorDLCs.Count > 0)
+							{
+								<button @onclick="(e => MostrarListado(e, juegosCuratorDLCs, 2))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoDLCs">
+									<div style="display: flex; align-items: center;">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Curators") (@juegosCuratorDLCs.Count.ToString())
+									</div>
+								</button>
+							}
+
+							@if (juegosCuratorBandasSonoras.Count > 0)
+							{
+								<button @onclick="(e => MostrarListado(e, juegosCuratorBandasSonoras, 3))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoBandasSonoras">
+									<div style="display: flex; align-items: center;">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Curators") (@juegosCuratorBandasSonoras.Count.ToString())
+									</div>
+								</button>
+							}
+
+							@if (juegosCuratorSoftware.Count > 0)
+							{
+								<button @onclick="(e => MostrarListado(e, juegosCuratorSoftware, 4))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoSoftware">
+									<div style="display: flex; align-items: center;">
+										@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Curators") (@juegosCuratorSoftware.Count.ToString())
+									</div>
+								</button>
+							}
 						</div>
-
-						@{
-							string fondoJuegos = string.Empty;
-
-							if (filtrado == 1)
-							{
-								fondoJuegos = "background-color: var(--fondoBotonPequeño);";
-							}
-							else
-							{
-								fondoJuegos = "background-color: transparent;";
-							}
-
-							string fondoDLCs = string.Empty;
-
-							if (filtrado == 2)
-							{
-								fondoDLCs = "background-color: var(--fondoBotonPequeño);";
-							}
-							else
-							{
-								fondoDLCs = "background-color: transparent;";
-							}
-
-							string fondoBandasSonoras = string.Empty;
-
-							if (filtrado == 3)
-							{
-								fondoBandasSonoras = "background-color: var(--fondoBotonPequeño);";
-							}
-							else
-							{
-								fondoBandasSonoras = "background-color: transparent;";
-							}
-
-							string fondoSoftware = string.Empty;
-
-							if (filtrado == 4)
-							{
-								fondoSoftware = "background-color: var(--fondoBotonPequeño);";
-							}
-							else
-							{
-								fondoSoftware = "background-color: transparent;";
-							}
-						}
-
-						@if (juegosCuratorJuegos.Count > 0)
-						{
-							<button @onclick="(e => MostrarListado(e, juegosCuratorJuegos, 1))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoJuegos">
-								<div style="display: flex; align-items: center;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Curators") (@juegosCuratorJuegos.Count.ToString())
-								</div>
-							</button>
-						}
-
-						@if (juegosCuratorDLCs.Count > 0)
-						{
-							<button @onclick="(e => MostrarListado(e, juegosCuratorDLCs, 2))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoDLCs">
-								<div style="display: flex; align-items: center;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Curators") (@juegosCuratorDLCs.Count.ToString())
-								</div>
-							</button>
-						}
-
-						@if (juegosCuratorBandasSonoras.Count > 0)
-						{
-							<button @onclick="(e => MostrarListado(e, juegosCuratorBandasSonoras, 3))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoBandasSonoras">
-								<div style="display: flex; align-items: center;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Curators") (@juegosCuratorBandasSonoras.Count.ToString())
-								</div>
-							</button>
-						}
-
-						@if (juegosCuratorSoftware.Count > 0)
-						{
-							<button @onclick="(e => MostrarListado(e, juegosCuratorSoftware, 4))" style="color: var(--colorTexto); border: 0px; width: 100%; text-align: center; padding: 10px; @fondoSoftware">
-								<div style="display: flex; align-items: center;">
-									@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Curators") (@juegosCuratorSoftware.Count.ToString())
-								</div>
-							</button>
-						}
-					</div>
+					}
 
 					<div style="width: 100%;">
 						<div style="display: flex; flex-direction: column; gap: 20px; margin-top: -20px;">
@@ -345,10 +344,6 @@
 
 				if (juegosCurator.Count > 0)
 				{
-					juegosCurator = juegosCurator.Where(x => x.Analisis != null).Where(x => x.Analisis.Cantidad != null).OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
-
-					juegosCuratorMostrar = juegosCurator;
-
 					foreach (var juegoCurator in juegosCurator)
 					{
 						if (juegoCurator.Tipo == Juegos.JuegoTipo.Game)
@@ -373,6 +368,27 @@
 							juegosCuratorSoftware.Add(juegoCurator);
 						}
 					}
+
+					if (juegosCuratorJuegos.Count > 0)
+					{
+						juegosCuratorMostrar = juegosCuratorJuegos;
+						filtrado = 1;
+					}
+					else if (juegosCuratorDLCs.Count > 0)
+					{
+						juegosCuratorMostrar = juegosCuratorDLCs;
+						filtrado = 2;
+					}
+					else if (juegosCuratorBandasSonoras.Count > 0)
+					{
+						juegosCuratorMostrar = juegosCuratorBandasSonoras;
+						filtrado = 3;
+					}
+					else if (juegosCuratorSoftware.Count > 0)
+					{
+						juegosCuratorMostrar = juegosCuratorSoftware;
+						filtrado = 4;
+                    }
 				}
 			}
 		}

@@ -156,6 +156,7 @@ builder.Services.AddSingleton<Tareas.Suscripciones.AmazonLunaPlus>();
 
 builder.Services.AddSingleton<Tareas.Streaming.GeforceNOW>();
 builder.Services.AddSingleton<Tareas.Streaming.AmazonLuna>();
+builder.Services.AddSingleton<Tareas.Streaming.Boosteroid>();
 
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Mantenimiento>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Minimos>());
@@ -203,6 +204,7 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas
 
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.GeforceNOW>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.AmazonLuna>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.Boosteroid>());
 
 #endregion
 

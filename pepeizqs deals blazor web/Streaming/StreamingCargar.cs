@@ -3,8 +3,9 @@
     public enum StreamingTipo
     {
         GeforceNOW,
-        AmazonLuna
-    }
+        AmazonLuna,
+		Boosteroid
+	}
 
     public class StreamingCargar
     {
@@ -13,7 +14,8 @@
             List<Streaming> streaming = new List<Streaming>
             {
                 APIs.GeforceNOW.Streaming.Generar(),
-                APIs.GOG.Streaming.Generar()
+                APIs.GOG.Streaming.Generar(),
+                APIs.Boosteroid.Streaming.Generar()
             };
 
             return streaming;

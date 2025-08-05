@@ -773,7 +773,7 @@ else
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -15px;">
 				<Virtualize Context="juego" Items="@juegosFiltrados" ItemSize="107" OverscanCount="10">
 					<ItemContent>
-						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" />
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" userAgent="@userAgent"/>
 					</ItemContent>
 				</Virtualize>
 			</div>

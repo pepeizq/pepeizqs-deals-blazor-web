@@ -8,7 +8,7 @@ namespace BaseDatos.Streaming
 {
     public static class Buscar
     {
-        public static List<JuegoDRM> GeforceNOWDRMs(int idJuego, SqlConnection conexion = null)
+        public static List<JuegoDRM> DRMs(string tabla, int idJuego, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -26,7 +26,7 @@ namespace BaseDatos.Streaming
 
             using (conexion)
             {
-                string busqueda = "SELECT drms FROM streaminggeforcenow WHERE idJuego = " + idJuego.ToString();
+                string busqueda = "SELECT drms FROM streaming" + tabla + " WHERE idJuego = " + idJuego.ToString() + " AND fecha > DATEADD(DAY, -7, CAST(GETDATE() as date))";
 
                 using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
@@ -34,7 +34,7 @@ namespace BaseDatos.Streaming
 
                     using (lector)
                     {
-                        if (lector.Read() == true)
+                        while (lector.Read() == true)
                         {
                             if (lector.IsDBNull(0) == false)
                             {

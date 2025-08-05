@@ -225,8 +225,13 @@
     <div class="caja-archivo-contenido" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; gap: 30px; padding: 30px; margin: 40px 0px;">
         @foreach (var juego in juegosActuales)
         {
-            string enlaceGratis = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
+            string enlaceGratis = juego.Enlace;
 
+            if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            {
+                enlaceGratis = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
+            }
+            
             <CajaJuego enlaceGratis="@enlaceGratis" drmGratis="@juego.DRM" tipoGratis="@juego.Tipo" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Gratis"/> 
         }
     </div>

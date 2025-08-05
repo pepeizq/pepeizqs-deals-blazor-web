@@ -290,11 +290,27 @@ namespace BaseDatos.Pendientes
                     {
                         while (lector.Read() == true)
                         {
-                            Pendiente pendiente = new Pendiente
-                            {
-                                Enlace = lector.GetString(0),
-                                Nombre = lector.GetString(1)
-                            };
+                            Pendiente pendiente = new Pendiente();
+
+							if (lector.IsDBNull(0) == false)
+							{
+								try
+								{
+									pendiente.Enlace = lector.GetString(0);
+								}
+								catch { }
+
+								try
+								{
+									pendiente.Enlace = lector.GetInt32(0).ToString();
+								}
+								catch { }
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								pendiente.Nombre = lector.GetString(1);
+							}
 
                             listaPendientes.Add(pendiente);
                         }
@@ -409,12 +425,29 @@ namespace BaseDatos.Pendientes
                 {
                     while (lector.Read())
                     {
-                        Pendiente pendiente = new Pendiente
-                        {
-                            Enlace = lector.GetString(0),
-                            Nombre = lector.GetString(1),
-                            Imagen = "vacio"
-                        };
+						Pendiente pendiente = new Pendiente();
+
+						if (lector.IsDBNull(0) == false)
+						{
+							try
+							{
+								pendiente.Enlace = lector.GetString(0);
+							}
+							catch { }
+
+							try
+							{
+								pendiente.Enlace = lector.GetInt32(0).ToString();
+							}
+							catch { }
+						}
+
+						if (lector.IsDBNull(1) == false)
+						{
+							pendiente.Nombre = lector.GetString(1);
+						}
+
+						pendiente.Imagen = null;
 
                         return pendiente;
                     }

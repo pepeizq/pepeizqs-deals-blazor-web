@@ -120,7 +120,25 @@ namespace BaseDatos.Pendientes
 
                     }
                 }
-            }         
+
+				string sqlActualizar2 = "UPDATE streaming" + idStreaming + " " +
+				   "SET idJuego=@idJuego WHERE id=@id";
+
+				using (SqlCommand comando = new SqlCommand(sqlActualizar2, conexion))
+				{
+					comando.Parameters.AddWithValue("@idJuego", idJuego);
+					comando.Parameters.AddWithValue("@id", nombreCodigo);
+
+					try
+					{
+						comando.ExecuteNonQuery();
+					}
+					catch
+					{
+
+					}
+				}
+			}         
         }
 
         public static void PlataformaAmazon(string idAmazon, int idJuego, SqlConnection conexion)
@@ -415,7 +433,25 @@ namespace BaseDatos.Pendientes
 
                 }
             }
-        }
+
+			string sqlActualizar2 = "UPDATE streaming" + idStreaming + " " +
+					"SET descartado=@descartado WHERE id=@id";
+
+			using (SqlCommand comando = new SqlCommand(sqlActualizar2, conexion))
+			{
+				comando.Parameters.AddWithValue("@descartado", 1);
+				comando.Parameters.AddWithValue("@id", nombreCodigo);
+
+				try
+				{
+					comando.ExecuteNonQuery();
+				}
+				catch
+				{
+
+				}
+			}
+		}
 
         public static void DescartarPlataforma(string idPlataforma, string idJuego, SqlConnection conexion)
         {

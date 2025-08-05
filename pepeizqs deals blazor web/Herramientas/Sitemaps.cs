@@ -411,7 +411,7 @@ namespace Herramientas
 		public IActionResult NoticiasIngles(int i)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
+			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\"\r\n    xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
 
 			int minimo = 0;
 			int maximo = 0;
@@ -448,7 +448,7 @@ namespace Herramientas
 		public IActionResult NoticiasEspañol(int i)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
+			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\"\r\n    xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
 
 			int minimo = 0;
 			int maximo = 0;

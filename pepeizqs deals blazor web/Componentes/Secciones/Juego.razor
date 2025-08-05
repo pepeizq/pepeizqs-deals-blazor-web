@@ -1058,6 +1058,17 @@
                                                         }
                                                     }
 
+                                                    if (drmsBoosteroid.Count > 0)
+                                                    {
+                                                        foreach (var drmB in drmsBoosteroid)
+                                                        {
+                                                            if (drmB == drm.Id)
+                                                            {
+                                                                añadirDiv = true;
+                                                            }
+                                                        }
+                                                    }
+
                                                     if (añadirDiv == true)
                                                     {
                                                         <div style="display: flex; align-items: center; flex-direction: row; gap: 20px; padding-left: 2px;">
@@ -1325,8 +1336,21 @@
                                                                 {
                                                                     if (drmG == drm.Id)
                                                                     {
-                                                                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String71", "Game")">
+                                                                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;" title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String71", "Game"), "Geforce NOW")">
                                                                             <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(APIs.GeforceNOW.Streaming.Generar().ImagenIcono, 22, 22)" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Geforce NOW" />
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            @if (drmsBoosteroid.Count > 0)
+                                                            {
+                                                                foreach (var drmB in drmsBoosteroid)
+                                                                {
+                                                                    if (drmB == drm.Id)
+                                                                    {
+                                                                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;" title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String71", "Game"), "Boosteroid")">
+                                                                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(APIs.Boosteroid.Streaming.Generar().ImagenIcono, 22, 22)" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Boosteroid" />
                                                                         </div>
                                                                     }
                                                                 }
@@ -3653,6 +3677,7 @@
     private Juegos.Juego juego = null;
     private List<Juegos.Juego> dlcs = new List<Juegos.Juego>();
     private List<Juegos.JuegoDRM> drmsGeforceNOW = new List<JuegoDRM>();
+    private List<Juegos.JuegoDRM> drmsBoosteroid = new List<JuegoDRM>();
     private List<global::BaseDatos.Curators.CuratorFicha> curators = new List<global::BaseDatos.Curators.CuratorFicha>();
 
     private ApexChartOptions<PuntoGrafico> opcionesGrafico;
@@ -3696,7 +3721,8 @@
 
             if (juego.Tipo == JuegoTipo.Game)
             {
-                drmsGeforceNOW = global::BaseDatos.Streaming.Buscar.GeforceNOWDRMs(juego.Id);
+                drmsGeforceNOW = global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
+                drmsBoosteroid = global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
             }
 
             if (juego.IdSteam > 0)

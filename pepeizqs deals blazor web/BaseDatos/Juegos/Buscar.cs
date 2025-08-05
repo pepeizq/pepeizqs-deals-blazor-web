@@ -646,6 +646,7 @@ namespace BaseDatos.Juegos
 					}
 
 					sqlBuscar = sqlBuscar + ")";
+					sqlBuscar = sqlBuscar + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
 				}
 			}
 
@@ -764,9 +765,7 @@ namespace BaseDatos.Juegos
 
 			if (juegos.Count > 0)
 			{
-				return juegos.OrderBy(x => x.Nombre)
-							 .ThenBy(x => x.Id)
-							 .ToList();
+				return juegos;
 			}
 
 			return null;

@@ -117,7 +117,7 @@
 				}
 			}
 		}
-	
+
 
 		if (oferta != null)
 		{
@@ -130,7 +130,15 @@
 
 			if (tipo == Tipo.MinimosHistoricos)
 			{
-				enlace = Herramientas.EnlaceAcortador.Generar(oferta.Enlace, oferta.Tienda, usuarioPatreon);
+				if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+				{
+					enlace = Herramientas.EnlaceAcortador.Generar(oferta.Enlace, oferta.Tienda, usuarioPatreon);
+				}
+				else
+				{
+                    enlace = oferta.Enlace;
+				}
+				
 				enlaceNuevaPestaña = "_blank";
 			}
 
@@ -756,6 +764,9 @@
 
 	[Parameter]
 	public string idioma { get; set; }
+
+	[Parameter]
+    public string userAgent { get; set; }
 
 	[Parameter]
 	public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }

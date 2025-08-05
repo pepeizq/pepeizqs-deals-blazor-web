@@ -430,7 +430,7 @@
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoPortadaNoticias);">
-	<div class="cuerpo-ancho" style="padding: 20px 0px;">
+	<div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; flex-direction: column; gap: 40px;">
 		@if (noticias.Count > 0)
 		{
 			<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")">
@@ -442,7 +442,7 @@
 			</div>
 		}
 
-		<div style="display: flex; align-items: center; gap: 40px; justify-content: center; margin: 40px 10px 20px 10px;">
+		<div style="display: flex; align-items: center; gap: 40px; justify-content: center;">
 			<a class="boton-pequeño" style="padding: 15px 30px; width: fit-content;" href="/last-news">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Index")
 			</a>

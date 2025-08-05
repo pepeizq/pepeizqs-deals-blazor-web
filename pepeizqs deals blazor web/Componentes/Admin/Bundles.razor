@@ -1,10 +1,11 @@
 ﻿@using Bundles2
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Data.SqlClient
 
 <div class="caja-diseño" style="padding: 30px;">
     <div>
         <label style="margin-bottom: 10px;">Enlace:</label>
-        <input type="text" @oninput="TextoCambiaEnlace" class="entrada-texto" value="@bundle.Enlace" />
+        <input type="text" @bind-value="bundle.Enlace" @bind-value:event="oninput" @bind-value:after="TextoCambiaEnlace" class="entrada-texto" />
     </div>
 </div>
 
@@ -109,7 +110,7 @@
 
         <div style="margin-top: 20px;">
             <label style="margin-bottom: 10px;">Juegos Buscador:</label>
-            <input type="text" @oninput="TextoCambiaBuscador" class="entrada-texto" style="margin-bottom: 20px;" value="@cadenaBusqueda" />
+            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="margin-bottom: 20px;" />
 
             @if (juegosBuscador != null)
             {
@@ -207,26 +208,21 @@
 
     #nullable disable
 
+    private SqlConnection conexion = new SqlConnection();
+
     private string enlace = null;
     private Bundles2.Bundle bundle = new Bundles2.Bundle();
 
     private string juegosIds = null;
-    private string cadenaBusqueda = null;
+    private string textoBuscador = null;
     private List<global::Juegos.Juego> juegosBuscador = new List<global::Juegos.Juego>();
 
-    private void TextoCambiaEnlace(ChangeEventArgs texto)
+    private void TextoCambiaEnlace()
     {
-        if (texto.Value.ToString().Trim().Length > 1)
+        if (string.IsNullOrEmpty(bundle.Enlace) == false)
         {
-            enlace = texto.Value.ToString().Trim();
-        }
-        else
-        {
-            enlace = null;
-        }
+            enlace = bundle.Enlace.Trim();
 
-        if (string.IsNullOrEmpty(enlace) == false)
-        {
             enlace = enlace.Replace("https://www.steamgifts.com/redirect?url=", null);
             enlace = enlace.Replace("%3A", ":");
             enlace = enlace.Replace("%2F", "/");
@@ -254,6 +250,10 @@
                         }
                     }
                 }
+            }
+            else
+            {
+                juegosIds = BaseDatos.Portapapeles.Buscar.Contenido(bundle.Enlace);
             }
 
             if (bundle != null)
@@ -440,11 +440,23 @@
         }
     }
 
-    private void TextoCambiaBuscador(ChangeEventArgs texto)
+    private void TextoCambiaBuscador()
     {
-        if (texto.Value.ToString().Trim().Length > 1)
+        if (string.IsNullOrEmpty(textoBuscador) == false)
         {
-            juegosBuscador = BaseDatos.Juegos.Buscar.Nombre(texto.Value.ToString().Trim(), 100);
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            juegosBuscador = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 100, true, -1, true);
         }
         else
         {
@@ -454,7 +466,7 @@
 
     private void SeleccionarJuegoBuscador(MouseEventArgs e, string id, string imagen, string nombre)
     {
-        cadenaBusqueda = null;
+        textoBuscador = null;
         juegosBuscador = new List<global::Juegos.Juego>();
 
         if (bundle.Juegos == null)
@@ -487,6 +499,7 @@
         bundle.Juegos.Add(juegoBundle);
 
         juegosIds = null;
+
         for (int i = 0; i < bundle.Juegos.Count; i += 1)
         {
             if (i == 0)
@@ -498,6 +511,8 @@
                 juegosIds = juegosIds + "," + bundle.Juegos[i].JuegoId;
             }
         }
+
+        BaseDatos.Portapapeles.Insertar.Ejecutar(bundle.Enlace, juegosIds);
     }
 
     private void CambiarTierJuego(ChangeEventArgs texto, BundleJuego juego)
@@ -539,6 +554,7 @@
         if (bundle != null)
         {
             BaseDatos.Bundles.Insertar.Ejecutar(bundle);
+            BaseDatos.Portapapeles.Borrar.Ejecutar(bundle.Enlace);
 
             enlace = null;
         }

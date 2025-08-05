@@ -179,13 +179,22 @@
 
             if (usuario.EmailConfirmed == true)
             {
+                bool patreonActivo = Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck);
+
+                TimeSpan tiempoActualizar = TimeSpan.FromDays(7);
+
+                if (patreonActivo == true)
+                {
+                    tiempoActualizar = TimeSpan.FromDays(1);
+                }
+
                 if (string.IsNullOrEmpty(usuario.SteamAccount) == false && string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
                 {
                     bool tiempo = true;
 
                     if (string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
                     {
-                        if (Convert.ToDateTime(usuario.SteamAccountLastCheck) + TimeSpan.FromDays(7) > DateTime.Now)
+                        if (Convert.ToDateTime(usuario.SteamAccountLastCheck) + tiempoActualizar > DateTime.Now)
                         {
                             tiempo = false;
                         }
@@ -209,7 +218,7 @@
                 {
                     bool tiempo = true;
 
-                    if (usuario.GogAccountLastCheck + TimeSpan.FromDays(7) > DateTime.Now)
+                    if (usuario.GogAccountLastCheck + tiempoActualizar > DateTime.Now)
                     {
                         tiempo = false;
                     }
@@ -222,39 +231,41 @@
                     }
                 }
 
-                if (usuario.PatreonLastLogin == null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true && usuario.PatreonContribution > 0)
+                if (patreonActivo == true)
                 {
-                    usuario.PatreonLastLogin = DateTime.Now;
-                    usuario.PatreonCoins = 2;
-
-                    global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
-                }
-
-                if (usuario.PatreonLastLogin != null && Herramientas.Patreon.VerificarActivo(usuario.PatreonLastCheck) == true)
-                {
-                    if (usuario.PatreonContribution > 0)
+                    if (usuario.PatreonLastLogin == null)
                     {
-                        if (usuario.PatreonCoins < 120)
-                        {
-                            if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
-                            {
-                                usuario.PatreonLastLogin = DateTime.Now;
-                                usuario.PatreonCoins = usuario.PatreonCoins + 2;
+                        usuario.PatreonLastLogin = DateTime.Now;
+                        usuario.PatreonCoins = 2;
 
-                                global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
-                            }
-                        }
+                        global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
                     }
                     else
                     {
-                        if (usuario.PatreonCoins < 10)
+                        if (usuario.PatreonContribution > 0)
                         {
-                            if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                            if (usuario.PatreonCoins < 120)
                             {
-                                usuario.PatreonLastLogin = DateTime.Now;
-                                usuario.PatreonCoins = usuario.PatreonCoins + 2;
+                                if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                                {
+                                    usuario.PatreonLastLogin = DateTime.Now;
+                                    usuario.PatreonCoins = usuario.PatreonCoins + 2;
 
-                                global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                                    global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (usuario.PatreonCoins < 10)
+                            {
+                                if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
+                                {
+                                    usuario.PatreonLastLogin = DateTime.Now;
+                                    usuario.PatreonCoins = usuario.PatreonCoins + 2;
+
+                                    global::BaseDatos.Recompensas.Historial.Insertar(usuario.Id, 2, "Daily", DateTime.Now);
+                                }
                             }
                         }
                     }

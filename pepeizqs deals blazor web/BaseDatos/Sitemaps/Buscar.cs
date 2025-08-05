@@ -3,6 +3,7 @@
 using ApexCharts;
 using Herramientas;
 using Microsoft.Data.SqlClient;
+using Microsoft.VisualBasic;
 using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -421,7 +422,7 @@ namespace BaseDatos.Sitemaps
 
 			using (conexion)
 			{
-				string buscar = "SELECT id, tituloEn, fechaEmpieza FROM noticias WHERE id > @id1 AND id < @id2";
+				string buscar = "SELECT id, tituloEn, tituloEs, fechaEmpieza FROM noticias WHERE id > @id1 AND id < @id2";
 
 				buscar = buscar.Replace("@id1", id1.ToString());
 				buscar = buscar.Replace("@id2", id2.ToString());
@@ -433,7 +434,8 @@ namespace BaseDatos.Sitemaps
 						while (lector.Read())
 						{
 							int id = 0;
-							string nombre = string.Empty;
+							string tituloEn = string.Empty;
+							string tituloEs = string.Empty;
 							DateTime fecha = new DateTime();
 
 							try
@@ -451,7 +453,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(1)) == false)
 									{
-										nombre = lector.GetString(1);
+										tituloEn = lector.GetString(1);
 									}
 								}
 							}
@@ -461,17 +463,30 @@ namespace BaseDatos.Sitemaps
 							{
 								if (lector.IsDBNull(2) == false)
 								{
-									fecha = lector.GetDateTime(2);
+									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
+									{
+										tituloEs = lector.GetString(2);
+									}
 								}
 							}
 							catch { }
 
-							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
+							try
 							{
-								nombre = nombre.Replace("&", "&amp;");
+								if (lector.IsDBNull(3) == false)
+								{
+									fecha = lector.GetDateTime(3);
+								}
+							}
+							catch { }
+
+							if (id > 0 && string.IsNullOrEmpty(tituloEn) == false && string.IsNullOrEmpty(tituloEs) == false)
+							{
+								tituloEn = tituloEn.Replace("&", "&amp;");
 
 								string texto = "<url>" + Environment.NewLine +
-									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine +
+									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/</loc>" + Environment.NewLine +
+									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "es" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/" + Strings.ChrW(34) + " />" + Environment.NewLine +
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
 									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
@@ -483,7 +498,7 @@ namespace BaseDatos.Sitemaps
 									texto = texto + "<news:publication_date>" + fecha.ToString("yyyy-MM-dd") + "</news:publication_date>" + Environment.NewLine;
 								}
 
-								texto = texto + "<news:title>" + nombre + "</news:title>" + Environment.NewLine +
+								texto = texto + "<news:title>" + tituloEn + "</news:title>" + Environment.NewLine +
 									"</news:news>" + Environment.NewLine +
 									"</url>";
 
@@ -515,7 +530,7 @@ namespace BaseDatos.Sitemaps
 
 			using (conexion)
 			{
-				string buscar = "SELECT id, tituloEs, fechaEmpieza FROM noticias WHERE id > @id1 AND id < @id2";
+				string buscar = "SELECT id, tituloEs, tituloEn, fechaEmpieza FROM noticias WHERE id > @id1 AND id < @id2";
 
 				buscar = buscar.Replace("@id1", id1.ToString());
 				buscar = buscar.Replace("@id2", id2.ToString());
@@ -527,7 +542,8 @@ namespace BaseDatos.Sitemaps
 						while (lector.Read())
 						{
 							int id = 0;
-							string nombre = string.Empty;
+							string tituloEs = string.Empty;
+							string tituloEn = string.Empty;
 							DateTime fecha = new DateTime();
 
 							try
@@ -545,7 +561,7 @@ namespace BaseDatos.Sitemaps
 								{
 									if (string.IsNullOrEmpty(lector.GetString(1)) == false)
 									{
-										nombre = lector.GetString(1);
+										tituloEs = lector.GetString(1);
 									}
 								}
 							}
@@ -555,17 +571,30 @@ namespace BaseDatos.Sitemaps
 							{
 								if (lector.IsDBNull(2) == false)
 								{
-									fecha = lector.GetDateTime(2);
+									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
+									{
+										tituloEn = lector.GetString(2);
+									}
 								}
 							}
 							catch { }
 
-							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
+							try
 							{
-								nombre = nombre.Replace("&", "&amp;");
+								if (lector.IsDBNull(3) == false)
+								{
+									fecha = lector.GetDateTime(3);
+								}
+							}
+							catch { }
+
+							if (id > 0 && string.IsNullOrEmpty(tituloEs) == false)
+							{
+								tituloEs = tituloEs.Replace("&", "&amp;");
 
 								string texto = "<url>" + Environment.NewLine +
-									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine +
+									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/</loc>" + Environment.NewLine +
+									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "en" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/" + Strings.ChrW(34) + " />" + Environment.NewLine +
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
 									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
@@ -577,7 +606,7 @@ namespace BaseDatos.Sitemaps
 									texto = texto + "<news:publication_date>" + fecha.ToString("yyyy-MM-dd") + "</news:publication_date>" + Environment.NewLine;
 								}
 
-								texto = texto + "<news:title>" + nombre + "</news:title>" + Environment.NewLine +
+								texto = texto + "<news:title>" + tituloEs + "</news:title>" + Environment.NewLine +
 									"</news:news>" + Environment.NewLine +
 									"</url>";
 

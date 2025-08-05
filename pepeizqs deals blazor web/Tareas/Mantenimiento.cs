@@ -53,8 +53,9 @@ namespace Tareas
 							{
 								BaseDatos.Admin.Actualizar.TareaUso("mantenimiento", DateTime.Now, conexion);
 
-								BaseDatos.Analisis.Limpiar.Ejecutar();
-								BaseDatos.Juegos.Limpiar.Minimos();
+								BaseDatos.Analisis.Limpiar.Ejecutar(conexion);
+								BaseDatos.Juegos.Limpiar.Minimos(conexion);
+								BaseDatos.Portapapeles.Borrar.Limpieza(conexion);
 							}
 						}
 						catch (Exception ex)

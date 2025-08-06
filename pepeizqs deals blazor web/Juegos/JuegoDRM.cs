@@ -155,7 +155,7 @@ namespace Juegos
                 Id = JuegoDRM.BattleNet,
                 Nombre = "Battle.net",
                 Imagen = "/imagenes/drm/battlenet.webp",
-                Acepciones = new List<string> { "battlenet" }
+                Acepciones = new List<string> { "battlenet", "battle.net" }
             };
 
             drms.Add(battlenet);

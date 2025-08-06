@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Herramientas
 {
-	public static class RobotsUserAgents
+	public static class Bots
 	{
-		public static List<string> bots = [
+		public static List<string> botsUserAgents = [
 			"AhrefsBot",
 			"Applebot",
 			"Applebot-Extended",
@@ -47,6 +47,8 @@ namespace Herramientas
 			"nbot",
 			"OpenWebSearchBot",
 			"Owler",
+			"PerplexityBot",
+			"Perplexity-User",
 			"Qwantify",
 			"SeznamBot",
 			"sift",
@@ -61,11 +63,38 @@ namespace Herramientas
 			"zoominfobot"
 		];
 
-		public static bool EsBot(string userAgent)
+		public static List<string> botsIps = [
+			"5.35.",
+			"8.210.",
+			"43.130.",
+			"43.131.",
+			"43.157.",
+			"47.76.", 
+			"47.79.", 
+			"47.82.", 
+			"47.239.",
+			"47.242.", 
+			"47.243.",
+			"49.36.",
+			"58.69.",
+			"81.177.",
+			"89.163.",
+			"103.120.",
+			"103.207.",
+			"113.172.",
+			"119.13.",
+			"146.174.",
+			"178.156.",
+			"185.201.",
+			"188.239.",
+			"202.76."
+		];
+
+		public static bool UserAgentEsBot(string userAgent)
 		{
 			if (string.IsNullOrEmpty(userAgent) == false)
 			{
-				foreach (var bot in bots)
+				foreach (var bot in botsUserAgents)
 				{
 					if (userAgent.ToLower().Contains(bot.ToLower()) == true)
 					{
@@ -82,10 +111,10 @@ namespace Herramientas
 		}
 	}
 
-	public class Robots : Controller
+	public class BotsControlador : Controller
 	{
 		[HttpGet("robots.txt")]
-		public IActionResult Ejecutar()
+		public IActionResult Robots()
 		{
 			WebApplicationBuilder builder = WebApplication.CreateBuilder();
 			string piscinaApp = builder.Configuration.GetValue<string>("PoolWeb:Contenido");
@@ -95,15 +124,6 @@ namespace Herramientas
 
 			if (piscinaApp == piscinaUsada)
 			{
-				//				sb.Append(@"
-				//User-agent: *
-				//Disallow: /");
-
-				//				foreach (var bot in RobotsUserAgents.bots)
-				//				{
-				//					sb.Append($"\r\nUser-agent: {bot}\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*");
-				//				}
-
 				sb.Append(@"Sitemap: https://pepeizqdeals.com/sitemap.xml");
 				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*\\r\nDisallow: /es/*");
 			}

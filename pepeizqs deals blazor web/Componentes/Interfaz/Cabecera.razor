@@ -141,7 +141,7 @@
         </Authorized>
     </AuthorizeView>
 
-    @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
         <div style="background-color: var(--fondoEntrada); padding-right: 10px; display: flex; align-items: center; gap: 10px;">
             <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
@@ -276,13 +276,13 @@
             </Authorized>
             <NotAuthorized>
                 <div style="display: flex; align-items: center; margin-left: auto;">
-                    <a href="/account/login" target="_blank" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
+                    <a href="/account/login" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
                         <div style="@GenerarEstilo("/account/login")">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
                         </div>
                     </a>
 
-                    <a href="/account/register" target="_blank" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
+                    <a href="/account/register" class="boton-superior" style="text-align: left; border: 0; margin: 0px; font-size: 14px;">
                         <div style="@GenerarEstilo("/account/register")">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
                         </div>

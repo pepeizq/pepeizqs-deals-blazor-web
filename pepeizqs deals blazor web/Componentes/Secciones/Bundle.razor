@@ -177,7 +177,7 @@
 		{
             string enlaceBundle = bundle.Enlace;
 
-			if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+			if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
 				enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
 			}
@@ -194,7 +194,7 @@
 	{
 		string enlaceBundle = bundle.Enlace;
 
-		if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+		if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 		{
 			enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
 		}

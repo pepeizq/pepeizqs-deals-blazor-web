@@ -45,6 +45,7 @@ namespace Herramientas.RedesSociales
 				{
 					string tituloEn = noticia.TituloEn;
 					tituloEn = tituloEn.Replace("'", null);
+					tituloEn = tituloEn.Replace(":", null);
 
 					string imagenEnlace = noticia.Imagen;
 					HttpClient clienteWeb = new HttpClient();

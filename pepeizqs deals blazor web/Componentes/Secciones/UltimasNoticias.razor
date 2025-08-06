@@ -129,7 +129,7 @@
 	{
 		<div class="subcabecera">
 			<div class="cuerpo-ancho sub-subcabecera">
-				@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+				@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
 					<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, false))">
 						<h1 style="font-size: 18px; margin: 0px;">
@@ -158,7 +158,7 @@
 
 		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 			<div class="cuerpo-ancho sub-subcabecera">
-				@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+				@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
 					if (tiposActuales.Count > 0)
 					{

@@ -1,6 +1,6 @@
 ﻿@page "/account/login"
 
-@* @attribute [ExcludeFromInteractiveRouting] *@
+@attribute [ExcludeFromInteractiveRouting]
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
@@ -115,15 +115,28 @@
 
     public async Task LoginUser()
     {
-        SignInResult resultado = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        
-        if (resultado.Succeeded)
+        SignInResult resultado = null;
+
+        try
         {
-            RedirectManager.RedirectTo("/");
+            resultado = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        }
+        catch { }
+
+        if (resultado != null)
+        {
+            if (resultado.Succeeded == true)
+            {
+                RedirectManager.RedirectTo("/");
+            }
+            else
+            {
+                mensajeError = "Error: Invalid login attempt.";
+            }
         }
         else
         {
-            mensajeError = "Error: Invalid login attempt.";
+            mensajeError = "Error: 2.";
         }
     }
 

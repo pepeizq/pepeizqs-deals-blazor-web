@@ -80,6 +80,8 @@
 </script>
 
 @{
+	#nullable disable
+
 	int idMaestra = juego.IdMaestra;
 
 	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente)
@@ -130,7 +132,7 @@
 
 			if (tipo == Tipo.MinimosHistoricos)
 			{
-				if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+				if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
 					enlace = Herramientas.EnlaceAcortador.Generar(oferta.Enlace, oferta.Tienda, usuarioPatreon);
 				}

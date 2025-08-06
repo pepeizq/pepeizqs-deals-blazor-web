@@ -82,7 +82,7 @@ else
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "HistoricalLows") (@juegosFiltrados.Count().ToString())
 			</h1>
 
-			@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
 				<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
 					<div class="menu-dropdown" style="width: auto; margin: 0px 20px;">
@@ -146,7 +146,7 @@ else
 		</div>
 	</div>
 	
-	@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+	@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 	{
 		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 			<div class="cuerpo-ancho" style="padding: 20px 0px;">

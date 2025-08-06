@@ -99,7 +99,7 @@
 
     <script async src="@Assets["~/superjs.js"]"></script>
 
-    @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
         <div id="reconnect-modal" style="display: none;"></div>
         <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
@@ -153,6 +153,8 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private string ip = null;
+
     private string codigoFuente = null;
 
     protected override async Task OnInitializedAsync()
@@ -169,6 +171,7 @@
             idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+            ip = HttpContext.Connection.RemoteIpAddress.ToString();
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)

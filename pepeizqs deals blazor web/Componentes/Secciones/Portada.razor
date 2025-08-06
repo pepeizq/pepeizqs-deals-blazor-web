@@ -395,7 +395,7 @@
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 	<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
-		@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+		@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 		{
 			<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido))">
 				<h1 style="font-size: 18px; margin: 0px;">
@@ -430,19 +430,25 @@
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoPortadaNoticias);">
-	<div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; flex-direction: column; gap: 40px;">
-		@if (noticias.Count > 0)
-		{
-			<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")">
-				<Virtualize Context="noticia" Items="noticias">
-					<ItemContent>
-						<CajaNoticia idioma="@idioma" noticia="@noticia" tipo="@CajaNoticia.Tipo.Portada" />
-					</ItemContent>
-				</Virtualize>
-			</div>
+    <div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; flex-direction: column; gap: 40px;">
+		@{
+			string marginAbajo = string.Empty;
+
+			if (noticias.Count > 0)
+			{
+				marginAbajo = "margin-bottom: 20px;";
+
+				<div title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Index")">
+					<Virtualize Context="noticia" Items="noticias">
+						<ItemContent>
+							<CajaNoticia idioma="@idioma" noticia="@noticia" tipo="@CajaNoticia.Tipo.Portada" />
+						</ItemContent>
+					</Virtualize>
+				</div>
+			}
 		}
 
-		<div style="display: flex; align-items: center; gap: 40px; justify-content: center;">
+		<div style="display: flex; align-items: center; gap: 40px; justify-content: center; @marginAbajo">
 			<a class="boton-pequeño" style="padding: 15px 30px; width: fit-content;" href="/last-news">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Index")
 			</a>
@@ -454,7 +460,7 @@
 {
 	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
-			@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Nuevos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Nuevos))">
 					<h1 style="font-size: 18px; margin: 0px;">

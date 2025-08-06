@@ -156,7 +156,7 @@
 			@if (juegosCurator.Count > 0)
 			{
 				<div style="display: flex; align-items: start; gap: 40px;">
-					@if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+					@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 					{
 						<div class="caja-curator-contenido" style="width: 30%; display: flex; flex-direction: column; gap: 10px; padding: 20px;">
 							<div>

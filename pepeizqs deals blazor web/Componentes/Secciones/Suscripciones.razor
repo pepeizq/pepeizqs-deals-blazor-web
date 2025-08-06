@@ -200,7 +200,7 @@
 
 <div class="subcabecera">
     <div class="cuerpo-ancho sub-subcabecera">
-        @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+        @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
             <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, false))">
                 <h1 style="font-size: 18px; margin: 0px;">

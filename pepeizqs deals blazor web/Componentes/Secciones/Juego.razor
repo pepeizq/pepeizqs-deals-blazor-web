@@ -741,7 +741,7 @@
                 </div>
             </div>
 
-            @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 if (avisos.Count > 0)
                 {
@@ -861,7 +861,7 @@
                                         }
                                     </Authorized>
                                     <NotAuthorized>
-                                        @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                        @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                         {
                                             <button @onclick="(e => LogearEnseñar(e))" class="boton-pequeño" style="width: auto; padding: 20px 40px; margin-left: 5px;">
                                                 @Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Game")
@@ -1544,7 +1544,7 @@
                                                     </button>
                                                 }
 
-                                                @if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                                @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                 {
                                                     if (drm.Id == JuegoDRM.Steam)
                                                     {
@@ -1590,7 +1590,7 @@
                                             {
                                                 string enlace = precio.Enlace;
 
-                                                if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                 {
                                                     enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon);
                                                 }
@@ -1702,7 +1702,7 @@
                                                     {
                                                         string enlaceBajo = precioBajo.Enlace;
 
-                                                        if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                                        if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                         {
                                                             enlaceBajo = Herramientas.EnlaceAcortador.Generar(precioBajo.Enlace, precioBajo.Tienda, usuarioPatreon);
                                                         }
@@ -1786,7 +1786,7 @@
                                 {
                                     string enlaceBundle = bundle2.Enlace;
 
-                                    if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                    if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                     {
                                         enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon);
                                     }
@@ -1878,7 +1878,7 @@
                         {
                             string enlaceGratis = gratis2.Enlace;
 
-                            if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                             {
                                 enlaceGratis = Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon);
                             }
@@ -1970,7 +1970,7 @@
                                     enlaceSuscripcion = suscripcionUsar.Enlace;
                                 }
 
-                                if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                 {
                                     enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(enlaceSuscripcion, suscripcion2.Tipo, usuarioPatreon);
                                 }
@@ -2726,7 +2726,7 @@
                 }
             </div>
 
-            @if (curators.Count > 0 && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            @if (curators.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 foreach (var curator in curators)
                 {
@@ -2840,7 +2840,7 @@
                 }
             }
 
-            @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 <div id="reviews" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
                     <div>
@@ -3150,7 +3150,7 @@
 
                 string enlaceBundleSeleccionado = bundleSeleccionado.Enlace;
 
-                if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                 {
                     enlaceBundleSeleccionado = Herramientas.EnlaceAcortador.Generar(bundleSeleccionado.Enlace, bundleSeleccionado.Tipo, usuarioPatreon);
                 }
@@ -3816,7 +3816,7 @@
 
                 #region Reseñas
 
-                if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                 {
                     string idiomaSteam = "english";
 
@@ -3960,7 +3960,7 @@
 
             #region Avisos 
 
-            if (Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 avisos.Clear();
 
@@ -3975,7 +3975,9 @@
                                 Id = "f2p",
                                 Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
                                 Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
-                                Color = "fondoMinimo"
+                                Color = "fondoBotonPequeño",
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                EnlaceNuevaPestaña = true
                             });
                         }
                     }
@@ -4246,7 +4248,7 @@
                 }
             }
 
-            if (curatorsBuscar != null && Herramientas.RobotsUserAgents.EsBot(userAgent) == false)
+            if (curatorsBuscar != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 if (curatorsBuscar.Count > 0)
                 {

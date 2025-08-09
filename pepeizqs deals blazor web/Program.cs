@@ -244,53 +244,6 @@ builder.Services.AddControllersWithViews().AddMvcOptions(opciones =>
 
 #endregion
 
-#region Antibots
-
-builder.Services.AddRateLimiter(opciones =>
-{
-	opciones.OnRejected = (contexto, _) =>
-	{
-		if (contexto.Lease.TryGetMetadata(MetadataName.RetryAfter, out var reintento))
-		{
-			contexto.HttpContext.Response.Headers.RetryAfter = ((int)reintento.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
-		}
-
-		contexto.HttpContext.Response.WriteAsync(@"Your IP is blocked.
-
-If you are a human with blood running through your veins, contact admin@pepeizqdeals.com to remove your block.
-
-If you're a bot, sorry but I'm in the resistance with John Connor.");
-
-		return new ValueTask();
-	};
-
-	opciones.GlobalLimiter = PartitionedRateLimiter.CreateChained(
-		PartitionedRateLimiter.Create<HttpContext, string>(contexto =>
-		{
-			var ipAddress = contexto.Connection.RemoteIpAddress;
-
-			if (Bots.botsIps.Contains(ipAddress?.ToString()) == true)
-			{
-				return RateLimitPartition.GetFixedWindowLimiter(
-					partitionKey: contexto.Request.Headers.Host.ToString(),
-					factory: partition => new FixedWindowRateLimiterOptions
-					{
-						AutoReplenishment = false,
-						PermitLimit = 1,
-						QueueLimit = 1,
-						Window = TimeSpan.FromHours(24)
-					});
-			}
-			else
-			{
-				return RateLimitPartition.GetNoLimiter("");
-			}
-		})
-	);
-});
-
-#endregion
-
 #region Linea Grafico
 
 builder.Services.AddApexCharts(e =>
@@ -344,25 +297,6 @@ builder.Services.AddBlazorNotification();
 
 var app = builder.Build();
 
-app.Use(async (contexto, next) =>
-{
-	var ipAddress = contexto.Connection.RemoteIpAddress;
-
-	if (Bots.botsIps.Contains(ipAddress?.ToString()))
-	{
-		contexto.Response.StatusCode = StatusCodes.Status403Forbidden;
-		await contexto.Response.WriteAsync("Your IP is blocked: " + ipAddress?.ToString() + Environment.NewLine + Environment.NewLine +
-
-@"If you are a human with blood running through your veins, contact admin@pepeizqdeals.com to remove your block.
-
-If you're a bot, sorry but I'm in the resistance with John Connor.");
-
-		return;
-	}
-
-	await next.Invoke();
-});
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -407,12 +341,6 @@ app.UseCors("Extension");
 #region Redireccionador
 
 app.MapControllers();
-
-#endregion
-
-#region Antibots
-
-app.UseRateLimiter();
 
 #endregion
 

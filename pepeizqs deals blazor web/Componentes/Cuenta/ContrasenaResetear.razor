@@ -9,6 +9,16 @@
 @inject IHttpContextAccessor Contexto
 @inject UserManager<Usuario> UserManager
 
+<style>
+    .caja-contraseña-contenido {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 40px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        max-width: 600px;
+    }
+</style>
+
 @if (string.IsNullOrEmpty(Code) == false)
 {
     string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ResetPassword") + " • pepeizq's deals";
@@ -17,54 +27,52 @@
         <PageTitle>@titulo</PageTitle>
     </HeadContent>
 
-    <div class="caja-diseño" style="max-width: 600px; padding: 40px; margin: 40px auto;">
+    <div class="caja-contraseña-contenido" style="margin: 40px auto;">
         <div class="texto-info">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "ResetPassword")</div>
 
         <hr>
 
-        <div class="row">
-            <div style="display: flex; flex-direction: column;">
-                <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "ResetPassword")</label>
-                <input value="@correo" @onchange="@(e => CambiarCorreo(e))" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+        <div style="display: flex; flex-direction: column;">
+            <label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "ResetPassword")</label>
+            <input value="@correo" @onchange="@(e => CambiarCorreo(e))" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
 
-                <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "ResetPassword")</label>
-                <input value="@contraseñaNueva1" @onchange="@(e => CambiarNuevaContraseña1(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+            <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "ResetPassword")</label>
+            <input value="@contraseñaNueva1" @onchange="@(e => CambiarNuevaContraseña1(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
 
-                @if (string.IsNullOrEmpty(mensajeAviso1) == false)
-                {
-                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
-                        @mensajeAviso1
-                    </div>
-                }
+            @if (string.IsNullOrEmpty(mensajeAviso1) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeAviso1
+                </div>
+            }
 
-                <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ResetPassword")</label>
-                <input value="@contraseñaNueva2" @onchange="@(e => CambiarNuevaContraseña2(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
+            <label class="texto-info-entrada" style="margin-top: 20px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ResetPassword")</label>
+            <input value="@contraseñaNueva2" @onchange="@(e => CambiarNuevaContraseña2(e))" type="password" style="padding: 5px 10px; background-color: var(--fondoEntrada); border: 0px; color: var(--colorTexto); width: 100%;" />
 
-                @if (string.IsNullOrEmpty(mensajeAviso2) == false)
-                {
-                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
-                        @mensajeAviso2
-                    </div>
-                }
+            @if (string.IsNullOrEmpty(mensajeAviso2) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeAviso2
+                </div>
+            }
 
-                <button @onclick="ResetearContraseña" class="boton-pequeño" style="margin-top: 30px; text-align: center; font-size: 20px; padding: 15px 20px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ResetPassword")
-                </button>
+            <button @onclick="ResetearContraseña" class="boton-pequeño" style="margin-top: 30px; text-align: center; font-size: 20px; padding: 15px 20px;">
+                @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "ResetPassword")
+            </button>
 
-                @if (string.IsNullOrEmpty(mensajeExito) == false)
-                {
-                    <div class="alert alert-success alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
-                        @mensajeExito
-                    </div>
-                }
+            @if (string.IsNullOrEmpty(mensajeExito) == false)
+            {
+                <div class="alert alert-success alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeExito
+                </div>
+            }
 
-                @if (string.IsNullOrEmpty(mensajeError) == false)
-                {
-                    <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
-                        @mensajeError
-                    </div>
-                }
-            </div>
+            @if (string.IsNullOrEmpty(mensajeError) == false)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0px; margin-top: 20px;" role="alert">
+                    @mensajeError
+                </div>
+            }
         </div>
     </div>
 }

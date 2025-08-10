@@ -13,7 +13,7 @@
         </div>
 
         <div>
-            <a class="boton-pequeño" href="@dealsGoogleAnalytics" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Analytics</a>
+            <a class="boton-pequeño" href="@dealsCloudflare" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare</a>
         </div>
 
         <div>
@@ -37,7 +37,7 @@
         </div>
 
         <div>
-            <a class="boton-pequeño" href="@appsGoogleAnalytics" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Analytics</a>
+            <a class="boton-pequeño" href="@appsCloudflare" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare</a>
         </div>
 
         <div>
@@ -164,12 +164,12 @@
 
     private string dealsSmarterasp = string.Empty;
     private string dealsGoogleSearch = string.Empty;
-    private string dealsGoogleAnalytics = string.Empty;
+    private string dealsCloudflare = string.Empty;
     private string dealsBing = string.Empty;
 
     private string appsSmarterasp = string.Empty;
     private string appsGoogleSearch = string.Empty;
-    private string appsGoogleAnalytics = string.Empty;
+    private string appsCloudflare = string.Empty;
     private string appsBing = string.Empty;
 
     private string extensionChrome = string.Empty;
@@ -182,12 +182,12 @@
 
         dealsSmarterasp = builder.Configuration.GetValue<string>("WebmasterDeals:Smarterasp");
         dealsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleSearch");
-        dealsGoogleAnalytics = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleAnalytics");
+        dealsCloudflare = builder.Configuration.GetValue<string>("WebmasterDeals:Cloudflare");
         dealsBing = builder.Configuration.GetValue<string>("WebmasterDeals:Bing");
 
         appsSmarterasp = builder.Configuration.GetValue<string>("WebmasterApps:Smarterasp");
         appsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterApps:GoogleSearch");
-        appsGoogleAnalytics = builder.Configuration.GetValue<string>("WebmasterApps:GoogleAnalytics");
+        appsCloudflare = builder.Configuration.GetValue<string>("WebmasterApps:Cloudflare");
         appsBing = builder.Configuration.GetValue<string>("WebmasterApps:Bing");
 
         extensionChrome = builder.Configuration.GetValue<string>("ExtensionDeals:Chrome");

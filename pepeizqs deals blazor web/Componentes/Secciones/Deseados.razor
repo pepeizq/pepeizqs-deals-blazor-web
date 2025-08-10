@@ -131,17 +131,23 @@
 
 					@if (string.IsNullOrEmpty(otroUsuario) == true)
 					{
-						<button class="boton-pequeño" style="@CambiarEstilo(2) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 2))">
-							<div style="display: flex; align-items: center; gap: 10px;">
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String29", "Wishlist"), deseadosBundles.Count)
-							</div>
-						</button>
+						if (deseadosBundles.Count > 0)
+						{
+							<button class="boton-pequeño" style="@CambiarEstilo(2) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 2))">
+								<div style="display: flex; align-items: center; gap: 10px;">
+									@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String29", "Wishlist"), deseadosBundles.Count)
+								</div>
+							</button>
+						}
 
-						<button class="boton-pequeño" style="@CambiarEstilo(3) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 3))">
-							<div style="display: flex; align-items: center; gap: 10px;">
-								@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Wishlist"), deseadosSuscripciones.Count)
-							</div>
-						</button>
+						if (deseadosSuscripciones.Count > 0)
+						{
+							<button class="boton-pequeño" style="@CambiarEstilo(3) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="(e => CambiarPestaña(e, 3))">
+								<div style="display: flex; align-items: center; gap: 10px;">
+									@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Wishlist"), deseadosSuscripciones.Count)
+								</div>
+							</button>
+						}
 					}			
 
 					<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 10px;">

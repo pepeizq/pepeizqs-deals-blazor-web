@@ -129,7 +129,7 @@
         };
     </script>
 
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b8f0af1685ca4f0484bb45dba08198cb"}'></script>
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "@cloudflareApi"}'></script>
 </body>
 
 </html>
@@ -149,11 +149,13 @@
     private string ip = null;
 
     private string codigoFuente = null;
+    private string cloudflareApi = null;
 
     protected override async Task OnInitializedAsync()
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         codigoFuente = builder.Configuration.GetValue<string>("Enlaces:CodigoFuente");
+        cloudflareApi = builder.Configuration.GetValue<string>("CloudflareAPI:Contenido");
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;

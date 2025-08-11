@@ -25,6 +25,7 @@ namespace Herramientas
 			s2 = s2.Replace(Strings.ChrW(160).ToString(), "_");
 			s2 = s2.Replace(" ", "_");
 			s2 = s2.Replace("*", "_");
+			s2 = s2.Replace("】", "-");
 
 			int i = 0;
 			while (i < 10)
@@ -36,6 +37,11 @@ namespace Herramientas
 			if (s2.LastIndexOf("_") == s2.Length - 1)
 			{
 				s2 = s2.Remove(s2.Length - 1, 1);
+			}
+
+			if (s2.IndexOf("_") == 0)
+			{
+				s2 = s2.Remove(0, 1);
 			}
 
 			return s2;

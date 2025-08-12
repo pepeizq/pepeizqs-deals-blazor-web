@@ -195,6 +195,29 @@
                 </div>
             </div>
         </button>
+
+        @if (usuarioAdmin == true)
+        {
+            <button @onclick="@(e => MostrarPerfil(e))" class="boton-pestañas">
+                <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
+                    <div style="max-width: 22px;">
+                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                            <path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div>
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Account")
+                        </div>
+
+                        <div style="margin-top: 5px; font-size: 14px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Account")
+                        </div>
+                    </div>
+                </div>
+            </button>
+        }
     </div>
 
     @if (opcionesCuenta.EmailConfirmed == true)
@@ -471,6 +494,11 @@ else
             <pepeizqs_deals_blazor_web.Componentes.Cuenta.Pepecoins.Patreon idioma="@idioma" />
         }
 
+        @if (mostrarPerfil == true)
+        {
+            <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Perfil idioma="@idioma" />
+        }
+
         @if (mostrarNotificacionesCorreo == true)
         {
             <pepeizqs_deals_blazor_web.Componentes.Cuenta.Notificaciones.Correo idioma="@idioma" />
@@ -529,14 +557,14 @@ else
     private string tituloOpcion = string.Empty;
 
     protected override void OnInitialized()
-	{
-		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+    {
+        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+        usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
         userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
-		if (string.IsNullOrEmpty(usuarioId) == false)
-		{
-			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+        if (string.IsNullOrEmpty(usuarioId) == false)
+        {
+            idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
             opcionesCuenta = BaseDatos.Usuarios.Buscar.OpcionesCuenta(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
             usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
@@ -553,6 +581,7 @@ else
         mostrarIdioma = false;
         mostrarClaves = false;
         mostrarForo = false;
+        mostrarPerfil = false;
 
         mostrarTienda = false;
         mostrarHistorial = false;
@@ -669,6 +698,16 @@ else
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Account");
         enseñarOpcion = true;
         mostrarPatreon = true;
+    }
+
+    private bool mostrarPerfil = false;
+
+    private void MostrarPerfil(MouseEventArgs e)
+    {
+        CerrarPestañas();
+        tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Account");
+        enseñarOpcion = true;
+        mostrarPerfil = true;
     }
 
     #endregion

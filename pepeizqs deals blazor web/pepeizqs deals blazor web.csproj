@@ -10,17 +10,11 @@
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <ServerGarbageCollection>false</ServerGarbageCollection>
+    <GarbageCollectionAdaptationMode>1</GarbageCollectionAdaptationMode>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <CompressionEnabled>false</CompressionEnabled>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="BaseDatos\Recompensas\Historial.cs~RF3394682.TMP" />
-    <None Remove="Componentes\Interfaz\CajaNoticia.razor~RF270af8e.TMP" />
-    <None Remove="Componentes\Secciones\Coste.razor~RF18340d7.TMP" />
-    <None Remove="Componentes\Secciones\kupnqowa.5zs~" />
-    <None Remove="Componentes\Secciones\Suscripciones.razor~RF15053f9.TMP" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazor-ApexCharts" Version="6.0.1" />

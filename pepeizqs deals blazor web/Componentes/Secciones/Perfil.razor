@@ -1,0 +1,35 @@
+﻿@page "/user/{usuarioNombre}/"
+
+@inject IHttpContextAccessor Contexto
+
+@code {
+
+    #nullable disable
+
+    private string idioma = "en";
+    private string usuarioId = null;
+    private string userAgent = null;
+
+	private bool usuarioPatreon = false;
+	private bool usuarioAdmin = false;
+
+    [Parameter]
+    public string usuarioNombre { get; set; }
+
+	protected override void OnInitialized()
+	{
+		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
+			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
+		}
+
+
+	}
+
+}

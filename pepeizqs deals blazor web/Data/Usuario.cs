@@ -292,4 +292,16 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
 	public bool? ForumIndex { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? ProfileShow { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "nvarchar(256)")]
+	public string? ProfileNickname { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? ProfileWishlist { get; set; }
 }

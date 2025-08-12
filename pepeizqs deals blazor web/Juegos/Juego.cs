@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Juegos
 {
 	public class Juego : ComponentBase, IComponent
-    {
+	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }

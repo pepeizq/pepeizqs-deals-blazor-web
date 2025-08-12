@@ -644,9 +644,9 @@
 
                         if (juego.Tipo == JuegoTipo.Game)
                         {
-                            if (juego.CantidadJugadores != null)
+                            if (juego.CantidadJugadores != null && juego.Caracteristicas?.FechaLanzamientoSteam != null)
                             {
-                                if (juego.CantidadJugadores.Cantidad > -1)
+                                if (juego.CantidadJugadores.Cantidad > 0 && DateTime.Now > juego.Caracteristicas?.FechaLanzamientoSteam)
                                 {
                                     añadirDivAnalisisJugadores = true;
                                 }
@@ -696,9 +696,9 @@
 
                                 @if (juego.Tipo == JuegoTipo.Game)
                                 {
-                                    if (juego.CantidadJugadores != null)
+                                    if (juego.CantidadJugadores != null && juego.Caracteristicas?.FechaLanzamientoSteam != null)
                                     {
-                                        if (juego.CantidadJugadores.Cantidad > -1)
+                                        if (juego.CantidadJugadores.Cantidad > 0 && DateTime.Now > juego.Caracteristicas?.FechaLanzamientoSteam)
                                         {
                                             <div class="caja-jugadores" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 10px; flex-direction: column; gap: 10px; min-height: 82px;">
                                                 <div style="font-size: 17px; text-align: center; line-height: 30px;">
@@ -3786,34 +3786,40 @@
                 {
                     #region Cantidad Jugadores
 
-                    bool actualizarCantidadJugadores = false;
-
-                    if (juego.CantidadJugadores == null)
+                    if (juego.Caracteristicas?.FechaLanzamientoSteam != null)
                     {
-                        actualizarCantidadJugadores = true;
-                    }
-                    else
-                    {
-                        if (juego.CantidadJugadores.Fecha.AddMinutes(30) < DateTime.Now)
+                        if (DateTime.Now > juego.Caracteristicas?.FechaLanzamientoSteam)
                         {
-                            actualizarCantidadJugadores = true;
+                            bool actualizarCantidadJugadores = false;
+
+                            if (juego.CantidadJugadores == null)
+                            {
+                                actualizarCantidadJugadores = true;
+                            }
+                            else
+                            {
+                                if (juego.CantidadJugadores.Fecha.AddMinutes(30) < DateTime.Now)
+                                {
+                                    actualizarCantidadJugadores = true;
+                                }
+                            }
+
+                            if (actualizarCantidadJugadores == true)
+                            {
+                                JuegoCantidadJugadoresSteam cantidadNueva = new JuegoCantidadJugadoresSteam();
+                                cantidadNueva.Cantidad = await APIs.Steam.Juego.CargarCantidadJugadores(juego.IdSteam.ToString());
+                                cantidadNueva.Fecha = DateTime.Now;
+
+                                juego.CantidadJugadores = cantidadNueva;
+
+                                global::BaseDatos.Juegos.Actualizar.CantidadJugadoresSteam(juego);
+                            }
                         }
-                    }
-
-                    if (actualizarCantidadJugadores == true)
-                    {
-                        JuegoCantidadJugadoresSteam cantidadNueva = new JuegoCantidadJugadoresSteam();
-                        cantidadNueva.Cantidad = await APIs.Steam.Juego.CargarCantidadJugadores(juego.IdSteam.ToString());
-                        cantidadNueva.Fecha = DateTime.Now;
-
-                        juego.CantidadJugadores = cantidadNueva;
-
-                        global::BaseDatos.Juegos.Actualizar.CantidadJugadoresSteam(juego);
                     }
 
                     #endregion
                 }
-
+                
                 #region Reseñas
 
                 if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)

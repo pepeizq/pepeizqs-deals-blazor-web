@@ -1,0 +1,114 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using pepeizqs_deals_web.Data
+
+@inject UserManager<Usuario> UserManager
+@inject IHttpContextAccessor Contexto
+
+<style>
+	.caja-perfil-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 30px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
+<div class="caja-perfil-contenido" style="display: flex; flex-direction: column;">
+	<div style="display: flex; align-items: start; gap: 30px;">
+		<div class="checkbox-caja">
+			<input type="checkbox" class="checkbox-interior" checked="@estadoEnseñar" @onchange="ClickearPerfilEnseñar">
+		</div>
+
+		<div style="display: flex; flex-direction: column; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountUser")
+			</div>
+		</div>
+	</div>
+
+	<hr/>
+
+	<label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountUser")</label>
+    <input type="text" @bind-value="textoNombre" @bind-value:event="oninput" @bind-value:after="TextoCambiaNombre" class="entrada-texto" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountUser")" />
+
+</div>
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	private Usuario usuario = new Usuario();
+
+	protected override async void OnInitialized()
+	{
+		usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
+
+		if (usuario != null)
+		{
+			if (usuario.ProfileShow == null)
+			{
+				estadoEnseñar = null;
+			}
+			else
+			{
+				if (usuario.ProfileShow == true)
+				{
+					estadoEnseñar = "checked";
+				}
+				else
+				{
+					estadoEnseñar = null;
+				}
+			}
+
+			if (string.IsNullOrEmpty(usuario.ProfileNickname) == false)
+			{
+				textoNombre = usuario.ProfileNickname;
+			}
+		}
+	}
+
+	private string estadoEnseñar = null;
+
+	private async void ClickearPerfilEnseñar()
+	{
+		if (usuario != null)
+		{
+			bool boolEnseñar = false;
+
+			if (estadoEnseñar == null)
+			{
+				estadoEnseñar = "checked";
+				boolEnseñar = true;
+			}
+			else
+			{
+				estadoEnseñar = null;
+				boolEnseñar = false;
+			}
+
+			usuario.ProfileShow = boolEnseñar;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private string textoNombre = string.Empty;
+
+	private async void TextoCambiaNombre()
+	{
+		usuario.ProfileNickname = textoNombre;
+
+		try
+		{
+			await UserManager.UpdateAsync(usuario);
+		}
+		catch
+		{
+			
+		}
+	}
+}

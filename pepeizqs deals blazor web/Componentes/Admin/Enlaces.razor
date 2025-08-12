@@ -5,10 +5,6 @@
 
     <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px;">
         <div>
-            <a class="boton-pequeño" href="@dealsSmarterasp" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
-        </div>
-
-        <div>
             <a class="boton-pequeño" href="@dealsGoogleSearch" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Search</a>
         </div>
 
@@ -28,10 +24,6 @@
     </div>
 
     <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px;">
-        <div>
-            <a class="boton-pequeño" href="@appsSmarterasp" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Smarterasp</a>
-        </div>
-
         <div>
             <a class="boton-pequeño" href="@appsGoogleSearch" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Google Search</a>
         </div>
@@ -162,12 +154,10 @@
     [Parameter]
     public int correosApps { get; set; }
 
-    private string dealsSmarterasp = string.Empty;
     private string dealsGoogleSearch = string.Empty;
     private string dealsCloudflare = string.Empty;
     private string dealsBing = string.Empty;
 
-    private string appsSmarterasp = string.Empty;
     private string appsGoogleSearch = string.Empty;
     private string appsCloudflare = string.Empty;
     private string appsBing = string.Empty;
@@ -180,12 +170,10 @@
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
-        dealsSmarterasp = builder.Configuration.GetValue<string>("WebmasterDeals:Smarterasp");
         dealsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleSearch");
         dealsCloudflare = builder.Configuration.GetValue<string>("WebmasterDeals:Cloudflare");
         dealsBing = builder.Configuration.GetValue<string>("WebmasterDeals:Bing");
 
-        appsSmarterasp = builder.Configuration.GetValue<string>("WebmasterApps:Smarterasp");
         appsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterApps:GoogleSearch");
         appsCloudflare = builder.Configuration.GetValue<string>("WebmasterApps:Cloudflare");
         appsBing = builder.Configuration.GetValue<string>("WebmasterApps:Bing");

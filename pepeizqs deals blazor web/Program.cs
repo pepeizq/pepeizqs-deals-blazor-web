@@ -10,10 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using pepeizqs_deals_blazor_web.Componentes;
 using pepeizqs_deals_blazor_web.Componentes.Account;
 using pepeizqs_deals_web.Data;
-using System.Globalization;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +49,10 @@ builder.Services.AddWebOptimizer(opciones => {
 builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
 {
 	opciones.DetailedErrors = true;
+	opciones.DisconnectedCircuitMaxRetained = 10;
+	opciones.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(10);
+	opciones.JSInteropDefaultCallTimeout = TimeSpan.FromSeconds(10);
+	opciones.MaxBufferedUnacknowledgedRenderBatches = 3;
 });
 
 builder.Services.AddCascadingAuthenticationState();

@@ -146,7 +146,6 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
-    private string ip = null;
 
     private string codigoFuente = null;
     private string cloudflareApi = null;
@@ -166,7 +165,6 @@
             idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext.Request.Headers.UserAgent.ToString();
-            ip = HttpContext.Connection.RemoteIpAddress.ToString();
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)

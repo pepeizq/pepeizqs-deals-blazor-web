@@ -658,47 +658,6 @@ namespace BaseDatos.Usuarios
 			return null;
 		}
 
-		public static List<Usuario> UsuariosIdioma(SqlConnection conexion = null)
-		{
-			List<Usuario> usuarios = new List<Usuario>();
-
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
-			string busqueda = "SELECT Id, Language FROM AspNetUsers";
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read())
-					{
-						if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false)
-						{
-							Usuario usuario = new Usuario
-							{
-								Id = lector.GetString(0),
-								Language = lector.GetString(1)
-							};
-
-							usuarios.Add(usuario);
-						}
-					}
-				}
-			}
-
-			return usuarios;
-		}
-
 		public static List<Usuario> UsuariosNotificacionesCorreo(SqlConnection conexion = null)
 		{
 			List<Usuario> usuarios = new List<Usuario>();
@@ -1275,27 +1234,65 @@ namespace BaseDatos.Usuarios
 			return false;
 		}
 
-		public static bool UsuarioNombreRepetido(string nombre, SqlConnection sqlConnection = null)
+		public static bool UsuarioNombreRepetido(string nombre, SqlConnection conexion = null)
 		{
 			if (string.IsNullOrEmpty(nombre) == false)
 			{
-				if (sqlConnection == null)
+				if (conexion == null)
 				{
-					sqlConnection = Herramientas.BaseDatos.Conectar();
+					conexion = Herramientas.BaseDatos.Conectar();
 				}
 				else
 				{
-					if (sqlConnection.State != System.Data.ConnectionState.Open)
+					if (conexion.State != System.Data.ConnectionState.Open)
 					{
-						sqlConnection = Herramientas.BaseDatos.Conectar();
+						conexion = Herramientas.BaseDatos.Conectar();
 					}
 				}
 
 				string busqueda = "SELECT Id FROM AspNetUsers WHERE Nickname=@Nickname";
 
-				using (SqlCommand comando = new SqlCommand(busqueda, sqlConnection))
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
 					comando.Parameters.AddWithValue("@Nickname", nombre);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public static bool PerfilYaUsado(string nombre, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(nombre) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT Id FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@ProfileNickname", nombre);
 
 					using (SqlDataReader lector = comando.ExecuteReader())
 					{

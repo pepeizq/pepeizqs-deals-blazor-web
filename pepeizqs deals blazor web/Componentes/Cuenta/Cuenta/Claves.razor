@@ -64,7 +64,7 @@
 
 	private Usuario usuario = new Usuario();
 
-	protected override async void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 	}

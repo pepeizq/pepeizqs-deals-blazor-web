@@ -112,6 +112,7 @@ builder.Services.Configure<HostOptions>(opciones =>
 	opciones.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
 });
 
+builder.Services.AddSingleton<Tareas.Memoria>();
 builder.Services.AddSingleton<Tareas.Mantenimiento>();
 builder.Services.AddSingleton<Tareas.Minimos>();
 builder.Services.AddSingleton<Tareas.Pings>();
@@ -160,6 +161,7 @@ builder.Services.AddSingleton<Tareas.Streaming.GeforceNOW>();
 builder.Services.AddSingleton<Tareas.Streaming.AmazonLuna>();
 builder.Services.AddSingleton<Tareas.Streaming.Boosteroid>();
 
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Memoria>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Mantenimiento>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Minimos>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Pings>());

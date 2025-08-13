@@ -1,6 +1,10 @@
 {
   "String1": "Compartir perfil",
-  "String2": "Nombre del perfil en el enlace",
-  "String3": "Escribe un nombre"
+  "String2": "Nombre del perfil en el enlace (mínimo 4 caracteres):",
+  "String3": "Escribe un nombre",
+  "String4": "Ese nombre para el enlace ya está usado.",
+  "String5": "Enlace del perfil:",
+  "String6": "Cosas que quieres compartir en el perfil",
+  "String7": "Deseados"
 }
 

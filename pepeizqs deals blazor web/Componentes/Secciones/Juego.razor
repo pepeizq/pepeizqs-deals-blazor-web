@@ -3786,7 +3786,7 @@
                 {
                     #region Cantidad Jugadores
 
-                    if (juego.Caracteristicas?.FechaLanzamientoSteam != null)
+                    if (juego.Caracteristicas?.FechaLanzamientoSteam != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                     {
                         if (DateTime.Now > juego.Caracteristicas?.FechaLanzamientoSteam)
                         {
@@ -4155,10 +4155,12 @@
 
             #endregion
 
+            #region Curators
+
             curators.Clear();
             List<string> curatorsBuscar = new List<string>();
 
-            if (juego.Caracteristicas != null)
+            if (juego.Caracteristicas != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 if (juego.Caracteristicas.Desarrolladores2 != null)
                 {
@@ -4293,6 +4295,8 @@
                 }
             }
 
+            #endregion
+
             #region Ultima Actualización
 
             if (juego.Tipo == JuegoTipo.Game)
@@ -4319,7 +4323,7 @@
 
             #endregion
 
-            if (string.IsNullOrEmpty(usuarioId) == false)
+            if (string.IsNullOrEmpty(usuarioId) == false && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 usuarioTieneDesea = new List<JuegoRazorUsuario>();
 
@@ -4583,7 +4587,7 @@
     {
         if (primerRender == true)
         {
-            if (juego != null)
+            if (juego != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {	
                 await JavaScript.InvokeVoidAsync("ChangeUrl", "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
             }

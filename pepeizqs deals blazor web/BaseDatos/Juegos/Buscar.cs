@@ -596,7 +596,7 @@ namespace BaseDatos.Juegos
 							{
 								Juego juego = JuegoCrear.Generar();
 								juego = Cargar(juego, lector);
-
+							
 								return juego;
 							}
 						}

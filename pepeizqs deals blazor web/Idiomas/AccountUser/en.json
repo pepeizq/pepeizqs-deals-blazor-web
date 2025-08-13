@@ -1,5 +1,9 @@
 {
   "String1": "Share profile",
-  "String2": "Profile name in the link",
-  "String3": "Write a name"
+  "String2": "Profile name in the link (minimum 4 characters):",
+  "String3": "Write a name",
+  "String4": "That link name is already taken.",
+  "String5": "Profile link:",
+  "String6": "Things you want to share on your profile",
+  "String7": "Wishlist"
 }

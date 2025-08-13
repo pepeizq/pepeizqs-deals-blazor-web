@@ -888,6 +888,7 @@
 		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
 		{
 			ApplicationState.PersistAsJson("juegosGuardados", juegosDestacadosMostrar);
+
 			return Task.CompletedTask;
 		});
 	}

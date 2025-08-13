@@ -13,25 +13,69 @@
 	}
 </style>
 
-<div class="caja-perfil-contenido" style="display: flex; flex-direction: column;">
-	<div style="display: flex; align-items: start; gap: 30px;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoEnseñar" @onchange="ClickearPerfilEnseñar">
-		</div>
+@if (usuario != null)
+{
+	<div class="caja-perfil-contenido" style="display: flex; flex-direction: column;">
+		<div style="display: flex; align-items: start; gap: 30px;">
+			<div class="checkbox-caja">
+				<input type="checkbox" class="checkbox-interior" checked="@estadoEnseñar" @onchange="ClickearPerfilEnseñar">
+			</div>
 
-		<div style="display: flex; flex-direction: column; gap: 10px;">
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountUser")
+			<div style="display: flex; flex-direction: column; gap: 10px;">
+				<div>
+					@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountUser")
+				</div>
 			</div>
 		</div>
+
+		<hr />
+
+		<label style="margin-bottom: 10px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountUser")</label>
+		<input type="text" @bind-value="textoNombre" @bind-value:event="oninput" @bind-value:after="TextoCambiaNombre" class="entrada-texto" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountUser")" />
+
+		@if (nombreYaUsado == true)
+		{
+			<div style="background-color: var(--fondoPeligro); padding: 6px 12px; margin-top: 20px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountUser")
+			</div>
+		}
+		else
+		{
+			if (string.IsNullOrEmpty(textoNombre) == false)
+			{
+				if (textoNombre.Length > 3)
+				{
+					<hr />
+
+					<label style="margin-bottom: 10px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "AccountUser")</label>
+					<a href="https://pepeizqdeals.com/user/@textoNombre" target="_blank">
+						https://pepeizqdeals.com/user/@textoNombre
+					</a>
+				}
+			}
+		}
 	</div>
 
-	<hr/>
+	@if (estadoEnseñar == "checked" && textoNombre.Length > 3 && nombreYaUsado == false)
+	{
+		<div class="caja-perfil-contenido" style="display: flex; flex-direction: column; margin-top: 30px;">
+			<label>@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountUser")</label>
+			<hr />
 
-	<label class="texto-info-entrada">@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountUser")</label>
-    <input type="text" @bind-value="textoNombre" @bind-value:event="oninput" @bind-value:after="TextoCambiaNombre" class="entrada-texto" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountUser")" />
+			<div style="display: flex; align-items: start; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoDeseados" @onchange="ClickearPerfilDeseados">
+				</div>
 
-</div>
+				<div style="display: flex; flex-direction: column; gap: 10px;">
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
 
 @code {
 
@@ -42,7 +86,7 @@
 
 	private Usuario usuario = new Usuario();
 
-	protected override async void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		usuario = await UserManager.GetUserAsync(Contexto.HttpContext.User);
 
@@ -67,6 +111,22 @@
 			if (string.IsNullOrEmpty(usuario.ProfileNickname) == false)
 			{
 				textoNombre = usuario.ProfileNickname;
+			}
+
+			if (usuario.ProfileWishlist == null)
+			{
+				estadoDeseados = null;
+			}
+			else
+			{
+				if (usuario.ProfileWishlist == true)
+				{
+					estadoDeseados = "checked";
+				}
+				else
+				{
+					estadoDeseados = null;
+				}
 			}
 		}
 	}
@@ -97,18 +157,55 @@
 	}
 
 	private string textoNombre = string.Empty;
+	private bool nombreYaUsado = false;
 
 	private async void TextoCambiaNombre()
 	{
-		usuario.ProfileNickname = textoNombre;
+		if (string.IsNullOrEmpty(textoNombre) == false)
+		{
+			nombreYaUsado = BaseDatos.Usuarios.Buscar.PerfilYaUsado(textoNombre);
 
-		try
-		{
-			await UserManager.UpdateAsync(usuario);
+			if (nombreYaUsado == false)
+			{
+				if (textoNombre.Length > 3)
+				{
+					usuario.ProfileNickname = textoNombre;
+
+					try
+					{
+						await UserManager.UpdateAsync(usuario);
+					}
+					catch
+					{
+
+					}
+				}
+			}
 		}
-		catch
+	}
+
+	private string estadoDeseados = null;
+
+	private async void ClickearPerfilDeseados()
+	{
+		if (usuario != null)
 		{
-			
+			bool boolDeseados = false;
+
+			if (estadoDeseados == null)
+			{
+				estadoDeseados = "checked";
+				boolDeseados = true;
+			}
+			else
+			{
+				estadoDeseados = null;
+				boolDeseados = false;
+			}
+
+			usuario.ProfileWishlist = boolDeseados;
+
+			await UserManager.UpdateAsync(usuario);
 		}
 	}
 }

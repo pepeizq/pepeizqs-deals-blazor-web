@@ -1309,5 +1309,57 @@ namespace BaseDatos.Usuarios
 
 			return false;
 		}
+
+		public static Usuario PerfilCargar(string nombre, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(nombre) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT Id, Nickname, Avatar FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname AND ProfileShow='true'";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@ProfileNickname", nombre);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							Usuario perfil = new Usuario();
+
+							if (lector.IsDBNull(0) == false)
+							{
+								perfil.Id = lector.GetString(0);
+							}
+
+							if (lector.IsDBNull(1) == false)
+							{
+								perfil.Nickname = lector.GetString(1);
+							}
+
+							if (lector.IsDBNull(2) == false)
+							{
+								perfil.Avatar = lector.GetString(2);
+							}
+
+							return perfil;
+						}
+					}
+				}
+			}
+
+			return null;
+		}
 	}
 }

@@ -2,12 +2,17 @@
 
 using Bundles2;
 using Gratis2;
+using Microsoft.AspNetCore.Components;
 using Suscripciones2;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Noticias
 {
-	public class Noticia
+	public class Noticia : ComponentBase, IComponent
 	{
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
 		public NoticiaTipo Tipo { get; set; }
 		public BundleTipo BundleTipo { get; set; }

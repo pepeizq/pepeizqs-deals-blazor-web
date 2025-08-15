@@ -46,13 +46,20 @@ builder.Services.AddWebOptimizer(opciones => {
 
 #endregion
 
-builder.Services.AddRazorComponents().AddInteractiveServerComponents(opciones =>
+builder.Services.AddRazorComponents(opciones =>
+{
+	opciones.DetailedErrors = true;
+}).AddInteractiveServerComponents(opciones =>
 {
 	opciones.DetailedErrors = true;
 	opciones.DisconnectedCircuitMaxRetained = 10;
 	opciones.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(10);
 	opciones.JSInteropDefaultCallTimeout = TimeSpan.FromSeconds(10);
 	opciones.MaxBufferedUnacknowledgedRenderBatches = 3;
+}).AddHubOptions(opciones =>
+{
+	opciones.EnableDetailedErrors = true;
+	opciones.MaximumReceiveMessageSize = null;
 });
 
 builder.Services.AddCascadingAuthenticationState();

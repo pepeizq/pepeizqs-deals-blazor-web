@@ -1,7 +1,10 @@
 ﻿#nullable disable
 
 using APIs.Steam;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Data.SqlClient;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
 namespace BaseDatos.Curators
@@ -132,18 +135,20 @@ namespace BaseDatos.Curators
 		}
 	}
 
-	public class Curator
+	public class Curator : ComponentBase, IComponent
 	{
-		public int Id;
-		public int IdSteam;
-		public string Nombre;
-		public string Imagen;
-		public string Descripcion;
-		public string Slug;
-		public List<int> SteamIds;
-		public SteamCuratorAPIWeb Web;
-		public string ImagenFondo;
-		public DateTime? Fecha;
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int Id { get; set; }
+		public int IdSteam { get; set; }
+		public string Nombre { get; set; }
+		public string Imagen { get; set; }
+		public string Descripcion { get; set; }
+		public string Slug { get; set; }
+		public List<int> SteamIds { get; set; }
+		public SteamCuratorAPIWeb Web { get; set; }
+		public string ImagenFondo { get; set; }
+		public DateTime? Fecha { get; set; }
 	}
 
 	public class CuratorFicha

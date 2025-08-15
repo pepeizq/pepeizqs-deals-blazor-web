@@ -1,20 +1,49 @@
 ﻿@page "/user/{usuarioNombre}/"
 
+@using pepeizqs_deals_web.Data
+
 @inject IHttpContextAccessor Contexto
+
+@if (perfil != null)
+{
+	string titulo = perfil.Nickname + " • pepeizq's deals";
+
+	<HeadContent>
+		<PageTitle>@titulo</PageTitle>
+	</HeadContent>
+
+	<div class="subcabecera">
+		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
+			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(perfil.Avatar)" style="width: 100px; height: 100px;" alt="@perfil.Nickname" />
+
+			<div style="display: flex; flex-direction: column; gap: 10px;">
+				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
+					@perfil.Nickname
+				</h1>
+
+				@* <div style="font-size: 14px;">
+					@curator.Descripcion
+				</div> *@
+			</div>
+		</div>
+	</div>
+}
 
 @code {
 
-    #nullable disable
+	#nullable disable
 
-    private string idioma = "en";
-    private string usuarioId = null;
-    private string userAgent = null;
+	private string idioma = "en";
+	private string usuarioId = null;
+	private string userAgent = null;
 
 	private bool usuarioPatreon = false;
 	private bool usuarioAdmin = false;
 
-    [Parameter]
-    public string usuarioNombre { get; set; }
+	[Parameter]
+	public string usuarioNombre { get; set; }
+
+	public Usuario perfil = null;
 
 	protected override void OnInitialized()
 	{
@@ -32,4 +61,10 @@
 
 	}
 
+	protected override async Task OnParametersSetAsync()
+	{
+		await Task.Yield();
+
+		perfil = BaseDatos.Usuarios.Buscar.PerfilCargar(usuarioNombre);
+	}
 }

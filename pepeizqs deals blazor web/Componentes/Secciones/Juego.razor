@@ -22,6 +22,8 @@
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
+@inject PersistentComponentState ApplicationState
+@implements IDisposable
 
 @if (juego != null)
 {
@@ -147,11 +149,14 @@
         <meta name="robots" content="index, follow" />
         <meta name="keywords" content="@keywords" />
 
-        @if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+        @if (juego.MayorEdad != null)
         {
-            if (juego.MayorEdad.ToLower() == "true")
+            if (string.IsNullOrEmpty(juego.MayorEdad) == false)
             {
-                <meta name="rating" content="adult">
+                if (juego.MayorEdad.ToLower() == "true")
+                {
+                    <meta name="rating" content="adult">
+                }
             }
         }
 
@@ -2083,7 +2088,7 @@
 
                             if (mediaMostrarPosicion < 99999)
                             {
-                                if (juego.Media.Capturas2[mediaMostrarPosicion].MayorEdad == true)
+                                if (juego.Media.Capturas2[mediaMostrarPosicion]?.MayorEdad == true)
                                 {
                                     difuminar = true;
                                 }
@@ -3656,6 +3661,8 @@
 
     #nullable disable
 
+    private PersistingComponentStateSubscription? persistingSubscription;
+
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
@@ -3710,7 +3717,14 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
+        if (!ApplicationState.TryTakeFromJson<Juegos.Juego>("juegoGuardado", out var juegoGuardado))
+        {
+            juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
+        }
+        else
+        {
+            juego = juegoGuardado;
+        }
 
         mediaMostrar = null;
         mediaMostrarPosicion = 0;
@@ -4581,7 +4595,16 @@
                 }
             }
         }
+
+        persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
+        {
+            ApplicationState.PersistAsJson("juegoGuardado", juego);
+
+            return Task.CompletedTask;
+        });
     }
+
+    public void Dispose() => persistingSubscription?.Dispose();
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
     {

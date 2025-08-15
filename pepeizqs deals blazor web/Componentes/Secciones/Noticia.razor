@@ -14,6 +14,8 @@
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
+@inject PersistentComponentState ApplicationState
+@implements IDisposable
 
 @{
 	string tituloSeo = titulo + " • pepeizq's deals";
@@ -379,6 +381,8 @@
 
 	#nullable disable
 
+	private PersistingComponentStateSubscription? persistingSubscription;
+
 	private string idioma = "en";
 	private string usuarioId = null;
 
@@ -432,11 +436,20 @@
 		}
 	}
 
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
+        await Task.Yield();
+
 		if (id > 0)
 		{
-			noticia = BaseDatos.Noticias.Buscar.UnaNoticia(id);
+			if (!ApplicationState.TryTakeFromJson<Noticias.Noticia>("noticiaGuardada", out var noticiaGuardada))
+			{
+				noticia = BaseDatos.Noticias.Buscar.UnaNoticia(id);
+			}
+			else
+			{
+				noticia = noticiaGuardada;
+			}
 
 			if (noticia != null)
 			{
@@ -511,8 +524,17 @@
 				noticiaAnterior = BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
 				noticiaPosterior = BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
 			}
+
+			persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
+			{
+				ApplicationState.PersistAsJson("noticiaGuardada", noticia);
+
+				return Task.CompletedTask;
+			});
 		}
 	}
+
+	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{

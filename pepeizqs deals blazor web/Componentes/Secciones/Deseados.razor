@@ -15,8 +15,6 @@
 
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @{
 	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Wishlist") + " • pepeizq's deals";
@@ -101,8 +99,8 @@
 	{
 		if (deseadosGestor.Count == 0)
 		{
-			<div style="max-width: 800px; margin: auto;">
-				<div class="caja-diseño" style="padding: 40px;">
+			<div style="max-width: 800px; margin: 40px auto;">
+				<div class="caja-diseño" style="padding: 20px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Wishlist")
 				</div>
 			</div>
@@ -690,8 +688,6 @@
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 
@@ -750,99 +746,92 @@
 			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			opcionesDeseados = BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
 
-			if (!ApplicationState.TryTakeFromJson<List<JuegoDeseadoMostrar>>("deseadosGuardados", out var deseadosGuardados))
+			#region Deseados Steam
+
+			if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
 			{
-				#region Deseados Steam
-
-				if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
-				{
-					deseadosSteam = Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
-				}
-
-				if (deseadosSteam.Count > 0)
-				{
-					List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(deseadosSteam);
-
-					if (juegos != null)
-					{
-						int i = 0;
-
-						foreach (var juego in juegos)
-						{
-							i += 1;
-
-							if (juego != null)
-							{
-								AñadirJuegoMostrar(juego, JuegoDRM.Steam, true);
-							}
-						}
-					}
-				}
-
-				#endregion
-
-				#region Deseados Web
-
-				if (string.IsNullOrEmpty(deseadosUsuario.Wishlist) == false)
-				{
-					deseadosWeb = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosUsuario.Wishlist);
-				}
-
-				if (deseadosWeb != null)
-				{
-					if (deseadosWeb.Count > 0)
-					{
-						int i = 0;
-
-						foreach (var deseadoWeb in deseadosWeb)
-						{
-							i += 1;
-
-							Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(deseadoWeb.IdBaseDatos);
-
-							if (juego != null)
-							{
-								AñadirJuegoMostrar(juego, deseadoWeb.DRM, false);
-							}
-						}
-					}
-				}
-
-				#endregion
-
-				#region Deseados GOG
-
-				if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
-				{
-					deseadosGog = Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
-				}
-
-				if (deseadosGog.Count > 0)
-				{
-					List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosGOG(deseadosGog);
-
-					if (juegos != null)
-					{
-						int i = 0;
-
-						foreach (var juego in juegos)
-						{
-							i += 1;
-
-							if (juego != null)
-							{
-								AñadirJuegoMostrar(juego, JuegoDRM.GOG, true);
-							}
-						}
-					}
-				}
-
-				#endregion
+				deseadosSteam = Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
 			}
-			else
+
+			if (deseadosSteam.Count > 0)
 			{
-				deseadosGestor = deseadosGuardados;
+				List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(deseadosSteam);
+
+				if (juegos != null)
+				{
+					int i = 0;
+
+					foreach (var juego in juegos)
+					{
+						i += 1;
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, JuegoDRM.Steam, true);
+						}
+					}
+				}
 			}
+
+			#endregion
+
+			#region Deseados Web
+
+			if (string.IsNullOrEmpty(deseadosUsuario.Wishlist) == false)
+			{
+				deseadosWeb = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosUsuario.Wishlist);
+			}
+
+			if (deseadosWeb != null)
+			{
+				if (deseadosWeb.Count > 0)
+				{
+					int i = 0;
+
+					foreach (var deseadoWeb in deseadosWeb)
+					{
+						i += 1;
+
+						Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(deseadoWeb.IdBaseDatos);
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, deseadoWeb.DRM, false);
+						}
+					}
+				}
+			}
+
+			#endregion
+
+			#region Deseados GOG
+
+			if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
+			{
+				deseadosGog = Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
+			}
+
+			if (deseadosGog.Count > 0)
+			{
+				List<Juegos.Juego> juegos = BaseDatos.Juegos.Buscar.MultiplesJuegosGOG(deseadosGog);
+
+				if (juegos != null)
+				{
+					int i = 0;
+
+					foreach (var juego in juegos)
+					{
+						i += 1;
+
+						if (juego != null)
+						{
+							AñadirJuegoMostrar(juego, JuegoDRM.GOG, true);
+						}
+					}
+				}
+			}
+
+			#endregion
 
 			if (string.IsNullOrEmpty(otroUsuario) == true)
 			{
@@ -967,16 +956,7 @@
 		deseadosSteam.Clear();
 		deseadosWeb.Clear();
 		deseadosGog.Clear();
-
-		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-		{
-			ApplicationState.PersistAsJson("deseadosGuardados", deseadosGestor);
-
-			return Task.CompletedTask;
-		});
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	private string CambiarEstilo(int pestañaClickeada)
 	{

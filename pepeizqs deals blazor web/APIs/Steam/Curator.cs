@@ -15,7 +15,7 @@ namespace APIs.Steam
             if (string.IsNullOrEmpty(html) == false)
             {
 				SteamCuratorAPI api = JsonSerializer.Deserialize<SteamCuratorAPI>(html);
-
+		
                 if (api != null)
                 {
 					return api;

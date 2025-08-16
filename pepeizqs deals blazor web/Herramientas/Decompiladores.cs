@@ -58,6 +58,8 @@ namespace Herramientas
 
 		public static async Task<string> Estandar(string enlace)
         {
+			string contenido = null;
+
 			ServiceProvider servicio = new ServiceCollection().AddHttpClient().BuildServiceProvider();
 			IHttpClientFactory factoria = servicio.GetService<IHttpClientFactory>() ?? throw new InvalidOperationException();
 			HttpClient cliente = factoria.CreateClient("Decompilador");
@@ -70,7 +72,8 @@ namespace Herramientas
 				{
 					using (HttpResponseMessage respuesta = await cliente.GetAsync(enlace, HttpCompletionOption.ResponseContentRead))
 					{
-						return await respuesta.Content.ReadAsStringAsync();
+						contenido = await respuesta.Content.ReadAsStringAsync();
+						respuesta.Dispose();
 					}
 				}
 				catch (Exception ex) 
@@ -79,9 +82,10 @@ namespace Herramientas
 				}
 			}
 
+			servicio.Dispose();
 			cliente.Dispose();
 
-			return null;
+			return contenido;
         }
 
 		public static async Task<string> GZipFormato(string enlace) 
@@ -152,6 +156,7 @@ namespace Herramientas
 					HttpResponseMessage respuesta = await cliente.SendAsync(mensaje);
 
 					Stream stream = await respuesta.Content.ReadAsStreamAsync();
+					respuesta.Dispose();
 
 					using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
 					{

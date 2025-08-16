@@ -22,8 +22,6 @@
 @inject IHttpContextAccessor Contexto
 @inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @if (juego != null)
 {
@@ -2731,7 +2729,7 @@
                 }
             </div>
 
-            @if (curators.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+            @if (curators?.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 foreach (var curator in curators)
                 {
@@ -3661,8 +3659,6 @@
 
     #nullable disable
 
-    private PersistingComponentStateSubscription? persistingSubscription;
-
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
@@ -3685,7 +3681,7 @@
     private List<Juegos.Juego> dlcs = new List<Juegos.Juego>();
     private List<Juegos.JuegoDRM> drmsGeforceNOW = new List<JuegoDRM>();
     private List<Juegos.JuegoDRM> drmsBoosteroid = new List<JuegoDRM>();
-    private List<global::BaseDatos.Curators.CuratorFicha> curators = new List<global::BaseDatos.Curators.CuratorFicha>();
+    private List<global::BaseDatos.Curators.CuratorFicha> curators = null;
 
     private ApexChartOptions<PuntoGrafico> opcionesGrafico;
     private JuegoDRM drmGrafico = JuegoDRM.NoEspecificado;
@@ -3715,16 +3711,9 @@
         }      
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (!ApplicationState.TryTakeFromJson<Juegos.Juego>("juegoGuardado", out var juegoGuardado))
-        {
-            juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
-        }
-        else
-        {
-            juego = juegoGuardado;
-        }
+	protected override async Task OnInitializedAsync()
+	{
+        juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 
         mediaMostrar = null;
         mediaMostrarPosicion = 0;
@@ -4171,9 +4160,8 @@
 
             #region Curators
 
-            curators.Clear();
             List<string> curatorsBuscar = new List<string>();
-
+          
             if (juego.Caracteristicas != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 if (juego.Caracteristicas.Desarrolladores2 != null)
@@ -4301,6 +4289,11 @@
                                 global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
                                 ficha.Curator = curator2;
                                 ficha.Posicion = 0;
+
+                                if (curators == null)
+                                {
+                                    curators = new List<global::BaseDatos.Curators.CuratorFicha>();
+                                }
 
                                 curators.Add(ficha);
                             }
@@ -4595,16 +4588,7 @@
                 }
             }
         }
-
-        persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-        {
-            ApplicationState.PersistAsJson("juegoGuardado", juego);
-
-            return Task.CompletedTask;
-        });
     }
-
-    public void Dispose() => persistingSubscription?.Dispose();
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
     {

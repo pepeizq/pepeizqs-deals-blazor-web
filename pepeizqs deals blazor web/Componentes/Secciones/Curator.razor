@@ -9,8 +9,6 @@
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 <style>
 	.caja-curator-contenido {
@@ -277,8 +275,6 @@
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
@@ -316,20 +312,11 @@
 		}
 	}
 
-	protected override async Task OnParametersSetAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		if (string.IsNullOrEmpty(slug) == false)
 		{
-			// curator = BaseDatos.Curators.Buscar.Uno(slug);
-
-			if (!ApplicationState.TryTakeFromJson<BaseDatos.Curators.Curator>("curatorGuardado2", out var curatorGuardado))
-			{
-				curator = BaseDatos.Curators.Buscar.Uno(slug);
-			}
-			else
-			{
-				curator = curatorGuardado;
-			}
+			curator = BaseDatos.Curators.Buscar.Uno(slug);
 
 			if (curator != null)
 			{
@@ -413,17 +400,8 @@
 					}
 				}
 			}
-
-			persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-			{
-				ApplicationState.PersistAsJson("curatorGuardado2", curator);
-
-				return Task.CompletedTask;
-			});
 		}
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	private void MostrarListado(MouseEventArgs e, List<Juegos.Juego> juegos, int nuevoFiltrado)
 	{

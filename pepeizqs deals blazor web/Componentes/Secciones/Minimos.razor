@@ -15,8 +15,6 @@
 
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @{
 	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "HistoricalLows") + " • pepeizq's deals";
@@ -787,8 +785,6 @@ else
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
@@ -1234,58 +1230,49 @@ else
 			opcionesMinimos = BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
 		}
 
-		if (!ApplicationState.TryTakeFromJson<List<Juegos.Juego>>("minimosGuardados", out var juegosGuardados))
+		if (opcionesMinimos == null)
 		{
-			if (opcionesMinimos == null)
-			{
-				OrdenarReseñasCantidad(true);
-			}
-			else
-			{
-				if (opcionesMinimos.HistoricalLowsSort == null)
-				{
-					opcionesMinimos.HistoricalLowsSort = 1;
-				}
-
-				if (opcionesMinimos.HistoricalLowsSort == 0)
-				{
-					OrdenarReseñasPorcentaje(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 1)
-				{
-					OrdenarReseñasCantidad(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 2)
-				{
-					OrdenarNombreAZ(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 3)
-				{
-					OrdenarNombreZA(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 4)
-				{
-					OrdenarPrecio(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 5)
-				{
-					OrdenarDescuento(true);
-				}
-				else if (opcionesMinimos.HistoricalLowsSort == 6)
-				{
-					OrdenarFechaDetectado(true);
-				}
-			}
+			OrdenarReseñasCantidad(true);
 		}
 		else
 		{
-			juegosFiltrados = juegosGuardados;
+			if (opcionesMinimos.HistoricalLowsSort == null)
+			{
+				opcionesMinimos.HistoricalLowsSort = 1;
+			}
+
+			if (opcionesMinimos.HistoricalLowsSort == 0)
+			{
+				OrdenarReseñasPorcentaje(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 1)
+			{
+				OrdenarReseñasCantidad(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 2)
+			{
+				OrdenarNombreAZ(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 3)
+			{
+				OrdenarNombreZA(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 4)
+			{
+				OrdenarPrecio(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 5)
+			{
+				OrdenarDescuento(true);
+			}
+			else if (opcionesMinimos.HistoricalLowsSort == 6)
+			{
+				OrdenarFechaDetectado(true);
+			}
 		}
 
 		cargado = true;
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{
@@ -1617,13 +1604,6 @@ else
 		}
 
 		await InvokeAsync(StateHasChanged);
-
-		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-		{
-			ApplicationState.PersistAsJson("minimosGuardados", nuevaLista);
-
-			return Task.CompletedTask;
-		});
 
 		cargado = true;
 

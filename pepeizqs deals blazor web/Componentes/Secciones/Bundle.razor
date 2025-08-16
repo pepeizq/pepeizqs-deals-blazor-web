@@ -10,8 +10,6 @@
 
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @if (bundle != null)
 {
@@ -403,8 +401,6 @@
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
@@ -441,16 +437,11 @@
 		}
 	}
 
-	protected override void OnParametersSet()
+	protected override async Task OnInitializedAsync()
 	{
-		if (!ApplicationState.TryTakeFromJson<Bundles2.Bundle>("bundleGuardado", out var bundleGuardado))
-		{
-			bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
-		}
-		else
-		{
-			bundle = bundleGuardado;
-		}
+		await Task.Yield();
+
+		bundle = BaseDatos.Bundles.Buscar.UnBundle(bundleId);
 
 		if (bundle != null)
 		{
@@ -469,16 +460,7 @@
 				}
 			}
 		}
-
-		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-		{
-			ApplicationState.PersistAsJson("bundleGuardado", bundle);
-
-			return Task.CompletedTask;
-		});
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{

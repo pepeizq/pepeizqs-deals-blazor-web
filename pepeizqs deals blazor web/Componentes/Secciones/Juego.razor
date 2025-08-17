@@ -3711,7 +3711,7 @@
         }      
     }
 
-	protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
 	{
         juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 

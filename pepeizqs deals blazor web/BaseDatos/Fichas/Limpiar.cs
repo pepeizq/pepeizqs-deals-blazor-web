@@ -21,6 +21,7 @@ namespace BaseDatos.Fichas
 						conexion = Herramientas.BaseDatos.Conectar();
 					}
 				}
+
 				string sqlEliminar = "DELETE FROM fichasActualizar WHERE idJuego=@idJuego AND idPlataforma=@idPlataforma AND metodo=@metodo";
 
 				using (SqlCommand comando = new SqlCommand(sqlEliminar, conexion))

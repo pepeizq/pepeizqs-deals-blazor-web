@@ -198,15 +198,7 @@
 
                     if (tiempo == true)
                     {
-                        SteamUsuario datos = await APIs.Steam.Cuenta.CargarDatos(usuario.SteamAccount);
-
-                        usuario.SteamGames = datos.Juegos;
-                        usuario.SteamWishlist = datos.Deseados;
-                        usuario.Avatar = datos.Avatar;
-                        usuario.Nickname = datos.Nombre;
-                        usuario.SteamAccountLastCheck = DateTime.Now.ToString();
-                        usuario.OfficialGroup = datos.GrupoPremium;
-                        usuario.OfficialGroup2 = datos.GrupoNormal;
+                        BaseDatos.UsuariosActualizar.Insertar.Ejecutar(usuario.Id, "Steam");
                     }
                 }
 
@@ -221,9 +213,7 @@
 
                     if (tiempo == true)
                     {
-                        usuario.GogGames = await APIs.GOG.Cuenta.BuscarJuegos(usuario.GogAccount);
-                        usuario.GogWishlist = await APIs.GOG.Cuenta.BuscarDeseados(usuario.GogId);
-                        usuario.GogAccountLastCheck = DateTime.Now;
+                        BaseDatos.UsuariosActualizar.Insertar.Ejecutar(usuario.Id, "GOG");
                     }
                 }
 

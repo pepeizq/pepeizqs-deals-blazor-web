@@ -10,10 +10,16 @@ namespace Herramientas
 		{
 			TimeSpan actualizado = DateTime.Now.Subtract(precio.FechaActualizacion);
 
-			if (precio.Tienda == APIs.Steam.Tienda.Generar().Id || precio.Tienda == APIs.Steam.Tienda.GenerarBundles().Id ||
-				precio.Tienda == APIs.Humble.Tienda.Generar().Id || precio.Tienda == APIs.Humble.Tienda.GenerarChoice().Id)
+			if (precio.Tienda == APIs.Steam.Tienda.Generar().Id || precio.Tienda == APIs.Steam.Tienda.GenerarBundles().Id)
 			{
 				if (actualizado.TotalHours < 24)
+				{
+					return true;
+				}
+			}
+			else if (precio.Tienda == APIs.Humble.Tienda.Generar().Id || precio.Tienda == APIs.Humble.Tienda.GenerarChoice().Id)
+			{
+				if (actualizado.TotalHours < 25)
 				{
 					return true;
 				}

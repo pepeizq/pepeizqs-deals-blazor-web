@@ -1309,7 +1309,7 @@
                                                                 }
                                                             }
 
-                                                            @if (drm.Id == JuegoDRM.Steam && juego.Deck != JuegoDeck.Desconocido)
+                                                            @if (drm.Id == JuegoDRM.Steam && juego.Deck != JuegoDeck.Desconocido && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                             {
                                                                 <button @onclick="(e => DeckEnseñar(e))" class="boton-expandir" title="Steam Deck" style="color: var(--colorTexto); text-decoration: none; border: 0px;">
                                                                     <div style="display: flex; align-items: center; gap: 10px; padding: 5px 10px; width: 75px; height: 32px;">
@@ -1369,7 +1369,7 @@
                                                                 }
                                                             }
 
-                                                            @if (juego.Idiomas != null)
+                                                            @if (juego.Idiomas != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                             {
                                                                 if (juego.Idiomas.Count > 0)
                                                                 {
@@ -1540,7 +1540,7 @@
                                             </div>
 
                                             <div style="display: flex; flex-direction: column; gap: 15px;">
-                                                @if (HistoricoComprobar(drm.Id) == true)
+                                                @if (HistoricoComprobar(drm.Id) == true && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                 {
                                                     <button @onclick="(e => HistoricoEnseñar(e, drm.Id))" class="boton-pequeño" style="width: auto; min-width: 200px; text-align: center; font-size: 14px; padding: 10px 12px;">
                                                         @Herramientas.Idiomas.BuscarTexto(idioma, "String64", "Game")

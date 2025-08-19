@@ -29,8 +29,6 @@ namespace BaseDatos.Admin
 				comando.Parameters.AddWithValue("@fecha", fecha);
 				comando.Parameters.AddWithValue("@mensaje", cantidad);
 
-				SqlDataReader lector = comando.ExecuteReader();
-
 				try
 				{
 					comando.ExecuteNonQuery();
@@ -39,7 +37,11 @@ namespace BaseDatos.Admin
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void TiendasValorAdicional(string tienda, string valor, int cantidad, SqlConnection conexion = null)
@@ -65,7 +67,11 @@ namespace BaseDatos.Admin
 				comando.Parameters.AddWithValue("@id", tienda);
 
 				comando.ExecuteNonQuery();
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void TareaUso(string id, DateTime fecha, SqlConnection conexion = null)
@@ -98,7 +104,11 @@ namespace BaseDatos.Admin
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Dato(string id, string contenido, SqlConnection conexion = null)
@@ -125,8 +135,6 @@ namespace BaseDatos.Admin
 					comando.Parameters.AddWithValue("@id", id);
 					comando.Parameters.AddWithValue("@contenido", contenido);
 
-					SqlDataReader lector = comando.ExecuteReader();
-
 					try
 					{
 						comando.ExecuteNonQuery();
@@ -135,7 +143,11 @@ namespace BaseDatos.Admin
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 	}

@@ -16,17 +16,64 @@
 		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
 			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(perfil.Avatar)" style="width: 100px; height: 100px;" alt="@perfil.Nickname" />
 
-			<div style="display: flex; flex-direction: column; gap: 10px;">
+			<div style="display: flex; flex-direction: column; gap: 15px;">
 				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
 					@perfil.Nickname
 				</h1>
 
-				@* <div style="font-size: 14px;">
-					@curator.Descripcion
-				</div> *@
+				<div style="display: flex; align-items: center; gap: 15px;">
+					@if (string.IsNullOrEmpty(perfilSteamCuenta) == false)
+					{
+						<a class="boton-pequeño" href="@perfilSteamCuenta" target="_blank" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTexto);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								<div>
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(Juegos.JuegoDRM.Steam))" style="max-width: 20px; max-height: 20px;" />
+								</div>
+
+								<div>
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountUser")
+								</div>
+							</div>
+						</a>
+					}
+
+					@if (string.IsNullOrEmpty(perfilGogCuenta) == false)
+					{
+						<a class="boton-pequeño" href="@perfilGogCuenta" target="_blank" style="font-size: 14px; width: fit-content; padding: 6px 10px; border: 0px; color: var(--colorTexto);">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								<div>
+									<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(Juegos.JuegoDRM.GOG))" style="max-width: 20px; max-height: 20px;" />
+								</div>
+
+								<div>
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "AccountUser")
+								</div>
+							</div>
+						</a>
+					}
+				</div>
 			</div>
 		</div>
 	</div>
+
+	if (perfil.ProfileWishlist == true)
+	{
+		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+			<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
+				@if (perfil.ProfileWishlist == true)
+				{
+					<button class="boton-pequeño" style="@CambiarEstilo(enseñarDeseados) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaDeseados">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
+					</button>
+				}
+			</div>
+		</div>
+	}
+
+	if (enseñarDeseados == true)
+	{
+		<Deseados perfilUsuarioId="@usuarioId"/>
+	}
 }
 
 @code {
@@ -57,14 +104,62 @@
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
-
-
 	}
+
+	private string perfilSteamCuenta = null;
+	private string perfilGogCuenta = null;
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await Task.Yield();
 
 		perfil = BaseDatos.Usuarios.Buscar.PerfilCargar(usuarioNombre);
+
+		if (perfil != null)
+		{
+			perfilSteamCuenta = BaseDatos.Usuarios.Buscar.PerfilSteamCuenta(perfil.Id);
+			perfilGogCuenta = BaseDatos.Usuarios.Buscar.PerfilGogCuenta(perfil.Id);
+
+			if (string.IsNullOrEmpty(perfilGogCuenta) == false)
+			{
+				if (perfilGogCuenta.LastIndexOf("/") == perfilGogCuenta.Length - 1)
+				{
+					perfilGogCuenta = perfilGogCuenta.Substring(0, perfilGogCuenta.Length - 1);
+				}
+			}
+		}
+	}
+
+	private string CambiarEstilo(bool enseñar)
+	{
+		if (enseñar == false)
+		{
+			return "background-color: transparent;";
+		}
+		else
+		{
+			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
+		}
+    }
+
+	private void PestañasOcultar()
+	{
+        enseñarDeseados = false;
+	}
+
+	private bool enseñarDeseados = false;
+
+	private void PestañaDeseados()
+	{
+		if (enseñarDeseados == false)
+		{
+			PestañasOcultar();
+
+			enseñarDeseados = true;
+		}
+		else
+		{
+			enseñarDeseados = false;
+		}
 	}
 }

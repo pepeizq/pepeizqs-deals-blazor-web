@@ -187,10 +187,16 @@ namespace BaseDatos.Tiendas
 									Juegos.Insertar.Ejecutar(juego, conexion);
 								}
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 				}
 			}
+
+			conexion.Dispose();
 		}
 
 		private static async void ActualizarDatosSteamAPI(Juego juego, JuegoPrecio oferta, JuegoAnalisis analisis, SqlConnection conexion = null)
@@ -268,13 +274,31 @@ namespace BaseDatos.Tiendas
 
 							Juegos.Precios.Steam(juego, oferta, conexion, true);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 		}
 
-		public static void Resto(JuegoPrecio oferta, SqlConnection conexion, string idGog = null, string slugGOG = null, string slugEpic = null)
+		public static void Resto(JuegoPrecio oferta, SqlConnection conexion = null, string idGog = null, string slugGOG = null, string slugEpic = null)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			bool encontrado = false;
 
 			string buscarJuegos = @"DECLARE @ids NVARCHAR(MAX); 
@@ -405,7 +429,11 @@ namespace BaseDatos.Tiendas
 							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic, usuariosInteresados, analisis);
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comandoBuscar.Dispose();
 			}
 
 			if (encontrado == false)
@@ -443,8 +471,12 @@ namespace BaseDatos.Tiendas
 					{
 						Errores.Insertar.Mensaje("Insertar Tienda: " + oferta?.Enlace, ex);
 					}
+
+					comandoInsertar.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 		}
 	}
 }

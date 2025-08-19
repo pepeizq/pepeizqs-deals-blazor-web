@@ -92,9 +92,15 @@ namespace BaseDatos.Bundles
 						{
 							bundles.Add(Cargar(lector));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return bundles;
 		}
@@ -117,7 +123,7 @@ namespace BaseDatos.Bundles
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM bundles WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina";
+				string busqueda = "SELECT * FROM bundles WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY nombre DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -127,14 +133,15 @@ namespace BaseDatos.Bundles
 						{
 							bundles.Add(Cargar(lector));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			if (bundles.Count > 0)
-			{
-				bundles.Reverse();
-			}
+			conexion.Dispose();
 
 			return bundles;
 		}
@@ -182,9 +189,15 @@ namespace BaseDatos.Bundles
 								}
 							}												
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return bundles;
 		}
@@ -203,6 +216,8 @@ namespace BaseDatos.Bundles
 				}
 			}
 
+			Bundles2.Bundle bundle = null;
+
 			string busqueda = "SELECT * FROM bundles WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -213,12 +228,18 @@ namespace BaseDatos.Bundles
 				{
 					while (lector.Read() == true)
 					{
-						return Cargar(lector);
+						bundle = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return bundle;
 		}
 
         public static List<Bundles2.Bundle> Ultimos(int cantidad)
@@ -239,11 +260,17 @@ namespace BaseDatos.Bundles
                         {
                             bundles.Add(Cargar(lector));
                         }
-                    }
-                }
+
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
             }
 
-            return bundles;
+			conexion.Dispose();
+
+			return bundles;
         }
     }
 }

@@ -223,14 +223,6 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
-	public bool? WishlistPublic { get; set; }
-
-	[PersonalData]
-	[Column(TypeName = "nvarchar(256)")]
-	public string? WishlistNickname { get; set; }
-
-	[PersonalData]
-	[Column(TypeName = "bit(1)")]
 	public bool? NotificationPushLows { get; set; }
 
 	[PersonalData]
@@ -304,4 +296,12 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
 	public bool? ProfileWishlist { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? ProfileSteamAccount { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? ProfileGogAccount { get; set; }
 }

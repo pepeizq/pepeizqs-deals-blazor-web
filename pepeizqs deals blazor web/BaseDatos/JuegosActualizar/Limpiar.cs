@@ -2,11 +2,11 @@
 
 using Microsoft.Data.SqlClient;
 
-namespace BaseDatos.Fichas
+namespace BaseDatos.JuegosActualizar
 {
 	public static class Limpiar
 	{
-		public static void Una(FichaActualizar ficha, SqlConnection conexion = null)
+		public static void Una(JuegoActualizar ficha, SqlConnection conexion = null)
 		{
 			if (ficha != null)
 			{

@@ -71,11 +71,17 @@ namespace BaseDatos.Suscripciones
                         {
 							suscripciones.Add(Cargar(lector));
 						}
-                    }
-                }
-            } 
 
-            return suscripciones;
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
+			}
+
+			conexion.Dispose();
+
+			return suscripciones;
         }
 
 		public static List<JuegoSuscripcion> Año(string año, SqlConnection conexion = null)
@@ -96,7 +102,7 @@ namespace BaseDatos.Suscripciones
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM suscripciones WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina";
+				string busqueda = "SELECT * FROM suscripciones WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY nombre DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -106,14 +112,15 @@ namespace BaseDatos.Suscripciones
 						{
 							suscripciones.Add(Cargar(lector));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			if (suscripciones.Count > 0)
-			{
-				suscripciones.Reverse();
-			}
+			conexion.Dispose();
 
 			return suscripciones;
 		}
@@ -157,9 +164,15 @@ namespace BaseDatos.Suscripciones
 								}
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			if (suscripciones.Count > 0) 
 			{
@@ -183,6 +196,8 @@ namespace BaseDatos.Suscripciones
 				}
 			}
 
+			JuegoSuscripcion juego = null;
+
 			string busqueda = "SELECT * FROM suscripciones WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -193,12 +208,18 @@ namespace BaseDatos.Suscripciones
 				{
 					while (lector.Read())
 					{
-						return Cargar(lector);
+						juego = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return juego;
 		}
 
 		public static JuegoSuscripcion UnJuego(string enlace, SqlConnection conexion = null)
@@ -215,6 +236,8 @@ namespace BaseDatos.Suscripciones
 				}
 			}
 
+			JuegoSuscripcion juego = null;
+
 			using (conexion)
 			{
 				string busqueda = "SELECT * FROM suscripciones WHERE enlace=@enlace";
@@ -227,18 +250,25 @@ namespace BaseDatos.Suscripciones
 					{
 						while (lector.Read())
 						{
-							return Cargar(lector);
+							juego = Cargar(lector);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return juego;
 		}
 
 		public static JuegoSuscripcion UnJuego(int juegoId)
 		{
 			List<JuegoSuscripcion> resultados = new List<JuegoSuscripcion>();
+
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
 			using (conexion)
@@ -255,9 +285,15 @@ namespace BaseDatos.Suscripciones
 						{
 							resultados.Add(Cargar(lector));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			if (resultados.Count > 0)
 			{
@@ -281,6 +317,8 @@ namespace BaseDatos.Suscripciones
 				}
 			}
 
+			JuegoSuscripcion juego = null;
+
 			string busqueda = "SELECT * FROM suscripciones WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -291,12 +329,18 @@ namespace BaseDatos.Suscripciones
 				{
 					while (lector.Read())
 					{
-						return Cargar(lector);
+						juego = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return juego;
 		}
 
 		public static List<JuegoSuscripcion> UltimasAñadidas(SqlConnection conexion = null)
@@ -325,24 +369,32 @@ namespace BaseDatos.Suscripciones
 					{
 						suscripciones.Add(Cargar(lector));
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return suscripciones;
 		}
 
-		public static List<JuegoSuscripcion> Ultimos(string cantidad)
+		public static List<JuegoSuscripcion> Ultimos(string cantidad, SqlConnection conexion = null)
 		{
-			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
-
-			using (conexion)
+			if (conexion == null)
 			{
-				return Ultimos(conexion, cantidad);
+				conexion = Herramientas.BaseDatos.Conectar();
 			}
-		}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
 
-		public static List<JuegoSuscripcion> Ultimos(SqlConnection conexion, string cantidad)
-		{
 			List<JuegoSuscripcion> juegos = new List<JuegoSuscripcion>();
 
 			string busqueda = "SELECT TOP " + cantidad + " * FROM suscripciones ORDER BY id DESC";
@@ -355,8 +407,14 @@ namespace BaseDatos.Suscripciones
 					{
 						juegos.Add(Cargar(lector));
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return juegos;
 		}

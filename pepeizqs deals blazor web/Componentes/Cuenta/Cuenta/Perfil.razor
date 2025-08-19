@@ -16,7 +16,7 @@
 @if (usuario != null)
 {
 	<div class="caja-perfil-contenido" style="display: flex; flex-direction: column;">
-		<div style="display: flex; align-items: start; gap: 30px;">
+		<div style="display: flex; align-items: start; gap: 20px;">
 			<div class="checkbox-caja">
 				<input type="checkbox" class="checkbox-interior" checked="@estadoEnseñar" @onchange="ClickearPerfilEnseñar">
 			</div>
@@ -62,17 +62,50 @@
 			<label>@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountUser")</label>
 			<hr />
 
-			<div style="display: flex; align-items: start; gap: 30px;">
-				<div class="checkbox-caja">
-					<input type="checkbox" class="checkbox-interior" checked="@estadoDeseados" @onchange="ClickearPerfilDeseados">
-				</div>
+			<div style="display: flex; flex-direction: column; gap: 20px;">
+				@if (string.IsNullOrEmpty(BaseDatos.Usuarios.Buscar.PerfilSteamCuenta(usuario.Id)) == false)
+				{
+					<div style="display: flex; align-items: start; gap: 20px;">
+						<div class="checkbox-caja">
+							<input type="checkbox" class="checkbox-interior" checked="@estadoSteamCuenta" @onchange="ClickearPerfilSteamCuenta">
+						</div>
 
-				<div style="display: flex; flex-direction: column; gap: 10px;">
-					<div>
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
+						<div style="display: flex; flex-direction: column; gap: 10px;">
+							<div>
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountUser")
+							</div>
+						</div>
+					</div>
+				}
+
+				@if (string.IsNullOrEmpty(BaseDatos.Usuarios.Buscar.PerfilGogCuenta(usuario.Id)) == false)
+				{
+					<div style="display: flex; align-items: start; gap: 20px;">
+						<div class="checkbox-caja">
+							<input type="checkbox" class="checkbox-interior" checked="@estadoGogCuenta" @onchange="ClickearPerfilGogCuenta">
+						</div>
+
+						<div style="display: flex; flex-direction: column; gap: 10px;">
+							<div>
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "AccountUser")
+							</div>
+						</div>
+					</div>
+				}
+
+				<div style="display: flex; align-items: start; gap: 20px;">
+					<div class="checkbox-caja">
+						<input type="checkbox" class="checkbox-interior" checked="@estadoDeseados" @onchange="ClickearPerfilDeseados">
+					</div>
+
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<div>
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
+						</div>
 					</div>
 				</div>
 			</div>
+			
 		</div>
 	}
 }
@@ -111,6 +144,38 @@
 			if (string.IsNullOrEmpty(usuario.ProfileNickname) == false)
 			{
 				textoNombre = usuario.ProfileNickname;
+			}
+
+			if (usuario.ProfileSteamAccount == null)
+			{
+				estadoSteamCuenta = null;
+			}
+			else
+			{
+				if (usuario.ProfileSteamAccount == true)
+				{
+					estadoSteamCuenta = "checked";
+				}
+				else
+				{
+					estadoSteamCuenta = null;
+				}
+			}
+
+			if (usuario.ProfileGogAccount == null)
+			{
+				estadoGogCuenta = null;
+			}
+			else
+			{
+				if (usuario.ProfileGogAccount == true)
+				{
+					estadoGogCuenta = "checked";
+				}
+				else
+				{
+					estadoGogCuenta = null;
+				}
 			}
 
 			if (usuario.ProfileWishlist == null)
@@ -181,6 +246,56 @@
 					}
 				}
 			}
+		}
+	}
+
+	private string estadoSteamCuenta = null;
+
+	private async void ClickearPerfilSteamCuenta()
+	{
+		if (usuario != null)
+		{
+			bool boolSteamCuenta = false;
+
+			if (estadoSteamCuenta == null)
+			{
+				estadoSteamCuenta = "checked";
+				boolSteamCuenta = true;
+			}
+			else
+			{
+				estadoSteamCuenta = null;
+				boolSteamCuenta = false;
+			}
+
+			usuario.ProfileSteamAccount = boolSteamCuenta;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private string estadoGogCuenta = null;
+
+	private async void ClickearPerfilGogCuenta()
+	{
+		if (usuario != null)
+		{
+			bool boolGogCuenta = false;
+
+			if (estadoGogCuenta == null)
+			{
+				estadoGogCuenta = "checked";
+				boolGogCuenta = true;
+			}
+			else
+			{
+				estadoGogCuenta = null;
+				boolGogCuenta = false;
+			}
+
+			usuario.ProfileGogAccount = boolGogCuenta;
+
+			await UserManager.UpdateAsync(usuario);
 		}
 	}
 

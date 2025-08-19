@@ -2,7 +2,7 @@
 
 using Microsoft.Data.SqlClient;
 
-namespace BaseDatos.Fichas
+namespace BaseDatos.JuegosActualizar
 {
 
 	public static class Buscar
@@ -51,7 +51,7 @@ namespace BaseDatos.Fichas
 			}
 		}
 
-		public static List<FichaActualizar> Todos(SqlConnection conexion = null)
+		public static List<JuegoActualizar> Todos(SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -65,7 +65,7 @@ namespace BaseDatos.Fichas
 				}
 			}
 
-			List<FichaActualizar> fichas = new List<FichaActualizar>();
+			List<JuegoActualizar> fichas = new List<JuegoActualizar>();
 
 			string busqueda = "SELECT * FROM fichasActualizar";
 
@@ -75,7 +75,7 @@ namespace BaseDatos.Fichas
 				{
 					while (lector.Read())
 					{
-						FichaActualizar ficha = new FichaActualizar
+						JuegoActualizar ficha = new JuegoActualizar
 						{
 							IdJuego = lector.GetInt32(0),
 							IdPlataforma = lector.GetInt32(1),
@@ -91,7 +91,7 @@ namespace BaseDatos.Fichas
 		}
 	}
 
-	public class FichaActualizar
+	public class JuegoActualizar
 	{
 		public int IdJuego { get; set; }
 		public int IdPlataforma { get; set; }

@@ -9,6 +9,8 @@ namespace BaseDatos.Admin
 	{
 		public static string Dato(string id, SqlConnection conexion = null)
 		{
+			string dato = null;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -31,16 +33,24 @@ namespace BaseDatos.Admin
 				{
 					if (lector.Read() == true)
 					{
-						return lector.GetString(1);
+						dato = lector.GetString(1);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return dato;
 		}
 
 		public static bool TiendasPosibleUsar(TimeSpan tiempo, string tiendaId, SqlConnection conexion = null)
 		{
+			bool esPosible = false;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -67,13 +77,19 @@ namespace BaseDatos.Admin
 
 						if ((DateTime.Now - ultimaComprobacion) > tiempo)
 						{
-							return true;
+							esPosible = true;
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return false;
+			conexion.Dispose();
+
+			return esPosible;
 		}
 
 		public static AdminTarea TiendasEnUso(TimeSpan tiempo, SqlConnection conexion = null)
@@ -126,8 +142,14 @@ namespace BaseDatos.Admin
 							tiendas.Add(tienda);
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			if (tiendas.Count > 0)
 			{
@@ -149,6 +171,8 @@ namespace BaseDatos.Admin
 
 		public static int TiendasValorAdicional(string id, string valor, SqlConnection conexion = null)
 		{
+			int valorAdicional = 0;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -173,13 +197,19 @@ namespace BaseDatos.Admin
 					{
 						if (lector.IsDBNull(lector.GetOrdinal(valor)) == false)
 						{
-							return lector.GetInt32(lector.GetOrdinal(valor));
+							valorAdicional = lector.GetInt32(lector.GetOrdinal(valor));
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return 0;
+			conexion.Dispose();
+
+			return valorAdicional;
 		}
 
 		public static AdminTarea Tarea(string id, SqlConnection conexion = null)
@@ -223,14 +253,22 @@ namespace BaseDatos.Admin
 							}
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return null;
 		}
 
 		public static bool TareaPosibleUsar(string id, TimeSpan tiempo, SqlConnection conexion = null)
 		{
+			bool esPosible = true;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -257,17 +295,25 @@ namespace BaseDatos.Admin
 
 						if ((DateTime.Now - ultimaComprobacion) < tiempo)
 						{
-							return false;
+							esPosible = false;
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return true;
+			conexion.Dispose();
+
+			return esPosible;
 		}
 
 		public static int CantidadErrores(SqlConnection conexion = null)
 		{
+			int cantidadErrores = 0;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -290,13 +336,19 @@ namespace BaseDatos.Admin
 					{
 						if (lector.IsDBNull(0) == false)
 						{
-							return lector.GetInt32(0);
+							cantidadErrores = lector.GetInt32(0);
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return 0;
+			conexion.Dispose();
+
+			return cantidadErrores;
 		}
 	}
 

@@ -29,9 +29,5 @@
   "String28": "Subscriptions ({0})",
   "String29": "Bundles ({0})",
   "String30": "Games on your wishlist that have at least the minimum discount indicated will be displayed.",
-  "String31": "Games on your wishlist that exceed the maximum price indicated will not be displayed.",
-  "String32": "Share",
-  "String33": "If you want to share your wishlist you must have this option activated.",
-  "String34": "For this option to work, you must assign an identifying name to your wishlist, such as your nickname:",
-  "String35": "Write a name"
+  "String31": "Games on your wishlist that exceed the maximum price indicated will not be displayed."
 }

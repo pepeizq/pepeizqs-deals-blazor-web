@@ -578,6 +578,8 @@ namespace BaseDatos.Juegos
 				}
 			}
 
+			Juego juego = null;
+
 			if (sqlBuscar != string.Empty)
 			{
 				SqlConnection conexion = Herramientas.BaseDatos.Conectar();
@@ -594,17 +596,20 @@ namespace BaseDatos.Juegos
 						{
 							if (lector.Read())
 							{
-								Juego juego = JuegoCrear.Generar();
-								juego = Cargar(juego, lector);
-							
-								return juego;
+								juego = Cargar(JuegoCrear.Generar(), lector);
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 				}
+
+				conexion.Dispose();
 			}
 
-			return null;
+			return juego;
 		}
 
 		public static List<Juego> MultiplesJuegosSteam(List<int> ids, SqlConnection conexion = null)
@@ -674,8 +679,14 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
 			return juegos;
@@ -735,8 +746,14 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
 			return juegos;
@@ -1002,8 +1019,14 @@ namespace BaseDatos.Juegos
 							juegos.Add(juego);
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return juegos;
 		}
@@ -1262,15 +1285,33 @@ namespace BaseDatos.Juegos
 
 							juegos.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return juegos;
 		}
 
 		public static List<Juego> Ultimos(SqlConnection conexion, string tabla, int cantidad)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			List<Juego> juegos = new List<Juego>();
 
 			string busqueda = "SELECT TOP (" + cantidad + ") * FROM " + tabla + " ORDER BY id DESC";
@@ -1286,8 +1327,14 @@ namespace BaseDatos.Juegos
 
 						juegos.Add(juego);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return juegos;
 		}
@@ -1314,11 +1361,11 @@ namespace BaseDatos.Juegos
 
 				if (string.IsNullOrEmpty(idMaestro) == false)
 				{
-					busqueda = "SELECT * FROM juegos WHERE maestro='" + idMaestro + "'";
+					busqueda = "SELECT * FROM juegos WHERE maestro='" + idMaestro + "' ORDER BY nombre DESC";
 				}
 				else
 				{
-					busqueda = "SELECT * FROM juegos WHERE (maestro IS NULL AND tipo='1') or (maestro='no' AND tipo='1')";
+					busqueda = "SELECT * FROM juegos WHERE (maestro IS NULL AND tipo='1') or (maestro='no' AND tipo='1') ORDER BY nombre DESC";
 				}
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -1332,11 +1379,17 @@ namespace BaseDatos.Juegos
 
 							dlcs.Add(dlc);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			return dlcs.OrderBy(x => x.Nombre).ToList();
+			conexion.Dispose();
+
+			return dlcs;
 		}
 
 		public static List<Juego> Filtro(List<string> ids, int cantidad, SqlConnection conexion = null)
@@ -1582,9 +1635,15 @@ namespace BaseDatos.Juegos
 
 							resultados.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return resultados;
 		}
@@ -1622,9 +1681,15 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return juegos;
 		}

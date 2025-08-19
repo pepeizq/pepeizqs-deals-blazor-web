@@ -11,13 +11,15 @@ namespace BaseDatos.Usuarios
 	{
 		public static bool RolDios(string id)
 		{
-			if (string.IsNullOrEmpty(id) == false) 
+			bool esDios = false;
+
+			if (string.IsNullOrEmpty(id) == false)
 			{
 				SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
 				using (conexion)
 				{
-					string busqueda = "SELECT * FROM AspNetUsers WHERE Id=@Id";
+					string busqueda = "SELECT Role FROM AspNetUsers WHERE Id=@Id";
 
 					using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 					{
@@ -27,21 +29,29 @@ namespace BaseDatos.Usuarios
 						{
 							while (lector.Read())
 							{
-								if (lector.GetString(2) == "God")
+								if (lector.GetString(0) == "God")
 								{
-									return true;
+									esDios = true;
 								}
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 				}
+
+				conexion.Dispose();
 			}
 
-			return false;
+			return esDios;
 		}
 
 		public static string IdiomaSobreescribir(string usuarioId, SqlConnection conexion = null)
 		{
+			string idioma = "en";
+
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
 				if (conexion == null)
@@ -68,18 +78,26 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return lector.GetString(0);
+								idioma = lector.GetString(0);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return "en";
+			return idioma;
 		}
 
 		public static string IdiomaJuegos(string usuarioId, SqlConnection conexion = null)
 		{
+			string idioma = "en";
+
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
 				if (conexion == null)
@@ -106,14 +124,20 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return lector.GetString(0);
+								idioma = lector.GetString(0);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return "en";
+			return idioma;
 		}
 
 		public static Usuario JuegosTiene(string usuarioId, SqlConnection conexion = null)
@@ -174,8 +198,14 @@ namespace BaseDatos.Usuarios
 								juegos.EaGames = lector.GetString(5);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return juegos;
 			}
@@ -214,8 +244,14 @@ namespace BaseDatos.Usuarios
 								return lector.GetDateTime(0);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
 			return null;
@@ -264,8 +300,14 @@ namespace BaseDatos.Usuarios
 								deseados.GogWishlist = lector.GetString(2);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return deseados;
 			}
@@ -321,8 +363,14 @@ namespace BaseDatos.Usuarios
 								opciones.PatreonCoins = lector.GetInt32(3);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return opciones;
 			}
@@ -383,8 +431,14 @@ namespace BaseDatos.Usuarios
 								opciones.ForumIndex = lector.GetBoolean(4);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return opciones;
 			}
@@ -410,7 +464,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT WishlistPublic, WishlistNickname, WishlistSort, WishlistOption3, WishlistOption4 FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT WishlistSort, WishlistOption3, WishlistOption4 FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -422,31 +476,27 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								opciones.WishlistPublic = lector.GetBoolean(0);
+								opciones.WishlistSort = lector.GetInt32(0);
 							}
 
 							if (lector.IsDBNull(1) == false)
 							{
-								opciones.WishlistNickname = lector.GetString(1);
+								opciones.WishlistOption3 = lector.GetInt32(1);
 							}
 
 							if (lector.IsDBNull(2) == false)
 							{
-								opciones.WishlistSort = lector.GetInt32(2);
-							}
-
-							if (lector.IsDBNull(3) == false)
-							{
-								opciones.WishlistOption3 = lector.GetInt32(3);
-							}
-
-							if (lector.IsDBNull(4) == false)
-							{
-								opciones.WishlistOption4 = lector.GetDecimal(4);
+								opciones.WishlistOption4 = lector.GetDecimal(2);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return opciones;
 			}
@@ -537,8 +587,14 @@ namespace BaseDatos.Usuarios
 								opciones.HistoricalLowsAI = lector.GetInt32(10);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return opciones;
 			}
@@ -614,45 +670,16 @@ namespace BaseDatos.Usuarios
 								opciones.EaLastImport = lector.GetDateTime(7);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 
 				return opciones;
-			}
-
-			return null;
-		}
-
-		public static string UsuarioDeseadosNickname(string otroUsuario, SqlConnection conexion = null)
-		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
-			string busqueda = "SELECT Id FROM AspNetUsers WHERE WishlistPublic='true' AND WishlistNickname=@WishlistNickname";
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				comando.Parameters.AddWithValue("@WishlistNickname", otroUsuario);
-
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read())
-					{
-						if (lector.IsDBNull(0) == false)
-						{
-							return lector.GetString(0);
-						}
-					}
-				}
 			}
 
 			return null;
@@ -745,8 +772,14 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return usuarios;
 		}
@@ -820,14 +853,22 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return usuarios;
 		}
 
 		public static bool CorreoYaUsado(string correo, SqlConnection conexion = null)
 		{
+			bool yaUsado = false;
+
 			if (string.IsNullOrEmpty(correo) == false)
 			{
 				if (conexion == null)
@@ -854,20 +895,26 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return true;
+								yaUsado = true;
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return false;
+			return yaUsado;
 		}
-
-
 
 		public static bool UsuarioTieneJuego(string usuarioId, int juegoId, JuegoDRM drm, SqlConnection conexion = null)
 		{
+			bool yaTiene = false;
+
 			string busqueda = string.Empty;
 
 			if (drm == JuegoDRM.Steam)
@@ -925,18 +972,26 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return true;
+								yaTiene = true;
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return false;
+			return yaTiene;
 		}
 
 		public static bool UsuarioTieneDeseado(string usuarioId, string juegoId, JuegoDRM drm, SqlConnection conexion = null)
 		{
+			bool yaTiene = false;
+
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
 				if (conexion == null)
@@ -966,10 +1021,14 @@ namespace BaseDatos.Usuarios
 							{
 								if (lector.IsDBNull(0) == false)
 								{
-									return true;
+									yaTiene = true;
 								}
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 				}
 
@@ -988,10 +1047,14 @@ namespace BaseDatos.Usuarios
 							{
 								if (lector.IsDBNull(0) == false)
 								{
-									return true;
+									yaTiene = true;
 								}
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 				}
 
@@ -1006,7 +1069,7 @@ namespace BaseDatos.Usuarios
 				{
 					comando.Parameters.AddWithValue("@id", usuarioId);
 					comando.Parameters.AddWithValue("@juegoId", juegoId);
-					comando.Parameters.AddWithValue("@drm", (int) drm);
+					comando.Parameters.AddWithValue("@drm", (int)drm);
 
 					using (SqlDataReader lector = comando.ExecuteReader())
 					{
@@ -1014,14 +1077,20 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return true;
+								yaTiene = true;
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return false;
+			return yaTiene;
 		}
 
 		public static string UsuarioQuiereCorreos(string usuarioId, SqlConnection conexion = null)
@@ -1083,14 +1152,20 @@ namespace BaseDatos.Usuarios
 								}
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
 			return null;
 		}
 
-        public static bool CuentaSteamUsada(string id64Steam, string idUsuario)
+		public static bool CuentaSteamUsada(string id64Steam, string idUsuario)
 		{
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
@@ -1111,15 +1186,21 @@ namespace BaseDatos.Usuarios
 								if (lector.GetString(0) != idUsuario)
 								{
 									return true;
-								}							
+								}
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
+			conexion.Dispose();
+
 			return false;
-        }
+		}
 
 		public static bool CuentaGogUsada(string idGog, string idUsuario, SqlConnection conexion = null)
 		{
@@ -1153,8 +1234,14 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return false;
 		}
@@ -1193,8 +1280,14 @@ namespace BaseDatos.Usuarios
 
 						return usuario;
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return null;
 		}
@@ -1228,8 +1321,14 @@ namespace BaseDatos.Usuarios
 							return lector.GetBoolean(0);
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return false;
 		}
@@ -1265,8 +1364,14 @@ namespace BaseDatos.Usuarios
 								return true;
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
 			return false;
@@ -1274,6 +1379,8 @@ namespace BaseDatos.Usuarios
 
 		public static bool PerfilYaUsado(string nombre, SqlConnection conexion = null)
 		{
+			bool yaUsado = false;
+
 			if (string.IsNullOrEmpty(nombre) == false)
 			{
 				if (conexion == null)
@@ -1300,14 +1407,20 @@ namespace BaseDatos.Usuarios
 						{
 							if (lector.IsDBNull(0) == false)
 							{
-								return true;
+								yaUsado = true;
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 
-			return false;
+			return yaUsado;
 		}
 
 		public static Usuario PerfilCargar(string nombre, SqlConnection conexion = null)
@@ -1326,7 +1439,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT Id, Nickname, Avatar FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname AND ProfileShow='true'";
+				string busqueda = "SELECT Id, Nickname, Avatar, ProfileSteamAccount, ProfileGogAccount, ProfileWishlist FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname AND ProfileShow='true'";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -1353,10 +1466,119 @@ namespace BaseDatos.Usuarios
 								perfil.Avatar = lector.GetString(2);
 							}
 
+							if (lector.IsDBNull(3) == false)
+							{
+								perfil.ProfileSteamAccount = lector.GetBoolean(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								perfil.ProfileGogAccount = lector.GetBoolean(4);
+							}
+
+							if (lector.IsDBNull(5) == false)
+							{
+								perfil.ProfileWishlist = lector.GetBoolean(5);
+							}
+
 							return perfil;
 						}
+
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
+
+				conexion.Dispose();
+			}
+
+			return null;
+		}
+
+		public static string PerfilSteamCuenta(string id, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(id) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
 					}
 				}
+
+				string busqueda = "SELECT SteamAccount FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", id);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetString(0);
+							}
+						}
+
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
+
+				conexion.Dispose();
+			}
+
+			return null;
+		}
+
+		public static string PerfilGogCuenta(string id, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(id) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT GogAccount FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", id);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetString(0);
+							}
+						}
+
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
+
+				conexion.Dispose();
 			}
 
 			return null;

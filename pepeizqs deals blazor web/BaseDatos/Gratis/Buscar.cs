@@ -68,8 +68,14 @@ namespace BaseDatos.Gratis
 					{
 						listaGratis.Add(Cargar(lector));
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return listaGratis;
 		}
@@ -90,7 +96,7 @@ namespace BaseDatos.Gratis
                 }
             }
 
-			string busqueda = "SELECT * FROM gratis WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina";
+			string busqueda = "SELECT * FROM gratis WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY nombre DESC";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 			{
@@ -100,15 +106,16 @@ namespace BaseDatos.Gratis
 					{
 						listaGratis.Add(Cargar(lector));
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			if (listaGratis.Count > 0)
-            {
-                listaGratis.Reverse();
-            }
+			conexion.Dispose();
 
-            return listaGratis;
+			return listaGratis;
         }
 
         public static List<JuegoGratis> UnTipo(string gratisTexto, Herramientas.Tiempo tiempo, SqlConnection conexion = null)
@@ -158,8 +165,14 @@ namespace BaseDatos.Gratis
 							}
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return listaGratis;
 		}
@@ -177,7 +190,9 @@ namespace BaseDatos.Gratis
 					conexion = Herramientas.BaseDatos.Conectar();
 				}
 			}
-		
+
+			JuegoGratis juegoGratis = null;
+
 			string busqueda = "SELECT TOP 1 * FROM gratis WHERE juegoId=@juegoId ORDER BY ID DESC";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -188,12 +203,18 @@ namespace BaseDatos.Gratis
 				{
 					while (lector.Read())
 					{
-						return Cargar(lector);
+						juegoGratis = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return juegoGratis;
 		}
 
 		public static JuegoGratis UnGratis(string id, SqlConnection conexion = null)
@@ -210,6 +231,8 @@ namespace BaseDatos.Gratis
 				}
 			}
 
+			JuegoGratis juegoGratis = null;
+
 			string busqueda = "SELECT * FROM gratis WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -220,12 +243,18 @@ namespace BaseDatos.Gratis
 				{
 					while (lector.Read())
 					{
-						return Cargar(lector);
+						juegoGratis = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return juegoGratis;
 		}
 
 		public static List<JuegoGratis> Ultimos(int cantidad, SqlConnection conexion = null)
@@ -254,10 +283,16 @@ namespace BaseDatos.Gratis
                     {
                         juegos.Add(Cargar(lector));
                     }
-                }
-            }
 
-            return juegos;
+					lector.Dispose();
+				}
+
+				comando.Dispose();
+			}
+
+			conexion.Dispose();
+
+			return juegos;
         }
     }
 }

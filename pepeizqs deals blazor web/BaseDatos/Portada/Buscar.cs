@@ -3,6 +3,7 @@
 using Juegos;
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BaseDatos.Portada
 {
@@ -47,10 +48,16 @@ namespace BaseDatos.Portada
 
 							resultados.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
-			
+
+			conexion.Dispose();
+
 			return resultados;
 		}
 
@@ -176,9 +183,15 @@ ORDER BY NEWID()";
 
 							resultados.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return resultados;
 		}
@@ -381,9 +394,15 @@ ORDER BY NEWID()";
 
 							resultados.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return resultados;
 		}
@@ -532,9 +551,15 @@ ORDER BY CONVERT(datetime2, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam
 
 							resultados.Add(juego);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return resultados;
 		}

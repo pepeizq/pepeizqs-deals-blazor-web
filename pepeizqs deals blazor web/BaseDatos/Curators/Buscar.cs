@@ -64,8 +64,14 @@ namespace BaseDatos.Curators
 					{
 						curators.Add(Cargar(lector));
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return curators;
 		}
@@ -84,6 +90,8 @@ namespace BaseDatos.Curators
 				}
 			}
 
+			Curator curator = null;
+
 			string busqueda = "SELECT * FROM curators WHERE idSteam=@idSteam";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -94,12 +102,18 @@ namespace BaseDatos.Curators
 				{
 					if (lector.Read() == true)
 					{
-						return Cargar(lector);
+						curator = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return curator;
 		}
 
 		public static Curator Uno(string slug, SqlConnection conexion = null)
@@ -116,6 +130,8 @@ namespace BaseDatos.Curators
 				}
 			}
 
+			Curator curator = null;
+
 			string busqueda = "SELECT * FROM curators WHERE slug=@slug";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -126,12 +142,18 @@ namespace BaseDatos.Curators
 				{
 					if (lector.Read() == true)
 					{
-						return Cargar(lector);
+						curator = Cargar(lector);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return curator;
 		}
 	}
 

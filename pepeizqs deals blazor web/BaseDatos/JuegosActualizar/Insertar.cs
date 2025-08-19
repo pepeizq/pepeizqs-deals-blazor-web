@@ -2,7 +2,7 @@
 
 using Microsoft.Data.SqlClient;
 
-namespace BaseDatos.Fichas
+namespace BaseDatos.JuegosActualizar
 {
 	public static class Insertar
 	{

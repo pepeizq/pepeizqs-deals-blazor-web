@@ -52,9 +52,15 @@ namespace BaseDatos.Analisis
 								analisis.CantidadNegativos = lector.GetInt32(lector.GetOrdinal("negativos" + idioma));
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return analisis;
 		}
@@ -73,6 +79,8 @@ namespace BaseDatos.Analisis
 				}
 			}
 
+			bool debeModificarse = false;
+
 			using (conexion)
 			{
 				string sqlBusqueda = "SELECT fecha" + idioma + " FROM juegosAnalisis WHERE id=@id";
@@ -85,13 +93,13 @@ namespace BaseDatos.Analisis
 					{
 						if (lector.Read() == false)
 						{
-							return true;
+							debeModificarse = true;
 						}
 						else
 						{
 							if (lector.IsDBNull(0) == true)
 							{
-								return true;
+								debeModificarse = true;
 							}
 							else
 							{
@@ -99,15 +107,21 @@ namespace BaseDatos.Analisis
 
 								if (fechaRegistrada + TimeSpan.FromDays(7) < DateTime.Now)
 								{
-									return true;
+									debeModificarse = true;
 								}
 							}
 						}
-					}
-				}
 
-				return false;
+						lector.Dispose();
+					}
+
+					comando.Dispose();
+				}
 			}
+
+			conexion.Dispose();
+
+			return debeModificarse;
 		}
 	}
 }

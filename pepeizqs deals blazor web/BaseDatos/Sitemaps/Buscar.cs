@@ -1,11 +1,9 @@
 ﻿#nullable disable
 
-using ApexCharts;
 using Herramientas;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BaseDatos.Sitemaps
 {
@@ -48,9 +46,15 @@ namespace BaseDatos.Sitemaps
 							}
 							catch { }
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return cantidad;
 		}
@@ -133,9 +137,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -221,9 +231,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -309,9 +325,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -397,9 +419,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -505,9 +533,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -613,9 +647,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}
@@ -688,9 +728,15 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return lineas;
 		}

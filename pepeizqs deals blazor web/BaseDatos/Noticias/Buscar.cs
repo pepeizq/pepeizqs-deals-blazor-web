@@ -110,6 +110,8 @@ namespace BaseDatos.Noticias
 
 		public static Noticia UnaNoticia(int id)
 		{
+			Noticia noticia = null;
+
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
 			using (conexion)
@@ -124,48 +126,19 @@ namespace BaseDatos.Noticias
 					{
 						while (lector.Read())
 						{
-							return Cargar(lector, conexion);
+							noticia = Cargar(lector, conexion);
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			return null;
-		}
+			conexion.Dispose();
 
-		public static string UnaNoticiaEnlace(int id, SqlConnection conexion = null)
-		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
-			string busqueda = "SELECT enlace FROM noticias WHERE id=@id";
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				comando.Parameters.AddWithValue("@id", id);
-
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read())
-					{
-						if (lector.IsDBNull(0) == false)
-						{
-							return lector.GetString(0);
-						}
-					}
-				}
-			}
-
-			return null;
+			return noticia;
 		}
 
 		public static Noticia Ultimo(SqlConnection conexion = null)
@@ -182,6 +155,8 @@ namespace BaseDatos.Noticias
 				}
 			}
 
+			Noticia noticia = null;
+
 			string busqueda = "SELECT TOP 1 * FROM noticias ORDER BY id DESC";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -190,12 +165,18 @@ namespace BaseDatos.Noticias
 				{
 					while (lector.Read())
 					{
-						return Cargar(lector, conexion);
+						noticia = Cargar(lector, conexion);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
-			return null;
+			conexion.Dispose();
+
+			return noticia;
 		}
 
 		public static List<Noticia> Actuales(NoticiaTipo tipo = NoticiaTipo.Desconocido, int ultimosDias = 0, SqlConnection conexion = null)
@@ -238,9 +219,15 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+				
+			conexion.Dispose();
 
 			return noticias;
 		}
@@ -263,7 +250,7 @@ namespace BaseDatos.Noticias
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM noticias WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina";
+				string busqueda = "SELECT * FROM noticias WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY nombre DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -273,14 +260,15 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
 
-			if (noticias.Count > 0)
-			{
-				noticias.Reverse();
-			}
+			conexion.Dispose();
 
 			return noticias;
 		}
@@ -313,10 +301,16 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
-			
+
+			conexion.Dispose();
+
 			return noticias;
 		}
 
@@ -350,9 +344,15 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 
 			return noticias;
 		}

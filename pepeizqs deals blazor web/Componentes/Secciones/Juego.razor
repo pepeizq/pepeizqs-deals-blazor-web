@@ -3780,7 +3780,7 @@
 
                 if (actualizarDatosAPI == true)
                 {
-                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdSteam, "SteamAPI");
+                    BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, juego.IdSteam, "SteamAPI");
                 }
 
                 #endregion
@@ -3926,13 +3926,13 @@
             {
                 if (juego.GalaxyGOG == null)
                 {
-                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
+                    BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
                 }
                 else
                 {
                     if (juego.GalaxyGOG.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
                     {
-                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
+                        BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, juego.IdGog, "GOGAPI");
                     }
                 }
             }
@@ -3941,13 +3941,13 @@
             {
                 if (juego.EpicGames == null)
                 {
-                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
+                    BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
                 }
                 else
                 {
                     if (juego.EpicGames.Fecha + TimeSpan.FromDays(240) < DateTime.Now)
                     {
-                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
+                        BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, 0, "EpicAPI");
                     }
                 }
             }
@@ -3956,13 +3956,13 @@
             {
                 if (juego.Xbox == null)
                 {
-                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
+                    BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
                 }
                 else
                 {
                     if (juego.Xbox.Fecha + TimeSpan.FromDays(120) < DateTime.Now)
                     {
-                        BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
+                        BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, 0, "XboxAPI");
                     }
                 }
             }
@@ -4324,7 +4324,7 @@
 
                 if (actualizarUltimaActualizacion == true)
                 {
-                    BaseDatos.Fichas.Insertar.Ejecutar(juego.Id, 0, "SteamCMD");
+                    BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, 0, "SteamCMD");
                 }
             }
 

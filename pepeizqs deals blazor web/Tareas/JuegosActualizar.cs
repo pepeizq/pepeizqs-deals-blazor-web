@@ -6,13 +6,13 @@ using Microsoft.Data.SqlClient;
 
 namespace Tareas
 {
-	public class FichasActualizar : BackgroundService
+	public class JuegosActualizar : BackgroundService
 	{
-		private readonly ILogger<FichasActualizar> _logger;
+		private readonly ILogger<JuegosActualizar> _logger;
 		private readonly IServiceScopeFactory _factoria;
 		private readonly IDecompiladores _decompilador;
 
-		public FichasActualizar(ILogger<FichasActualizar> logger, IServiceScopeFactory factory, IDecompiladores decompilador)
+		public JuegosActualizar(ILogger<JuegosActualizar> logger, IServiceScopeFactory factory, IDecompiladores decompilador)
 		{
 			_logger = logger;
 			_factoria = factory;
@@ -49,7 +49,7 @@ namespace Tareas
 							{
 								BaseDatos.Admin.Actualizar.TareaUso("fichasActualizar", DateTime.Now, conexion);
 
-								List<BaseDatos.Fichas.FichaActualizar> fichas = BaseDatos.Fichas.Buscar.Todos(conexion);
+								List<BaseDatos.JuegosActualizar.JuegoActualizar> fichas = BaseDatos.JuegosActualizar.Buscar.Todos(conexion);
 
 								if (fichas.Count > 0)
 								{
@@ -64,7 +64,7 @@ namespace Tareas
 											{
 												BaseDatos.Juegos.Actualizar.Media(nuevoJuego, juego);
 
-												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+												BaseDatos.JuegosActualizar.Limpiar.Una(ficha, conexion);
 											}
 										}
 
@@ -84,7 +84,7 @@ namespace Tareas
 													BaseDatos.Juegos.Actualizar.GalaxyGOG(juego);
 												}
 
-												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+												BaseDatos.JuegosActualizar.Limpiar.Una(ficha, conexion);
 											}
 										}
 
@@ -102,7 +102,7 @@ namespace Tareas
 													BaseDatos.Juegos.Actualizar.EpicGames(juego);
 												}
 
-												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+												BaseDatos.JuegosActualizar.Limpiar.Una(ficha, conexion);
 											}
 										}
 
@@ -120,7 +120,7 @@ namespace Tareas
 													BaseDatos.Juegos.Actualizar.Xbox(juego);
 												}
 
-												BaseDatos.Fichas.Limpiar.Una(ficha, conexion);
+												BaseDatos.JuegosActualizar.Limpiar.Una(ficha, conexion);
 											}
 										}
 

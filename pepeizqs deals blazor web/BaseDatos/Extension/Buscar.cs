@@ -179,13 +179,19 @@ namespace BaseDatos.Extension
 								extension.SlugEpic = lector.GetString(10);
 							}
 						}
-
-						if (buscarDivisas == false)
-						{
-							return extension;
-						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
+			}
+
+			if (buscarDivisas == false)
+			{
+				conexion.Dispose();
+
+				return extension;
 			}
 
 			string buscar2 = "SELECT id, cantidad FROM divisas WHERE id='USD' OR id='GBP'";
@@ -210,9 +216,15 @@ namespace BaseDatos.Extension
 						}
 					}
 
-					return extension;
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
+
+			return extension;
 		}
 	}
 }

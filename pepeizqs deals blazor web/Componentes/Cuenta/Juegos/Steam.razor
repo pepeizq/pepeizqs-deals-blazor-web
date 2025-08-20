@@ -1,6 +1,7 @@
 ﻿@using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
+@using System.Text.Json
 @using global::Juegos
 @using pepeizqs_deals_web.Data
 
@@ -62,9 +63,9 @@
 				@{
 					int cantidadJuegos = 0;
 
-					if (string.IsNullOrEmpty(usuario.SteamGames) == false)
+					if (listadoJuegos != null)
 					{
-						cantidadJuegos = Herramientas.Listados.Generar(usuario.SteamGames).Count;
+						cantidadJuegos = listadoJuegos.Count;
 					}
 
 					<div style="background-color: var(--fondoBien); padding: 10px 20px;">
@@ -117,14 +118,14 @@
 
 				@if (errorCuentaUsada == true)
 				{
-					<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px">
+					<div style="background-color: var(--fondoPeligro); padding: 20px">
 						@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountGames"), "Steam")
 					</div>
 				}
 
 				@if (Convert.ToDateTime(usuario.SteamAccountLastCheck) + TimeSpan.FromMinutes(10) > DateTime.Now)
 				{
-					<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px">
+					<div style="background-color: var(--fondoPeligro); padding: 20px">
 						<div>
 							@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String12", "AccountGames"), "Steam")
 						</div>
@@ -182,6 +183,7 @@
 	public string idioma { get; set; }
 
 	private Usuario usuario = new Usuario();
+	private List<SteamUsuarioJuego> listadoJuegos = null;
 
 	private string enlaceCuenta = string.Empty;
 
@@ -191,14 +193,19 @@
 	private string mensajeCargando = string.Empty;
 	private bool errorCuentaUsada = false;
 
-	private SteamUsuario datos = new SteamUsuario();
-
 	protected override async Task OnInitializedAsync()
 	{
 		usuario = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
 
 		if (usuario != null)
 		{
+			try
+			{
+				listadoJuegos = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
+			}
+			catch
+			{ }
+
 			if (string.IsNullOrEmpty(usuario.SteamAccountLastCheck) == false)
 			{
 				if (Convert.ToDateTime(usuario.SteamAccountLastCheck) + TimeSpan.FromMinutes(10) < DateTime.Now)
@@ -260,12 +267,12 @@
 					{
 						mensajeCargando = Herramientas.Idiomas.BuscarTexto(idioma, "Steam14", "Account");
 
-						datos = await APIs.Steam.Cuenta.CargarDatos(enlaceCuenta);
+						SteamUsuario datos = await APIs.Steam.Cuenta.CargarDatos(enlaceCuenta);
 
 						if (datos != null)
 						{
 							usuario.SteamAccount = enlaceCuenta;
-							usuario.SteamGames = datos.Juegos;
+							usuario.SteamGames = JsonSerializer.Serialize(datos.Juegos);
 							usuario.SteamWishlist = datos.Deseados;
 							usuario.Avatar = datos.Avatar;
 							usuario.Nickname = datos.Nombre;

@@ -9,6 +9,8 @@ namespace BaseDatos.JuegosActualizar
 	{
 		public static bool Existe(int idJuego, int idPlataforma, string metodo, SqlConnection conexion = null)
 		{
+			bool existe = false;
+
 			if (conexion == null)
 			{
 				conexion = Herramientas.BaseDatos.Conectar();
@@ -36,19 +38,18 @@ namespace BaseDatos.JuegosActualizar
 
 					if (count > 0)
 					{
-						return true;
-					}
-					else
-					{
-						return false;
+						existe = true;
 					}
 				}
 				catch (Exception ex)
 				{
 					BaseDatos.Errores.Insertar.Mensaje("Buscar Fichas Actualizar", ex);
-					return false;
 				}
+
+				comando.Dispose();
 			}
+
+			return existe;
 		}
 
 		public static List<JuegoActualizar> Todos(SqlConnection conexion = null)
@@ -84,8 +85,14 @@ namespace BaseDatos.JuegosActualizar
 
 						fichas.Add(ficha);
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 
 			return fichas;
 		}

@@ -56,8 +56,20 @@ namespace APIs.Ubisoft
             return ubisoft;
         }
 
-        public static async Task Buscar(SqlConnection conexion)
+        public static async Task Buscar(SqlConnection conexion = null)
         {
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
 
             int cantidad = 0;
@@ -92,7 +104,19 @@ namespace APIs.Ubisoft
 
                         bool encontrado = false;
 
-                        string sqlBuscar = "SELECT idJuegos FROM tiendaubisoft WHERE enlace=@enlace";
+						if (conexion == null)
+						{
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
+						else
+						{
+							if (conexion.State != System.Data.ConnectionState.Open)
+							{
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+						}
+
+						string sqlBuscar = "SELECT idJuegos FROM tiendaubisoft WHERE enlace=@enlace";
 
                         using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
                         {
@@ -212,8 +236,20 @@ namespace APIs.Ubisoft
             }
         }
 
-		public static async Task BuscarPremium(SqlConnection conexion)
+		public static async Task BuscarPremium(SqlConnection conexion = null)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			BaseDatos.Admin.Actualizar.Tiendas(GenerarPremium().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
 
 			int cantidad = 0;
@@ -247,6 +283,18 @@ namespace APIs.Ubisoft
 						string enlace = "https://store.ubisoft.com/" + juego.Id + ".html";
 
 						bool encontrado = false;
+
+						if (conexion == null)
+						{
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
+						else
+						{
+							if (conexion.State != System.Data.ConnectionState.Open)
+							{
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+						}
 
 						string sqlBuscar = "SELECT idJuegos FROM tiendaubisoft WHERE enlace=@enlace";
 

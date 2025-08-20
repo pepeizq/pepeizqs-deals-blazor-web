@@ -24,7 +24,7 @@ namespace BaseDatos.Errores
 
             using (conexion)
             {
-                string busqueda = "SELECT * FROM errores";
+                string busqueda = "SELECT * FROM errores ORDER BY fecha DESC";
 
                 using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
@@ -50,10 +50,7 @@ namespace BaseDatos.Errores
                             {
                                 if (lector.IsDBNull(3) == false)
                                 {
-									if (string.IsNullOrEmpty(lector.GetString(3)) == false)
-                                    {
-										error.Fecha = DateTime.Parse(lector.GetString(3));
-									}										
+									error.Fecha = lector.GetDateTime(3);
 								}
 							}
                             catch { }
@@ -68,14 +65,15 @@ namespace BaseDatos.Errores
 
                             listaErrores.Add(error);
                         }
-                    }
-                }
 
-                if (listaErrores.Count > 0)
-                {
-                    listaErrores = listaErrores.OrderBy(x => x.Fecha).Reverse().ToList();
-                }
-            }
+                        lector.Dispose();
+                    }
+
+                    comando.Dispose();
+				}
+
+                conexion.Dispose();
+			}
 
             return listaErrores;
         }

@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-using Gratis2;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Suscripciones2;
@@ -71,15 +70,9 @@ namespace BaseDatos.Suscripciones
                         {
 							suscripciones.Add(Cargar(lector));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return suscripciones;
         }
@@ -112,15 +105,9 @@ namespace BaseDatos.Suscripciones
 						{
 							suscripciones.Add(Cargar(lector));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return suscripciones;
 		}
@@ -164,15 +151,9 @@ namespace BaseDatos.Suscripciones
 								}
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			if (suscripciones.Count > 0) 
 			{
@@ -210,14 +191,8 @@ namespace BaseDatos.Suscripciones
 					{
 						juego = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juego;
 		}
@@ -252,15 +227,9 @@ namespace BaseDatos.Suscripciones
 						{
 							juego = Cargar(lector);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return juego;
 		}
@@ -285,15 +254,9 @@ namespace BaseDatos.Suscripciones
 						{
 							resultados.Add(Cargar(lector));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			if (resultados.Count > 0)
 			{
@@ -331,14 +294,8 @@ namespace BaseDatos.Suscripciones
 					{
 						juego = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juego;
 		}
@@ -369,14 +326,8 @@ namespace BaseDatos.Suscripciones
 					{
 						suscripciones.Add(Cargar(lector));
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return suscripciones;
 		}
@@ -407,14 +358,8 @@ namespace BaseDatos.Suscripciones
 					{
 						juegos.Add(Cargar(lector));
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegos;
 		}

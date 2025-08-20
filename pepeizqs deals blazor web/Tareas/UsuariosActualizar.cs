@@ -5,6 +5,7 @@ using Herramientas;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using pepeizqs_deals_web.Data;
+using System.Text.Json;
 
 namespace Tareas
 {
@@ -64,7 +65,7 @@ namespace Tareas
 											Usuario usuario = await UserManager.FindByIdAsync(usuario2.IdUsuario);
 											SteamUsuario datos = await APIs.Steam.Cuenta.CargarDatos(usuario.SteamAccount);
 
-											usuario.SteamGames = datos.Juegos;
+											usuario.SteamGames = JsonSerializer.Serialize(datos.Juegos);
 											usuario.SteamWishlist = datos.Deseados;
 											usuario.Avatar = datos.Avatar;
 											usuario.Nickname = datos.Nombre;
@@ -83,7 +84,7 @@ namespace Tareas
 
 											Usuario usuario = await UserManager.FindByIdAsync(usuario2.IdUsuario);
 
-											usuario.GogGames = await APIs.GOG.Cuenta.BuscarJuegos(usuario.GogAccount);
+											usuario.GogGames = JsonSerializer.Serialize(await APIs.GOG.Cuenta.BuscarJuegos(usuario.GogAccount));
 											usuario.GogWishlist = await APIs.GOG.Cuenta.BuscarDeseados(usuario.GogId);
 											usuario.GogAccountLastCheck = DateTime.Now;
 

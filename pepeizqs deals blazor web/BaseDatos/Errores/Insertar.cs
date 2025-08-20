@@ -31,7 +31,7 @@ namespace BaseDatos.Errores
                     comando.Parameters.AddWithValue("@seccion", seccion);
                     comando.Parameters.AddWithValue("@mensaje", ex.Message);
                     comando.Parameters.AddWithValue("@stacktrace", ex.StackTrace);
-                    comando.Parameters.AddWithValue("@fecha", DateTime.Now.ToString());
+                    comando.Parameters.AddWithValue("@fecha", DateTime.Now);
 
                     try
                     {
@@ -41,8 +41,12 @@ namespace BaseDatos.Errores
                     {
 
                     }
-                }
-            }
+
+                    comando.Dispose();
+				}
+
+                conexion.Dispose();
+			}
             
             if (reiniciar == true)
             {
@@ -57,17 +61,7 @@ namespace BaseDatos.Errores
 			}  
         }
 
-        public static void Mensaje(string seccion, string mensaje, string enlace = null)
-        {
-            SqlConnection conexion = Herramientas.BaseDatos.Conectar();
-
-            using (conexion)
-            {
-                Mensaje(seccion, mensaje, conexion, enlace);
-            }
-        }
-
-        public static void Mensaje(string seccion, string mensaje, SqlConnection conexion, string enlace = null)
+        public static void Mensaje(string seccion, string mensaje, string enlace = null, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -95,7 +89,7 @@ namespace BaseDatos.Errores
                 comando.Parameters.AddWithValue("@seccion", seccion);
                 comando.Parameters.AddWithValue("@mensaje", "nada");
                 comando.Parameters.AddWithValue("@stacktrace", mensaje);
-                comando.Parameters.AddWithValue("@fecha", DateTime.Now.ToString());
+                comando.Parameters.AddWithValue("@fecha", DateTime.Now);
                 comando.Parameters.AddWithValue("@enlace", enlace);
 
                 try
@@ -106,7 +100,11 @@ namespace BaseDatos.Errores
                 {
                     Mensaje("Errores", ex);
                 }
-            }
-        }
+
+                comando.Dispose();
+			}
+
+            conexion.Dispose();
+		}
     }
 }

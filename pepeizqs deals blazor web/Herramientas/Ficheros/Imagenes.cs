@@ -87,12 +87,12 @@ namespace Herramientas.Ficheros
 
 				if (añadirServidor == true)
 				{
-					enlace = "https://wsrv.nl/?n=-1&output=webp&url=" + enlace;
+					//enlace = "https://wsrv.nl/?n=-1&output=webp&url=" + enlace;
 
-					if (ancho > 0 && alto > 0)
-					{
-						enlace = enlace + "&w=" + ancho + "&h=" + alto + "&dpr=2";
-					}
+					//if (ancho > 0 && alto > 0)
+					//{
+					//	enlace = enlace + "&w=" + ancho + "&h=" + alto + "&dpr=2";
+					//}
 				}
 			}
 

@@ -46,8 +46,6 @@ namespace BaseDatos.Curators
 				{
 					comando.Parameters.AddWithValue("@imagenFondo", curator.ImagenFondo);
 				}
-				
-				SqlDataReader lector = comando.ExecuteReader();
 
 				try
 				{
@@ -57,7 +55,11 @@ namespace BaseDatos.Curators
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void ImagenFondo(string imagenFondo, int id, SqlConnection conexion = null)
@@ -82,8 +84,6 @@ namespace BaseDatos.Curators
 				comando.Parameters.AddWithValue("@idSteam", id);
 				comando.Parameters.AddWithValue("@imagenFondo", imagenFondo);
 
-				SqlDataReader lector = comando.ExecuteReader();
-
 				try
 				{
 					comando.ExecuteNonQuery();
@@ -92,7 +92,11 @@ namespace BaseDatos.Curators
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 	}
 }

@@ -99,6 +99,18 @@ namespace APIs.Humble
 					{
 						foreach (HumbleJuego juego in juegos.Resultados)
 						{
+							if (conexion == null)
+							{
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+							else
+							{
+								if (conexion.State != System.Data.ConnectionState.Open)
+								{
+									conexion = Herramientas.BaseDatos.Conectar();
+								}
+							}
+
 							string sqlAñadir = "INSERT INTO temporalhumble " +
 									"(contenido, fecha, enlace) VALUES " +
 									"(@contenido, @fecha, @enlace) ";
@@ -124,8 +136,20 @@ namespace APIs.Humble
 			}	         
         }
 
-		public static async Task BuscarOfertas(SqlConnection conexion)
+		public static async Task BuscarOfertas(SqlConnection conexion = null)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			await Task.Delay(1000);
 
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
@@ -285,18 +309,18 @@ namespace APIs.Humble
 									}
 									catch (Exception ex)
 									{
-                                        BaseDatos.Errores.Insertar.Mensaje(Tienda.Generar().Id, ex, conexion);
+                                        BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
                                     }
 
 									juegos2 += 1;
 
 									try
 									{
-										BaseDatos.Admin.Actualizar.Tiendas(Tienda.Generar().Id, DateTime.Now, juegos2, conexion);
+										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
 									}
 									catch (Exception ex)
 									{
-                                        BaseDatos.Errores.Insertar.Mensaje(Tienda.Generar().Id, ex, conexion);
+                                        BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
                                     }
 								}
 							}

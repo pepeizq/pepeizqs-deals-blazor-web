@@ -7,9 +7,21 @@ namespace BaseDatos.Divisas
 {
 	public static class Insertar
 	{
-		public static void Ejecutar(Divisa divisa, SqlConnection conexion)
+		public static void Ejecutar(Divisa divisa, SqlConnection conexion = null)
 		{
-            string sqlAñadir = "INSERT INTO divisas " +
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlAñadir = "INSERT INTO divisas " +
                      "(id, cantidad, fecha) VALUES " +
                      "(@id, @cantidad, @fecha) ";
 
@@ -27,7 +39,11 @@ namespace BaseDatos.Divisas
                 {
 
                 }
-            }
-        }
+
+                comando.Dispose();
+			}
+
+            conexion.Dispose();
+		}
 	}
 }

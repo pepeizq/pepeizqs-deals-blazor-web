@@ -1550,7 +1550,7 @@ else
 						{
 							foreach (var juegoUsuario in juegosUsuario.Steam)
 							{
-								if (juego.IdSteam.ToString() == juegoUsuario)
+								if (juego.IdSteam == juegoUsuario.Id)
 								{
 									if (nuevaLista.Count > 0)
 									{

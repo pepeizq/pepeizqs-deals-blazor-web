@@ -32,8 +32,20 @@ namespace APIs.Xbox
             return gamepass;
         }
 
-        public static async Task Buscar(SqlConnection conexion)
+        public static async Task Buscar(SqlConnection conexion = null)
         {
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
 
             int cantidad = 0;

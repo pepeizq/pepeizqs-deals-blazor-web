@@ -39,6 +39,8 @@ namespace BaseDatos.Bundles
 					{
 
 					}
+
+					comando.Dispose();
 				}
 
 				if (bundle.Juegos != null)
@@ -54,7 +56,11 @@ namespace BaseDatos.Bundles
 							{
 								id = lector.GetInt32(0);
 							}
+
+							lector.Dispose();
 						}
+
+						comando.Dispose();
 					}
 
 					if (id > 0) 
@@ -102,12 +108,16 @@ namespace BaseDatos.Bundles
 										{
 
 										}
+
+										comando.Dispose();
 									}
 								}
 							}
 						}
 					}					
 				}		
+
+				conexion.Dispose();
 			}
 		}
 	}

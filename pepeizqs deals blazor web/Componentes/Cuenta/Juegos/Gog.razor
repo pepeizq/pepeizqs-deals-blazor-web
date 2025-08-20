@@ -1,5 +1,7 @@
-﻿@using Microsoft.AspNetCore.Components.Web
+﻿@using APIs.GOG
+@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
+@using System.Text.Json
 @using global::Juegos
 @using pepeizqs_deals_web.Data
 
@@ -62,9 +64,9 @@
 				@{
 					int cantidadJuegos = 0;
 
-					if (string.IsNullOrEmpty(usuario.GogGames) == false)
+					if (listadoJuegos != null)
 					{
-						cantidadJuegos = Herramientas.Listados.Generar(usuario.GogGames).Count;
+						cantidadJuegos = listadoJuegos.Count;
 					}
 
 					<div style="background-color: var(--fondoBien); padding: 10px 20px;">
@@ -117,14 +119,14 @@
 
 				@if (errorCuentaUsada == true)
 				{
-					<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px">
+					<div style="background-color: var(--fondoPeligro); padding: 20px">
 						@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountGames"), "GOG")
 					</div>
 				}
 
 				@if (usuario.GogAccountLastCheck + TimeSpan.FromMinutes(10) > DateTime.Now)
 				{
-					<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px">
+					<div style="background-color: var(--fondoPeligro); padding: 20px">
 						<div>
 							@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String12", "AccountGames"), "GOG")
 						</div>
@@ -182,6 +184,7 @@
 	public string idioma { get; set; }
 
 	private Usuario usuario = new Usuario();
+	private List<GOGUsuarioJuego> listadoJuegos = null;
 
 	private string enlaceCuenta = string.Empty;
 
@@ -197,6 +200,13 @@
 
 		if (usuario != null)
 		{
+			try
+			{
+				listadoJuegos = JsonSerializer.Deserialize<List<GOGUsuarioJuego>>(usuario.GogGames);
+			}
+			catch
+			{  }		
+
 			if (usuario.GogAccountLastCheck != null)
 			{
 				if (usuario.GogAccountLastCheck + TimeSpan.FromMinutes(10) < DateTime.Now)
@@ -224,39 +234,6 @@
 		{
 			enlaceCuenta = texto.Value.ToString().Trim();
 		}
-	}
-
-	private string MensajeCantidad(string datos)
-	{
-		if (datos != null)
-		{
-			string juegos = datos;
-
-			int i = 0;
-			int j = 100000;
-
-			while (i < j)
-			{
-				i += 1;
-
-				if (juegos.Contains(",") == true)
-				{
-					int int1 = juegos.IndexOf(",");
-					juegos = juegos.Remove(0, int1 + 1);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if (i > 0)
-			{
-				return i.ToString();
-			}
-		}
-
-		return null;
 	}
 
 	private void ClickearEnseñarImagen()
@@ -292,7 +269,7 @@
 						mensajeCargando = Herramientas.Idiomas.BuscarTexto(idioma, "Gog14", "Account");
 
 						usuario.GogAccount = enlaceCuenta;
-						usuario.GogGames = await APIs.GOG.Cuenta.BuscarJuegos(enlaceCuenta);
+						usuario.GogGames = JsonSerializer.Serialize(await APIs.GOG.Cuenta.BuscarJuegos(enlaceCuenta));
 						usuario.GogWishlist = await APIs.GOG.Cuenta.BuscarDeseados(idCuenta);
 						usuario.GogAccountLastCheck = DateTime.Now;
 						usuario.GogId = idCuenta;

@@ -7,8 +7,20 @@ namespace BaseDatos.Suscripciones
 {
 	public static class Actualizar
 	{
-		public static void FechaTermina(JuegoSuscripcion suscripcion, SqlConnection conexion)
+		public static void FechaTermina(JuegoSuscripcion suscripcion, SqlConnection conexion = null)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			string sqlActualizar = "UPDATE suscripciones " +
 					"SET fechaTermina=@fechaTermina WHERE enlace=@enlace";
 

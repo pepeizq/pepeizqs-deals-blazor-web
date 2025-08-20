@@ -538,7 +538,7 @@ namespace BaseDatos.Juegos
 			return UnJuego(id.ToString());
 		}
 
-		public static Juego UnJuego(string id = null, string idSteam = null, string idGog = null, string idEpic = null)
+		public static Juego UnJuego(string id = null, string idSteam = null, string idGog = null, string idEpic = null, SqlConnection conexion = null)
 		{
 			string sqlBuscar = string.Empty;
 			string idParametro = string.Empty;
@@ -582,7 +582,17 @@ namespace BaseDatos.Juegos
 
 			if (sqlBuscar != string.Empty)
 			{
-				SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
 
 				using (conexion)
 				{
@@ -1019,14 +1029,8 @@ namespace BaseDatos.Juegos
 							juegos.Add(juego);
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegos;
 		}

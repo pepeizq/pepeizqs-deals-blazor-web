@@ -155,8 +155,12 @@ namespace BaseDatos.Juegos
 					{
 						Errores.Insertar.Mensaje("Actualizar Datos " + juego.Nombre + " " + juego.Id.ToString(), ex);
 					}
+
+					comando.Dispose();
 				}
-			}		
+			}
+
+			conexion.Dispose();
 		}
 
 		public static void Comprobacion(int id, List<JuegoPrecio> ofertasActuales, List<JuegoPrecio> ofertasHistoricas, List<JuegoHistorico> historicos, SqlConnection conexion = null, string slugGOG = null, string idGOG = null, string slugEpic = null, DateTime? ultimaModificacion = null, JuegoAnalisis analisis = null)
@@ -262,7 +266,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Imagenes(Juego juego, SqlConnection conexion)
@@ -283,6 +291,8 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
 
 			string sqlActualizar2 = "UPDATE seccionMinimos " +
@@ -301,7 +311,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando2.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void PreciosActuales(Juego juego, SqlConnection conexion)
@@ -322,7 +336,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void PreciosHistoricos(Juego juego, SqlConnection conexion)
@@ -343,7 +361,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Bundles(Juego juego, SqlConnection conexion)
@@ -372,7 +394,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Gratis(Juego juego, SqlConnection conexion)
@@ -401,7 +427,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Suscripciones(Juego juego, SqlConnection conexion)
@@ -422,6 +452,8 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
 
 			string sqlActualizar2 = "UPDATE seccionMinimos " +
@@ -440,7 +472,11 @@ namespace BaseDatos.Juegos
 				{
 				
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void DlcMaestro(Juego juego, SqlConnection conexion)
@@ -461,7 +497,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void FreeToPlay(Juego juego, SqlConnection conexion)
@@ -482,7 +522,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void MayorEdad(Juego juego, SqlConnection conexion = null)
@@ -515,6 +559,8 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
 
 			bool actualizar = false;
@@ -530,7 +576,11 @@ namespace BaseDatos.Juegos
 					{
 						actualizar = true;
 					}
+
+					lector.Dispose();
 				}
+
+				comando2.Dispose();
 			}
 
 			if (actualizar == true)
@@ -551,8 +601,12 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando3.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void OcultarPortada(Juego juego, SqlConnection conexion = null)
@@ -585,6 +639,8 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
 
 			bool actualizar = false;
@@ -600,7 +656,11 @@ namespace BaseDatos.Juegos
 					{
 						actualizar = true;
 					}
+
+					lector.Dispose();
 				}
+
+				comando2.Dispose();
 			}
 
 			if (actualizar == true)
@@ -621,8 +681,12 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando3.Dispose();
 				}
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Media(Juego nuevoJuego, Juego juego, SqlConnection conexion = null)
@@ -780,7 +844,11 @@ namespace BaseDatos.Juegos
 						{
 							BaseDatos.Errores.Insertar.Mensaje("Actualizar Steam API", ex);
 						}
+
+						comando.Dispose();
 					}
+
+					conexion.Dispose();
 				}
 			}		
 		}
@@ -803,7 +871,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void IdSteam(Juego juego, SqlConnection conexion)
@@ -824,7 +896,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Deseados(Juego juego, SqlConnection conexion)
@@ -845,7 +921,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void IdGOG(Juego juego, SqlConnection conexion)
@@ -867,7 +947,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void SlugGOG(Juego juego, SqlConnection conexion = null)
@@ -901,7 +985,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void SlugEpic(Juego juego, SqlConnection conexion = null)
@@ -935,7 +1023,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void ExeEpic(Juego juego, SqlConnection conexion = null)
@@ -969,7 +1061,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void IdXbox(int idJuego, string idXbox, SqlConnection conexion = null)
@@ -1003,7 +1099,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void ExeUbisoft(Juego juego, SqlConnection conexion = null)
@@ -1037,7 +1137,11 @@ namespace BaseDatos.Juegos
 				{
 
 				}
+
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static void Deck(Juego juego, SqlConnection conexion = null)
@@ -1077,7 +1181,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1114,7 +1222,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1151,7 +1263,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1189,7 +1305,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1227,7 +1347,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1265,7 +1389,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1302,7 +1430,11 @@ namespace BaseDatos.Juegos
 					{
 
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 
@@ -1363,7 +1495,11 @@ namespace BaseDatos.Juegos
 					{
 						BaseDatos.Errores.Insertar.Mensaje("Actualizar SteamCMD " + idJuego.ToString(), ex);
 					}
+
+					comando.Dispose();
 				}
+
+				conexion.Dispose();
 			}
 		}
 	}

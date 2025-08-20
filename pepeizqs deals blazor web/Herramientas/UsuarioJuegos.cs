@@ -1,7 +1,9 @@
 ﻿#nullable disable
 
+using APIs.Steam;
 using Juegos;
 using pepeizqs_deals_web.Data;
+using System.Text.Json;
 
 namespace Herramientas
 {
@@ -15,7 +17,7 @@ namespace Herramientas
 
 			if (string.IsNullOrEmpty(usuario.SteamGames) == false)
 			{
-				listados.Steam = Herramientas.Listados.Generar(usuario.SteamGames);
+				listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
 			}
 
 			if (string.IsNullOrEmpty(usuario.GogGames) == false)
@@ -52,7 +54,7 @@ namespace Herramientas
 
 			if (string.IsNullOrEmpty(usuario.SteamGames) == false)
 			{
-				listados.Steam = Herramientas.Listados.Generar(usuario.SteamGames);
+				listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
 			}
 
 			if (string.IsNullOrEmpty(usuario.GogGames) == false)
@@ -83,7 +85,7 @@ namespace Herramientas
 			return listados;
 		}
 
-		public static bool ComprobarSiTiene(UsuarioListadosJuegos listados, Juego juego, JuegoDRM drm = JuegoDRM.NoEspecificado)
+		public static bool ComprobarSiTiene(UsuarioListadosJuegos listados, Juegos.Juego juego, JuegoDRM drm = JuegoDRM.NoEspecificado)
 		{
 			if (juego != null && listados != null)
 			{
@@ -106,7 +108,7 @@ namespace Herramientas
 								{
 									foreach (var juegoUsuario in listados.Steam)
 									{
-										if (juegoUsuario == juego.IdSteam.ToString())
+										if (juegoUsuario.Id == juego.IdSteam)
 										{
 											return true;
 										}
@@ -274,7 +276,7 @@ namespace Herramientas
 
 	public class UsuarioListadosJuegos
 	{
-		public List<string> Steam { get; set; }
+		public List<SteamUsuarioJuego> Steam { get; set; }
 		public List<string> Gog { get; set; }
 		public List<string> Amazon { get; set; }
 		public List<string> Epic { get; set; }

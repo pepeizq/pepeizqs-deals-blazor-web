@@ -1153,7 +1153,7 @@
 						{
 							foreach (var juegoUsuario in juegosUsuario.Steam)
 							{
-								if (juego.IdSteam.ToString() == juegoUsuario)
+								if (juego.IdSteam == juegoUsuario.Id)
 								{
 									ocultar = true;
 									break;

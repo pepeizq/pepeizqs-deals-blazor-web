@@ -4344,7 +4344,7 @@
 
                             if (drm.Id == JuegoDRM.Steam && juego.IdSteam > 0)
                             {
-                                List<string> juegosSteam = juegosUsuario.Steam;
+                                List<SteamUsuarioJuego> juegosSteam = juegosUsuario.Steam;
 
                                 if (juegosSteam != null)
                                 {
@@ -4354,7 +4354,7 @@
                                         {
                                             foreach (var juegoUsuario in juegosSteam)
                                             {
-                                                if (juegoUsuario == juego.IdSteam.ToString())
+                                                if (juegoUsuario.Id == juego.IdSteam)
                                                 {
                                                     JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
                                                     nuevoJuegoUsuario.DRM = JuegoDRM.Steam;

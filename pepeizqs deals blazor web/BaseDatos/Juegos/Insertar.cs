@@ -261,8 +261,12 @@ namespace BaseDatos.Juegos
 					}
 
 					Errores.Insertar.Mensaje("Añadir Juego en " + tabla + " - Id Steam: " + añadido, ex);
-				}				
+				}
+				
+				comando.Dispose();
 			}
+
+			conexion.Dispose();
 		}
 
 		public static async Task<string> GogReferencia(string idReferencia, SqlConnection conexion = null)
@@ -296,7 +300,11 @@ namespace BaseDatos.Juegos
 							return lector.GetInt32(1).ToString();
 						}
 					}
+
+					lector.Dispose();
 				}
+
+				comando.Dispose();
 			}
 
 			if (sePuedeInsertar == true)
@@ -320,12 +328,16 @@ namespace BaseDatos.Juegos
 						{
 							Errores.Insertar.Mensaje("Añadir GOG Referencia " + idJuego, ex);
 						}
+
+						comando.Dispose();
 					}
 
 					return idJuego;
 				}
 			}
-			
+
+			conexion.Dispose();
+
 			return idReferencia;
 		}
 	}

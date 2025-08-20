@@ -64,7 +64,11 @@ namespace BaseDatos.Curators
 						{
 							BaseDatos.Errores.Insertar.Mensaje("Insertar Curator", ex);
 						}
+
+						comando.Dispose();
 					}
+
+					conexion.Dispose();
 				}
 			}
 		}

@@ -316,7 +316,19 @@ namespace APIs.EA
 							if (juegoEA.Suscripciones.EaPlay != null)
 							{
 								bool encontrado = false;
-							
+
+								if (conexion == null)
+								{
+									conexion = Herramientas.BaseDatos.Conectar();
+								}
+								else
+								{
+									if (conexion.State != System.Data.ConnectionState.Open)
+									{
+										conexion = Herramientas.BaseDatos.Conectar();
+									}
+								}
+
 								string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
 
 								using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
@@ -434,6 +446,18 @@ namespace APIs.EA
 								if (juegoEA.Suscripciones.EaPlayPro != null)
 								{
 									bool encontrado = false;
+
+									if (conexion == null)
+									{
+										conexion = Herramientas.BaseDatos.Conectar();
+									}
+									else
+									{
+										if (conexion.State != System.Data.ConnectionState.Open)
+										{
+											conexion = Herramientas.BaseDatos.Conectar();
+										}
+									}
 
 									string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
 

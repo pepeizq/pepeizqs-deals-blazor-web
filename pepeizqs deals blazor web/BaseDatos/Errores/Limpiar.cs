@@ -13,7 +13,11 @@ namespace BaseDatos.Errores
             using (SqlCommand comando = new SqlCommand(limpiar, conexion))
             {
                 comando.ExecuteNonQuery();
-            }
-        }
+
+                comando.Dispose();
+			}
+
+            conexion.Dispose();
+		}
     }
 }

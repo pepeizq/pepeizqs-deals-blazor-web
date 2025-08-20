@@ -7,9 +7,21 @@ namespace BaseDatos.Divisas
 {
 	public static class Actualizar
 	{
-		public static void Ejecutar(Divisa divisa, SqlConnection conexion)
+		public static void Ejecutar(Divisa divisa, SqlConnection conexion = null)
 		{
-            string sqlActualizar = "UPDATE divisas " +
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string sqlActualizar = "UPDATE divisas " +
                     "SET id=@id, cantidad=@cantidad, fecha=@fecha WHERE id=@id";
 
             using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
@@ -26,7 +38,11 @@ namespace BaseDatos.Divisas
                 {
 
                 }
-            }
-        }
+
+                comando.Dispose();
+			}
+
+            conexion.Dispose();
+		}
 	}
 }

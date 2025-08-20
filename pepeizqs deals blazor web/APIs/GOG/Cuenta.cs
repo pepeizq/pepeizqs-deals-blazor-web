@@ -51,7 +51,7 @@ namespace APIs.GOG
 			return null;
 		}
 
-		public static async Task<string> BuscarJuegos(string usuario)
+		public static async Task<List<GOGUsuarioJuego>> BuscarJuegos(string usuario)
 		{
 			if (string.IsNullOrEmpty(usuario) == false)
 			{
@@ -78,7 +78,7 @@ namespace APIs.GOG
 
 						if (limite > 0)
 						{
-							string juegos = string.Empty;
+							List<GOGUsuarioJuego> juegos = null;
 
 							int i = 1;
 							while (i < limite + 1)
@@ -97,14 +97,28 @@ namespace APIs.GOG
 
 											idJuego = await BaseDatos.Juegos.Insertar.GogReferencia(idJuego);
 
-											if (string.IsNullOrEmpty(juegos) == false)
+											GOGUsuarioJuego nuevoJuego = new GOGUsuarioJuego
 											{
-												juegos = juegos + "," + idJuego;
-											}
-											else
+												Id = int.Parse(idJuego)
+											};
+
+											if (juego.Estadisticas != null)
 											{
-												juegos = idJuego;
+												if (juego.Estadisticas.Datos != null)
+												{
+													if (juego.Estadisticas.Datos.ContainsKey("playtime") == true)
+													{
+														nuevoJuego.TiempoJugadoEnMinutos = juego.Estadisticas.Datos["playtime"].JugadoEnMinutos;
+													}
+
+													if (juego.Estadisticas.Datos.ContainsKey("lastSession") == true)
+													{
+														nuevoJuego.TiempoJugadoUltimaVez = (int)juego.Estadisticas.Datos["last_played"].JugadoUltimaVez.Ticks;
+													}
+												}
 											}
+
+											juegos.Add(nuevoJuego);
 										}
 									}
 								}
@@ -112,7 +126,7 @@ namespace APIs.GOG
 								i += 1;
 							}
 
-							if (string.IsNullOrEmpty(juegos) == false)
+							if (juegos != null)
 							{
 								return juegos;
 							}
@@ -192,6 +206,15 @@ namespace APIs.GOG
 		}
 	}
 
+	public class GOGUsuarioJuego
+	{
+		public int Id { get; set; }
+		public int TiempoJugadoEnMinutos { get; set; }
+		public int TiempoJugadoUltimaVez { get; set; }
+	}
+
+	//-----------------------------------------------
+
 	public class GOGCuenta
 	{
 		[JsonPropertyName("page")]
@@ -214,12 +237,29 @@ namespace APIs.GOG
 	{
 		[JsonPropertyName("game")]
 		public GOGCuentaJuegoDatos Datos { get; set; }
+
+		[JsonPropertyName("stats")]
+		public GOGCuentaJuegoEstadisticas Estadisticas { get; set; }
 	}
 
 	public class GOGCuentaJuegoDatos
 	{
 		[JsonPropertyName("id")]
 		public string Id { get; set; }
+	}
+
+	public class GOGCuentaJuegoEstadisticas
+	{
+		public Dictionary<string, GOGCuentaJuegoEstadisticas2> Datos { get; set; }
+	}
+
+	public class GOGCuentaJuegoEstadisticas2
+	{
+		[JsonPropertyName("playtime")]
+		public int JugadoEnMinutos { get; set; }
+
+		[JsonPropertyName("lastSession")]
+		public DateTime JugadoUltimaVez { get; set; }
 	}
 
 	//-----------------------------------------------

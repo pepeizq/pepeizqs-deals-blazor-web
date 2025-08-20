@@ -45,6 +45,18 @@ namespace APIs.EpicGames
 
 			try
 			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
 					using (SqlDataReader lector = comando.ExecuteReader())

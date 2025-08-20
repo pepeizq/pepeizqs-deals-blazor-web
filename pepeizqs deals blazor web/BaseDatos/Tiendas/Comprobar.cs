@@ -274,15 +274,9 @@ namespace BaseDatos.Tiendas
 
 							Juegos.Precios.Steam(juego, oferta, conexion, true);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void Resto(JuegoPrecio oferta, SqlConnection conexion = null, string idGog = null, string slugGOG = null, string slugEpic = null)
@@ -429,11 +423,7 @@ namespace BaseDatos.Tiendas
 							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic, usuariosInteresados, analisis);
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comandoBuscar.Dispose();
 			}
 
 			if (encontrado == false)
@@ -471,12 +461,8 @@ namespace BaseDatos.Tiendas
 					{
 						Errores.Insertar.Mensaje("Insertar Tienda: " + oferta?.Enlace, ex);
 					}
-
-					comandoInsertar.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 		}
 	}
 }

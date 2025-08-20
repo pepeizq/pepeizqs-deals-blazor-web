@@ -36,7 +36,11 @@ namespace BaseDatos.Analisis
 						{
 							insertar = true;
 						}
+
+						lector.Dispose();
 					}
+
+					comando.Dispose();
 				}
 
 				if (insertar == true)
@@ -62,6 +66,8 @@ namespace BaseDatos.Analisis
 						{
 
 						}
+
+						comando.Dispose();
 					}
 				}
 				else
@@ -87,8 +93,12 @@ namespace BaseDatos.Analisis
 						{
 
 						}
+
+						comando.Dispose();
 					}
 				}
+
+				conexion.Dispose();
 			}
 		}
 	}

@@ -97,7 +97,7 @@ namespace APIs.Steam
 
                     if (cuenta != null)
                     {
-                        string juegos = string.Empty;
+						List<SteamUsuarioJuego> juegos = null;
                         string htmlJuegos = await Decompiladores.Estandar("https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=41F2D73A0B5024E9101F8D4E8D8AC21E&steamid=" + cuenta.Datos.Jugador[0].ID64 + "&include_appinfo=1&include_played_free_games=1&include_extended_appinfo=1");
 
                         if (htmlJuegos != null)
@@ -114,14 +114,19 @@ namespace APIs.Steam
                                         {
                                             foreach (SteamJuegosAPIJuego juego in json.Datos.Juegos)
                                             {
-                                                if (juegos == string.Empty)
+												SteamUsuarioJuego nuevoJuego = new SteamUsuarioJuego
                                                 {
-                                                    juegos = juego.ID.ToString();
-                                                }
-                                                else
+                                                    Id = juego.ID,
+                                                    TiempoJugadoEnMinutos = juego.JugadoEnMinutos + juego.JugadoDesconectadoEnMinutos,
+                                                    TiempoJugadoUltimaVez = juego.JugadoUltimaVez
+                                                };
+
+                                                if (juegos == null)
                                                 {
-                                                    juegos = juegos + "," + juego.ID.ToString();
-                                                }
+                                                    juegos = new List<SteamUsuarioJuego>();
+												}
+
+                                                juegos.Add(nuevoJuego);
                                             }
                                         }
                                     }
@@ -219,7 +224,7 @@ namespace APIs.Steam
                             SteamId = nuevaCuenta.ID64
                         };
 
-                        if (string.IsNullOrEmpty(juegos) == false)
+                        if (juegos != null)
                         {
                             datos.Juegos = juegos;
                         }
@@ -242,7 +247,7 @@ namespace APIs.Steam
 
     public class SteamUsuario
     {
-        public string Juegos { get; set; }
+        public List<SteamUsuarioJuego> Juegos { get; set; }
         public string Deseados { get; set; }
 		public string Avatar { get; set; }
 		public string Nombre { get; set; }
@@ -251,9 +256,16 @@ namespace APIs.Steam
         public string SteamId { get; set; }
 	}
 
-    //----------------------------------------------
+	public class SteamUsuarioJuego
+    {
+        public int Id { get; set; }
+        public int TiempoJugadoEnMinutos { get; set; }
+        public int TiempoJugadoUltimaVez { get; set; }
+	}
 
-    public class SteamCuentaAPI
+	//----------------------------------------------
+
+	public class SteamCuentaAPI
     {
         [JsonPropertyName("response")]
         public SteamCuentaAPIDatos Datos { get; set; }
@@ -318,7 +330,16 @@ namespace APIs.Steam
 
         [JsonPropertyName("img_icon_url")]
         public string Icono { get; set; }
-    }
+
+		[JsonPropertyName("playtime_forever")]
+		public int JugadoEnMinutos { get; set; }
+
+		[JsonPropertyName("playtime_disconnected")]
+		public int JugadoDesconectadoEnMinutos { get; set; }
+
+		[JsonPropertyName("rtime_last_played")]
+        public int JugadoUltimaVez { get; set; }
+	}
 
     //----------------------------------------------
 

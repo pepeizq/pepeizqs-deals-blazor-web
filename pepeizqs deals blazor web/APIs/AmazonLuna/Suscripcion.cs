@@ -97,15 +97,27 @@ namespace APIs.AmazonLuna
 			GestionarHtml(htmlEa, cantidad, conexion);
 		}
 
-		private static void GestionarHtml(string html, int cantidad, SqlConnection conexion)
+		private static void GestionarHtml(string html, int cantidad, SqlConnection conexion = null)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			if (string.IsNullOrEmpty(html) == false)
 			{
 				AmazonLunaPlusAPI api = JsonSerializer.Deserialize<AmazonLunaPlusAPI>(html);
 
 				if (api != null)
 				{
-					foreach (var juego in api.Datos.Contenido.Widgets[3].Widgets)
+					foreach (var juego in api?.Datos?.Contenido?.Widgets[3]?.Widgets)
 					{
 						if (string.IsNullOrEmpty(juego.Json) == false)
 						{

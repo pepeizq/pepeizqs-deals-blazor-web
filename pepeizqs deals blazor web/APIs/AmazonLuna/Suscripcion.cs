@@ -1,11 +1,17 @@
 ﻿#nullable disable
 
+using ApexCharts;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System;
+using System.Diagnostics.Metrics;
+using System.Drawing.Drawing2D;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using X.Bluesky.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace APIs.AmazonLuna
 {
@@ -42,13 +48,40 @@ namespace APIs.AmazonLuna
 			cliente.BaseAddress = new Uri("https://luna.amazon.es/");
 			cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-			string peticionEnBruto = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"subscription/luna-plus/B085TRCCT6\",\"pageId\":\"default\"},\"cacheKey\":\"02ac1d69-94ae-406c-8a98-dd45d7af25e4\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"133.0\",\"deviceModel\":\"rv:133.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
+			string peticionEnBruto = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"subscription/luna-plus/B085TRCCT6\",\"pageId\":\"default\"},\"cacheKey\":\"cfb5550b-0c5f-49cd-852a-1cc4f85206a3\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"142.0\",\"deviceModel\":\"rv:142.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
 
 			HttpRequestMessage peticion = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
 			{
 				Content = new StringContent(peticionEnBruto, Encoding.UTF8, "application/json"),
-				Headers = { { "x-amz-locale", "es_ES" },
-							{ "x-amz-platform", "web" }
+				Headers = { {"Host","proxy-prod.eu-west-1.tempo.digital.a2z.com" },
+{"User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0" },
+{"Accept","*/*" },
+{"Accept-Language","en-US" },
+{"Accept-Encoding","gzip, deflate, br, zstd" },
+{"Referer","https://luna.amazon.es/" },
+{"x-amz-timezone","Europe/Madrid" },
+{"x-amz-client-version","-" },
+{"x-amz-device-serial-number","259-7104538-8853213" },
+{"x-amz-device-type","browser" },
+{"x-amz-platform","web" },
+{"x-amz-react-version","1.0.32195.0" },
+{"x-amz-session-id","259-7104538-8853213" },
+{"weblab-overrides"," " },
+{"x-amz-tdi","undefined" },
+{"x-amz-locale","es_ES" },
+{"x-amz-marketplace-id","A1RKKUPIHCS9HS" },
+{"x-amzn-RequestId","ddcd36d2-319a-412d-993b-f8c88953f0b1" },
+{"x-amz-country-of-residence","ES" },
+{"x-amz-access-token"," " },
+{"Origin","https://luna.amazon.es" },
+{"Sec-GPC","1" },
+{"Connection","keep-alive" },
+{"Sec-Fetch-Dest","empty" },
+{"Sec-Fetch-Mode","cors" },
+{"Sec-Fetch-Site","cross-site" },
+{"Priority","u=4" },
+{"Pragma","no-cache" },
+{"Cache-Control","no-cache" }
 					}
 			};
 
@@ -99,24 +132,14 @@ namespace APIs.AmazonLuna
 
 		private static void GestionarHtml(string html, int cantidad, SqlConnection conexion = null)
 		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
-
 			if (string.IsNullOrEmpty(html) == false)
 			{
 				AmazonLunaPlusAPI api = JsonSerializer.Deserialize<AmazonLunaPlusAPI>(html);
 
 				if (api != null)
 				{
+					BaseDatos.Errores.Insertar.Mensaje("test", JsonSerializer.Serialize(api?.Datos?.Contenido?.Widgets));
+
 					foreach (var juego in api?.Datos?.Contenido?.Widgets[3]?.Widgets)
 					{
 						if (string.IsNullOrEmpty(juego.Json) == false)
@@ -128,6 +151,18 @@ namespace APIs.AmazonLuna
 								string enlace = apiJuego.Id;
 
 								bool encontrado = false;
+
+								if (conexion == null)
+								{
+									conexion = Herramientas.BaseDatos.Conectar();
+								}
+								else
+								{
+									if (conexion.State != System.Data.ConnectionState.Open)
+									{
+										conexion = Herramientas.BaseDatos.Conectar();
+									}
+								}
 
 								string sqlBuscar = "SELECT idJuegos FROM " + Generar().TablaPendientes + " WHERE enlace=@enlace";
 

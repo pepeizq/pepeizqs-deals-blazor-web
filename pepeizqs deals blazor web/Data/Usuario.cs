@@ -295,6 +295,10 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
+	public bool? ProfileGames { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
 	public bool? ProfileWishlist { get; set; }
 
 	[PersonalData]

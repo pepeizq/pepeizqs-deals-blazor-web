@@ -95,6 +95,18 @@
 
 				<div style="display: flex; align-items: start; gap: 20px;">
 					<div class="checkbox-caja">
+						<input type="checkbox" class="checkbox-interior" checked="@estadoJuegos" @onchange="ClickearPerfilJuegos">
+					</div>
+
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<div>
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "AccountUser")
+						</div>
+					</div>
+				</div>
+
+				<div style="display: flex; align-items: start; gap: 20px;">
+					<div class="checkbox-caja">
 						<input type="checkbox" class="checkbox-interior" checked="@estadoDeseados" @onchange="ClickearPerfilDeseados">
 					</div>
 
@@ -175,6 +187,22 @@
 				else
 				{
 					estadoGogCuenta = null;
+				}
+			}
+
+			if (usuario.ProfileGames == null)
+			{
+				estadoJuegos = null;
+			}
+			else
+			{
+				if (usuario.ProfileGames == true)
+				{
+					estadoJuegos = "checked";
+				}
+				else
+				{
+					estadoJuegos = null;
 				}
 			}
 
@@ -294,6 +322,31 @@
 			}
 
 			usuario.ProfileGogAccount = boolGogCuenta;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private string estadoJuegos = null;
+
+	private async void ClickearPerfilJuegos()
+	{
+		if (usuario != null)
+		{
+			bool boolJuegos = false;
+
+			if (estadoJuegos == null)
+			{
+				estadoJuegos = "checked";
+				boolJuegos = true;
+			}
+			else
+			{
+				estadoJuegos = null;
+				boolJuegos = false;
+			}
+
+			usuario.ProfileGames = boolJuegos;
 
 			await UserManager.UpdateAsync(usuario);
 		}

@@ -104,18 +104,33 @@ namespace APIs.GOG
 
 											if (juego.Estadisticas != null)
 											{
-												if (juego.Estadisticas.Datos != null)
+												if (string.IsNullOrEmpty(juego.Estadisticas?.ToString()) == false)
 												{
-													if (juego.Estadisticas.Datos.ContainsKey("playtime") == true)
+													if (juego.Estadisticas.ToString() != "[]")
 													{
-														nuevoJuego.TiempoJugadoEnMinutos = juego.Estadisticas.Datos["playtime"].JugadoEnMinutos;
-													}
+														string jsonJuego = juego.Estadisticas.ToString();
 
-													if (juego.Estadisticas.Datos.ContainsKey("lastSession") == true)
-													{
-														nuevoJuego.TiempoJugadoUltimaVez = (int)juego.Estadisticas.Datos["last_played"].JugadoUltimaVez.Ticks;
+														jsonJuego = jsonJuego.Remove(jsonJuego.Length - 1, 1);
+														jsonJuego = jsonJuego.Remove(0, 1);
+														jsonJuego = jsonJuego.Remove(0, jsonJuego.IndexOf("{"));
+
+														JsonSerializerOptions opciones = new JsonSerializerOptions
+														{
+															WriteIndented = true,
+															Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+														};
+
+														GOGCuentaJuegoEstadisticas2 estadisticas2 = JsonSerializer.Deserialize<GOGCuentaJuegoEstadisticas2>(jsonJuego, opciones);
+
+														nuevoJuego.TiempoJugadoEnMinutos = estadisticas2.JugadoEnMinutos;
+														nuevoJuego.TiempoJugadoUltimaVez = (int)((DateTimeOffset)DateTime.Parse(estadisticas2.JugadoUltimaVez)).ToUnixTimeSeconds();
 													}
 												}
+											}
+											
+											if (juegos == null)
+											{
+												juegos = new List<GOGUsuarioJuego>();
 											}
 
 											juegos.Add(nuevoJuego);
@@ -239,7 +254,7 @@ namespace APIs.GOG
 		public GOGCuentaJuegoDatos Datos { get; set; }
 
 		[JsonPropertyName("stats")]
-		public GOGCuentaJuegoEstadisticas Estadisticas { get; set; }
+		public object Estadisticas { get; set; }
 	}
 
 	public class GOGCuentaJuegoDatos
@@ -248,18 +263,13 @@ namespace APIs.GOG
 		public string Id { get; set; }
 	}
 
-	public class GOGCuentaJuegoEstadisticas
-	{
-		public Dictionary<string, GOGCuentaJuegoEstadisticas2> Datos { get; set; }
-	}
-
 	public class GOGCuentaJuegoEstadisticas2
 	{
 		[JsonPropertyName("playtime")]
 		public int JugadoEnMinutos { get; set; }
 
 		[JsonPropertyName("lastSession")]
-		public DateTime JugadoUltimaVez { get; set; }
+		public string JugadoUltimaVez { get; set; }
 	}
 
 	//-----------------------------------------------

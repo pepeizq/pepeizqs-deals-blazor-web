@@ -56,10 +56,17 @@
 		</div>
 	</div>
 
-	if (perfil.ProfileWishlist == true)
+	if (perfil.ProfileGames == true || perfil.ProfileWishlist == true)
 	{
 		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 			<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
+				@if (perfil.ProfileGames == true)
+				{
+					<button class="boton-pequeño" style="@CambiarEstilo(enseñarJuegos) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaJuegos">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "AccountUser")
+					</button>
+				}
+				
 				@if (perfil.ProfileWishlist == true)
 				{
 					<button class="boton-pequeño" style="@CambiarEstilo(enseñarDeseados) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaDeseados">
@@ -68,6 +75,11 @@
 				}
 			</div>
 		</div>
+	}
+
+	if (enseñarJuegos == true)
+	{
+		
 	}
 
 	if (enseñarDeseados == true)
@@ -144,7 +156,24 @@
 
 	private void PestañasOcultar()
 	{
+        enseñarJuegos = false;
         enseñarDeseados = false;
+	}
+
+	private bool enseñarJuegos = false;
+
+	private void PestañaJuegos()
+	{
+		if (enseñarJuegos == false)
+		{
+			PestañasOcultar();
+
+			enseñarJuegos = true;
+		}
+		else
+		{
+			enseñarJuegos = false;
+		}
 	}
 
 	private bool enseñarDeseados = false;

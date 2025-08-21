@@ -1,0 +1,127 @@
+﻿@using Herramientas
+@using global::Juegos
+
+<style>
+	.cargando {
+		width: 48px;
+		height: 48px;
+		border: 5px solid var(--colorTexto);
+		border-bottom-color: transparent;
+		border-radius: 50%;
+		display: inline-block;
+		box-sizing: border-box;
+		animation: rotation 1s linear infinite;
+	}
+
+	@@keyframes rotation {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+</style>
+
+@if (juegos != null)
+{
+	if (cargado == false)
+	{
+		<div style="min-height: 200px; display: flex; align-items: center; justify-content: space-around;">
+			<div class="cargando" />
+		</div>
+	}
+	else
+	{
+		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+			<div class="cuerpo-ancho" style="padding: 20px 0px;">
+				<div style="display: flex; align-items: center; gap: 15px; flex-flow: wrap;">
+					<button class="boton-pequeño" style="@CambiarEstilo(JuegoDRM.NoEspecificado) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => ListadoAbrir(e, JuegoDRM.NoEspecificado))">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String27", "AccountGames")
+					</button>
+
+					@if (juegos.Steam != null && juegos.Steam.Count > 0)
+					{
+						<button class="boton-pequeño" style="@CambiarEstilo(JuegoDRM.Steam) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => ListadoAbrir(e, JuegoDRM.Steam))">
+							<img src="@JuegoDRM2.SacarImagen(JuegoDRM.Steam)" style="max-width: 20px; max-height: 20px;" />
+						</button>
+					}
+
+				</div>
+			</div>
+		</div>
+
+		<div style="max-width: 1000px; margin: 20px auto;">
+			<Virtualize Context="juego" Items="listaMostrar">
+				<ItemContent>
+					<div>
+						@juego.Nombre
+					</div>
+				</ItemContent>
+			</Virtualize>
+		</div>
+	}
+}
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public string usuarioId { get; set; }
+
+	private UsuarioListadosJuegos juegos = null;
+	private JuegoDRM drmSeleccionado = JuegoDRM.NoEspecificado;
+
+	private List<Juego> listaMostrar = null;
+
+	private bool cargado = false;
+
+	protected override void OnInitialized()
+	{
+		
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await Task.Yield();
+
+		if (string.IsNullOrEmpty(usuarioId) == false)
+		{
+			juegos = Herramientas.UsuarioJuegos.Cargar(usuarioId);
+
+			if (juegos != null)
+			{
+				if (juegos.Steam != null && juegos.Steam.Count > 0)
+				{
+					List<string> idsSteam = juegos.Steam.Select(juego => juego.Id.ToString()).ToList();
+
+					listaMostrar = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(idsSteam);
+
+                    cargado = true;
+				}
+			}
+		}
+	}
+
+	private string CambiarEstilo(JuegoDRM nuevoDrm)
+	{
+		if (nuevoDrm != drmSeleccionado)
+		{
+			return "background-color: transparent;";
+		}
+		else
+		{
+			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
+		}
+	}
+
+	private async void ListadoAbrir(MouseEventArgs e, JuegoDRM nuevoDrm)
+	{
+        drmSeleccionado = nuevoDrm;
+	}
+}

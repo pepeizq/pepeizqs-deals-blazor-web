@@ -1,6 +1,7 @@
 ﻿@page "/game/{juegoId:int}/"
 @page "/game/{juegoId:int}/{juegoNombre?}/"
 
+@using APIs.GOG
 @using APIs.Steam
 @using ApexCharts
 @using Bundles2
@@ -801,6 +802,9 @@
                     if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
                     {
                         bool usuarioTieneJuego = false;
+                        int usuarioTieneJuegoTiempoJugado = 0;
+                        int usuarioTieneJuegoUltimaVezJugado = 0;
+
                         bool usuarioTieneDeseado = false;
                         bool usuarioTieneDeseadoImportado = false;
                         string usuarioTieneDeseadoMensaje = string.Empty;
@@ -814,6 +818,13 @@
                                     if (drm.Id == tieneDesea.DRM)
                                     {
                                         usuarioTieneJuego = tieneDesea.Tiene;
+
+                                        if (usuarioTieneJuego == true)
+                                        {
+                                            usuarioTieneJuegoTiempoJugado = tieneDesea.JugadoTiempo;
+                                            usuarioTieneJuegoUltimaVezJugado = tieneDesea.JugadoUltimaVez;
+                                        }
+
                                         usuarioTieneDeseado = tieneDesea.Desea;
                                         usuarioTieneDeseadoImportado = tieneDesea.ImportadoDesea;
 
@@ -903,7 +914,32 @@
                                                                 </svg>
                                                             </div>
 
-                                                            <label style="text-align: left; width: 100%;">@mensaje</label>
+                                                            @if (usuarioTieneJuegoTiempoJugado > 0 || usuarioTieneJuegoUltimaVezJugado > 0)
+                                                            {
+                                                                <div style="display: flex; align-items: baseline; gap: 5px; width: 100%;">
+                                                                    @if (usuarioTieneJuegoTiempoJugado > 0)
+                                                                    {
+                                                                        TimeSpan tiempoJugado = TimeSpan.FromMinutes((long)usuarioTieneJuegoTiempoJugado);
+
+                                                                        string horasJugadas = tiempoJugado.TotalHours.ToString("N1");
+
+                                                                        <label>@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), horasJugadas, JuegoDRM2.DevolverDRM(drm.Id))</label>
+                                                                    }
+
+                                                                    @if (usuarioTieneJuegoUltimaVezJugado > 0)
+                                                                    {
+                                                                        DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(usuarioTieneJuegoUltimaVezJugado);
+
+                                                                        string ultimaVezJugado = Herramientas.Calculadora.DiferenciaTiempo(fecha.UtcDateTime, idioma);
+
+                                                                        <label style="font-size: 14px;">(@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Game"), ultimaVezJugado))</label>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label style="text-align: left; width: 100%;">@mensaje</label>
+                                                            }
 
                                                             @{
                                                                 string enlaceJugar = string.Empty;
@@ -4359,6 +4395,9 @@
                                                     JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
                                                     nuevoJuegoUsuario.DRM = JuegoDRM.Steam;
                                                     nuevoJuegoUsuario.Tiene = true;
+                                                    nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
+                                                    nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
+
                                                     usuarioTieneDesea.Add(nuevoJuegoUsuario);
                                                     usuarioTieneDRM = true;
 
@@ -4372,7 +4411,7 @@
 
                             if (drm.Id == JuegoDRM.GOG && juego.IdGog > 0)
                             {
-                                List<string> juegosGog = juegosUsuario.Gog;
+                                List<GOGUsuarioJuego> juegosGog = juegosUsuario.Gog;
 
                                 if (juegosGog != null)
                                 {
@@ -4382,11 +4421,14 @@
                                         {
                                             foreach (var juegoUsuario in juegosGog)
                                             {
-                                                if (juegoUsuario == juego.IdGog.ToString())
+                                                if (juegoUsuario.Id == juego.IdGog)
                                                 {
                                                     JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
                                                     nuevoJuegoUsuario.DRM = JuegoDRM.GOG;
                                                     nuevoJuegoUsuario.Tiene = true;
+                                                    nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
+                                                    nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
+
                                                     usuarioTieneDesea.Add(nuevoJuegoUsuario);
                                                     usuarioTieneDRM = true;
 

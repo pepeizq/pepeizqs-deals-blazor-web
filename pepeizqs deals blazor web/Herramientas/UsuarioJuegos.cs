@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using APIs.GOG;
 using APIs.Steam;
 using Juegos;
 using pepeizqs_deals_web.Data;
@@ -17,12 +18,18 @@ namespace Herramientas
 
 			if (string.IsNullOrEmpty(usuario.SteamGames) == false)
 			{
-				listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
+				try
+				{
+					listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
+				} catch { }
 			}
 
 			if (string.IsNullOrEmpty(usuario.GogGames) == false)
 			{
-				listados.Gog = Herramientas.Listados.Generar(usuario.GogGames);
+				try
+				{
+					listados.Gog = JsonSerializer.Deserialize<List<GOGUsuarioJuego>>(usuario.GogGames);
+				} catch { }				
 			}
 
 			if (string.IsNullOrEmpty(usuario.AmazonGames) == false)
@@ -54,12 +61,20 @@ namespace Herramientas
 
 			if (string.IsNullOrEmpty(usuario.SteamGames) == false)
 			{
-				listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
+				try
+				{
+					listados.Steam = JsonSerializer.Deserialize<List<SteamUsuarioJuego>>(usuario.SteamGames);
+				}
+				catch { }
 			}
 
 			if (string.IsNullOrEmpty(usuario.GogGames) == false)
 			{
-				listados.Gog = Herramientas.Listados.Generar(usuario.GogGames);
+				try
+				{
+					listados.Gog = JsonSerializer.Deserialize<List<GOGUsuarioJuego>>(usuario.GogGames);
+				}
+				catch { }
 			}
 
 			if (string.IsNullOrEmpty(usuario.AmazonGames) == false)
@@ -138,7 +153,7 @@ namespace Herramientas
 								{
 									foreach (var juegoUsuario in listados.Gog)
 									{
-										if (juegoUsuario == juego.IdGog.ToString())
+										if (juegoUsuario.Id == juego.IdGog)
 										{
 											return true;
 										}
@@ -277,7 +292,7 @@ namespace Herramientas
 	public class UsuarioListadosJuegos
 	{
 		public List<SteamUsuarioJuego> Steam { get; set; }
-		public List<string> Gog { get; set; }
+		public List<GOGUsuarioJuego> Gog { get; set; }
 		public List<string> Amazon { get; set; }
 		public List<string> Epic { get; set; }
 		public List<string> Ubisoft { get; set; }

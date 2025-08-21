@@ -41,11 +41,7 @@ namespace BaseDatos.Errores
                     {
 
                     }
-
-                    comando.Dispose();
 				}
-
-                conexion.Dispose();
 			}
             
             if (reiniciar == true)
@@ -100,11 +96,7 @@ namespace BaseDatos.Errores
                 {
                     Mensaje("Errores", ex);
                 }
-
-                comando.Dispose();
 			}
-
-            conexion.Dispose();
 		}
     }
 }

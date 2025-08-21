@@ -163,7 +163,7 @@ builder.Services.AddSingleton<Tareas.Tiendas.Nexus>();
 builder.Services.AddSingleton<Tareas.Suscripciones.XboxGamePass>();
 builder.Services.AddSingleton<Tareas.Suscripciones.UbisoftPlusClassics>();
 builder.Services.AddSingleton<Tareas.Suscripciones.UbisoftPlusPremium>();
-builder.Services.AddSingleton<Tareas.Suscripciones.AmazonLunaPlus>();
+//builder.Services.AddSingleton<Tareas.Suscripciones.AmazonLunaPlus>();
 
 builder.Services.AddSingleton<Tareas.Streaming.GeforceNOW>();
 builder.Services.AddSingleton<Tareas.Streaming.AmazonLuna>();
@@ -213,7 +213,7 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.XboxGamePass>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.UbisoftPlusClassics>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.UbisoftPlusPremium>());
-builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.AmazonLunaPlus>());
+//builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.AmazonLunaPlus>());
 
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.GeforceNOW>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Streaming.AmazonLuna>());

@@ -348,5 +348,7 @@ namespace Juegos
 		public bool Tiene { get; set; }
 		public bool Desea { get; set; }
 		public bool ImportadoDesea { get; set; }
+		public int JugadoTiempo { get; set; }
+		public int JugadoUltimaVez { get; set; }
 	}
 }

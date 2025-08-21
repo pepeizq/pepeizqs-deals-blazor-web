@@ -1,6 +1,6 @@
 {
   "String1": "il tuo nome",
-  "String2": "Puoi sincronizzare i tuoi giochi {0} e Wishlist nel Web semplicemente aggiungendo un link al tuo account. ",
+  "String2": "Puoi sincronizzare i tuoi giochi {0} e Wishlist nel Web semplicemente aggiungendo un link al tuo account. Non dovrai fare altro perché verrà aggiornato automaticamente ogni 7 giorni (o 1 giorno se contribuisci su Patreon).",
   "String3": "Le autorizzazioni dell'account {0} devono essere così.",
   "String4": "Quell'utente {0} è già associato a un altro account registrato.",
   "String5": "Rinfrescare",
@@ -23,5 +23,6 @@
   "String23": "Seleziona il file: {0}",
   "String24": "Giochi importati: {0}",
   "String25": "Se hai la versione installabile di PlayNite, è necessario caricare il file '{0}' situato nella cartella '{1}'.",
-  "String26": "Se hai la versione portatile di PlayNite, è necessario caricare il file '{0}' situato nella cartella '{1}'."
+  "String26": "Se hai la versione portatile di PlayNite, è necessario caricare il file '{0}' situato nella cartella '{1}'.",
+  "String27": "Tutto"
 }

@@ -36,6 +36,18 @@ namespace APIs.Playsum
 
 		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
 		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
 			int juegos2 = 0;

@@ -1,6 +1,6 @@
 {
   "String1": "ihr Name",
-  "String2": "Sie können Ihre {0}-Spiele und Ihre Wunschliste mit dem Web synchronisieren, indem Sie einfach einen Link zu Ihrem Konto hinzufügen. ",
+  "String2": "Sie können Ihre {0}-Spiele und Ihre Wunschliste mit dem Web synchronisieren, indem Sie einfach einen Link zu Ihrem Konto hinzufügen. Sie müssen nichts weiter tun, da die Aktualisierung alle 7 Tage (oder alle 1 Tag, wenn Sie auf Patreon beitragen) automatisch erfolgt.",
   "String3": "Ihre {0}-Kontoberechtigungen müssen so sein.",
   "String4": "Dieser {0}-Benutzer ist bereits einem anderen registrierten Konto zugeordnet.",
   "String5": "Aktualisieren",
@@ -23,5 +23,6 @@
   "String23": "Wählen Sie die Datei aus: {0}",
   "String24": "Importierte Spiele: {0}",
   "String25": "Wenn Sie die installierbare Version von PlayNite haben, müssen Sie die Datei '{0}' im Ordner '{1}' laden.",
-  "String26": "Wenn Sie die tragbare Version von PlayNite haben, müssen Sie die Datei '{0}' im Ordner '{1}' laden."
+  "String26": "Wenn Sie die tragbare Version von PlayNite haben, müssen Sie die Datei '{0}' im Ordner '{1}' laden.",
+  "String27": "Alle"
 }

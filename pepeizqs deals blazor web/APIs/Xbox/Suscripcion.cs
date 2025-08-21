@@ -70,6 +70,18 @@ namespace APIs.Xbox
 
 						bool encontrado = false;
 
+						if (conexion == null)
+						{
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
+						else
+						{
+							if (conexion.State != System.Data.ConnectionState.Open)
+							{
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+						}
+
 						string sqlBuscar = "SELECT idJuegos FROM tiendamicrosoftstore WHERE enlace=@enlace";
 
                         using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))

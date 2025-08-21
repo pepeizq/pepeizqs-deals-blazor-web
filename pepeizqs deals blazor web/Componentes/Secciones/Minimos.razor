@@ -1580,13 +1580,13 @@ else
 						{
 							foreach (var juegoUsuario in juegosUsuario.Gog)
 							{
-								if (juego.IdGog.ToString() == juegoUsuario)
+								if (juego.IdGog == juegoUsuario.Id)
 								{
 									if (nuevaLista.Count > 0)
 									{
 										foreach (var juegoFiltrado in nuevaLista)
 										{
-											if (juego.IdGog.ToString() == juegoFiltrado.IdGog.ToString())
+											if (juego.IdGog == juegoFiltrado.IdGog)
 											{
 												nuevaLista.Remove(juegoFiltrado);
 												break;

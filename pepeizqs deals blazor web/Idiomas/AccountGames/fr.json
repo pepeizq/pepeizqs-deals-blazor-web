@@ -1,6 +1,6 @@
 {
   "String1": "ton nom",
-  "String2": "Vous pouvez synchroniser vos jeux {0} et votre liste de souhaits sur le Web en ajoutant simplement un lien vers votre compte. ",
+  "String2": "Vous pouvez synchroniser vos jeux {0} et votre liste de souhaits sur le Web en ajoutant simplement un lien vers votre compte. Vous n'aurez rien d'autre à faire puisqu'il sera automatiquement mis à jour tous les 7 jours (ou 1 jour si vous contribuez sur Patreon).",
   "String3": "Vos autorisations de compte {0} doivent être comme ceci.",
   "String4": "Cet utilisateur {0} est déjà associé à un autre compte enregistré.",
   "String5": "Rafraîchir",
@@ -23,5 +23,6 @@
   "String23": "Sélectionnez le fichier: {0}",
   "String24": "Jeux importés: {0}",
   "String25": "Si vous avez la version instalable de Playnite, vous devez charger le fichier '{0}' situé dans le dossier '{1}'.",
-  "String26": "Si vous avez la version portable de Playnite, vous devez charger le fichier '{0}' situé dans le dossier '{1}'."
+  "String26": "Si vous avez la version portable de Playnite, vous devez charger le fichier '{0}' situé dans le dossier '{1}'.",
+  "String27": "Tous"
 }

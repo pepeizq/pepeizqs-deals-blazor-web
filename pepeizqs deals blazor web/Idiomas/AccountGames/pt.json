@@ -1,6 +1,6 @@
 {
   "String1": "o seu nome",
-  "String2": "Você pode sincronizar seus jogos {0} e a lista de desejos à web, simplesmente adicionando um link à sua conta. ",
+  "String2": "Você pode sincronizar seus jogos {0} e a lista de desejos à web, simplesmente adicionando um link à sua conta. Não terá de fazer mais nada, pois a atualização será automática a cada 7 dias (ou 1 dia se contribuir para o Patreon).",
   "String3": "Suas permissões de conta {0} devem ser assim.",
   "String4": "Esse usuário {0} já está associado a outra conta registrada.",
   "String5": "Atualizar",
@@ -23,5 +23,6 @@
   "String23": "Selecione o arquivo: {0}",
   "String24": "Jogos importados: {0}",
   "String25": "Se você tiver a versão instalável do PlayNite, deve carregar o arquivo '{0}' localizado na pasta '{1}'.",
-  "String26": "Se você tiver a versão portátil do Playnite, deve carregar o arquivo '{0}' localizado na pasta '{1}'."
+  "String26": "Se você tiver a versão portátil do Playnite, deve carregar o arquivo '{0}' localizado na pasta '{1}'.",
+  "String27": "Todos"
 }

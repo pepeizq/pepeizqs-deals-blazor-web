@@ -198,6 +198,26 @@
 
         @if (usuarioAdmin == true)
         {
+            <button @onclick="@(e => MostrarJuegos(e))" class="boton-pestañas">
+                <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
+                    <div style="max-width: 22px;">
+                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                            <path d="M448 128C554 128 640 214 640 320C640 426 554 512 448 512L192 512C86 512 0 426 0 320C0 214 86 128 192 128L448 128zM192 240C178.7 240 168 250.7 168 264L168 296L136 296C122.7 296 112 306.7 112 320C112 333.3 122.7 344 136 344L168 344L168 376C168 389.3 178.7 400 192 400C205.3 400 216 389.3 216 376L216 344L248 344C261.3 344 272 333.3 272 320C272 306.7 261.3 296 248 296L216 296L216 264C216 250.7 205.3 240 192 240zM432 336C414.3 336 400 350.3 400 368C400 385.7 414.3 400 432 400C449.7 400 464 385.7 464 368C464 350.3 449.7 336 432 336zM496 240C478.3 240 464 254.3 464 272C464 289.7 478.3 304 496 304C513.7 304 528 289.7 528 272C528 254.3 513.7 240 496 240z" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div>
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Account")
+                        </div>
+
+                        <div style="margin-top: 5px; font-size: 14px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String36", "Account")
+                        </div>
+                    </div>
+                </div>
+            </button>
+
             <button @onclick="@(e => MostrarPerfil(e))" class="boton-pestañas">
                 <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
                     <div style="max-width: 22px;">
@@ -448,7 +468,7 @@ else
         </div>
     </div>
 
-    <div style="width: 100%; margin: 40px auto;">
+    <div style="width: 100%; @añadirMargin">
         @if (mostrarCorreo == true)
         {
             <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Correo idioma="@idioma" />
@@ -492,6 +512,11 @@ else
         @if (mostrarPatreon == true)
         {
             <pepeizqs_deals_blazor_web.Componentes.Cuenta.Pepecoins.Patreon idioma="@idioma" />
+        }
+
+        @if (mostrarJuegos == true)
+        {
+            <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos idioma="@idioma" usuarioId="@usuarioId" />
         }
 
         @if (mostrarPerfil == true)
@@ -555,6 +580,7 @@ else
 
     private bool enseñarOpcion = false;
     private string tituloOpcion = string.Empty;
+    private string añadirMargin = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -574,6 +600,7 @@ else
     private void CerrarPestañas()
     {
         tituloOpcion = string.Empty;
+        añadirMargin = string.Empty;
 
         mostrarCorreo = false;
         mostrarContraseña = false;
@@ -581,6 +608,7 @@ else
         mostrarIdioma = false;
         mostrarClaves = false;
         mostrarForo = false;
+        mostrarJuegos = false;
         mostrarPerfil = false;
 
         mostrarTienda = false;
@@ -612,6 +640,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarCorreo = true;
     }
@@ -622,6 +651,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarContraseña = true;
     }
@@ -632,6 +662,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarDatosPersonales = true;
     }
@@ -642,6 +673,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarIdioma = true;
     }
@@ -652,6 +684,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarClaves = true;
     }
@@ -662,6 +695,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarForo = true;
     }
@@ -676,6 +710,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String29", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarTienda = true;
     }
@@ -686,6 +721,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String31", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarHistorial = true;
     }
@@ -696,8 +732,20 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarPatreon = true;
+    }
+
+    private bool mostrarJuegos = false;
+
+    private void MostrarJuegos(MouseEventArgs e)
+    {
+        CerrarPestañas();
+        tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Account");
+        añadirMargin = string.Empty;
+        enseñarOpcion = true;
+        mostrarJuegos = true;
     }
 
     private bool mostrarPerfil = false;
@@ -706,6 +754,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarPerfil = true;
     }
@@ -720,6 +769,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarNotificacionesCorreo = true;
     }
@@ -730,6 +780,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Account");
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarNotificacionesPush = true;
     }
@@ -744,6 +795,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.Steam);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarSteam = true;
     }
@@ -754,6 +806,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.GOG);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarGog = true;
     }
@@ -764,6 +817,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.Amazon);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarAmazon = true;
     }
@@ -774,6 +828,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.Epic);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarEpicGames = true;
     }
@@ -784,6 +839,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.Ubisoft);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarUbisoft = true;
     }
@@ -794,6 +850,7 @@ else
     {
         CerrarPestañas();
         tituloOpcion = JuegoDRM2.DevolverDRM(JuegoDRM.EA);
+        añadirMargin = "margin: 40px auto;";
         enseñarOpcion = true;
         mostrarEa = true;
     }

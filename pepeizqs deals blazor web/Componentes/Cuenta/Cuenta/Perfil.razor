@@ -72,7 +72,7 @@
 
 						<div style="display: flex; flex-direction: column; gap: 10px;">
 							<div>
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountUser")
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountUser") (@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "AccountUser"))
 							</div>
 						</div>
 					</div>
@@ -87,11 +87,23 @@
 
 						<div style="display: flex; flex-direction: column; gap: 10px;">
 							<div>
-								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "AccountUser")
+								@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "AccountUser") (@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "AccountUser"))
 							</div>
 						</div>
 					</div>
 				}
+
+				<div style="display: flex; align-items: start; gap: 20px;">
+					<div class="checkbox-caja">
+						<input type="checkbox" class="checkbox-interior" checked="@estadoUltimoJugado" @onchange="ClickearPerfilUltimoJugado">
+					</div>
+
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<div>
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "AccountUser")
+						</div>
+					</div>
+				</div>
 
 				<div style="display: flex; align-items: start; gap: 20px;">
 					<div class="checkbox-caja">
@@ -117,7 +129,24 @@
 					</div>
 				</div>
 			</div>
-			
+		</div>
+
+		<div class="caja-perfil-contenido" style="display: flex; flex-direction: column; margin-top: 30px;">
+			<label>@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "AccountUser")</label>
+			<hr />
+
+			<div style="display: flex; flex-direction: column; gap: 20px;">
+				<div style="display: flex; align-items: center; gap: 20px;">
+					<img src="@textoAvatar" style="width: 80px; height: 80px;" />
+
+					<div style="width: 100%;">
+						<label style="margin-bottom: 10px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "AccountUser")</label>
+						<input type="text" @bind-value="textoAvatar" @bind-value:event="oninput" @bind-value:after="TextoCambiaAvatar" class="entrada-texto" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "AccountUser")" />
+					</div>
+				</div>
+
+
+			</div>
 		</div>
 	}
 }
@@ -190,6 +219,22 @@
 				}
 			}
 
+			if (usuario.ProfileLastPlayed == null)
+			{
+				estadoUltimoJugado = null;
+			}
+			else
+			{
+				if (usuario.ProfileLastPlayed == true)
+				{
+					estadoUltimoJugado = "checked";
+				}
+				else
+				{
+					estadoUltimoJugado = null;
+				}
+			}
+
 			if (usuario.ProfileGames == null)
 			{
 				estadoJuegos = null;
@@ -219,6 +264,25 @@
 				else
 				{
 					estadoDeseados = null;
+				}
+			}
+
+			if (string.IsNullOrEmpty(usuario.ProfileAvatar) == false)
+			{
+				textoAvatar = usuario.ProfileAvatar;
+			}
+			else
+			{
+				textoAvatar = usuario.Avatar;
+
+				usuario.ProfileAvatar = textoAvatar;
+
+				try
+				{
+					await UserManager.UpdateAsync(usuario);
+				}
+				catch
+				{
 				}
 			}
 		}
@@ -260,7 +324,7 @@
 
 			if (nombreYaUsado == false)
 			{
-				if (textoNombre.Length > 3)
+				if (textoNombre.Length > 3 && textoNombre.Length < 21)
 				{
 					usuario.ProfileNickname = textoNombre;
 
@@ -327,6 +391,31 @@
 		}
 	}
 
+	private string estadoUltimoJugado = null;
+
+	private async void ClickearPerfilUltimoJugado()
+	{
+		if (usuario != null)
+		{
+			bool boolUltimoJugado = false;
+
+			if (estadoUltimoJugado == null)
+			{
+				estadoUltimoJugado = "checked";
+				boolUltimoJugado = true;
+			}
+			else
+			{
+				estadoUltimoJugado = null;
+				boolUltimoJugado = false;
+			}
+
+			usuario.ProfileLastPlayed = boolUltimoJugado;
+
+			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
 	private string estadoJuegos = null;
 
 	private async void ClickearPerfilJuegos()
@@ -374,6 +463,27 @@
 			usuario.ProfileWishlist = boolDeseados;
 
 			await UserManager.UpdateAsync(usuario);
+		}
+	}
+
+	private string textoAvatar = string.Empty;
+
+	private async void TextoCambiaAvatar()
+	{
+		if (string.IsNullOrEmpty(textoAvatar) == false)
+		{
+			if (textoAvatar.Contains("https://") == true)
+			{
+				usuario.ProfileAvatar = textoAvatar;
+
+				try
+				{
+					await UserManager.UpdateAsync(usuario);
+				}
+				catch
+				{
+				}
+            }
 		}
 	}
 }

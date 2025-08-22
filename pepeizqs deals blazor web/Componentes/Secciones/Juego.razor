@@ -926,7 +926,7 @@
                                                                         <label>@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Game"), horasJugadas, JuegoDRM2.DevolverDRM(drm.Id))</label>
                                                                     }
 
-                                                                    @if (usuarioTieneJuegoUltimaVezJugado > 0)
+                                                                    @if (usuarioTieneJuegoUltimaVezJugado > 0 && usuarioTieneJuegoUltimaVezJugado != 86400)
                                                                     {
                                                                         DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(usuarioTieneJuegoUltimaVezJugado);
 

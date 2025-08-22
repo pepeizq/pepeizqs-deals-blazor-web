@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System.Globalization;
 using System.Text.Json;
+using static pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos;
 using static pepeizqs_deals_blazor_web.Componentes.Secciones.Minimos;
 
 namespace BaseDatos.Juegos
@@ -764,6 +765,163 @@ namespace BaseDatos.Juegos
 				}
 
 				conexion.Dispose();
+			}
+
+			return juegos;
+		}
+
+		public static List<JuegoUsuario> MultiplesJuegosUsuario(List<JuegoUsuario> juegos, JuegoDRM drm, List<string> ids, SqlConnection conexion = null)
+		{
+			bool cogerNumero = false;
+			string campo = string.Empty;
+
+			if (drm == JuegoDRM.Steam)
+			{
+				cogerNumero = true;
+				campo = "idSteam";
+			}
+			else if (drm == JuegoDRM.GOG)
+			{
+				cogerNumero = true;
+				campo = "idGOG";
+			}
+			else if (drm == JuegoDRM.Amazon)
+			{
+				campo = "idAmazon";
+			}
+			else if (drm == JuegoDRM.Epic)
+			{
+				campo = "exeEpic";
+			}
+			else if (drm == JuegoDRM.Ubisoft)
+			{
+				campo = "exeUbisoft";
+			}
+			else if (drm == JuegoDRM.EA)
+			{
+				campo = "exeEA";
+			}
+
+			if (string.IsNullOrEmpty(campo) == false)
+			{
+				if (ids != null)
+				{
+					string sqlBuscar = string.Empty;
+
+					if (ids.Count > 0)
+					{
+						sqlBuscar = "SELECT id, nombre, JSON_VALUE(imagenes, '$.Capsule_231x87'), " + campo + " FROM juegos WHERE " + campo + " IN (";
+
+						int i = 0;
+						while (i < ids.Count)
+						{
+							if (i == 0)
+							{
+								sqlBuscar = sqlBuscar + "'" + ids[i] + "'";
+							}
+							else
+							{
+								sqlBuscar = sqlBuscar + ", '" + ids[i] + "'";
+							}
+
+							i += 1;
+						}
+
+						sqlBuscar = sqlBuscar + ")";
+					}
+
+					if (string.IsNullOrEmpty(sqlBuscar) == false)
+					{
+						if (conexion == null)
+						{
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
+						else
+						{
+							if (conexion.State != System.Data.ConnectionState.Open)
+							{
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+						}
+
+						using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+						{
+							using (SqlDataReader lector = comando.ExecuteReader())
+							{
+								while (lector.Read())
+								{
+									if (lector.IsDBNull(0) == false)
+									{
+										bool añadir = true;
+
+										if (juegos != null)
+										{
+											foreach (var juego in juegos)
+											{
+												if (juego.Id == lector.GetInt32(0))
+												{
+													JuegoUsuarioDRM nuevoDRM = new JuegoUsuarioDRM();
+													nuevoDRM.DRM = drm;
+
+													if (lector.IsDBNull(3) == false)
+													{
+														if (cogerNumero == true)
+														{
+															nuevoDRM.Id = lector.GetInt32(3).ToString();
+														}
+														else
+														{
+															nuevoDRM.Id = lector.GetString(3);
+														}
+													}
+
+													juego.DRMs.Add(nuevoDRM);
+													añadir = false;
+													break;
+												}
+											}
+										}
+
+										if (añadir == true)
+										{
+											JuegoUsuario nuevoJuego = new JuegoUsuario();
+											nuevoJuego.Id = lector.GetInt32(0);
+
+											if (lector.IsDBNull(1) == false)
+											{
+												nuevoJuego.Nombre = lector.GetString(1);
+											}
+
+											if (lector.IsDBNull(2) == false)
+											{
+												nuevoJuego.Imagen = lector.GetString(2);
+											}
+
+											JuegoUsuarioDRM nuevoDRM = new JuegoUsuarioDRM();
+											nuevoDRM.DRM = drm;
+
+											if (lector.IsDBNull(3) == false)
+											{
+												if (cogerNumero == true)
+												{
+													nuevoDRM.Id = lector.GetInt32(3).ToString();
+												}
+												else
+												{
+													nuevoDRM.Id = lector.GetString(3);
+												}
+											}
+
+											nuevoJuego.DRMs = [nuevoDRM];
+
+											juegos.Add(nuevoJuego);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 
 			return juegos;

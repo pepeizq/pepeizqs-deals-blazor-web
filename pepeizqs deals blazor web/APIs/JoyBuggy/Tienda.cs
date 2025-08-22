@@ -47,8 +47,9 @@ namespace APIs.JoyBuggy
                 html = html.Replace("g:id", "id");
                 html = html.Replace("g:sale_price", "sale_price");
                 html = html.Replace("g:price", "price");
+				html = html.Replace("g:availability", "availability");
 
-                XmlSerializer xml = new XmlSerializer(typeof(JoyBuggyCanal));
+				XmlSerializer xml = new XmlSerializer(typeof(JoyBuggyCanal));
                 JoyBuggyCanal listaJuegos = null;
 
                 using (TextReader lector = new StringReader(html))
@@ -66,58 +67,61 @@ namespace APIs.JoyBuggy
 
                             foreach (JoyBuggyJuego juego in listaJuegos.Datos.Juegos)
                             {
-                                if (string.IsNullOrEmpty(juego.PrecioBase) == false && string.IsNullOrEmpty(juego.PrecioRebajado) == false)
+                                if (string.IsNullOrEmpty(juego.Disponibilidad) == false && juego.Disponibilidad.ToLower() == "in stock")
                                 {
-                                    decimal precioBase = decimal.Parse(juego.PrecioBase);
-                                    decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+									if (string.IsNullOrEmpty(juego.PrecioBase) == false && string.IsNullOrEmpty(juego.PrecioRebajado) == false)
+									{
+										decimal precioBase = decimal.Parse(juego.PrecioBase);
+										decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-                                    int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+										int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-                                    if (descuento > 0)
-                                    {
-                                        string nombre = WebUtility.HtmlDecode(juego.Nombre);
-
-                                        string enlace = juego.Enlace;
-
-                                        string imagen = juego.Imagen;
-
-                                        JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
-
-                                        JuegoPrecio oferta = new JuegoPrecio
-                                        {
-                                            Nombre = nombre,
-                                            Enlace = enlace,
-                                            Imagen = imagen,
-                                            Moneda = JuegoMoneda.Euro,
-                                            Precio = precioRebajado,
-                                            Descuento = descuento,
-                                            Tienda = Generar().Id,
-                                            DRM = drm,
-                                            FechaDetectado = DateTime.Now,
-                                            FechaActualizacion = DateTime.Now
-                                        };
-
-										try
+										if (descuento > 0)
 										{
-											BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+											string nombre = WebUtility.HtmlDecode(juego.Nombre);
+
+											string enlace = juego.Enlace;
+
+											string imagen = juego.Imagen;
+
+											JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+
+											JuegoPrecio oferta = new JuegoPrecio
+											{
+												Nombre = nombre,
+												Enlace = enlace,
+												Imagen = imagen,
+												Moneda = JuegoMoneda.Euro,
+												Precio = precioRebajado,
+												Descuento = descuento,
+												Tienda = Generar().Id,
+												DRM = drm,
+												FechaDetectado = DateTime.Now,
+												FechaActualizacion = DateTime.Now
+											};
+
+											try
+											{
+												BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+											}
+											catch (Exception ex)
+											{
+												BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+											}
+
+											juegos2 += 1;
+
+											try
+											{
+												BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+											}
+											catch (Exception ex)
+											{
+												BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+											}
 										}
-										catch (Exception ex)
-										{
-                                            BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                        }
-
-										juegos2 += 1;
-
-										try
-										{
-											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-										}
-										catch (Exception ex)
-										{
-                                            BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                        }
 									}
-                                }
+								}
                             }
                         }
                     }
@@ -164,5 +168,8 @@ namespace APIs.JoyBuggy
 
         [XmlElement("Platform")]
         public string DRM { get; set; }
-    }
+
+		[XmlElement("availability")]
+		public string Disponibilidad { get; set; }
+	}
 }

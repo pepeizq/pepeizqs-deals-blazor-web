@@ -24,5 +24,6 @@
   "String24": "Juegos importados: {0}",
   "String25": "Si tenéis la versión instalable de Playnite, debéis cargar el fichero '{0}' ubicado en la carpeta '{1}'.",
   "String26": "Si tenéis la versión portable de Playnite, debéis cargar el fichero '{0}' ubicado en la carpeta '{1}'.",
-  "String27": "Todos"
+  "String27": "Todos",
+  "String28": "{0} horas"
 }

@@ -402,7 +402,7 @@ namespace Herramientas
 					}
 					catch (Exception ex)
 					{
-						global::BaseDatos.Errores.Insertar.Mensaje("traduccion", ex);
+						global::BaseDatos.Errores.Insertar.Mensaje("Traduccion Carpeta: " + carpeta + " - Cadena: " + cadena, ex);
 					}
 				}
 

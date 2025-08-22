@@ -1,12 +1,17 @@
 {
   "String1": "Share profile",
-  "String2": "Profile name in the link (minimum 4 characters):",
-  "String3": "Write a name",
-  "String4": "That link name is already taken.",
+  "String2": "Tag in your profile link (minimum 4 characters, maximum 20 characters):",
+  "String3": "Write a tag",
+  "String4": "That link tag is already taken.",
   "String5": "Profile link:",
   "String6": "Things you want to share on your profile",
   "String7": "Wishlist",
   "String8": "Steam Account",
   "String9": "GOG Account",
-  "String10": "Games"
+  "String10": "Games",
+  "String11": "Last Played",
+  "String12": "Link",
+  "String13": "Things you want to change in your profile",
+  "String14": "Avatar",
+  "String15": "Put a link to your avatar image"
 }

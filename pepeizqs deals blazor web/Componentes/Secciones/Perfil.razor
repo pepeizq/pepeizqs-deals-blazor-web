@@ -1,6 +1,7 @@
 ﻿@page "/user/{usuarioNombre}/"
 
 @using pepeizqs_deals_web.Data
+@using static pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos
 
 @inject IHttpContextAccessor Contexto
 
@@ -14,7 +15,7 @@
 
 	<div class="subcabecera">
 		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
-			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(perfil.Avatar)" style="width: 100px; height: 100px;" alt="@perfil.Nickname" />
+			<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(perfil.ProfileAvatar)" style="width: 100px; height: 100px;" alt="@perfil.Nickname" />
 
 			<div style="display: flex; flex-direction: column; gap: 15px;">
 				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
@@ -56,10 +57,17 @@
 		</div>
 	</div>
 
-	if (perfil.ProfileGames == true || perfil.ProfileWishlist == true)
+	if (perfil.ProfileLastPlayed == true || perfil.ProfileGames == true || perfil.ProfileWishlist == true)
 	{
 		<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 			<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
+				@if (perfil.ProfileLastPlayed == true)
+				{
+					<button class="boton-pequeño" style="@CambiarEstilo(enseñarUltimoJugado) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaUltimoJugado">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "AccountUser")
+					</button>
+				}
+
 				@if (perfil.ProfileGames == true)
 				{
 					<button class="boton-pequeño" style="@CambiarEstilo(enseñarJuegos) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaJuegos">
@@ -77,9 +85,62 @@
 		</div>
 	}
 
+	if (enseñarUltimoJugado == true)
+	{
+		if (listaMostrar.Count > 0)
+		{
+			<div style="max-width: 1000px; margin: 20px auto;">
+				<Virtualize Context="juego" Items="listaMostrar">
+					<ItemContent>
+						<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
+							<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" target="_blank">
+								<div style="display: flex; align-items: center; justify-content: center; flex-direction: row;">
+									<div>
+										<img src="@juego.Imagen" style="height: 100%; width: 100%; min-width: 231px; max-height: 87px; object-fit: cover;" />
+									</div>
+
+									<div style="width: 100%; padding: 5px 20px;">
+										<div>@juego.Nombre</div>
+
+										<div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+											@foreach (var drm in juego.DRMs)
+											{
+												<div style="max-width: 20px; max-height: 20px; display: flex;">
+													<img src="@Juegos.JuegoDRM2.SacarImagen(drm.DRM)" style="width: 100%; height: 100%;" />
+												</div>
+
+												@if (drm.JugadoTiempo > 0)
+												{
+													TimeSpan tiempoJugado = TimeSpan.FromMinutes((long)drm.JugadoTiempo);
+
+													string horasJugadas = tiempoJugado.TotalHours.ToString("N1");
+
+													<label>@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String28", "AccountGames"), horasJugadas)</label>
+												}
+
+												@if (drm.JugadoUltimaVez > 0 && drm.JugadoUltimaVez != 86400)
+												{
+													DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(drm.JugadoUltimaVez);
+
+													string ultimaVezJugado = Herramientas.Calculadora.DiferenciaTiempo(fecha.UtcDateTime, idioma);
+
+													<label>(@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String33", "Game"), ultimaVezJugado))</label>
+												}
+											}
+										</div>
+									</div>
+								</div>
+							</a>
+						</div>
+					</ItemContent>
+				</Virtualize>
+			</div>
+		}
+	}
+
 	if (enseñarJuegos == true)
 	{
-		
+		<pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos usuarioId="@usuarioId" idioma="@idioma"/>
 	}
 
 	if (enseñarDeseados == true)
@@ -103,6 +164,8 @@
 	public string usuarioNombre { get; set; }
 
 	public Usuario perfil = null;
+
+	private List<JuegoUsuario> listaMostrar = new List<JuegoUsuario>();
 
 	protected override void OnInitialized()
 	{
@@ -139,6 +202,103 @@
 					perfilGogCuenta = perfilGogCuenta.Substring(0, perfilGogCuenta.Length - 1);
 				}
 			}
+
+			if (perfil.ProfileLastPlayed == true)
+			{
+				enseñarUltimoJugado = true;
+
+				Herramientas.UsuarioListadosJuegos ultimoJugado = Herramientas.UsuarioJuegos.Cargar(perfil.Id);
+
+				if (ultimoJugado != null)
+				{
+					List<JuegoUsuario> listaGestor = new List<JuegoUsuario>();
+
+					if (ultimoJugado.Steam != null && ultimoJugado.Steam.Count > 0)
+					{
+						List<string> idsSteam = ultimoJugado.Steam.OrderByDescending(j => j.TiempoJugadoUltimaVez).Take(5).Select(juego => juego.Id.ToString()).ToList();
+
+						listaGestor = global::BaseDatos.Juegos.Buscar.MultiplesJuegosUsuario(listaGestor, Juegos.JuegoDRM.Steam, idsSteam);
+
+						foreach (var juegoSteam in ultimoJugado.Steam)
+						{
+							foreach (var juegoMostrar in listaGestor)
+							{
+								if (juegoMostrar.DRMs.Count > 0)
+								{
+									foreach (var drm in juegoMostrar.DRMs)
+									{
+										if (drm.DRM == Juegos.JuegoDRM.Steam && juegoSteam.Id.ToString() == drm.Id)
+										{
+											drm.JugadoTiempo = juegoSteam.TiempoJugadoEnMinutos;
+											drm.JugadoUltimaVez = juegoSteam.TiempoJugadoUltimaVez;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					if (ultimoJugado.Gog != null && ultimoJugado.Gog.Count > 0)
+					{
+						List<string> idsGog = ultimoJugado.Gog.OrderByDescending(j => j.TiempoJugadoUltimaVez).Take(5).Select(juego => juego.Id.ToString()).ToList();
+
+						listaGestor = global::BaseDatos.Juegos.Buscar.MultiplesJuegosUsuario(listaGestor, Juegos.JuegoDRM.GOG, idsGog);
+
+						foreach (var juegoGog in ultimoJugado.Gog)
+						{
+							foreach (var juegoMostrar in listaGestor)
+							{
+								if (juegoMostrar.DRMs.Count > 0)
+								{
+									foreach (var drm in juegoMostrar.DRMs)
+									{
+										if (drm.DRM == Juegos.JuegoDRM.GOG && juegoGog.Id.ToString() == drm.Id)
+										{
+											drm.JugadoTiempo = juegoGog.TiempoJugadoEnMinutos;
+											drm.JugadoUltimaVez = juegoGog.TiempoJugadoUltimaVez;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					if (listaGestor.Count > 0)
+					{
+						int mesAnterior = (int)((DateTimeOffset)DateTime.Now.AddMonths(-3)).ToUnixTimeSeconds();
+
+						foreach (var juego in listaGestor)
+						{
+							foreach (var drm in juego.DRMs)
+							{
+								if (drm.JugadoUltimaVez > mesAnterior && drm.JugadoTiempo > 5)
+								{
+                                    listaMostrar.Add(juego);
+								}
+							}
+						}
+
+						if (listaMostrar.Count > 0)
+						{
+							listaMostrar = listaMostrar.OrderByDescending(j => j.DRMs.Max(d => d.JugadoUltimaVez)).ToList();
+                        }
+                    }
+				}
+			}
+			else
+			{
+				if (perfil.ProfileGames == true)
+				{
+					enseñarJuegos = true;
+				}
+				else
+				{
+					if (perfil.ProfileWishlist == true)
+					{
+						enseñarDeseados = true;
+					}
+                }
+			}
 		}
 	}
 
@@ -152,12 +312,29 @@
 		{
 			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
 		}
-    }
+	}
 
 	private void PestañasOcultar()
 	{
-        enseñarJuegos = false;
+		enseñarUltimoJugado = false;
+		enseñarJuegos = false;
         enseñarDeseados = false;
+	}
+
+	private bool enseñarUltimoJugado = false;
+
+	private void PestañaUltimoJugado()
+	{
+		if (enseñarUltimoJugado == false)
+		{
+			PestañasOcultar();
+
+			enseñarUltimoJugado = true;
+		}
+		else
+		{
+			enseñarUltimoJugado = false;
+		}
 	}
 
 	private bool enseñarJuegos = false;

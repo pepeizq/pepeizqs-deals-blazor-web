@@ -295,6 +295,10 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
+	public bool? ProfileLastPlayed { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
 	public bool? ProfileGames { get; set; }
 
 	[PersonalData]
@@ -308,4 +312,8 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
 	public bool? ProfileGogAccount { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "nvarchar(512)")]
+	public string? ProfileAvatar { get; set; }
 }

@@ -17,7 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BaseDatos\Usuarios\Buscar.cs~RF10dfd01.TMP" />
     <None Remove="Componentes\Cuenta\Cuenta\Juegos.razor~RF1c41df1.TMP" />
+    <None Remove="Idiomas\AccountUser\en.json~RF191d10d.TMP" />
   </ItemGroup>
 
   <ItemGroup>

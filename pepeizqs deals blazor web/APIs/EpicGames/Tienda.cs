@@ -70,6 +70,14 @@ namespace APIs.EpicGames
 									{
 										idsBorrar.Add(lector.GetInt32(0));
 									}
+									else if (lector.GetString(1) == "null")
+									{
+										idsBorrar.Add(lector.GetInt32(0));
+									}
+									else if (lector.GetString(1) == "elements\":[]")
+									{
+										idsBorrar.Add(lector.GetInt32(0));
+									}
 									else
 									{
 										EpicGamesStorePrincipal principal = null;

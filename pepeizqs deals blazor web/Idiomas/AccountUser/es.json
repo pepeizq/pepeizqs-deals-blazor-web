@@ -1,13 +1,18 @@
 {
   "String1": "Compartir perfil",
-  "String2": "Nombre del perfil en el enlace (mínimo 4 caracteres):",
-  "String3": "Escribe un nombre",
-  "String4": "Ese nombre para el enlace ya está usado.",
+  "String2": "Etiqueta en el enlace de tu perfil (mínimo 4 caracteres, máximo 20 caracteres):",
+  "String3": "Escribe una etiqueta",
+  "String4": "Esa etiqueta para el enlace ya está usada.",
   "String5": "Enlace del perfil:",
   "String6": "Cosas que quieres compartir en el perfil",
   "String7": "Deseados",
   "String8": "Cuenta de Steam",
   "String9": "Cuenta de GOG",
-  "String10": "Juegos"
+  "String10": "Juegos",
+  "String11": "Último Jugado",
+  "String12": "Enlace",
+  "String13": "Cosas que quieres modificar en tu perfil",
+  "String14": "Avatar",
+  "String15": "Pon un enlace para la imagen de tu avatar"
 }
 

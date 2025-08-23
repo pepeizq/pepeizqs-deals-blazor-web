@@ -7,7 +7,7 @@
 
 @if (perfil != null)
 {
-	string titulo = perfil.Nickname + " • pepeizq's deals";
+	string titulo = perfil.ProfileNickname2 + " • pepeizq's deals";
 
 	<HeadContent>
 		<PageTitle>@titulo</PageTitle>
@@ -19,7 +19,7 @@
 
 			<div style="display: flex; flex-direction: column; gap: 15px;">
 				<h1 style="font-size: 18px; margin: 0px; width: fit-content;">
-					@perfil.Nickname
+					@perfil.ProfileNickname2
 				</h1>
 
 				<div style="display: flex; align-items: center; gap: 15px;">
@@ -147,6 +147,12 @@
 	{
 		<Deseados perfilUsuarioId="@usuarioId"/>
 	}
+}
+else
+{
+	<div style="background-color: var(--fondoPeligro); padding: 15px 20px; margin: 40px auto;">
+		@Herramientas.Idiomas.BuscarTexto(idioma, "String21", "AccountUser")
+	</div>
 }
 
 @code {

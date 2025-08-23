@@ -1439,7 +1439,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT Id, Nickname, ProfileAvatar, ProfileSteamAccount, ProfileGogAccount, ProfileLastPlayed, ProfileGames, ProfileWishlist FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname AND ProfileShow='true'";
+				string busqueda = "SELECT Id, ProfileNickname2, ProfileAvatar, ProfileSteamAccount, ProfileGogAccount, ProfileLastPlayed, ProfileGames, ProfileWishlist FROM AspNetUsers WHERE ProfileNickname=@ProfileNickname AND ProfileShow='true'";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -1458,7 +1458,7 @@ namespace BaseDatos.Usuarios
 
 							if (lector.IsDBNull(1) == false)
 							{
-								perfil.Nickname = lector.GetString(1);
+								perfil.ProfileNickname2 = lector.GetString(1);
 							}
 
 							if (lector.IsDBNull(2) == false)

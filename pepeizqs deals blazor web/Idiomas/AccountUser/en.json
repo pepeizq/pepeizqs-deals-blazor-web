@@ -12,6 +12,12 @@
   "String11": "Last Played",
   "String12": "Link",
   "String13": "Things you want to change in your profile",
-  "String14": "Avatar",
-  "String15": "Put a link to your avatar image"
+  "String14": "Avatar (maximum dimensions 100x100)",
+  "String15": "Put a link to your avatar image",
+  "String16": "Name (minimum 4 characters, maximum 70 characters)",
+  "String17": "Enter your profile name",
+  "String18": "You can show your games by linking to any of the platforms available on the web.",
+  "String19": "You can show your wishlist by adding a game to your wishlist or linking your Steam or GOG account.",
+  "String20": "You can show your most recently played games by linking your Steam or GOG account.",
+  "String21": "No profile found."
 }

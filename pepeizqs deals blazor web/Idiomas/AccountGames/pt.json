@@ -6,7 +6,7 @@
   "String5": "Atualizar",
   "String7": "Última importação",
   "String8": "{0} jogos",
-  "String9": "{0} Lista de desejos",
+  "String9": "{0} lista de desejos",
   "String10": "Última sincronia",
   "String11": "Dados salvos em sua conta",
   "String12": "Seus dados da conta {0} só podem ser atualizados a cada 10 minutos.",
@@ -25,5 +25,6 @@
   "String25": "Se você tiver a versão instalável do PlayNite, deve carregar o arquivo '{0}' localizado na pasta '{1}'.",
   "String26": "Se você tiver a versão portátil do Playnite, deve carregar o arquivo '{0}' localizado na pasta '{1}'.",
   "String27": "Todos",
-  "String28": "{0} horas"
+  "String28": "{0} horas",
+  "String29": "Você não tem nenhum jogo carregado em sua conta."
 }

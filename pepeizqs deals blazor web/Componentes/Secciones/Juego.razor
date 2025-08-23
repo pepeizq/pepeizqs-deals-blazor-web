@@ -4638,7 +4638,16 @@
         {
             if (juego != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {	
-                await JavaScript.InvokeVoidAsync("ChangeUrl", "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
+                string nombreLimpio = Herramientas.EnlaceAdaptador.Nombre(juego.Nombre);
+
+                if (string.IsNullOrEmpty(nombreLimpio) == false)
+                {
+                    await JavaScript.InvokeVoidAsync("ChangeUrl", "/game/" + juego.Id.ToString() + "/" + nombreLimpio + "/");
+                }
+                else
+                {
+                    await JavaScript.InvokeVoidAsync("ChangeUrl", "/game/" + juego.Id.ToString() + "/");
+                }
             }
         }
     }

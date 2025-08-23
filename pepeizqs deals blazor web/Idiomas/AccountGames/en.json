@@ -25,5 +25,6 @@
   "String25": "If you have the installable version of Playnite, you must load the file '{0}' located in the folder '{1}'.",
   "String26": "If you have the portable version of Playnite, you must load the file '{0}' located in the folder '{1}'.",
   "String27": "All",
-  "String28": "{0} hours"
+  "String28": "{0} hours",
+  "String29": "You don't have any games loaded on your account."
 }

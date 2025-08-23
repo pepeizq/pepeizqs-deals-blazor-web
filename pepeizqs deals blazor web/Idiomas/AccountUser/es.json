@@ -12,7 +12,13 @@
   "String11": "Último Jugado",
   "String12": "Enlace",
   "String13": "Cosas que quieres modificar en tu perfil",
-  "String14": "Avatar",
-  "String15": "Pon un enlace para la imagen de tu avatar"
+  "String14": "Avatar (dimensiones máximas 100x100)",
+  "String15": "Pon un enlace para la imagen de tu avatar",
+  "String16": "Nombre (mínimo 4 caracteres, máximo 70 caracteres)",
+  "String17": "Pon el nombre de tu perfil",
+  "String18": "Puedes enseñar tus juegos si enlazas cualquiera de las plataformas disponibles en la web.",
+  "String19": "Puedes enseñar tus deseados si añades algún juego a tus deseados o enlazas la cuenta de Steam o GOG.",
+  "String20": "Puedes enseñar tus últimos juegos jugados si enlazas la cuenta de Steam o GOG.",
+  "String21": "No se ha encontrado un perfil."
 }
 

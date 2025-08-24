@@ -3,9 +3,11 @@
 using ApexCharts;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using RedditSharp.Multi;
 using System;
 using System.Diagnostics.Metrics;
 using System.Drawing.Drawing2D;
+using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -46,13 +48,12 @@ namespace APIs.AmazonLuna
 
 			HttpClient cliente = new HttpClient();
 			cliente.BaseAddress = new Uri("https://luna.amazon.es/");
-			cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 			string peticionEnBruto = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"subscription/luna-plus/B085TRCCT6\",\"pageId\":\"default\"},\"cacheKey\":\"cfb5550b-0c5f-49cd-852a-1cc4f85206a3\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"142.0\",\"deviceModel\":\"rv:142.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
 
 			HttpRequestMessage peticion = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
 			{
-				Content = new StringContent(peticionEnBruto, Encoding.UTF8, "application/json"),
+				Content = new StringContent(peticionEnBruto, Encoding.UTF8, "*/*"),
 				Headers = { {"Host","proxy-prod.eu-west-1.tempo.digital.a2z.com" },
 {"User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0" },
 {"Accept","*/*" },
@@ -66,13 +67,11 @@ namespace APIs.AmazonLuna
 {"x-amz-platform","web" },
 {"x-amz-react-version","1.0.32195.0" },
 {"x-amz-session-id","259-7104538-8853213" },
-{"weblab-overrides"," " },
 {"x-amz-tdi","undefined" },
 {"x-amz-locale","es_ES" },
 {"x-amz-marketplace-id","A1RKKUPIHCS9HS" },
 {"x-amzn-RequestId","ddcd36d2-319a-412d-993b-f8c88953f0b1" },
 {"x-amz-country-of-residence","ES" },
-{"x-amz-access-token"," " },
 {"Origin","https://luna.amazon.es" },
 {"Sec-GPC","1" },
 {"Connection","keep-alive" },
@@ -91,7 +90,15 @@ namespace APIs.AmazonLuna
 
 			try
 			{
-				html = await respuesta.Content.ReadAsStringAsync();
+				Stream stream = await respuesta.Content.ReadAsStreamAsync();
+
+				using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
+				{
+					using (StreamReader lector = new StreamReader(stream, Encoding.UTF8))
+					{
+						html = await lector.ReadToEndAsync();
+					}
+				}
 			}
 			catch (Exception ex) 
 			{ 
@@ -100,45 +107,47 @@ namespace APIs.AmazonLuna
 
 			GestionarHtml(html, cantidad, conexion);
 
-			HttpClient clienteEa = new HttpClient();
-			clienteEa.BaseAddress = new Uri("https://luna.amazon.es/");
-			clienteEa.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			//HttpClient clienteEa = new HttpClient();
+			//clienteEa.BaseAddress = new Uri("https://luna.amazon.es/");
+			//clienteEa.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-			string peticionEnBrutoEa = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"ea?ref=tmp_pghq_landingpage\",\"pageId\":\"default\"},\"cacheKey\":\"3411e8dc-75f4-4b58-8860-815159a61183\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"136.0\",\"deviceModel\":\"rv:136.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
+			//string peticionEnBrutoEa = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"ea?ref=tmp_pghq_landingpage\",\"pageId\":\"default\"},\"cacheKey\":\"3411e8dc-75f4-4b58-8860-815159a61183\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"136.0\",\"deviceModel\":\"rv:136.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
 
-			HttpRequestMessage peticionEa = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
-			{
-				Content = new StringContent(peticionEnBrutoEa, Encoding.UTF8, "application/json"),
-				Headers = { { "x-amz-locale", "es_ES" },
-							{ "x-amz-platform", "web" }
-				}
-			};
+			//HttpRequestMessage peticionEa = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
+			//{
+			//	Content = new StringContent(peticionEnBrutoEa, Encoding.UTF8, "application/json"),
+			//	Headers = { { "x-amz-locale", "es_ES" },
+			//				{ "x-amz-platform", "web" }
+			//	}
+			//};
 
-			HttpResponseMessage respuestaEa = await clienteEa.SendAsync(peticionEa);
+			//HttpResponseMessage respuestaEa = await clienteEa.SendAsync(peticionEa);
 
-			string htmlEa = string.Empty;
+			//string htmlEa = string.Empty;
 
-			try
-			{
-				htmlEa = await respuestaEa.Content.ReadAsStringAsync();
-			}
-			catch (Exception ex)
-			{
-				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna EA", ex, conexion);
-			}
+			//try
+			//{
+			//	htmlEa = await respuestaEa.Content.ReadAsStringAsync();
+			//}
+			//catch (Exception ex)
+			//{
+			//	BaseDatos.Errores.Insertar.Mensaje("Amazon Luna EA", ex, conexion);
+			//}
 
-			GestionarHtml(htmlEa, cantidad, conexion);
+			//GestionarHtml(htmlEa, cantidad, conexion);
 		}
 
 		private static void GestionarHtml(string html, int cantidad, SqlConnection conexion = null)
 		{
 			if (string.IsNullOrEmpty(html) == false)
 			{
+				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna HTML", html);
+
 				AmazonLunaPlusAPI api = JsonSerializer.Deserialize<AmazonLunaPlusAPI>(html);
 
 				if (api != null)
 				{
-					BaseDatos.Errores.Insertar.Mensaje("test", JsonSerializer.Serialize(api?.Datos?.Contenido?.Widgets));
+					
 
 					foreach (var juego in api?.Datos?.Contenido?.Widgets[3]?.Widgets)
 					{

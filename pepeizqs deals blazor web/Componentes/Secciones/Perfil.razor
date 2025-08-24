@@ -68,18 +68,21 @@
 					</button>
 				}
 
-				@if (perfil.ProfileGames == true)
+				@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
-					<button class="boton-pequeño" style="@CambiarEstilo(enseñarJuegos) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaJuegos">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "AccountUser")
-					</button>
-				}
-				
-				@if (perfil.ProfileWishlist == true)
-				{
-					<button class="boton-pequeño" style="@CambiarEstilo(enseñarDeseados) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaDeseados">
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
-					</button>
+					if (perfil.ProfileGames == true)
+					{
+						<button class="boton-pequeño" style="@CambiarEstilo(enseñarJuegos) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaJuegos">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "AccountUser")
+						</button>
+					}
+
+					if (perfil.ProfileWishlist == true)
+					{
+						<button class="boton-pequeño" style="@CambiarEstilo(enseñarDeseados) width: fit-content; font-size: 18px; padding: 8px 20px; border-radius: 5px;" @onclick="PestañaDeseados">
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountUser")
+						</button>
+					}
 				}
 			</div>
 		</div>

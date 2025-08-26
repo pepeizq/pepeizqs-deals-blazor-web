@@ -94,7 +94,7 @@ namespace APIs.AmazonLuna
 
 				using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
 				{
-					using (StreamReader lector = new StreamReader(stream, Encoding.UTF8))
+					using (StreamReader lector = new StreamReader(stream))
 					{
 						html = await lector.ReadToEndAsync();
 					}

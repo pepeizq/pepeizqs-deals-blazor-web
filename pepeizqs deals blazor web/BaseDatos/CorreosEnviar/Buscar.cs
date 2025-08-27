@@ -41,14 +41,8 @@ namespace BaseDatos.CorreosEnviar
 
 						lista.Add(correo);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return lista;
 		}

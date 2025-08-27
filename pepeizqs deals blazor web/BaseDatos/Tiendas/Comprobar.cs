@@ -329,8 +329,8 @@ namespace BaseDatos.Tiendas
 
 			buscarJuegos = buscarJuegos.Replace("@oferta.Tienda", oferta.Tienda);
 			buscarJuegos = buscarJuegos.Replace("@oferta.Enlace", oferta.Enlace);
-
-            using (SqlCommand comandoBuscar = new SqlCommand(buscarJuegos, conexion))
+				
+			using (SqlCommand comandoBuscar = new SqlCommand(buscarJuegos, conexion))
 			{
 				using (SqlDataReader lector = comandoBuscar.ExecuteReader())
 				{

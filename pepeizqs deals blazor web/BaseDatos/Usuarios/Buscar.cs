@@ -919,12 +919,12 @@ namespace BaseDatos.Usuarios
 
 			if (drm == JuegoDRM.Steam)
 			{
-				busqueda = "SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(SteamGames, ',') WHERE VALUE IN ((SELECT idSteam FROM juegos WHERE id=@juegoId))) AND id=@id";
+				busqueda = "DECLARE @idSteam nvarchar(256);\r\n\r\nSET @idSteam = (SELECT idSteam FROM juegos WHERE id=@juegoId);\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idSteam, SteamGames) > 0 AND id=@id";
 			}
 
 			if (drm == JuegoDRM.GOG)
 			{
-				busqueda = "SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(GogGames, ',') WHERE VALUE IN ((SELECT idGog FROM juegos WHERE id=@juegoId))) AND id=@id";
+				busqueda = "DECLARE @idGog nvarchar(256);\r\n\r\nSET @idGog = (SELECT idGog FROM juegos WHERE id=@juegoId);\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idGog, GogGames) > 0 AND id=@id";
 			}
 
 			if (drm == JuegoDRM.Amazon)

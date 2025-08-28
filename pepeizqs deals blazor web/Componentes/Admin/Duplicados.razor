@@ -55,6 +55,6 @@
 
         duplicados = BaseDatos.Juegos.Buscar.Duplicados(conexion);
 
-        BaseDatos.Admin.Actualizar.Dato("duplicados", duplicados.Count.ToString(), conexion);
+        BaseDatos.Admin.Actualizar.Dato("duplicados", duplicados.Count, conexion);
     }
 }

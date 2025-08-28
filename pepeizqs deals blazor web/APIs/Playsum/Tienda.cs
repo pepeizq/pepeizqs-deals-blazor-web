@@ -62,7 +62,6 @@ namespace APIs.Playsum
 				using (StringReader lector = new StringReader(html))
 				{
 					listaJuegos = (PlaysumJuegos)xml.Deserialize(lector);
-					lector.Dispose();
 				}
 
 				if (listaJuegos != null)

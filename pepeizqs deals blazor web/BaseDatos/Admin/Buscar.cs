@@ -7,9 +7,9 @@ namespace BaseDatos.Admin
 {
 	public static class Buscar
 	{
-		public static string Dato(string id, SqlConnection conexion = null)
+		public static int Dato(string id, SqlConnection conexion = null)
 		{
-			string dato = null;
+			int dato = 0;
 
 			if (conexion == null)
 			{
@@ -23,7 +23,7 @@ namespace BaseDatos.Admin
 				}
 			}
 
-			string seleccionarDato = "SELECT * FROM adminDatos WHERE id=@id";
+			string seleccionarDato = "SELECT contenido FROM adminDatos WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(seleccionarDato, conexion))
 			{
@@ -33,16 +33,13 @@ namespace BaseDatos.Admin
 				{
 					if (lector.Read() == true)
 					{
-						dato = lector.GetString(1);
+						if (lector.IsDBNull(0) == false)
+						{
+							dato = lector.GetInt32(0);
+						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return dato;
 		}
@@ -80,14 +77,8 @@ namespace BaseDatos.Admin
 							esPosible = true;
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return esPosible;
 		}
@@ -142,14 +133,8 @@ namespace BaseDatos.Admin
 							tiendas.Add(tienda);
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			if (tiendas.Count > 0)
 			{
@@ -200,14 +185,8 @@ namespace BaseDatos.Admin
 							valorAdicional = lector.GetInt32(lector.GetOrdinal(valor));
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return valorAdicional;
 		}
@@ -253,14 +232,8 @@ namespace BaseDatos.Admin
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return null;
 		}
@@ -298,14 +271,8 @@ namespace BaseDatos.Admin
 							esPosible = false;
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return esPosible;
 		}
@@ -339,14 +306,8 @@ namespace BaseDatos.Admin
 							cantidadErrores = lector.GetInt32(0);
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return cantidadErrores;
 		}

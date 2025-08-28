@@ -113,8 +113,8 @@
 
                     using (conexion)
                     {
-                        int nuevosCorreosDeals = int.Parse(BaseDatos.Admin.Buscar.Dato("correos", conexion));
-                        int nuevosCorreosApps = int.Parse(BaseDatos.Admin.Buscar.Dato("correos2", conexion));
+                        int nuevosCorreosDeals = BaseDatos.Admin.Buscar.Dato("correos", conexion);
+                        int nuevosCorreosApps = BaseDatos.Admin.Buscar.Dato("correos2", conexion);
 
                         if (nuevosCorreosDeals > 0 || nuevosCorreosApps > 0)
                         {

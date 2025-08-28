@@ -48,20 +48,12 @@ namespace BaseDatos.Pendientes
                 {
                     if (tienda.Id != "steam")
                     {
-                        string busqueda = "SELECT * FROM tienda" + tienda.Id + " WHERE (idJuegos='0' AND descartado='no')";
+                        string busqueda = "SELECT COUNT(*) FROM tienda" + tienda.Id + " WHERE (idJuegos='0' AND descartado='no')";
 
                         using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                         {
-                            SqlDataReader lector = comando.ExecuteReader();
-
-                            using (lector)
-                            {
-                                while (lector.Read() == true)
-                                {
-									cantidad += 1;
-                                }
-                            }
-                        }
+							cantidad = cantidad + (int)comando.ExecuteScalar();
+						}
                     }
                 }
             }
@@ -91,19 +83,11 @@ namespace BaseDatos.Pendientes
 				{
 					if (suscripcion.AdminPendientes == true)
 					{
-						string busqueda = "SELECT * FROM temporal" + suscripcion.Id.ToString();
+						string busqueda = "SELECT COUNT(*) FROM temporal" + suscripcion.Id.ToString();
 
 						using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 						{
-							SqlDataReader lector = comando.ExecuteReader();
-
-							using (lector)
-							{
-								while (lector.Read() == true)
-								{
-									cantidad += 1;
-								}
-							}
+							cantidad = cantidad + (int)comando.ExecuteScalar();
 						}
 					}
 				}
@@ -132,21 +116,13 @@ namespace BaseDatos.Pendientes
 			{
                 foreach (var streaming in Streaming2.StreamingCargar.GenerarListado())
 				{
-                    string busqueda = "SELECT * FROM streaming" + streaming.Id + " WHERE (idJuego IS NULL OR idJuego = '0') AND (descartado IS NULL OR descartado = 0)";
+                    string busqueda = "SELECT COUNT(*) FROM streaming" + streaming.Id + " WHERE (idJuego IS NULL OR idJuego = '0') AND (descartado IS NULL OR descartado = 0)";
 
-                    using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-                    {
-                        SqlDataReader lector = comando.ExecuteReader();
-
-                        using (lector)
-                        {
-                            while (lector.Read() == true)
-                            {
-                                cantidad += 1;
-                            }
-                        }
-                    }
-                } 
+					using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+					{
+						cantidad = cantidad + (int)comando.ExecuteScalar();
+					}
+				} 
             }
 
 			return cantidad;
@@ -170,19 +146,11 @@ namespace BaseDatos.Pendientes
 
             foreach (var plataforma in Plataformas2.PlataformasCargar.GenerarListado())
             {
-                string busqueda = "SELECT * FROM temporal" + plataforma.Id + "juegos";
+                string busqueda = "SELECT COUNT(*) FROM temporal" + plataforma.Id + "juegos";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
-					SqlDataReader lector = comando.ExecuteReader();
-
-					using (lector)
-					{
-						while (lector.Read() == true)
-						{
-							cantidad += 1;
-						}
-					}
+					cantidad = cantidad + (int)comando.ExecuteScalar();
 				}
 			}
 

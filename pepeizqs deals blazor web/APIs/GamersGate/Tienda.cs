@@ -51,7 +51,6 @@ namespace APIs.GamersGate
                 using (StringReader lector = new StringReader(html))
                 {
                     listaJuegos = (GamersGateJuegos)xml.Deserialize(lector);
-					lector.Dispose();
                 }        
 
                 if (listaJuegos != null)

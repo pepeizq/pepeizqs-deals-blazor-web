@@ -92,15 +92,9 @@ namespace BaseDatos.Bundles
 						{
 							bundles.Add(Cargar(lector));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return bundles;
 		}
@@ -133,15 +127,9 @@ namespace BaseDatos.Bundles
 						{
 							bundles.Add(Cargar(lector));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return bundles;
 		}
@@ -189,15 +177,9 @@ namespace BaseDatos.Bundles
 								}
 							}												
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return bundles;
 		}
@@ -230,14 +212,8 @@ namespace BaseDatos.Bundles
 					{
 						bundle = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return bundle;
 		}
@@ -260,15 +236,9 @@ namespace BaseDatos.Bundles
                         {
                             bundles.Add(Cargar(lector));
                         }
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
             }
-
-			conexion.Dispose();
 
 			return bundles;
         }

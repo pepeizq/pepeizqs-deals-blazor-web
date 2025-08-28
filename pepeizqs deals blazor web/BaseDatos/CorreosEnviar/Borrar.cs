@@ -34,11 +34,7 @@ namespace BaseDatos.CorreosEnviar
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 	}
 }

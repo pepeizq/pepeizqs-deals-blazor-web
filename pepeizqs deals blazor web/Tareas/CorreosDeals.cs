@@ -52,11 +52,11 @@ namespace Tareas
 
                                 if (correosDeals.Count > 0)
                                 {
-									BaseDatos.Admin.Actualizar.Dato("correos", correosDeals.Count.ToString(), conexion);
+									BaseDatos.Admin.Actualizar.Dato("correos", correosDeals.Count, conexion);
                                 }
                                 else
                                 {
-									BaseDatos.Admin.Actualizar.Dato("correos", "0", conexion);
+									BaseDatos.Admin.Actualizar.Dato("correos", 0, conexion);
                                 }
                             }
                         }

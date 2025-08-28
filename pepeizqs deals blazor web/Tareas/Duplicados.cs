@@ -55,7 +55,7 @@ namespace Tareas
 
 								List<Juegos.Juego> duplicados = BaseDatos.Juegos.Buscar.Duplicados(conexion);
 
-								BaseDatos.Admin.Actualizar.Dato("duplicados", duplicados.Count.ToString(), conexion);
+								BaseDatos.Admin.Actualizar.Dato("duplicados", duplicados.Count, conexion);
 							}
 						}
 						catch (Exception ex)

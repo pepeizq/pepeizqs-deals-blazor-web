@@ -1,19 +1,8 @@
 ﻿#nullable disable
 
-using ApexCharts;
 using Juegos;
 using Microsoft.Data.SqlClient;
-using RedditSharp.Multi;
-using System;
-using System.Diagnostics.Metrics;
-using System.Drawing.Drawing2D;
-using System.IO.Compression;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using X.Bluesky.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace APIs.AmazonLuna
 {
@@ -42,238 +31,173 @@ namespace APIs.AmazonLuna
 
 		public static async Task Buscar(SqlConnection conexion)
 		{
+			await Task.Yield();
+
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
+
+			List<int> idsBorrar = new List<int>();
 
 			int cantidad = 0;
 
-			HttpClient cliente = new HttpClient();
-			cliente.BaseAddress = new Uri("https://luna.amazon.es/");
+			List<AmazonLunaJuego> juegos = null;
 
-			string peticionEnBruto = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"subscription/luna-plus/B085TRCCT6\",\"pageId\":\"default\"},\"cacheKey\":\"cfb5550b-0c5f-49cd-852a-1cc4f85206a3\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"142.0\",\"deviceModel\":\"rv:142.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
-
-			HttpRequestMessage peticion = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
-			{
-				Content = new StringContent(peticionEnBruto, Encoding.UTF8, "*/*"),
-				Headers = { {"Host","proxy-prod.eu-west-1.tempo.digital.a2z.com" },
-{"User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0" },
-{"Accept","*/*" },
-{"Accept-Language","en-US" },
-{"Accept-Encoding","gzip, deflate, br, zstd" },
-{"Referer","https://luna.amazon.es/" },
-{"x-amz-timezone","Europe/Madrid" },
-{"x-amz-client-version","-" },
-{"x-amz-device-serial-number","259-7104538-8853213" },
-{"x-amz-device-type","browser" },
-{"x-amz-platform","web" },
-{"x-amz-react-version","1.0.32195.0" },
-{"x-amz-session-id","259-7104538-8853213" },
-{"x-amz-tdi","undefined" },
-{"x-amz-locale","es_ES" },
-{"x-amz-marketplace-id","A1RKKUPIHCS9HS" },
-{"x-amzn-RequestId","ddcd36d2-319a-412d-993b-f8c88953f0b1" },
-{"x-amz-country-of-residence","ES" },
-{"Origin","https://luna.amazon.es" },
-{"Sec-GPC","1" },
-{"Connection","keep-alive" },
-{"Sec-Fetch-Dest","empty" },
-{"Sec-Fetch-Mode","cors" },
-{"Sec-Fetch-Site","cross-site" },
-{"Priority","u=4" },
-{"Pragma","no-cache" },
-{"Cache-Control","no-cache" }
-					}
-			};
-
-			HttpResponseMessage respuesta = await cliente.SendAsync(peticion);
-
-			string html = string.Empty;
+			string busqueda = "SELECT * FROM temporalamazonluna";
 
 			try
 			{
-				Stream stream = await respuesta.Content.ReadAsStreamAsync();
-
-				using (GZipStream descompresion = new GZipStream(stream, CompressionMode.Decompress, false))
+				if (conexion == null)
 				{
-					using (StreamReader lector = new StreamReader(stream))
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
 					{
-						html = await lector.ReadToEndAsync();
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						while (lector.Read())
+						{
+							if (lector.IsDBNull(1) == false)
+							{
+								if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+								{
+									juegos = JsonSerializer.Deserialize<List<AmazonLunaJuego>>(lector.GetString(1));
+								}
+							}
+						}
 					}
 				}
 			}
-			catch (Exception ex) 
-			{ 
-				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna", ex, conexion);
+			catch (Exception ex)
+			{
+				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna + Suscripcion 1", ex);
 			}
 
-			GestionarHtml(html, cantidad, conexion);
-
-			//HttpClient clienteEa = new HttpClient();
-			//clienteEa.BaseAddress = new Uri("https://luna.amazon.es/");
-			//clienteEa.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-			//string peticionEnBrutoEa = "{\"timeout\":10000,\"featureScheme\":\"WEB_V1\",\"pageContext\":{\"pageUri\":\"ea?ref=tmp_pghq_landingpage\",\"pageId\":\"default\"},\"cacheKey\":\"3411e8dc-75f4-4b58-8860-815159a61183\",\"clientContext\":{\"browserMetadata\":{\"browserType\":\"Firefox\",\"browserVersion\":\"136.0\",\"deviceModel\":\"rv:136.0\",\"deviceType\":\"unknown\",\"osName\":\"Windows\",\"osVersion\":\"10\"}},\"inputContext\":{\"gamepadTypes\":[]},\"dynamicFeatures\":[]}";
-
-			//HttpRequestMessage peticionEa = new HttpRequestMessage(HttpMethod.Post, "https://proxy-prod.eu-west-1.tempo.digital.a2z.com/getPage")
-			//{
-			//	Content = new StringContent(peticionEnBrutoEa, Encoding.UTF8, "application/json"),
-			//	Headers = { { "x-amz-locale", "es_ES" },
-			//				{ "x-amz-platform", "web" }
-			//	}
-			//};
-
-			//HttpResponseMessage respuestaEa = await clienteEa.SendAsync(peticionEa);
-
-			//string htmlEa = string.Empty;
-
-			//try
-			//{
-			//	htmlEa = await respuestaEa.Content.ReadAsStringAsync();
-			//}
-			//catch (Exception ex)
-			//{
-			//	BaseDatos.Errores.Insertar.Mensaje("Amazon Luna EA", ex, conexion);
-			//}
-
-			//GestionarHtml(htmlEa, cantidad, conexion);
-		}
-
-		private static void GestionarHtml(string html, int cantidad, SqlConnection conexion = null)
-		{
-			if (string.IsNullOrEmpty(html) == false)
+			if (juegos != null)
 			{
-				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna HTML", html);
-
-				AmazonLunaPlusAPI api = JsonSerializer.Deserialize<AmazonLunaPlusAPI>(html);
-
-				if (api != null)
+				foreach (var juego in juegos)
 				{
-					
-
-					foreach (var juego in api?.Datos?.Contenido?.Widgets[3]?.Widgets)
+					if (string.IsNullOrEmpty(juego.Id) == false)
 					{
-						if (string.IsNullOrEmpty(juego.Json) == false)
+						bool encontrado = false;
+
+						if (conexion == null)
 						{
-							AmazonLunaPlusAPIJuego apiJuego = JsonSerializer.Deserialize<AmazonLunaPlusAPIJuego>(juego.Json);
-
-							if (apiJuego != null)
+							conexion = Herramientas.BaseDatos.Conectar();
+						}
+						else
+						{
+							if (conexion.State != System.Data.ConnectionState.Open)
 							{
-								string enlace = apiJuego.Id;
+								conexion = Herramientas.BaseDatos.Conectar();
+							}
+						}
 
-								bool encontrado = false;
+						string sqlBuscar = "SELECT idJuegos FROM " + Generar().TablaPendientes + " WHERE enlace=@enlace";
 
-								if (conexion == null)
+						using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+						{
+							comando.Parameters.AddWithValue("@enlace", juego.Id);
+
+							using (SqlDataReader lector = comando.ExecuteReader())
+							{
+								if (lector.Read() == true)
 								{
-									conexion = Herramientas.BaseDatos.Conectar();
-								}
-								else
-								{
-									if (conexion.State != System.Data.ConnectionState.Open)
+									cantidad += 1;
+									BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+
+									if (lector.IsDBNull(0) == false)
 									{
-										conexion = Herramientas.BaseDatos.Conectar();
-									}
-								}
-
-								string sqlBuscar = "SELECT idJuegos FROM " + Generar().TablaPendientes + " WHERE enlace=@enlace";
-
-								using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
-								{
-									comando.Parameters.AddWithValue("@enlace", enlace);
-
-									using (SqlDataReader lector = comando.ExecuteReader())
-									{
-										if (lector.Read() == true)
+										if (string.IsNullOrEmpty(lector.GetString(0)) == false)
 										{
-											cantidad += 1;
-											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+											string idJuegosTexto = lector.GetString(0);
 
-											if (lector.IsDBNull(0) == false)
+											encontrado = true;
+
+											if (idJuegosTexto != "0")
 											{
-												if (string.IsNullOrEmpty(lector.GetString(0)) == false)
+												List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+
+												if (idJuegos.Count > 0)
 												{
-													string idJuegosTexto = lector.GetString(0);
-
-													encontrado = true;
-
-													if (idJuegosTexto != "0")
+													foreach (var id in idJuegos)
 													{
-														List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+														Juegos.Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
 
-														if (idJuegos.Count > 0)
+														if (juegobd != null)
 														{
-															foreach (var id in idJuegos)
+															bool añadirSuscripcion = true;
+
+															if (juegobd.Suscripciones != null)
 															{
-																Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
-
-																if (juegobd != null)
+																if (juegobd.Suscripciones.Count > 0)
 																{
-																	bool añadirSuscripcion = true;
+																	bool actualizar = false;
 
-																	if (juegobd.Suscripciones != null)
+																	foreach (var suscripcion in juegobd.Suscripciones)
 																	{
-																		if (juegobd.Suscripciones.Count > 0)
+																		if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.AmazonLunaPlus)
 																		{
-																			bool actualizar = false;
+																			añadirSuscripcion = false;
+																			actualizar = true;
 
-																			foreach (var suscripcion in juegobd.Suscripciones)
-																			{
-																				if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.AmazonLunaPlus)
-																				{
-																					añadirSuscripcion = false;
-																					actualizar = true;
-
-																					DateTime nuevaFecha = suscripcion.FechaTermina;
-																					nuevaFecha = DateTime.Now;
-																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																					suscripcion.FechaTermina = nuevaFecha;
-																				}
-																			}
-
-																			if (actualizar == true)
-																			{
-																				BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
-
-																				JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlace);
-
-																				if (suscripcion2 != null)
-																				{
-																					DateTime nuevaFecha = suscripcion2.FechaTermina;
-																					nuevaFecha = DateTime.Now;
-																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																					suscripcion2.FechaTermina = nuevaFecha;
-																					BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
-																				}
-																			}
+																			DateTime nuevaFecha = suscripcion.FechaTermina;
+																			nuevaFecha = DateTime.Now;
+																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+																			suscripcion.FechaTermina = nuevaFecha;
 																		}
 																	}
 
-																	if (añadirSuscripcion == true)
+																	if (actualizar == true)
 																	{
-																		DateTime nuevaFecha = DateTime.Now;
-																		nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																		BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
 
-																		JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
-																		{
-																			DRM = JuegoDRM.AmazonLuna,
-																			Nombre = juegobd.Nombre,
-																			FechaEmpieza = DateTime.Now,
-																			FechaTermina = nuevaFecha,
-																			Imagen = juegobd.Imagenes.Header_460x215,
-																			ImagenNoticia = juegobd.Imagenes.Header_460x215,
-																			JuegoId = juegobd.Id,
-																			Enlace = enlace,
-																			Tipo = Suscripciones2.SuscripcionTipo.AmazonLunaPlus
-																		};
+																		JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(juego.Id);
 
-																		if (juegobd.Suscripciones == null)
+																		if (suscripcion2 != null)
 																		{
-																			juegobd.Suscripciones = new List<JuegoSuscripcion>();
+																			DateTime nuevaFecha = suscripcion2.FechaTermina;
+																			nuevaFecha = DateTime.Now;
+																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+																			suscripcion2.FechaTermina = nuevaFecha;
+																			BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
 																		}
-
-																		juegobd.Suscripciones.Add(nuevaSuscripcion);
-
-																		BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
 																	}
 																}
+															}
+
+															if (añadirSuscripcion == true)
+															{
+																DateTime nuevaFecha = DateTime.Now;
+																nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+
+																JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+																{
+																	DRM = JuegoDRM.AmazonLuna,
+																	Nombre = juegobd.Nombre,
+																	FechaEmpieza = DateTime.Now,
+																	FechaTermina = nuevaFecha,
+																	Imagen = juegobd.Imagenes.Header_460x215,
+																	ImagenNoticia = juegobd.Imagenes.Header_460x215,
+																	JuegoId = juegobd.Id,
+																	Enlace = juego.Id,
+																	Tipo = Suscripciones2.SuscripcionTipo.AmazonLunaPlus
+																};
+
+																if (juegobd.Suscripciones == null)
+																{
+																	juegobd.Suscripciones = new List<JuegoSuscripcion>();
+																}
+
+																juegobd.Suscripciones.Add(nuevaSuscripcion);
+
+																BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
 															}
 														}
 													}
@@ -282,55 +206,48 @@ namespace APIs.AmazonLuna
 										}
 									}
 								}
-
-								if (encontrado == false)
-								{
-									BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), enlace, apiJuego.Nombre, apiJuego.Imagen);
-								}
 							}
 						}
+
+						if (encontrado == false)
+						{
+							BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), juego.Id, juego.Nombre);
+						}
+					}
+				}
+
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string limpieza = "DELETE FROM temporalamazonluna WHERE id='1'";
+
+				using (SqlCommand comandoBorrar = new SqlCommand(limpieza, conexion))
+				{
+					try
+					{
+						comandoBorrar.ExecuteNonQuery();
+					}
+					catch (Exception ex)
+					{
+						BaseDatos.Errores.Insertar.Mensaje(Generar().Id.ToString().ToLower(), ex, conexion);
 					}
 				}
 			}
 		}
 	}
 
-	public class AmazonLunaPlusAPI
+	public class AmazonLunaJuego
 	{
-		[JsonPropertyName("pageMemberGroups")]
-		public AmazonLunaPlusAPIDatos Datos { get; set; }
-	}
-
-	public class AmazonLunaPlusAPIDatos
-	{
-		[JsonPropertyName("mainContent")]
-		public AmazonLunaPlusAPIContenido Contenido { get; set; }
-	}
-
-	public class AmazonLunaPlusAPIContenido
-	{
-		[JsonPropertyName("widgets")]
-		public List<AmazonLunaPlusAPIWidget> Widgets { get; set; }
-	}
-
-	public class AmazonLunaPlusAPIWidget
-	{
-		[JsonPropertyName("widgets")]
-		public List<AmazonLunaPlusAPIWidget> Widgets { get; set; }
-
-		[JsonPropertyName("presentationData")]
-		public string Json { get; set; }
-	}
-
-	public class AmazonLunaPlusAPIJuego
-	{
-		[JsonPropertyName("gameId")]
 		public string Id { get; set; }
-
-		[JsonPropertyName("title")]
 		public string Nombre { get; set; }
-
-		[JsonPropertyName("imagePortrait")]
-		public string Imagen { get; set; }
 	}
 }

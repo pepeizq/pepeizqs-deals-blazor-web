@@ -3,6 +3,7 @@
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
+using MimeKit.Tnef;
 using System.Globalization;
 using System.Text.Json;
 using static pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos;
@@ -1541,17 +1542,37 @@ namespace BaseDatos.Juegos
 
 							dlcs.Add(dlc);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
 
-			conexion.Dispose();
-
 			return dlcs;
+		}
+
+		public static int DLCsCantidad(SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			int cantidad = 0;
+
+			string busqueda = "SELECT COUNT(*) FROM juegos WHERE (maestro IS NULL AND tipo='1') or (maestro='no' AND tipo='1')";
+
+			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+			{
+				cantidad = (int)comando.ExecuteScalar();
+			}
+
+			return cantidad;
 		}
 
 		public static List<Juego> Filtro(List<string> ids, int cantidad, SqlConnection conexion = null)

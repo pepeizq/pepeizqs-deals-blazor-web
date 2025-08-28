@@ -99,7 +99,7 @@ namespace BaseDatos.Admin
 			}
 		}
 
-		public static void Dato(string id, string contenido, SqlConnection conexion = null)
+		public static void Dato(string id, int contenido, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{

@@ -610,15 +610,9 @@ namespace BaseDatos.Juegos
 							{
 								juego = Cargar(JuegoCrear.Generar(), lector);
 							}
-
-							lector.Dispose();
 						}
-
-						comando.Dispose();
 					}
 				}
-
-				conexion.Dispose();
 			}
 
 			return juego;
@@ -691,14 +685,8 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return juegos;
@@ -758,14 +746,8 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return juegos;
@@ -959,233 +941,238 @@ namespace BaseDatos.Juegos
 
 		public static List<Juego> Nombre(string nombre, SqlConnection conexion, int cantidad = 30, bool todo = true, int tipo = -1, bool logeado = false)
 		{
-			if (conexion == null)
+			List<Juego> juegos = null;
+
+			if (string.IsNullOrEmpty(nombre) == false)
 			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
+				juegos = new List<Juego>();
+
+				if (conexion == null)
 				{
 					conexion = Herramientas.BaseDatos.Conectar();
 				}
-			}
-
-			List<Juego> juegos = new List<Juego>();
-
-			string busqueda = string.Empty;
-			string busquedaTodo = "*";
-
-			if (todo == false)
-			{
-				busquedaTodo = "id, nombre, imagenes, precioMinimosHistoricos, precioActualesTiendas, bundles, gratis, suscripciones, tipo, analisis, idSteam, idGog, idAmazon, exeEpic, exeUbisoft, freeToPlay";
-			}
-
-			if (nombre.Contains(" ") == true)
-			{
-				if (nombre.Contains("  ") == true)
+				else
 				{
-					nombre = nombre.Replace("  ", " ");
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
 				}
 
-				string[] palabras = nombre.Split(" ");
+				string busqueda = string.Empty;
+				string busquedaTodo = "*";
 
-				int i = 0;
-				foreach (var palabra in palabras)
+				if (todo == false)
 				{
-					if (string.IsNullOrEmpty(palabra) == false)
+					busquedaTodo = "id, nombre, imagenes, precioMinimosHistoricos, precioActualesTiendas, bundles, gratis, suscripciones, tipo, analisis, idSteam, idGog, idAmazon, exeEpic, exeUbisoft, freeToPlay";
+				}
+
+				if (nombre.Contains(" ") == true)
+				{
+					if (nombre.Contains("  ") == true)
 					{
-						string palabraLimpia = Herramientas.Buscador.LimpiarNombre(palabra, true);
+						nombre = nombre.Replace("  ", " ");
+					}
 
-						if (palabraLimpia.Length > 0)
+					string[] palabras = nombre.Split(" ");
+
+					int i = 0;
+					foreach (var palabra in palabras)
+					{
+						if (string.IsNullOrEmpty(palabra) == false)
 						{
-							if (i == 0)
+							string palabraLimpia = Herramientas.Buscador.LimpiarNombre(palabra, true);
+
+							if (palabraLimpia.Length > 0)
 							{
-								busqueda = "SELECT TOP " + cantidad + " " + busquedaTodo + " FROM juegos WHERE CHARINDEX('" + palabraLimpia + "', nombreCodigo) > 0 ";
+								if (i == 0)
+								{
+									busqueda = "SELECT TOP " + cantidad + " " + busquedaTodo + " FROM juegos WHERE CHARINDEX('" + palabraLimpia + "', nombreCodigo) > 0 ";
+								}
+								else
+								{
+									bool buscar = true;
+
+									if (palabra.ToLower() == "and")
+									{
+										buscar = false;
+									}
+									else if (palabra.ToLower() == "dlc")
+									{
+										buscar = false;
+									}
+									if (palabra.ToLower() == "expansion")
+									{
+										buscar = false;
+									}
+
+									if (buscar == true)
+									{
+										busqueda = busqueda + " AND CHARINDEX('" + palabraLimpia + "', nombreCodigo) > 0 ";
+									}
+								}
+
+								i += 1;
 							}
-							else
-							{
-								bool buscar = true;
-
-								if (palabra.ToLower() == "and")
-								{
-									buscar = false;
-								}
-								else if (palabra.ToLower() == "dlc")
-								{
-									buscar = false;
-								}
-								if (palabra.ToLower() == "expansion")
-								{
-									buscar = false;
-								}
-
-								if (buscar == true)
-								{
-									busqueda = busqueda + " AND CHARINDEX('" + palabraLimpia + "', nombreCodigo) > 0 ";
-								}
-							}
-
-							i += 1;
 						}
 					}
 				}
-			}
-			else
-			{
-				busqueda = "SELECT TOP " + cantidad + " " + busquedaTodo + " FROM juegos WHERE nombreCodigo LIKE '%" + Herramientas.Buscador.LimpiarNombre(nombre) + "%'";
-			}
-
-			if (tipo > -1)
-			{
-				busqueda = busqueda + " AND tipo = " + tipo.ToString();
-			}
-
-			if (logeado == false)
-			{
-				busqueda = busqueda + " AND (mayorEdad='false' OR mayorEdad IS NULL)";
-			}
-
-			if (string.IsNullOrEmpty(busqueda) == false)
-			{
-				busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
-			}
-
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				using (SqlDataReader lector = comando.ExecuteReader())
+				else
 				{
-					while (lector.Read())
+					busqueda = "SELECT TOP " + cantidad + " " + busquedaTodo + " FROM juegos WHERE nombreCodigo LIKE '%" + Herramientas.Buscador.LimpiarNombre(nombre) + "%'";
+				}
+
+				if (tipo > -1)
+				{
+					busqueda = busqueda + " AND tipo = " + tipo.ToString();
+				}
+
+				if (logeado == false)
+				{
+					busqueda = busqueda + " AND (mayorEdad='false' OR mayorEdad IS NULL)";
+				}
+
+				if (string.IsNullOrEmpty(busqueda) == false)
+				{
+					busqueda = busqueda + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					using (SqlDataReader lector = comando.ExecuteReader())
 					{
-						if (todo == true)
+						while (lector.Read())
 						{
-							Juego juego = new Juego();
-							juego = Cargar(juego, lector);
-							juegos.Add(juego);
-						}
-						else
-						{
-							Juego juego = new Juego();
-
-							if (lector.IsDBNull(0) == false)
+							if (todo == true)
 							{
-								juego.Id = lector.GetInt32(0);
-								juego.IdMaestra = lector.GetInt32(0);
+								Juego juego = new Juego();
+								juego = Cargar(juego, lector);
+								juegos.Add(juego);
 							}
-
-							if (lector.IsDBNull(1) == false)
+							else
 							{
-								if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+								Juego juego = new Juego();
+
+								if (lector.IsDBNull(0) == false)
 								{
-									juego.Nombre = lector.GetString(1);
-									juego.NombreCodigo = Herramientas.Buscador.LimpiarNombre(juego.Nombre);
+									juego.Id = lector.GetInt32(0);
+									juego.IdMaestra = lector.GetInt32(0);
 								}
-							}
 
-							if (lector.IsDBNull(2) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(2)) == false)
+								if (lector.IsDBNull(1) == false)
 								{
-									juego.Imagenes = JsonSerializer.Deserialize<JuegoImagenes>(lector.GetString(2));
+									if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+									{
+										juego.Nombre = lector.GetString(1);
+										juego.NombreCodigo = Herramientas.Buscador.LimpiarNombre(juego.Nombre);
+									}
 								}
-							}
 
-							if (lector.IsDBNull(3) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(3)) == false)
+								if (lector.IsDBNull(2) == false)
 								{
-									juego.PrecioMinimosHistoricos = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(3));
+									if (string.IsNullOrEmpty(lector.GetString(2)) == false)
+									{
+										juego.Imagenes = JsonSerializer.Deserialize<JuegoImagenes>(lector.GetString(2));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(4) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(4)) == false)
+								if (lector.IsDBNull(3) == false)
 								{
-									juego.PrecioActualesTiendas = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(4));
+									if (string.IsNullOrEmpty(lector.GetString(3)) == false)
+									{
+										juego.PrecioMinimosHistoricos = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(3));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(5) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(5)) == false)
+								if (lector.IsDBNull(4) == false)
 								{
-									juego.Bundles = JsonSerializer.Deserialize<List<JuegoBundle>>(lector.GetString(5));
+									if (string.IsNullOrEmpty(lector.GetString(4)) == false)
+									{
+										juego.PrecioActualesTiendas = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(4));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(6) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(6)) == false)
+								if (lector.IsDBNull(5) == false)
 								{
-									juego.Gratis = JsonSerializer.Deserialize<List<JuegoGratis>>(lector.GetString(6));
+									if (string.IsNullOrEmpty(lector.GetString(5)) == false)
+									{
+										juego.Bundles = JsonSerializer.Deserialize<List<JuegoBundle>>(lector.GetString(5));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(7) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(7)) == false)
+								if (lector.IsDBNull(6) == false)
 								{
-									juego.Suscripciones = JsonSerializer.Deserialize<List<JuegoSuscripcion>>(lector.GetString(7));
+									if (string.IsNullOrEmpty(lector.GetString(6)) == false)
+									{
+										juego.Gratis = JsonSerializer.Deserialize<List<JuegoGratis>>(lector.GetString(6));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(8) == false)
-							{
-								juego.Tipo = Enum.Parse<JuegoTipo>(lector.GetString(8));
-							}
-
-							if (lector.IsDBNull(9) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(9)) == false)
+								if (lector.IsDBNull(7) == false)
 								{
-									juego.Analisis = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(9));
+									if (string.IsNullOrEmpty(lector.GetString(7)) == false)
+									{
+										juego.Suscripciones = JsonSerializer.Deserialize<List<JuegoSuscripcion>>(lector.GetString(7));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(10) == false)
-							{
-								juego.IdSteam = lector.GetInt32(10);
-							}
-
-							if (lector.IsDBNull(11) == false)
-							{
-								juego.IdGog = lector.GetInt32(11);
-							}
-
-							if (lector.IsDBNull(12) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(12)) == false)
+								if (lector.IsDBNull(8) == false)
 								{
-									juego.IdAmazon = lector.GetString(12);
+									juego.Tipo = Enum.Parse<JuegoTipo>(lector.GetString(8));
 								}
-							}
 
-							if (lector.IsDBNull(13) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(13)) == false)
+								if (lector.IsDBNull(9) == false)
 								{
-									juego.ExeEpic = lector.GetString(13);
+									if (string.IsNullOrEmpty(lector.GetString(9)) == false)
+									{
+										juego.Analisis = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(9));
+									}
 								}
-							}
 
-							if (lector.IsDBNull(14) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(14)) == false)
+								if (lector.IsDBNull(10) == false)
 								{
-									juego.ExeUbisoft = lector.GetString(14);
+									juego.IdSteam = lector.GetInt32(10);
 								}
-							}
 
-							if (lector.IsDBNull(15) == false)
-							{
-								if (string.IsNullOrEmpty(lector.GetString(15)) == false)
+								if (lector.IsDBNull(11) == false)
 								{
-									juego.FreeToPlay = lector.GetString(15);
+									juego.IdGog = lector.GetInt32(11);
 								}
-							}
 
-							juegos.Add(juego);
+								if (lector.IsDBNull(12) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(12)) == false)
+									{
+										juego.IdAmazon = lector.GetString(12);
+									}
+								}
+
+								if (lector.IsDBNull(13) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(13)) == false)
+									{
+										juego.ExeEpic = lector.GetString(13);
+									}
+								}
+
+								if (lector.IsDBNull(14) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(14)) == false)
+									{
+										juego.ExeUbisoft = lector.GetString(14);
+									}
+								}
+
+								if (lector.IsDBNull(15) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(15)) == false)
+									{
+										juego.FreeToPlay = lector.GetString(15);
+									}
+								}
+
+								juegos.Add(juego);
+							}
 						}
 					}
 				}
@@ -1448,15 +1435,9 @@ namespace BaseDatos.Juegos
 
 							juegos.Add(juego);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return juegos;
 		}
@@ -1490,14 +1471,8 @@ namespace BaseDatos.Juegos
 
 						juegos.Add(juego);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegos;
 		}
@@ -1818,15 +1793,9 @@ namespace BaseDatos.Juegos
 
 							resultados.Add(juego);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return resultados;
 		}
@@ -1864,15 +1833,9 @@ namespace BaseDatos.Juegos
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return juegos;
 		}

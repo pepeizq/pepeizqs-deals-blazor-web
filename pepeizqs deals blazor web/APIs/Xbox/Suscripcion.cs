@@ -132,7 +132,7 @@ namespace APIs.Xbox
 
 																			DateTime nuevaFecha = suscripcion.FechaTermina;
 																			nuevaFecha = DateTime.Now;
-																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
 																			suscripcion.FechaTermina = nuevaFecha;
 																		}
 																	}
@@ -152,7 +152,7 @@ namespace APIs.Xbox
 																		{
                                                                             DateTime nuevaFecha = suscripcion2.FechaTermina;
                                                                             nuevaFecha = DateTime.Now;
-                                                                            nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                            nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
                                                                             suscripcion2.FechaTermina = nuevaFecha;
                                                                             BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
                                                                         }
@@ -163,7 +163,7 @@ namespace APIs.Xbox
 															if (añadirSuscripcion == true)
 															{
 																DateTime nuevaFecha = DateTime.Now;
-																nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
 
 																JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
 																{

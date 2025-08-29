@@ -187,16 +187,10 @@ namespace BaseDatos.Tiendas
 									Juegos.Insertar.Ejecutar(juego, conexion);
 								}
 							}
-
-							lector.Dispose();
 						}
-
-						comando.Dispose();
 					}
 				}
 			}
-
-			conexion.Dispose();
 		}
 
 		private static async void ActualizarDatosSteamAPI(Juego juego, JuegoPrecio oferta, JuegoAnalisis analisis, SqlConnection conexion = null)

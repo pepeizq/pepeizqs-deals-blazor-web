@@ -175,7 +175,7 @@ namespace APIs.AmazonLuna
 															if (añadirSuscripcion == true)
 															{
 																DateTime nuevaFecha = DateTime.Now;
-																nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+																nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
 
 																JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
 																{
@@ -228,7 +228,7 @@ namespace APIs.AmazonLuna
 					}
 				}
 
-				string limpieza = "DELETE FROM temporalamazonluna WHERE id='1'";
+				string limpieza = "DELETE FROM temporalamazonluna WHERE enlace='1'";
 
 				using (SqlCommand comandoBorrar = new SqlCommand(limpieza, conexion))
 				{

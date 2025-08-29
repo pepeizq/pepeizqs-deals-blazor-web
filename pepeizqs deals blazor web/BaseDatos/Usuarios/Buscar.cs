@@ -975,14 +975,8 @@ namespace BaseDatos.Usuarios
 								yaTiene = true;
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return yaTiene;
@@ -1024,11 +1018,7 @@ namespace BaseDatos.Usuarios
 									yaTiene = true;
 								}
 							}
-
-							lector.Dispose();
 						}
-
-						comando.Dispose();
 					}
 				}
 
@@ -1050,11 +1040,7 @@ namespace BaseDatos.Usuarios
 									yaTiene = true;
 								}
 							}
-
-							lector.Dispose();
 						}
-
-						comando.Dispose();
 					}
 				}
 
@@ -1080,14 +1066,8 @@ namespace BaseDatos.Usuarios
 								yaTiene = true;
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return yaTiene;

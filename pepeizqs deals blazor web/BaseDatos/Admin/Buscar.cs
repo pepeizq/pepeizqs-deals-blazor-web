@@ -99,7 +99,7 @@ namespace BaseDatos.Admin
 
 			List<AdminTarea> tiendas = new List<AdminTarea>();
 
-			string seleccionarTarea = "SELECT * FROM adminTiendas";
+			string seleccionarTarea = "SELECT id, fecha FROM adminTiendas ORDER BY fecha DESC";
 
 			using (SqlCommand comando = new SqlCommand(seleccionarTarea, conexion))
 			{
@@ -138,8 +138,6 @@ namespace BaseDatos.Admin
 
 			if (tiendas.Count > 0)
 			{
-				tiendas = tiendas.OrderBy(x => x.Fecha).ToList();
-
 				foreach (var tienda in tiendas)
 				{
 					DateTime ultimaComprobacion = tienda.Fecha;
@@ -275,6 +273,48 @@ namespace BaseDatos.Admin
 			}
 
 			return esPosible;
+		}
+
+		public static bool TiendasLibre(SqlConnection conexion = null)
+		{
+			int enUso = 0;
+
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			string seleccionarTarea = "SELECT COUNT(*) FROM adminTiendas WHERE fecha > DATEADD(SECOND, -60, GETDATE())";
+
+			using (SqlCommand comando = new SqlCommand(seleccionarTarea, conexion))
+			{
+				using (SqlDataReader lector = comando.ExecuteReader())
+				{
+					if (lector.Read() == true)
+					{
+						if (lector.IsDBNull(0) == false)
+						{
+							enUso = enUso + lector.GetInt32(0);
+						}
+					}
+				}
+			}
+
+			if (enUso == 0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public static int CantidadErrores(SqlConnection conexion = null)

@@ -165,6 +165,10 @@
 							</button>
 
 							<div class="menu-dropdown-contenido" style="right: 0; width: 100%; background-color: var(--buscadorSubcabecera);">
+								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarDetectado">
+									@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Wishlist")
+								</button>
+								<hr />
 								<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="OrdenarReseñasPorcentaje">
 									@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Wishlist")
 								</button>
@@ -631,7 +635,6 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 
-	private Usuario deseadosUsuario = null;
 	private bool usuarioPatreon = false;
 	private Usuario opcionesDeseados = null;
 
@@ -677,13 +680,13 @@
 		}
 	}
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
 		await Task.Yield();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			Usuario deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			opcionesDeseados = BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
 
 			#region Deseados Steam
@@ -813,11 +816,11 @@
 			{
 				if (deseadosGestor.Count > 0)
 				{
-					if (deseadosUsuario != null)
+					if (opcionesDeseados != null)
 					{
-						if (deseadosUsuario.WishlistSort == null)
+						if (opcionesDeseados.WishlistSort == null)
 						{
-							deseadosUsuario.WishlistSort = 3;
+							opcionesDeseados.WishlistSort = 3;
 						}
 
 						ElegirOrdenamiento();
@@ -1402,6 +1405,42 @@
 		}
 	}
 
+	private void OrdenarDetectado()
+	{
+		if (deseadosOfertas != null)
+		{
+			ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String32", "Wishlist");
+
+			if (deseadosGestor.Count > 0)
+			{
+				deseadosOfertas.Clear();
+				deseadosOfertas = Filtros(false);
+				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
+
+				deseadosHistoricos.Clear();
+				deseadosHistoricos = Filtros(true);
+
+				if (deseadosHistoricos != null)
+				{
+					if (deseadosHistoricos.Count > 0)
+					{
+						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
+					}
+				}
+			}
+
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				opcionesDeseados.WishlistSort = 6;
+			}
+
+			if (string.IsNullOrEmpty(usuarioId) == false && string.IsNullOrEmpty(perfilUsuarioId) == true)
+			{
+				BaseDatos.Usuarios.Actualizar.Opcion("WishlistSort", 6, usuarioId);
+			}
+		}
+	}
+
 	#endregion
 
 	#region Opciones
@@ -1495,6 +1534,10 @@
 		else if (opcionesDeseados.WishlistSort == 4)
 		{
 			OrdenarDescuento();
+		}
+		else if (opcionesDeseados.WishlistSort == 6)
+		{
+			OrdenarDetectado();
 		}
 	}
 

@@ -138,9 +138,9 @@
 				}
 				else
 				{
-                    enlace = oferta.Enlace;
+					enlace = oferta.Enlace;
 				}
-				
+
 				enlaceNuevaPestaña = "_blank";
 			}
 
@@ -168,6 +168,10 @@
 	else if (tipo == Tipo.Noticia)
 	{
 		drmUsar = drmNoticia;
+	}
+	else if (tipo == Tipo.Gratis)
+	{
+		drmUsar = drmGratis;
 	}
 	else if (tipo == Tipo.Suscripciones)
 	{

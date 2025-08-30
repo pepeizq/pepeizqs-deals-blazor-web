@@ -221,8 +221,9 @@ namespace BaseDatos.Usuarios
 				{
 					comando.ExecuteNonQuery();
 				}
-				catch
+				catch (Exception ex) 
 				{
+					BaseDatos.Errores.Insertar.Mensaje("Usuario Actualiza Datos", ex);
 				}
 			}
 		}

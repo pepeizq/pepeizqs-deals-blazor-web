@@ -87,13 +87,13 @@ namespace Herramientas
 					i += 1;
 				}
 
-				i = 0;
-				while (i <= segmentacion)
-				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-news-es-" + i.ToString() + ".xml");
+				//i = 0;
+				//while (i <= segmentacion)
+				//{
+				//	sitemaps.Add("https://pepeizqdeals.com/sitemap-news-es-" + i.ToString() + ".xml");
 
-					i += 1;
-				}
+				//	i += 1;
+				//}
 			}
 
 			int cantidadCurators = global::BaseDatos.Sitemaps.Buscar.Cantidad("curators");

@@ -405,6 +405,8 @@
 
 			@if (tiposActualesNoticias.Count > 1)
 			{
+				tiposActualesNoticias = tiposActualesNoticias.OrderBy(x => Noticias.NoticiasCargar.Traduccion(x, idioma)).ToList();
+
 				foreach (var tipo in tiposActualesNoticias)
 				{
 					if (tipo != NoticiaTipo.Desconocido)

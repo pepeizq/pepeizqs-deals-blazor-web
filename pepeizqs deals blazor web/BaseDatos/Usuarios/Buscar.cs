@@ -34,15 +34,9 @@ namespace BaseDatos.Usuarios
 									esDios = true;
 								}
 							}
-
-							lector.Dispose();
 						}
-
-						comando.Dispose();
 					}
 				}
-
-				conexion.Dispose();
 			}
 
 			return esDios;
@@ -81,14 +75,8 @@ namespace BaseDatos.Usuarios
 								idioma = lector.GetString(0);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return idioma;
@@ -127,14 +115,8 @@ namespace BaseDatos.Usuarios
 								idioma = lector.GetString(0);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return idioma;
@@ -198,14 +180,8 @@ namespace BaseDatos.Usuarios
 								juegos.EaGames = lector.GetString(5);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return juegos;
 			}
@@ -244,14 +220,8 @@ namespace BaseDatos.Usuarios
 								return lector.GetDateTime(0);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return null;
@@ -300,14 +270,8 @@ namespace BaseDatos.Usuarios
 								deseados.GogWishlist = lector.GetString(2);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return deseados;
 			}
@@ -363,14 +327,8 @@ namespace BaseDatos.Usuarios
 								opciones.PatreonCoins = lector.GetInt32(3);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return opciones;
 			}
@@ -431,14 +389,8 @@ namespace BaseDatos.Usuarios
 								opciones.ForumIndex = lector.GetBoolean(4);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return opciones;
 			}
@@ -489,14 +441,8 @@ namespace BaseDatos.Usuarios
 								opciones.WishlistOption4 = lector.GetDecimal(2);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return opciones;
 			}
@@ -587,14 +533,8 @@ namespace BaseDatos.Usuarios
 								opciones.HistoricalLowsAI = lector.GetInt32(10);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return opciones;
 			}
@@ -670,14 +610,8 @@ namespace BaseDatos.Usuarios
 								opciones.EaLastImport = lector.GetDateTime(7);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 
 				return opciones;
 			}
@@ -772,14 +706,8 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return usuarios;
 		}
@@ -853,14 +781,8 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return usuarios;
 		}
@@ -898,14 +820,8 @@ namespace BaseDatos.Usuarios
 								yaUsado = true;
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return yaUsado;
@@ -1132,14 +1048,8 @@ namespace BaseDatos.Usuarios
 								}
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return null;
@@ -1169,15 +1079,9 @@ namespace BaseDatos.Usuarios
 								}
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return false;
 		}
@@ -1214,14 +1118,8 @@ namespace BaseDatos.Usuarios
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return false;
 		}
@@ -1260,14 +1158,8 @@ namespace BaseDatos.Usuarios
 
 						return usuario;
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return null;
 		}
@@ -1301,14 +1193,8 @@ namespace BaseDatos.Usuarios
 							return lector.GetBoolean(0);
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return false;
 		}
@@ -1344,14 +1230,8 @@ namespace BaseDatos.Usuarios
 								return true;
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return false;
@@ -1390,14 +1270,8 @@ namespace BaseDatos.Usuarios
 								yaUsado = true;
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return yaUsado;
@@ -1473,14 +1347,8 @@ namespace BaseDatos.Usuarios
 
 							return perfil;
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return null;
@@ -1517,14 +1385,8 @@ namespace BaseDatos.Usuarios
 								return lector.GetString(0);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return null;
@@ -1561,14 +1423,8 @@ namespace BaseDatos.Usuarios
 								return lector.GetString(0);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 
 			return null;

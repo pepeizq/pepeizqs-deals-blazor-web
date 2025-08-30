@@ -3748,7 +3748,7 @@
     }
 
     protected override async Task OnParametersSetAsync()
-	{
+    {
         juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 
         mediaMostrar = null;
@@ -3858,7 +3858,7 @@
 
                     #endregion
                 }
-                
+
                 #region Reseñas
 
                 if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
@@ -4196,6 +4196,11 @@
 
             #region Curators
 
+            if (curators != null)
+            {
+                curators.Clear();                
+            }
+            
             List<string> curatorsBuscar = new List<string>();
           
             if (juego.Caracteristicas != null && Herramientas.Bots.UserAgentEsBot(userAgent) == false)

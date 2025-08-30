@@ -363,7 +363,7 @@
     {
         <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); display: flex; align-items: start; flex-direction: column; backdrop-filter: blur(5px); background: color-mix(in srgb, var(--fondoCuerpo) 90%, transparent);">
             <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;"> 
-               <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="10">
+               <Virtualize Context="juego" Items="@resultadosMostrar" ItemSize="107" OverscanCount="3">
                     <ItemContent>
                         @{
                             string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
@@ -513,13 +513,13 @@
 
     private string textoBuscador = string.Empty;
 
-    private void TextoCambiaBuscador()
+    private async void TextoCambiaBuscador()
     {
         textoBuscador = textoBuscador.Replace("'", null);
 
         if (textoBuscador.Trim().Length > 3)
         {
-            resultadosMostrar.Clear();
+            resultadosMostrar.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
 
             if (conexion == null)
             {
@@ -535,6 +535,8 @@
 
             using (conexion)
             {
+                await InvokeAsync(StateHasChanged);
+
                 if (APIs.Steam.Juego.Detectar(textoBuscador) == true)
                 {
                     textoBuscador = APIs.Steam.Juego.LimpiarID(textoBuscador);
@@ -577,7 +579,7 @@
                         usuarioLogeado = true;
                     }
 
-                    resultadosMostrar = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 50, false, -1, usuarioLogeado);
+                    resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 50, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
                 }
 
                 if (resultadosMostrar.Count > 0)

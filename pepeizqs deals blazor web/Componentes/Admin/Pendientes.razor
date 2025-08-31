@@ -197,9 +197,9 @@
 </div>
 
 <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
-    <input type="text" @oninput="TextoCambiarBuscadorPendientes" class="entrada-texto" />
+    <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
-    @if (string.IsNullOrEmpty(cadenaBusquedaPendiente) == false)
+    @if (string.IsNullOrEmpty(textoBuscador) == false)
     {
         <div style="display: flex; align-items: center; gap: 20px; margin: 20px 0px;">
             <button @onclick="@(e => CambiarPestañas(e, 0))" class="boton-pequeño" style="width: 130px; text-align: center; @estiloJuegos">Juegos (@buscadorPendientesJuegos.Count.ToString())</button>
@@ -413,7 +413,6 @@
     private string nombrePendiente = null;
     private string enlacePendiente = null;
     private string idsPendiente = "0";
-    private string cadenaBusquedaPendiente = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -950,7 +949,9 @@
     private List<global::Juegos.Juego> buscadorPendientesBandasSonoras = new List<global::Juegos.Juego>();
     private List<global::Juegos.Juego> buscadorPendientesSoftware = new List<global::Juegos.Juego>();
 
-    private void TextoCambiarBuscadorPendientes(ChangeEventArgs texto)
+    private string textoBuscador = string.Empty;
+
+    private void TextoCambiaBuscador()
     {
         if (conexion.State != System.Data.ConnectionState.Open)
         {
@@ -959,38 +960,21 @@
 
         using (conexion)
         {
-            if (texto.Value.ToString().Trim().Length > 2)
+            if (textoBuscador.Trim().Length > 2)
             {
-                cadenaBusquedaPendiente = texto.Value.ToString().Trim();
-
-                List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(cadenaBusquedaPendiente, conexion, 250, true, -1, true);
+                List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
 
                 if (resultados.Count > 0)
                 {
-                    buscadorPendientesJuegos.Clear();
-                    buscadorPendientesDLCs.Clear();
-                    buscadorPendientesBandasSonoras.Clear();
-                    buscadorPendientesSoftware.Clear();
+                    buscadorPendientesJuegos.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+                    buscadorPendientesDLCs.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+                    buscadorPendientesBandasSonoras.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+                    buscadorPendientesSoftware.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
 
-                    foreach (var resultado in resultados)
-                    {
-                        if (resultado.Tipo == global::Juegos.JuegoTipo.Game)
-                        {
-                            buscadorPendientesJuegos.Add(resultado);
-                        }
-                        else if (resultado.Tipo == global::Juegos.JuegoTipo.DLC)
-                        {
-                            buscadorPendientesDLCs.Add(resultado);
-                        }
-                        else if (resultado.Tipo == global::Juegos.JuegoTipo.Music)
-                        {
-                            buscadorPendientesBandasSonoras.Add(resultado);
-                        }
-                        else if (resultado.Tipo == global::Juegos.JuegoTipo.Software)
-                        {
-                            buscadorPendientesSoftware.Add(resultado);
-                        }
-                    }
+                    buscadorPendientesJuegos.AddRange(resultados.Where(x => buscadorPendientesJuegos.FirstOrDefault(y => y.Nombre == x.Nombre) == null && x.Tipo == global::Juegos.JuegoTipo.Game).ToList());
+                    buscadorPendientesDLCs.AddRange(resultados.Where(x => buscadorPendientesJuegos.FirstOrDefault(y => y.Nombre == x.Nombre) == null && x.Tipo == global::Juegos.JuegoTipo.DLC).ToList());
+                    buscadorPendientesBandasSonoras.AddRange(resultados.Where(x => buscadorPendientesJuegos.FirstOrDefault(y => y.Nombre == x.Nombre) == null && x.Tipo == global::Juegos.JuegoTipo.Music).ToList());
+                    buscadorPendientesSoftware.AddRange(resultados.Where(x => buscadorPendientesJuegos.FirstOrDefault(y => y.Nombre == x.Nombre) == null && x.Tipo == global::Juegos.JuegoTipo.Software).ToList());
 
                     if (buscadorPendientesJuegos.Count == 0)
                     {
@@ -1124,7 +1108,7 @@
         {
             BaseDatos.Juegos.Borrar.Ejecutar(id, conexion);
 
-            buscadorPendientesJuegos = BaseDatos.Juegos.Buscar.Nombre(cadenaBusquedaPendiente, conexion, 250, true, -1, true);
+            buscadorPendientesJuegos = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
         }
     }
 

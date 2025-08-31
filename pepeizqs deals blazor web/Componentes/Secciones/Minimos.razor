@@ -771,7 +771,7 @@ else
 		@if (juegosFiltrados.Count > 0)
 		{
 			<div style="display: flex; flex-direction: column; gap: 25px; margin-top: -15px;">
-				<Virtualize Context="juego" Items="@juegosFiltrados" ItemSize="107" OverscanCount="10">
+				<Virtualize Context="juego" Items="@juegosFiltrados" ItemSize="107" OverscanCount="5">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.MinimosHistoricos" usuarioPatreon="@usuarioPatreon" userAgent="@userAgent"/>
 					</ItemContent>
@@ -1284,7 +1284,7 @@ else
 
 	#region Ordenar
 
-	private async void OrdenarReseñasPorcentaje(bool buscar = true)
+	private void OrdenarReseñasPorcentaje(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "HistoricalLows");
 
@@ -1294,12 +1294,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1313,7 +1313,7 @@ else
 		}
 	}
 
-	private async void OrdenarReseñasCantidad(bool buscar = true)
+	private void OrdenarReseñasCantidad(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "HistoricalLows");
 
@@ -1323,12 +1323,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1342,7 +1342,7 @@ else
 		}
 	}
 
-	private async void OrdenarNombreAZ(bool buscar = true)
+	private void OrdenarNombreAZ(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String5", "HistoricalLows");
 
@@ -1352,12 +1352,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1371,7 +1371,7 @@ else
 		}
 	}
 
-	private async void OrdenarNombreZA(bool buscar = true)
+	private void OrdenarNombreZA(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String6", "HistoricalLows");
 
@@ -1381,12 +1381,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1400,7 +1400,7 @@ else
 		}
 	}
 
-	private async void OrdenarPrecio(bool buscar = true)
+	private void OrdenarPrecio(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "HistoricalLows");
 
@@ -1410,12 +1410,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1429,7 +1429,7 @@ else
 		}
 	}
 
-	private async void OrdenarDescuento(bool buscar = true)
+	private void OrdenarDescuento(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "HistoricalLows");
 
@@ -1439,12 +1439,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1458,7 +1458,7 @@ else
 		}
 	}
 
-	private async void OrdenarFechaDetectado(bool buscar = true)
+	private void OrdenarFechaDetectado(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String34", "HistoricalLows");
 
@@ -1468,12 +1468,12 @@ else
 
 			if (juegosGestor.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosGestor);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosGestor);
 		}
 
 		if (opcionesMinimos != null)
@@ -1487,22 +1487,22 @@ else
 		}
 	}
 
-	private async void OrdenarFechaLanzamiento(bool buscar = true)
+	private void OrdenarFechaLanzamiento(bool buscar = true)
 	{
 		ordenamientoElegido = Herramientas.Idiomas.BuscarTexto(idioma, "String35", "HistoricalLows");
 
 		if (buscar == true)
 		{
-			juegosGestor = BaseDatos.Juegos.Buscar.Minimos(null, 7, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas);
+			juegosFiltrados = BaseDatos.Juegos.Buscar.Minimos(null, 7, tiendas, drmsListado, categorias, minimoDescuento, maximoPrecio, deckListado, lanzamientoElegido, inteligenciaArtificialElegida, minimoReseñas).Except(juegosFiltrados).ToList();
 
-			if (juegosGestor.Count > 0)
+			if (juegosFiltrados.Count > 0)
 			{
-				juegosFiltrados = await Filtros(juegosGestor);
+				juegosFiltrados = Filtros(juegosFiltrados);
 			}
 		}
 		else
 		{
-			juegosFiltrados = await Filtros(juegosGestor);
+			juegosFiltrados = Filtros(juegosFiltrados);
 		}
 
 		if (opcionesMinimos != null)
@@ -1520,94 +1520,34 @@ else
 
 	#region Filtrado
 
-	private async Task<List<Juegos.Juego>> Filtros(List<Juegos.Juego> lista)
+	private List<Juegos.Juego> Filtros(List<Juegos.Juego> lista)
 	{
 		cargado = false;
 
-		List<Juegos.Juego> nuevaLista = new List<Juegos.Juego>();
-
-		foreach (var juego in lista)
+		if (string.IsNullOrEmpty(textoBuscador) == false)
 		{
-			if (string.IsNullOrEmpty(textoBuscador) == false)
-			{
-				if (Herramientas.Buscador.LimpiarNombre(juego.Nombre, true).Contains(Herramientas.Buscador.LimpiarNombre(textoBuscador, true)))
-				{
-					nuevaLista.Add(juego);
-				}
-			}
-			else
-			{
-				nuevaLista.Add(juego);
-			}
-
-			if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
-			{
-				if (ocultarJuegosUsuarioSteam == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.Steam)
-				{
-					if (juegosUsuario.Steam != null)
-					{
-						if (juegosUsuario.Steam.Count > 0)
-						{
-							foreach (var juegoUsuario in juegosUsuario.Steam)
-							{
-								if (juego.IdSteam == juegoUsuario.Id)
-								{
-									if (nuevaLista.Count > 0)
-									{
-										foreach (var juegoFiltrado in nuevaLista)
-										{
-											if (juego.IdSteam.ToString() == juegoFiltrado.IdSteam.ToString())
-											{
-												nuevaLista.Remove(juegoFiltrado);
-												break;
-											}
-										}
-									}
-								}
-							}
-						}
-					}					
-				}
-			}
-
-			if (string.IsNullOrEmpty(ocultarJuegosUsuarioGog) == false)
-			{
-				if (ocultarJuegosUsuarioGog == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.GOG)
-				{
-					if (juegosUsuario.Gog != null)
-					{
-						if (juegosUsuario.Gog.Count > 0)
-						{
-							foreach (var juegoUsuario in juegosUsuario.Gog)
-							{
-								if (juego.IdGog == juegoUsuario.Id)
-								{
-									if (nuevaLista.Count > 0)
-									{
-										foreach (var juegoFiltrado in nuevaLista)
-										{
-											if (juego.IdGog == juegoFiltrado.IdGog)
-											{
-												nuevaLista.Remove(juegoFiltrado);
-												break;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			cargado = true;
+			lista = lista.Where(j => Herramientas.Buscador.LimpiarNombre(j.Nombre, true).Contains(Herramientas.Buscador.LimpiarNombre(textoBuscador, true)) == true).ToList();
 		}
 
-		await InvokeAsync(StateHasChanged);
+		if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
+		{
+			if (ocultarJuegosUsuarioSteam == "checked")
+			{
+				lista = lista.Where(j => !juegosUsuario.Steam.Any(jU => jU.Id == j.IdSteam && j.PrecioMinimosHistoricos[0].DRM == JuegoDRM.Steam)).ToList();
+			}
+		}
+
+		if (string.IsNullOrEmpty(ocultarJuegosUsuarioGog) == false)
+		{
+			if (ocultarJuegosUsuarioGog == "checked")
+			{
+				lista = lista.Where(j => !juegosUsuario.Gog.Any(jU => jU.Id == j.IdGog && j.PrecioMinimosHistoricos[0].DRM == JuegoDRM.GOG)).ToList();
+			}
+		}
 
 		cargado = true;
 
-		return nuevaLista;
+		return lista;
 	}
 
 	private async void ElegirOrdenamiento(bool buscar)

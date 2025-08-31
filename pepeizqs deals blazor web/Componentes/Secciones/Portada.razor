@@ -394,7 +394,7 @@
 }
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
+	<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
 		@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 		{
 			<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido))">
@@ -461,7 +461,7 @@
 @if (juegosMinimosMostrar.Count > 0)
 {
 	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px;">
+		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
 			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Nuevos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Nuevos))">

@@ -689,6 +689,11 @@
 			Usuario deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			opcionesDeseados = BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
 
+			if (opcionesDeseados.WishlistPosition != null)
+			{
+				pestañaMostrar = (int)opcionesDeseados.WishlistPosition;
+			}
+
 			#region Deseados Steam
 
 			if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
@@ -909,6 +914,8 @@
 	private void CambiarPestaña(MouseEventArgs e, int nuevaPestaña)
 	{
 		pestañaMostrar = nuevaPestaña;
+
+		BaseDatos.Usuarios.Actualizar.Opcion("WishlistPosition", pestañaMostrar, usuarioId);
 	}
 
 	private void AñadirJuegoMostrar(Juegos.Juego juego, JuegoDRM drm, bool importado)

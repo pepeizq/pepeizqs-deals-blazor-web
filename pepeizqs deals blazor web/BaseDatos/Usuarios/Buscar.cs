@@ -416,7 +416,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT WishlistSort, WishlistOption3, WishlistOption4 FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT WishlistSort, WishlistOption3, WishlistOption4, WishlistPosition FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -439,6 +439,11 @@ namespace BaseDatos.Usuarios
 							if (lector.IsDBNull(2) == false)
 							{
 								opciones.WishlistOption4 = lector.GetDecimal(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								opciones.WishlistPosition = lector.GetInt32(3);
 							}
 						}
 					}

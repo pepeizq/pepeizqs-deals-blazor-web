@@ -87,6 +87,10 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "int(4)")]
+	public int? WishlistPosition { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "int(4)")]
 	public int? WishlistSort { get; set; }
 
 	[PersonalData]

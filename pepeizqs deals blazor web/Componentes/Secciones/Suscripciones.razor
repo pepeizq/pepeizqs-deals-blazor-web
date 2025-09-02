@@ -564,6 +564,8 @@ else
 
                                     if (suscripcionesMensual.Count > 0)
                                     {
+                                        suscripcionesMensual = suscripcionesMensual.OrderBy(s => s.Nombre).ToList();
+
                                         <div>
                                             <label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months") (@suscripcionesMensual.Count.ToString())</label>
 

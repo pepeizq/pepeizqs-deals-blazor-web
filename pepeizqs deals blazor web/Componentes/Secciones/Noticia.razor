@@ -140,7 +140,7 @@
 	}
 
 	<div class="subcabecera">
-		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">
+		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap; padding: 20px 0px;">
 			@{
 				string imagenCabecera = string.Empty;
 
@@ -160,7 +160,7 @@
 				if (string.IsNullOrEmpty(imagenCabecera) == false)
 				{
 					<div>
-						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCabecera)" style="max-width: 200px; max-height: 90px;" alt="Logo" />
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagenCabecera)" style="max-width: 200px; max-height: 75px;" alt="Logo" />
 					</div>
 				}
 			}

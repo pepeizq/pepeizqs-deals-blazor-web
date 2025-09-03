@@ -56,6 +56,8 @@ namespace Tareas
 								BaseDatos.Analisis.Limpiar.Ejecutar(conexion);
 								BaseDatos.Juegos.Limpiar.Minimos(conexion);
 								BaseDatos.Portapapeles.Borrar.Limpieza(conexion);
+
+								BaseDatos.Mantenimiento.Encoger.Ejecutar(conexion);
 							}
 						}
 						catch (Exception ex)

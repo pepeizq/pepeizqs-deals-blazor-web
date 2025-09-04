@@ -1,35 +1,35 @@
 ﻿@using Gratis2
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Data.SqlClient
 
 @if (idSeleccionadaGratis == null)
 {
     <div class="caja-diseño" style="padding: 30px;">
         <label style="margin-bottom: 10px;">Buscador:</label>
-        <input type="text" @oninput="TextoCambiaBuscadorGratis" class="entrada-texto" />
+        <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
         @if (juegosBuscadorGratis != null)
         {
             @if (juegosBuscadorGratis.Count > 0)
             {
                 <div>
-                    <Virtualize Context="juego" Items="@juegosBuscadorGratis" ItemSize="107" OverscanCount="5">
-                        <ItemContent>
-                            <div class="perfil-flexible-centrado perfil-espacio-top">
-                                <button @onclick="@(e => ClickearJuegoGratis(e, juego.Id.ToString(), juego.Nombre, juego.Imagenes.Library_600x900, juego.Imagenes.Header_460x215))" class="boton-pequeño" style="text-align:center;">
-                                    <div class="perfil-flexible-centrado">
-                                        <div style="width: 12%;">
-                                            <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />
-                                        </div>
-
-                                        <div style="width: 88%; padding-left: 15px; padding-right: 15px; text-align: left;">
-                                            @juego.Nombre<br />
-                                            <span style="font-size: 13px;">@juego.Id.ToString()</span>
-                                        </div>
+                    @foreach (var juego in juegosBuscadorGratis)
+                    {
+                        <div class="perfil-flexible-centrado perfil-espacio-top">
+                            <button @onclick="@(e => ClickearJuegoGratis(e, juego.Id.ToString(), juego.Nombre, juego.Imagenes.Library_600x900, juego.Imagenes.Header_460x215))" class="boton-pequeño" style="text-align:center;">
+                                <div class="perfil-flexible-centrado">
+                                    <div style="width: 12%;">
+                                        <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />
                                     </div>
-                                </button>
-                            </div>
-                        </ItemContent>
-                    </Virtualize>
+
+                                    <div style="width: 88%; padding-left: 15px; padding-right: 15px; text-align: left;">
+                                        @juego.Nombre<br />
+                                        <span style="font-size: 13px;">@juego.Id.ToString()</span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    }
                 </div>
             }
         }
@@ -115,6 +115,23 @@ else
 
     #nullable disable
 
+    private SqlConnection conexion = new SqlConnection();
+
+    protected override void OnInitialized()
+    {
+        if (conexion == null)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
+        }
+        else
+        {
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+        }
+    }
+
     List<global::Juegos.Juego> juegosBuscadorGratis = new List<global::Juegos.Juego>();
 
     private string idSeleccionadaGratis = null;
@@ -127,20 +144,45 @@ else
     private string fechaTerminaSeleccionadaGratis = null;
     private string imagenNoticiaGratis = null;
 
-    private void TextoCambiaBuscadorGratis(ChangeEventArgs texto)
+    private string textoBuscador = string.Empty;
+
+    private void TextoCambiaBuscador()
     {
-        if (texto.Value.ToString().Trim().Length > 1)
+        if (conexion == null)
         {
-            juegosBuscadorGratis = BaseDatos.Juegos.Buscar.Nombre(texto.Value.ToString().Trim(), 250);
+            conexion = Herramientas.BaseDatos.Conectar();
         }
         else
         {
-            juegosBuscadorGratis = new List<global::Juegos.Juego>();
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+        }
+
+        using (conexion)
+        {
+            if (string.IsNullOrEmpty(textoBuscador) == false && textoBuscador.Trim().Length > 2)
+            {
+                List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
+
+                if (resultados.Count > 0)
+                {
+                    juegosBuscadorGratis.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+
+                    juegosBuscadorGratis.AddRange(resultados.Where(x => juegosBuscadorGratis.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
+                }
+            }
+            else
+            {
+                juegosBuscadorGratis.Clear();
+            }
         }
     }
 
     private void ClickearJuegoGratis(MouseEventArgs e, string id, string nombre, string imagenVertical, string imagenNoticia2)
     {
+        textoBuscador = null;
         juegosBuscadorGratis = new List<global::Juegos.Juego>();
 
         idSeleccionadaGratis = id;

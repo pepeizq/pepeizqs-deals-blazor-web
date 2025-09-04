@@ -953,9 +953,16 @@
 
     private void TextoCambiaBuscador()
     {
-        if (conexion.State != System.Data.ConnectionState.Open)
+        if (conexion == null)
         {
             conexion = Herramientas.BaseDatos.Conectar();
+        }
+        else
+        {
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
         }
 
         using (conexion)

@@ -6,7 +6,7 @@
 {
     <div class="caja-diseño" style="padding: 30px;">
         <label style="margin-bottom: 10px;">Buscador:</label>
-        <input type="text" @oninput="TextoCambiaBuscadorSuscripciones" class="entrada-texto" />
+        <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
         @if (juegosBuscadorSuscripciones != null)
         {
@@ -110,15 +110,20 @@ else
 
     protected override void OnInitialized()
     {
-        if (conexion.State != System.Data.ConnectionState.Open)
+        if (conexion == null)
         {
             conexion = Herramientas.BaseDatos.Conectar();
+        }
+        else
+        {
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
         }
     }
 
     List<global::Juegos.Juego> juegosBuscadorSuscripciones = new List<global::Juegos.Juego>();
-
-    private string cadenaBusquedaSuscripciones = null;
 
     private string idSeleccionadaSuscripciones = null;
     private string imagenSeleccionadaSuscripciones = null;
@@ -130,29 +135,45 @@ else
     private string enlaceSeleccionadoSuscripciones = null;
     private string imagenNoticiaSuscripciones = null;
 
-    private void TextoCambiaBuscadorSuscripciones(ChangeEventArgs texto)
+    private string textoBuscador = string.Empty;
+
+    private void TextoCambiaBuscador()
     {
-        if (texto.Value.ToString().Trim().Length > 1)
+        if (conexion == null)
         {
-            try
-            {
-                cadenaBusquedaSuscripciones = texto.Value.ToString().Trim();
-                juegosBuscadorSuscripciones = BaseDatos.Juegos.Buscar.Nombre(cadenaBusquedaSuscripciones, 250);
-            }
-            catch
-            {
-                juegosBuscadorSuscripciones = new List<global::Juegos.Juego>();
-            }
+            conexion = Herramientas.BaseDatos.Conectar();
         }
         else
         {
-            juegosBuscadorSuscripciones = new List<global::Juegos.Juego>();
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+        }
+
+        using (conexion)
+        {
+            if (string.IsNullOrEmpty(textoBuscador) == false && textoBuscador.Trim().Length > 2)
+            {
+                List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
+
+                if (resultados.Count > 0)
+                {
+                    juegosBuscadorSuscripciones.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+
+                    juegosBuscadorSuscripciones.AddRange(resultados.Where(x => juegosBuscadorSuscripciones.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
+                }
+            }
+            else
+            {
+                juegosBuscadorSuscripciones.Clear();
+            }
         }
     }
 
     private void SeleccionarJuegoSuscripciones(MouseEventArgs e, string id, string imagenVertical, string nombre, string imagenNoticia2)
     {
-        cadenaBusquedaSuscripciones = null;
+        textoBuscador = null;
         juegosBuscadorSuscripciones = new List<global::Juegos.Juego>();
 
         idSeleccionadaSuscripciones = id;

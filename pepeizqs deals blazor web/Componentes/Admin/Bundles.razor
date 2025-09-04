@@ -210,6 +210,21 @@
 
     private SqlConnection conexion = new SqlConnection();
 
+    protected override void OnInitialized()
+    {
+        if (conexion == null)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
+        }
+        else
+        {
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+        }
+    }
+
     private string enlace = null;
     private Bundles2.Bundle bundle = new Bundles2.Bundle();
 
@@ -442,25 +457,35 @@
 
     private void TextoCambiaBuscador()
     {
-        if (string.IsNullOrEmpty(textoBuscador) == false)
+        if (conexion == null)
         {
-            if (conexion == null)
-            {
-                conexion = Herramientas.BaseDatos.Conectar();
-            }
-            else
-            {
-                if (conexion.State != System.Data.ConnectionState.Open)
-                {
-                    conexion = Herramientas.BaseDatos.Conectar();
-                }
-            }
-
-            juegosBuscador = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 100, true, -1, true);
+            conexion = Herramientas.BaseDatos.Conectar();
         }
         else
         {
-            juegosBuscador = new List<global::Juegos.Juego>();
+            if (conexion.State != System.Data.ConnectionState.Open)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+        }
+
+        using (conexion)
+        {
+            if (string.IsNullOrEmpty(textoBuscador) == false && textoBuscador.Trim().Length > 2)
+            {
+                List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
+
+                if (resultados.Count > 0)
+                {
+                    juegosBuscador.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+
+                    juegosBuscador.AddRange(resultados.Where(x => juegosBuscador.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
+                }
+            }
+            else
+            {
+                juegosBuscador.Clear();
+            }
         }
     }
 

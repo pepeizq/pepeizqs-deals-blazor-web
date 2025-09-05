@@ -278,6 +278,7 @@ namespace BaseDatos.Juegos
 							precio.Nombre = nuevaOferta.Nombre;
 							precio.Imagen = nuevaOferta.Imagen;
 							precio.Moneda = nuevaOferta.Moneda;
+							precio.BundleSteam = nuevaOferta.BundleSteam;
 
 							añadir = false;
 							break;
@@ -345,6 +346,7 @@ namespace BaseDatos.Juegos
 								minimo.Imagen = nuevaOferta.Imagen;
 								minimo.Enlace = nuevaOferta.Enlace;
 								minimo.Tienda = nuevaOferta.Tienda;
+								minimo.BundleSteam = nuevaOferta.BundleSteam;
 
 								//------------------------------------------
 

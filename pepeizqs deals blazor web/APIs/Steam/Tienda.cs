@@ -227,7 +227,7 @@ namespace APIs.Steam
 
 									string imagen = temp10.Trim();
 
-									JuegoAnalisis analisis = new JuegoAnalisis
+									JuegoAnalisis reseñas = new JuegoAnalisis
 									{
 										Cantidad = "0",
 										Porcentaje = "0"
@@ -272,8 +272,8 @@ namespace APIs.Steam
 
 											if (cantidad.Length > 1)
 											{
-												analisis.Cantidad = cantidad;
-												analisis.Porcentaje = porcentaje;
+												reseñas.Cantidad = cantidad;
+												reseñas.Porcentaje = porcentaje;
 											}
 										}
 									}
@@ -282,14 +282,14 @@ namespace APIs.Steam
 
 									if (enlace.Contains("https://store.steampowered.com/app/") == true)
 									{
-										if (analisis.Cantidad.Length > 1)
+										if (reseñas.Cantidad.Length > 1)
 										{
 											suficientesReseñas = true;
 										}
 									}
 									else if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
 									{
-										if (analisis.Cantidad.Length > 3)
+										if (reseñas.Cantidad.Length > 3)
 										{
 											suficientesReseñas = true;
 										}
@@ -371,7 +371,7 @@ namespace APIs.Steam
 													{
 														try
 														{
-															BaseDatos.Tiendas.Comprobar.Steam(oferta, analisis, conexion);
+															BaseDatos.Tiendas.Comprobar.Steam(oferta, reseñas, conexion);
 														}
 														catch (Exception ex)
 														{
@@ -382,6 +382,37 @@ namespace APIs.Steam
 													if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
 													{
 														oferta.Tienda = GenerarBundles().Id;
+
+														if (string.IsNullOrEmpty(temp4) == false)
+														{
+															JuegoSteamBundle bundle = new JuegoSteamBundle();
+
+															if (temp4.Contains("m_bMustPurchaseAsSet&quot;:1") == true)
+															{
+																bundle.Junto = false;
+															}
+															else
+															{
+																bundle.Junto = true;
+															}
+
+															if (temp4.Contains("data-bundlediscount=") == true)
+															{
+																int int15 = temp4.IndexOf("data-bundlediscount=");
+																string temp15 = temp4.Remove(0, int15 + 21);
+
+																int int16 = temp15.IndexOf(Strings.ChrW(34));
+																string temp16 = temp15.Remove(int16, temp15.Length - int16);
+
+																bundle.Descuento = int.Parse(temp16);
+															}
+															else
+															{
+																bundle.Descuento = 0;
+															}
+
+															oferta.BundleSteam = bundle;
+														}
 
 														try
 														{

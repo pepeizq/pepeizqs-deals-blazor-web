@@ -1619,77 +1619,136 @@
                                         </div>
                                     }
 
-                                    @if (preciosActualesDRM.Count > 0)
+                                    @if (preciosActualesDRM.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                     {
+                                        List<JuegoPrecio> preciosMostrar = new List<JuegoPrecio>();
                                         List<JuegoPrecio> preciosBajos = new List<JuegoPrecio>();
                                         int descuentoMaximo = 0;
 
-                                        <div style="display: flex; flex-direction: column; gap: 20px; padding: 20px;">
-                                            @foreach (JuegoPrecio precio in preciosActualesDRM)
+                                        foreach (JuegoPrecio precio in preciosActualesDRM)
+                                        {
+                                            if (Herramientas.OfertaActiva.Verificar(precio) == true)
                                             {
-                                                string enlace = precio.Enlace;
-
-                                                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+                                                if (precio.Descuento > descuentoMaximo)
                                                 {
-                                                    enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon);
+                                                    descuentoMaximo = precio.Descuento;
                                                 }
 
-                                                if (Herramientas.OfertaActiva.Verificar(precio) == true)
+                                                if ((precio.Descuento > descuentoMaximo - (descuentoMaximo / 2)) || preciosActualesDRM.Count == 1)
                                                 {
-                                                    if (precio.Descuento > descuentoMaximo)
+                                                    preciosMostrar.Add(precio);
+                                                }                                                
+                                            }
+                                        }
+
+                                        if (preciosMostrar.Count > 0)
+                                        {
+                                            preciosMostrar = preciosMostrar.OrderBy(p => (p.Moneda == Herramientas.JuegoMoneda.Euro) ? p.Precio : p.PrecioCambiado).ToList();
+                                        }
+
+                                        foreach (JuegoPrecio precio in preciosActualesDRM)
+                                        {
+                                            if (Herramientas.OfertaActiva.Verificar(precio) == true)
+                                            {
+                                                bool yaIncluido = false;
+
+                                                if (preciosMostrar.Count > 0)
+                                                {
+                                                    foreach (var precioMostrar in preciosMostrar)
                                                     {
-                                                        descuentoMaximo = precio.Descuento;
+                                                        if (precioMostrar.Enlace == precio.Enlace)
+                                                        {
+                                                            yaIncluido = true;
+                                                            break;
+                                                        }
                                                     }
+                                                }
 
-                                                    if ((precio.Descuento > descuentoMaximo - (descuentoMaximo / 2)) || preciosActualesDRM.Count == 1)
+                                                if (yaIncluido == false)
+                                                {
+                                                    if (precio.Precio <= preciosMostrar.Last().Precio)
                                                     {
-                                                        <div>
-                                                            @if (string.IsNullOrEmpty(precio.CodigoTexto) == false)
-                                                            {
-                                                                <div style="width: 100%; display: flex; justify-content: right;">
-                                                                    <button @onclick="(e => CopiarAlClipboard(e, precio.CodigoTexto))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; justify-content: right;">
-                                                                        <div style="display: flex; align-items: center; gap: 5px;">
-                                                                            <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String90", "Game")</div>
-                                                                            <div>@precio.CodigoTexto</div>
-                                                                        </div>
-                                                                    </button>
-                                                                </div>
-                                                            }
-
-                                                            <a class="juego-boton-pequeño" style="display: block;" href="@enlace" target="_blank" rel="nofollow">
-                                                                <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-                                                                    <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
-                                                                    <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precio.Nombre)</span>
-
-                                                                    <div class="juego-descuento-precio">
-                                                                        <div class="juego-hacetiempo" style="font-size: 14px; margin: 20px;">
-                                                                            @Herramientas.Calculadora.DiferenciaTiempo(precio.FechaDetectado, idioma)
-                                                                        </div>
-
-                                                                        <div class="juego-descuento" style="width: 75px; text-align: center;">
-                                                                            @precio.Descuento.ToString()%
-                                                                        </div>
-
-                                                                        <div class="juego-precio" style="text-align: center;">
-                                                                            @PrepararPrecio(precio, false)
-
-                                                                            @if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
-                                                                            {
-                                                                                <br />
-
-                                                                                <label style="font-size: 13px;">@Herramientas.Divisas.DevolverSimbolo(precio.Precio, precio.Moneda)</label>
-                                                                            }
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
+                                                        preciosMostrar.Add(precio);
                                                     }
                                                     else
                                                     {
                                                         preciosBajos.Add(precio);
                                                     }
-                                                }           
+                                                }
+                                            }
+                                        }
+
+                                        if (preciosMostrar.Count > 0)
+                                        {
+                                            preciosMostrar = preciosMostrar.OrderBy(p => (p.Moneda == Herramientas.JuegoMoneda.Euro) ? p.Precio : p.PrecioCambiado).ToList();
+                                        }
+
+                                        <div style="display: flex; flex-direction: column; gap: 20px; padding: 20px;">
+                                            @foreach (JuegoPrecio precio in preciosMostrar)
+                                            {
+                                                string enlace = precio.Enlace;
+
+                                                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+                                                {
+                                                    enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, usuarioPatreon, false);
+                                                }
+
+                                                <div>
+                                                    @if (string.IsNullOrEmpty(precio.CodigoTexto) == false)
+                                                    {
+                                                        <div style="width: 100%; display: flex; justify-content: right;">
+                                                            <button @onclick="(e => CopiarAlClipboard(e, precio.CodigoTexto))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; justify-content: right;">
+                                                                <div style="display: flex; align-items: center; gap: 5px;">
+                                                                    <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String90", "Game")</div>
+                                                                    <div>@precio.CodigoTexto</div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                    }
+
+                                                    <button @onclick="(e => AbrirOferta(e, enlace))" class="juego-boton-pequeño" style="display: block; width: 100%;">
+                                                        <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+                                                            <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
+
+                                                            <div style="flex: 1;">
+                                                                <div>
+                                                                    @ComprobarEdicion(juego.Nombre, precio.Nombre)
+                                                                </div>
+
+                                                                @if (usuarioAdmin == true)
+                                                                {
+                                                                    <div>
+                                                                        @if (precio.BundleSteam != null)
+                                                                        {
+                                                                            @precio.BundleSteam.Junto.ToString()
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+
+                                                            <div class="juego-descuento-precio">
+                                                                <div class="juego-hacetiempo" style="font-size: 14px; margin: 20px;">
+                                                                    @Herramientas.Calculadora.DiferenciaTiempo(precio.FechaDetectado, idioma)
+                                                                </div>
+
+                                                                <div class="juego-descuento" style="width: 75px; text-align: center;">
+                                                                    @precio.Descuento.ToString()%
+                                                                </div>
+
+                                                                <div class="juego-precio" style="text-align: center;">
+                                                                    @PrepararPrecio(precio, false)
+
+                                                                    @if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+                                                                    {
+                                                                        <br />
+
+                                                                        <label style="font-size: 13px;">@Herramientas.Divisas.DevolverSimbolo(precio.Precio, precio.Moneda)</label>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </button>
+                                                </div>
                                             }
 
                                             @if (preciosBajos.Count > 0)
@@ -1759,10 +1818,15 @@
                                                                 </div>
                                                             }
 
-                                                            <a class="juego-boton-pequeño" style="display: block;" href="@enlaceBajo" target="_blank" rel="nofollow">
+                                                            <button @onclick="(e => AbrirOferta(e, enlaceBajo))" class="juego-boton-pequeño" style="display: block; width: 100%;">
                                                                 <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precioBajo.Tienda)" class="juego-imagen-boton" alt="@precioBajo.Tienda" loading="lazy" />
-                                                                    <span style="flex: 1;">@ComprobarEdicion(juego.Nombre, precioBajo.Nombre)</span>
+
+                                                                    <div style="flex: 1;">
+                                                                        <div>
+                                                                            @ComprobarEdicion(juego.Nombre, precioBajo.Nombre)
+                                                                        </div>
+                                                                    </div>
 
                                                                     <div class="juego-descuento-precio">
                                                                         <div class="juego-hacetiempo" style="font-size: 14px; margin: 20px;">
@@ -1785,7 +1849,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </a>
+                                                            </button>
                                                         </div>         
                                                     }
                                                 }
@@ -6274,6 +6338,15 @@
             curator.Posicion = 0;
         }
     }
+
+    #endregion
+
+    #region Abrir Oferta
+
+    private async void AbrirOferta(MouseEventArgs e, string enlace)
+	{
+        await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
+	}
 
     #endregion
 

@@ -28,6 +28,8 @@ namespace BaseDatos.Mantenimiento
 
 			using (SqlCommand comando = new SqlCommand(sqlEncoger, conexion))
 			{
+				comando.CommandTimeout = 1000;
+
 				try
 				{
 					comando.ExecuteNonQuery();

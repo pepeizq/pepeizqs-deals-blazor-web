@@ -112,7 +112,7 @@ namespace Juegos
 		public DateTime FechaTermina { get; set; }
 		public int CodigoDescuento { get; set; }
 		public string CodigoTexto { get; set; }
-		public string SteamID { get; set; }
+		public JuegoSteamBundle BundleSteam { get; set; }
 	}
 
 	public class JuegoAnalisis
@@ -283,6 +283,12 @@ namespace Juegos
 		public int CantidadPositivos { get; set; }
 		public int CantidadNegativos { get; set; }
 		public string Idioma { get; set; }
+	}
+
+	public class JuegoSteamBundle
+	{
+		public bool Junto { get; set; }
+		public int Descuento { get; set; }
 	}
 
 	//-------------------------------------------------------

@@ -12,7 +12,6 @@
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
-@inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
 @inject PersistentComponentState ApplicationState
 @implements IDisposable
@@ -557,11 +556,6 @@
 				}				
 			}
 		}
-	}
-
-	private void AbrirNoticia(MouseEventArgs e, string enlace)
-	{
-        NavManager.NavigateTo(enlace, true);
 	}
 
 	public enum Tipo

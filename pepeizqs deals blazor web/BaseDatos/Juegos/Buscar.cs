@@ -1,8 +1,10 @@
 ﻿#nullable disable
 
+using Herramientas.Redireccionador;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
 using static pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos;
@@ -1837,6 +1839,54 @@ namespace BaseDatos.Juegos
 			}
 
 			return juegos;
+		}
+
+		public static List<int> BundleSteam(string id, SqlConnection conexion = null)
+		{
+			List<int> lista = new List<int>();
+
+			if (string.IsNullOrEmpty(id) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (conexion)
+				{
+					string busqueda = @"DECLARE @ids NVARCHAR(MAX); 
+
+SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam');
+
+				SELECT idSteam FROM juegos WHERE id IN(SELECT value FROM STRING_SPLIT(@ids, ','))";
+
+					busqueda = busqueda.Replace("@enlaceSteam", id);
+
+					using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+					{
+						using (SqlDataReader lector = comando.ExecuteReader())
+						{
+							while (lector.Read())
+							{
+								if (lector.IsDBNull(0) == false)
+								{
+									lista.Add(lector.GetInt32(0));
+								}
+							}
+						}
+					}
+				}
+			}
+			
+
+			return lista;
 		}
 	}
 }

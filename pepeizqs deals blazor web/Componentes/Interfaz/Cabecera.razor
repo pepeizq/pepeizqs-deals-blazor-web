@@ -362,74 +362,77 @@
     @if (encontroAlgo == true)
     {
         <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); display: flex; align-items: start; flex-direction: column; backdrop-filter: blur(5px); background: color-mix(in srgb, var(--fondoCuerpo) 90%, transparent);">
-            <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;"> 
-                @foreach (var juego in resultadosMostrar)
-                {
-                    string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
-
-                    if (string.IsNullOrEmpty(usuarioId) == false)
-                    {
-                        bool? usuarioTieneJuego = false;
-
-                        usuarioTieneJuego = ComprobarSiTieneJuego(juego.Id);
-
-                        if (usuarioTieneJuego == null)
-                        {
-                            usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
-                        }
-
-                        bool? usuarioTieneDeseado = false;
-
-                        if (usuarioTieneJuego == true)
-                        {
-                            juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = true });
-                            fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
-                        }
-                        else
-                        {
-                            juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = false });
-
-                            usuarioTieneDeseado = ComprobarSiDeseaJuego(juego.Id);
-
-                            if (usuarioTieneDeseado == null)
-                            {
-                                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
-                            }
-
-                            if (usuarioTieneDeseado == true)
-                            {
-                                fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
-                            }
-                        }
-                    }
-
-                    <div style="display: flex; flex-direction: row; align-items: center; margin-top: 30px;">
+            <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;">
+                <Virtualize Context="juego" Items="resultadosMostrar">
+                    <ItemContent>
                         @{
-                            int ancho = 230;
-                            int alto = 107;
-                            string imagen = "width: " + ancho.ToString() + "px; height: " + alto.ToString() + "px;";
-                            string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
-                        }
-                                 
-                        <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
-                            <div class="perfil-flexible-centrado">
-                                <div>
-                                    <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
-                                </div>
+                            string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
 
-                                <div style="width: 100%; padding-left: 20px; padding-right: 20px;">
-                                    <div>
-                                        @juego.Nombre
-                                    </div>
+                            if (string.IsNullOrEmpty(usuarioId) == false)
+                            {
+                                bool? usuarioTieneJuego = false;
 
-                                    <div style="margin-top: 5px; font-size: 15px;">
-                                        @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
+                                usuarioTieneJuego = ComprobarSiTieneJuego(juego.Id);
+
+                                if (usuarioTieneJuego == null)
+                                {
+                                    usuarioTieneJuego = Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego);
+                                }
+
+                                bool? usuarioTieneDeseado = false;
+
+                                if (usuarioTieneJuego == true)
+                                {
+                                    juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = true });
+                                    fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
+                                }
+                                else
+                                {
+                                    juegosTieneUsuario.Add(new JuegoUsuarioTemporal() { Id = juego.Id, Estado = false });
+
+                                    usuarioTieneDeseado = ComprobarSiDeseaJuego(juego.Id);
+
+                                    if (usuarioTieneDeseado == null)
+                                    {
+                                        usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                                    }
+
+                                    if (usuarioTieneDeseado == true)
+                                    {
+                                        fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
+                                    }
+                                }
+                            }
+
+                            <div style="display: flex; flex-direction: row; align-items: center; margin-top: 30px;">
+                                @{
+                                    int ancho = 230;
+                                    int alto = 107;
+                                    string imagen = "width: " + ancho.ToString() + "px; height: " + alto.ToString() + "px;";
+                                    string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
+                                }
+
+                                <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+                                    <div class="perfil-flexible-centrado">
+                                        <div>
+                                            <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
+                                        </div>
+
+                                        <div style="width: 100%; padding-left: 20px; padding-right: 20px;">
+                                            <div>
+                                                @juego.Nombre
+                                            </div>
+
+                                            <div style="margin-top: 5px; font-size: 15px;">
+                                                @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                }
+                        }
+                    </ItemContent>
+                </Virtualize>
             </div>
         </div>
     }

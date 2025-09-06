@@ -837,6 +837,8 @@
                                         {
                                             usuarioTieneDeseadoMensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Game"), JuegoDRM2.DevolverDRM(drm.Id));
                                         }
+
+                                        break;
                                     }
                                 }
                             }                            
@@ -1589,9 +1591,11 @@
                                                     {
                                                         if (juego.IdSteam > 0)
                                                         {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            string enlaceSteam = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false);
+
+                                                            <button @onclick="(e => AbrirOferta(e, enlaceSteam))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Steam")
-                                                            </a>
+                                                            </button>
                                                         }
                                                     }
 
@@ -1599,9 +1603,11 @@
                                                     {
                                                         if (string.IsNullOrEmpty(juego.SlugGOG) == false)
                                                         {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://www.gog.com/game/" + juego.SlugGOG, APIs.GOG.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            string enlaceGog = Herramientas.EnlaceAcortador.Generar("https://www.gog.com/game/" + juego.SlugGOG, APIs.GOG.Tienda.Generar().Id, usuarioPatreon, false);
+
+                                                            <button @onclick="(e => AbrirOferta(e, enlaceGog))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "GOG")
-                                                            </a>
+                                                            </button>
                                                         }
                                                     }
 
@@ -1609,9 +1615,11 @@
                                                     {
                                                         if (string.IsNullOrEmpty(juego.SlugEpic) == false)
                                                         {
-                                                            <a class="juego-boton-pequeño" href="@Herramientas.EnlaceAcortador.Generar("https://store.epicgames.com/p/" + juego.SlugEpic, APIs.EpicGames.Tienda.Generar().Id, usuarioPatreon)" target="_blank" rel="nofollow" style="width: auto; min-width: 200px; text-align: center;">
+                                                            string enlaceEpic = Herramientas.EnlaceAcortador.Generar("https://store.epicgames.com/p/" + juego.SlugEpic, APIs.EpicGames.Tienda.Generar().Id, usuarioPatreon, false);
+
+                                                            <button @onclick="(e => AbrirOferta(e, enlaceEpic))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Epic Games")
-                                                            </a>
+                                                            </button>
                                                         }
                                                     }
                                                 }  
@@ -1646,6 +1654,8 @@
                                             preciosMostrar = preciosMostrar.OrderBy(p => (p.Moneda == Herramientas.JuegoMoneda.Euro) ? p.Precio : p.PrecioCambiado).ToList();
                                         }
 
+                                        JuegoPrecio ultimoPrecio = preciosMostrar.Last();
+
                                         foreach (JuegoPrecio precio in preciosActualesDRM)
                                         {
                                             if (Herramientas.OfertaActiva.Verificar(precio) == true)
@@ -1666,7 +1676,7 @@
 
                                                 if (yaIncluido == false)
                                                 {
-                                                    if (precio.Precio <= preciosMostrar.Last().Precio)
+                                                    if (precio.Precio <= ultimoPrecio.Precio)
                                                     {
                                                         preciosMostrar.Add(precio);
                                                     }
@@ -1710,19 +1720,53 @@
                                                         <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
                                                             <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
 
-                                                            <div style="flex: 1;">
+                                                            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                                                                 <div>
                                                                     @ComprobarEdicion(juego.Nombre, precio.Nombre)
                                                                 </div>
 
-                                                                @if (usuarioAdmin == true)
+                                                                @if (string.IsNullOrEmpty(usuarioId) == false)
                                                                 {
-                                                                    <div>
-                                                                        @if (precio.BundleSteam != null)
+                                                                    if (precio.BundleSteam != null)
+                                                                    {
+                                                                        if (precio.BundleSteam.Junto == true && juegosUsuario != null)
                                                                         {
-                                                                            @precio.BundleSteam.Junto.ToString()
+                                                                            int cuantosJuegos = 0;
+
+                                                                            List<int> juegosBundle = BaseDatos.Juegos.Buscar.BundleSteam(precio.Enlace);
+
+                                                                            if (juegosBundle.Count > 0)
+                                                                            {
+                                                                                List<SteamUsuarioJuego> juegosSteam = juegosUsuario.Steam;
+
+                                                                                foreach (var juegoBundle in juegosBundle)
+                                                                                {
+                                                                                    foreach (var juegoSteam in juegosSteam)
+                                                                                    {
+                                                                                        if (juegoSteam.Id == juegoBundle)
+                                                                                        {
+                                                                                            cuantosJuegos += 1;
+                                                                                            break;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                            if (cuantosJuegos > 0)
+                                                                            {
+                                                                                <div style="font-size: 14px; background-color: var(--fondoBien); padding: 5px 10px; border-radius: 5px; width: fit-content;">
+                                                                                    @if (cuantosJuegos == 1)
+                                                                                    {
+                                                                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String45", "Game")
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String46", "Game"), cuantosJuegos)
+                                                                                    }
+                                                                                </div>
+                                                                            }
                                                                         }
-                                                                    </div>
+                                                                    }
                                                                 }
                                                             </div>
 
@@ -1822,10 +1866,54 @@
                                                                 <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precioBajo.Tienda)" class="juego-imagen-boton" alt="@precioBajo.Tienda" loading="lazy" />
 
-                                                                    <div style="flex: 1;">
+                                                                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                                                                         <div>
                                                                             @ComprobarEdicion(juego.Nombre, precioBajo.Nombre)
                                                                         </div>
+
+                                                                        @if (string.IsNullOrEmpty(usuarioId) == false)
+                                                                        {
+                                                                            if (precioBajo.BundleSteam != null)
+                                                                            {
+                                                                                if (precioBajo.BundleSteam.Junto == true && juegosUsuario != null)
+                                                                                {
+                                                                                    int cuantosJuegos = 0;
+
+                                                                                    List<int> juegosBundle = BaseDatos.Juegos.Buscar.BundleSteam(precioBajo.Enlace);
+
+                                                                                    if (juegosBundle.Count > 0)
+                                                                                    {
+                                                                                        List<SteamUsuarioJuego> juegosSteam = juegosUsuario.Steam;
+
+                                                                                        foreach (var juegoBundle in juegosBundle)
+                                                                                        {
+                                                                                            foreach (var juegoSteam in juegosSteam)
+                                                                                            {
+                                                                                                if (juegoSteam.Id == juegoBundle)
+                                                                                                {
+                                                                                                    cuantosJuegos += 1;
+                                                                                                    break;
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+
+                                                                                    if (cuantosJuegos > 0)
+                                                                                    {
+                                                                                        <div style="font-size: 14px; background-color: var(--fondoBien); padding: 5px 10px; border-radius: 5px; width: fit-content;">
+                                                                                            @if (cuantosJuegos == 1)
+                                                                                            {
+                                                                                                @Herramientas.Idiomas.BuscarTexto(idioma, "String45", "Game")
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String46", "Game"), cuantosJuegos)
+                                                                                            }
+                                                                                        </div>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
                                                                     </div>
 
                                                                     <div class="juego-descuento-precio">

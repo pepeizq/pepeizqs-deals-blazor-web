@@ -350,7 +350,11 @@
 						<Virtualize Context="juego" Items="deseadosFinales" ItemSize="alturaFila">
 							<ItemContent>
 								<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-									<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon)" target="_blank">
+									@{
+										string enlaceDeseado = Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon, false);
+									}
+									
+									<button @onclick="(e => AbrirOferta(e, enlaceDeseado))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 										<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 											<div class="deseado-imagen">
 												@{
@@ -420,7 +424,7 @@
 												}
 											</div>
 										</div>
-									</a>
+									</button>
 
 									<AuthorizeView>
 										<Authorized>
@@ -1677,6 +1681,15 @@
 		{
 			enseñarExportar = false;
 		}
+	}
+
+	#endregion
+
+	#region Abrir Oferta
+
+	private async void AbrirOferta(MouseEventArgs e, string enlace)
+	{
+		await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
 	}
 
 	#endregion

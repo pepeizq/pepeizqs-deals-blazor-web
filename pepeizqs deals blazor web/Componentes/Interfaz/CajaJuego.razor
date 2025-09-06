@@ -489,7 +489,7 @@
 				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
 			}
 
-			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
+			<button @onclick="(e => AbrirOferta(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 100%; height: 100%;" loading="lazy" />
@@ -509,17 +509,17 @@
 								{
 									if (int.Parse(juego.Analisis.Porcentaje) > 74)
 									{
-										<img src="/imagenes/analisis/positivo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Good"/>
+										<img src="/imagenes/analisis/positivo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Good" />
 									}
 
 									if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
 									{
-										<img src="/imagenes/analisis/meh3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Meh"/>
+										<img src="/imagenes/analisis/meh3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Meh" />
 									}
 
 									if (int.Parse(juego.Analisis.Porcentaje) < 50)
 									{
-										<img src="/imagenes/analisis/negativo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Bad"/>
+										<img src="/imagenes/analisis/negativo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Bad" />
 									}
 								}
 							}
@@ -536,7 +536,7 @@
 						</div>
 					</div>
 				</div>
-			</a>
+			</button>
 
 			if (string.IsNullOrEmpty(codigoTexto) == false)
 			{
@@ -740,41 +740,41 @@
 
 		@if (tipo == Tipo.Gratis)
 		{
-			 <a href="@enlaceGratis" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor" target="_blank">
-                <div style="width: 100%; text-align: center;">
-                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
+			<button @onclick="(e => AbrirOferta(e, enlaceGratis))" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor">
+				<div style="width: 100%; text-align: center;">
+					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
 
 					<div style="margin: 10px 0px; text-align: center; padding: 5px;">
-                        @{
-                            Gratis2.Gratis gratis = Gratis2.GratisCargar.DevolverGratis(tipoGratis);
-                        }
+						@{
+							Gratis2.Gratis gratis = Gratis2.GratisCargar.DevolverGratis(tipoGratis);
+						}
 
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; height: 40px;">
-                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(gratis.ImagenLogo)" style="max-width: 140px; max-width: 140px;" alt="Store" />
+						<div style="display: flex; align-items: center; justify-content: center; gap: 20px; height: 40px;">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(gratis.ImagenLogo)" style="max-width: 140px; max-width: 140px;" alt="Store" />
 
-                            @if (gratis.DRMEnseñar == true)
-                            {
-                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(drmGratis))" style="width: 28px; height: 28px;" alt="DRM" />
-                            }
-                        </div>                            
-                    </div>
-                </div>
-            </a>
+							@if (gratis.DRMEnseñar == true)
+							{
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Juegos.JuegoDRM2.SacarImagen(drmGratis))" style="width: 28px; height: 28px;" alt="DRM" />
+							}
+						</div>
+					</div>
+				</div>
+			</button>
 		}
 
 		@if (tipo == Tipo.Suscripciones)
 		{
-			<a href="@enlaceSuscripcion" class="boton-pequeño" target="_blank" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
-                <div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
-                    <div>
-                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
-                    </div>
+			<button @onclick="(e => AbrirOferta(e, enlaceSuscripcion))" class="boton-pequeño" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
+				<div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
+					<div>
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
+					</div>
 
-                    <div style="width: 100%; text-align: right; padding: 10px;">
-                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="max-width: 20px; max-height: 20px;" />
-                    </div>
-                </div>
-            </a>
+					<div style="width: 100%; text-align: right; padding: 10px;">
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drmUsar))" style="max-width: 20px; max-height: 20px;" />
+					</div>
+				</div>
+			</button>
 		}
 	</div>
 }
@@ -861,6 +861,15 @@
 		PortadaLanzamientos,
 		PortadaProximamente
 	}
+
+	#region Abrir Oferta
+
+	private async void AbrirOferta(MouseEventArgs e, string enlace)
+	{
+		await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
+	}
+
+	#endregion
 
 	#region Portapapeles
 

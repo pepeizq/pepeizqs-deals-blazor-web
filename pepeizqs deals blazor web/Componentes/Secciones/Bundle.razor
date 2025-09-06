@@ -139,11 +139,37 @@
 <style>
 	.bundle-tabla {
 		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-gap: 40px;
 	}
 
-	@@media (max-width: 800px) {
+	.bundle-espacio {
+		padding: 30px;
+	}
+
+	.bundle-espacio2 {
+		gap: 40px;
+	}
+
+	.bundle-espacio3 {
+		padding: 15px 30px;
+	}
+
+	@@media (max-width: 1000px) {
 		.bundle-tabla {
 			grid-template-columns: 1fr 1fr 1fr;
+			grid-gap: 20px;
+		}
+
+		.bundle-espacio {
+			padding: 10px;
+		}
+
+		.bundle-espacio2 {
+			gap: 20px;
+		}
+
+		.bundle-espacio3 {
+			padding: 10px 20px;
 		}
 	}
 </style>
@@ -167,7 +193,7 @@
 					@bundle.NombreBundle
 				</h1>
 
-				<div style="font-size: 14px; padding: 0px 20px; margin-left: auto;">
+				<div style="font-size: 16px; padding: 0px 20px; margin-left: auto;">
 					@bundle.FechaEmpieza.Day.ToString()/@bundle.FechaEmpieza.Month.ToString()/@bundle.FechaEmpieza.Year.ToString() • @bundle.FechaTermina.Day.ToString()/@bundle.FechaTermina.Month.ToString()/@bundle.FechaTermina.Year.ToString()
 				</div>
 			</div>
@@ -183,9 +209,9 @@
 			}
 
 			<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
-				<a href="@enlaceBundle" class="boton-pequeño" style="text-align: center; padding: 10px 15px; font-size: 18px;" target="_blank">
+				<button @onclick="(e => AbrirBundle(e, enlaceBundle))" class="boton-pequeño" style="text-align: center; padding: 20px; font-size: 20px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
-				</a>
+				</button>
 			</div>
 		}
 	}
@@ -196,13 +222,13 @@
 
 		if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 		{
-			enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
+			enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon, false);
 		}
 
 		<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
-			<a href="@enlaceBundle" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
+			<button @onclick="(e => AbrirBundle(e, enlaceBundle))" class="boton-pequeño" style="text-align: center; padding: 20px; font-size: 20px;">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
-			</a>
+			</button>
 		</div>
 	}
 
@@ -297,10 +323,10 @@
 
 					if (bundle.Pick == true)
 					{
-						<div class="caja-diseño" style="border-radius: 0px; padding: 30px; font-size: 18px; display: flex; align-items: center; flex-direction: row; gap: 40px; justify-content: center; margin-bottom: 30px;">
+						<div class="caja-diseño bundle-espacio bundle-espacio2" style="border-radius: 0px; font-size: 18px; display: flex; align-items: center; flex-direction: row; justify-content: center; margin-bottom: 30px;">
 							@foreach (var tier2 in OrdenarTiers(bundle.Tiers))
 							{
-								<div style="text-align: center; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 15px 30px; display: flex; align-items: center; gap: 5px;">
+								<div class="bundle-espacio3" style="text-align: center; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); display: flex; align-items: center; gap: 5px;">
 									@if (tier2.CantidadJuegos == 1)
 									{
 										<label>@tier2.CantidadJuegos.ToString() @Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Bundle") • @Herramientas.Precios.Euro(decimal.Parse(tier2.Precio))</label>
@@ -323,7 +349,7 @@
 						espacioFondo = string.Empty;
 					}
 
-					<div class="caja-diseño" style="border-radius: 0px; padding: 30px; @espacioFondo">
+					<div class="caja-diseño bundle-espacio" style="border-radius: 0px; @espacioFondo">
 						@if (bundle.Pick == false)
 						{
 							<div style="font-size: 18px; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; margin-bottom: 30px; border-radius: 5px;">
@@ -353,7 +379,7 @@
 							</div>
 						}
 
-						<div class="bundle-tabla" style="display: grid; grid-gap: 40px; margin-top: 10px;">
+						<div class="bundle-tabla" style="display: grid;">
 							@foreach (var juego in juegosTier)
 							{
 								bool mostrar = true;
@@ -491,5 +517,10 @@
 		}
 
 		return tiers;
+	}
+
+	private async void AbrirBundle(MouseEventArgs e, string enlace)
+	{
+		await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
 	}
 }

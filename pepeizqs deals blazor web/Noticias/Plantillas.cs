@@ -175,8 +175,11 @@ namespace Noticias
 
 					if (lista.Count == 1)
 					{
-						plantilla.TituloEn = juegoGratis1.Nombre + " " + Idiomas.BuscarTexto("en", "Free1", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
-						plantilla.TituloEs = juegoGratis1.Nombre + " " + Idiomas.BuscarTexto("es", "Free1", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
+						Random azarTitulo = new Random();
+						int azarTitulo2 = azarTitulo.Next(1, 4);
+
+						plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "FreeTitleOneItem" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+						plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "FreeTitleOneItem" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
 
 						if (juegoGratis1.Juego.Tipo == Juegos.JuegoTipo.Game)
 						{

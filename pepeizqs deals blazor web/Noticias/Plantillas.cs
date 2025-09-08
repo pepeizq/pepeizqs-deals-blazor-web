@@ -198,31 +198,49 @@ namespace Noticias
 
 						if (juegoGratis2.Juego == null)
 						{
-							juegoGratis2.Juego = BaseDatos.Juegos.Buscar.UnJuego(juegoGratis1.JuegoId);
+							juegoGratis2.Juego = BaseDatos.Juegos.Buscar.UnJuego(juegoGratis2.JuegoId);
 						}
 
 						if (lista.Count == 2)
 						{
-							plantilla.TituloEn = juegoGratis1.Nombre + " " + Idiomas.BuscarTexto("en", "Free2", "NewsTemplates") + " " +
-								juegoGratis2.Nombre + " " + Idiomas.BuscarTexto("en", "Free3", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
-							plantilla.TituloEs = juegoGratis1.Nombre + " " + Idiomas.BuscarTexto("es", "Free2", "NewsTemplates") + " " +
-								juegoGratis2.Nombre + " " + Idiomas.BuscarTexto("es", "Free3", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
+							Random azarTitulo = new Random();
+							int azarTitulo2 = azarTitulo.Next(1, 2);
+
+							plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "FreeTitleTwoItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+							plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "FreeTitleTwoItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
 						}
-						else if (lista.Count > 2)
+						else if (lista.Count == 3)
+						{
+							Juegos.JuegoGratis juegoGratis3 = BaseDatos.Gratis.Buscar.UnJuego(lista[2]);
+
+							if (juegoGratis3.Juego == null)
+							{
+								juegoGratis3.Juego = BaseDatos.Juegos.Buscar.UnJuego(juegoGratis3.JuegoId);
+							}
+
+							Random azarTitulo = new Random();
+							int azarTitulo2 = azarTitulo.Next(1, 2);
+
+							plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "FreeTitleThreeItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, juegoGratis3.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+							plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "FreeTitleThreeItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, juegoGratis3.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+						}
+						else if (lista.Count > 3)
 						{
 							if (juegoGratis1.Juego.Tipo == Juegos.JuegoTipo.Game && juegoGratis2.Juego.Tipo == Juegos.JuegoTipo.Game)
 							{
-								plantilla.TituloEn = juegoGratis1.Nombre + ", " + juegoGratis2.Nombre + " " +
-									Idiomas.BuscarTexto("en", "Free4", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
-								plantilla.TituloEs = juegoGratis1.Nombre + ", " + juegoGratis2.Nombre + " " +
-									Idiomas.BuscarTexto("es", "Free4", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
+								Random azarTitulo = new Random();
+								int azarTitulo2 = azarTitulo.Next(1, 2);
+
+								plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "FreeTitleMoreItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+								plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "FreeTitleMoreItems" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
 							}
 							else if (juegoGratis1.Juego.Tipo == Juegos.JuegoTipo.DLC && juegoGratis2.Juego.Tipo == Juegos.JuegoTipo.DLC)
 							{
-								plantilla.TituloEn = juegoGratis1.Nombre + ", " + juegoGratis2.Nombre + " " +
-									Idiomas.BuscarTexto("en", "Free9", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
-								plantilla.TituloEs = juegoGratis1.Nombre + ", " + juegoGratis2.Nombre + " " +
-									Idiomas.BuscarTexto("es", "Free9", "NewsTemplates") + " " + GratisCargar.DevolverGratis(tipoSeleccionado).Nombre;
+								Random azarTitulo = new Random();
+								int azarTitulo2 = azarTitulo.Next(1, 2);
+
+								plantilla.TituloEn = string.Format(Idiomas.BuscarTexto("en", "FreeTitleMoreDLCs" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
+								plantilla.TituloEs = string.Format(Idiomas.BuscarTexto("es", "FreeTitleMoreDLCs" + azarTitulo2, "NewsTemplates"), juegoGratis1.Nombre, juegoGratis2.Nombre, GratisCargar.DevolverGratis(tipoSeleccionado).Nombre);
 							}
 						}
 

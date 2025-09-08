@@ -840,12 +840,12 @@ namespace BaseDatos.Usuarios
 
 			if (drm == JuegoDRM.Steam)
 			{
-				busqueda = "DECLARE @idSteam nvarchar(256);\r\n\r\nSET @idSteam = (SELECT idSteam FROM juegos WHERE id=@juegoId);\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idSteam, SteamGames) > 0 AND id=@id";
+				busqueda = "DECLARE @idSteam nvarchar(256);\r\n\r\nSET @idSteam = CONCAT('\"Id\":', (SELECT idSteam FROM juegos WHERE id=@juegoId), ',');\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idSteam, SteamGames) > 0 AND id=@id";
 			}
 
 			if (drm == JuegoDRM.GOG)
 			{
-				busqueda = "DECLARE @idGog nvarchar(256);\r\n\r\nSET @idGog = (SELECT idGog FROM juegos WHERE id=@juegoId);\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idGog, GogGames) > 0 AND id=@id";
+				busqueda = "DECLARE @idGog nvarchar(256);\r\n\r\nSET @idGog = CONCAT('\"Id\":', (SELECT idGog FROM juegos WHERE id=@juegoId), ',');\r\n\r\nSELECT id FROM AspNetUsers WHERE CHARINDEX(@idGog, GogGames) > 0 AND id=@id";
 			}
 
 			if (drm == JuegoDRM.Amazon)
@@ -1433,6 +1433,146 @@ namespace BaseDatos.Usuarios
 			}
 
 			return null;
+		}
+
+		public static int CuantosUsuariosTienenJuego(string juegoId, JuegoDRM drm, SqlConnection conexion = null)
+		{
+			int cuantos = 0;
+
+			string busqueda = string.Empty;
+
+			if (drm == JuegoDRM.Steam)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(CONCAT('\"Id\":', (SELECT idSteam FROM juegos WHERE id=@juegoId), ','), SteamGames) > 0";
+			}
+
+			if (drm == JuegoDRM.GOG)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(CONCAT('\"Id\":', (SELECT idGog FROM juegos WHERE id=@juegoId), ','), GogGames) > 0";
+			}
+
+			if (drm == JuegoDRM.Amazon)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(AmazonGames, ',') WHERE VALUE IN ((SELECT idAmazon FROM juegos WHERE id=@juegoId)))";
+			}
+
+			if (drm == JuegoDRM.Epic)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(EpicGames, ',') WHERE VALUE IN ((SELECT exeEpic FROM juegos WHERE id=@juegoId)))";
+			}
+
+			if (drm == JuegoDRM.Ubisoft)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(UbisoftGames, ',') WHERE VALUE IN ((SELECT exeUbisoft FROM juegos WHERE id=@juegoId)))";
+			}
+
+			if (drm == JuegoDRM.EA)
+			{
+				busqueda = "SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(EaGames, ',') WHERE VALUE IN ((SELECT exeEa FROM juegos WHERE id=@juegoId)))";
+			}
+
+			if (string.IsNullOrEmpty(busqueda) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@juegoId", juegoId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								cuantos = lector.GetInt32(0);
+							}
+						}
+					}
+				}
+			}
+
+			return cuantos;
+		}
+
+		public static int CuantosUsuariosTienenDeseado(string juegoId, JuegoDRM drm, SqlConnection conexion = null)
+		{
+			int cuantos = 0;
+
+			string busqueda = string.Empty;
+
+			if (drm == JuegoDRM.Steam)
+			{
+				busqueda = "DECLARE @idSteam nvarchar(256);\r\n\r\nSET @idSteam = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":0}');\r\n\r\nDECLARE @num1 int;\r\nSET @num1 = (SELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idSteam, Wishlist) > 0);\r\n\r\nDECLARE @num2 int;\r\nSET @num2 = (SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(SteamWishlist, ',') WHERE VALUE IN (SELECT idSteam FROM juegos WHERE id=@juegoId)));\r\n\r\nSELECT @num1 + @num2";
+			}
+
+			if (drm == JuegoDRM.GOG)
+			{
+				busqueda = "DECLARE @idGOG nvarchar(256);\r\n\r\nSET @idGOG = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":8}');\r\n\r\nDECLARE @num1 int;\r\nSET @num1 = (SELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idGOG, Wishlist) > 0);\r\n\r\nDECLARE @num2 int;\r\nSET @num2 = (SELECT COUNT(*) FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(GogWishlist, ',') WHERE VALUE IN (SELECT idGog FROM juegos WHERE id=@juegoId)));\r\n\r\nSELECT @num1 + @num2";
+			}
+
+			if (drm == JuegoDRM.Amazon)
+			{
+				busqueda = "DECLARE @idAmazon nvarchar(256);\r\n\r\nSET @idAmazon = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":9}');\r\n\r\nSELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idAmazon, Wishlist) > 0;";
+			}
+
+			if (drm == JuegoDRM.Epic)
+			{
+				busqueda = "DECLARE @idEpic nvarchar(256);\r\n\r\nSET @idEpic = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":6}');\r\n\r\nSELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idEpic, Wishlist) > 0;";
+			}
+
+			if (drm == JuegoDRM.Ubisoft)
+			{
+				busqueda = "DECLARE @idUbisoft nvarchar(256);\r\n\r\nSET @idUbisoft = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":2}');\r\n\r\nSELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idUbisoft, Wishlist) > 0;";
+			}
+
+			if (drm == JuegoDRM.EA)
+			{
+				busqueda = "DECLARE @idEA nvarchar(256);\r\n\r\nSET @idEA = CONCAT('\"IdBaseDatos\":\"',@juegoId,'\",\"DRM\":3}');\r\n\r\nSELECT COUNT(*) FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0;";
+			}
+
+			if (string.IsNullOrEmpty(busqueda) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@juegoId", juegoId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								cuantos = lector.GetInt32(0);
+							}
+						}
+					}
+				}
+			}
+
+			return cuantos;
 		}
 	}
 }

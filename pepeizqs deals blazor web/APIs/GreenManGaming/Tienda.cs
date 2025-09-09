@@ -84,54 +84,57 @@ namespace APIs.GreenManGaming
 
 							foreach (GreenManGamingJuego juego in listaJuegos.Juegos)
 							{
-								string nombre = WebUtility.HtmlDecode(juego.Nombre);
-
-								string enlace = juego.Enlace;
-
-								string imagen = juego.Imagen;
-
-								decimal precioBase = decimal.Parse(juego.PrecioBase);
-								decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
-
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-								if (descuento > 0)
+								if (int.Parse(juego.Stock) > 0)
 								{
-									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+									decimal precioBase = decimal.Parse(juego.PrecioBase);
+									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-									JuegoPrecio oferta = new JuegoPrecio
-									{
-										Nombre = nombre,
-										Enlace = enlace,
-										Imagen = imagen,
-										Moneda = JuegoMoneda.Euro,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = Generar().Id,
-										DRM = drm,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now
-									};
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-									try
+									if (descuento > 0)
 									{
-										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+
+										string enlace = juego.Enlace;
+
+										string imagen = juego.Imagen;
+
+										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+
+										JuegoPrecio oferta = new JuegoPrecio
+										{
+											Nombre = nombre,
+											Enlace = enlace,
+											Imagen = imagen,
+											Moneda = JuegoMoneda.Euro,
+											Precio = precioRebajado,
+											Descuento = descuento,
+											Tienda = Generar().Id,
+											DRM = drm,
+											FechaDetectado = DateTime.Now,
+											FechaActualizacion = DateTime.Now
+										};
+
+										try
+										{
+											BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
+
+										juegos2 += 1;
+
+										try
+										{
+											BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+										}
 									}
-									catch (Exception ex)
-									{
-                                        BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                    }
-
-									juegos2 += 1;
-
-									try
-									{
-										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-									}
-									catch (Exception ex)
-									{
-                                        BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-                                    }
 								}
 							}
 						}
@@ -192,49 +195,52 @@ namespace APIs.GreenManGaming
 						{
 							foreach (var juego in datos.Resultados[4].Juegos)
 							{
-								decimal precioBase = juego.Regiones.ES.PrecioBase;
-								decimal precioRebajado = juego.Regiones.ES.PrecioRebajado;
-
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-								if (descuento > 0)
+								if (juego.SinStocks.ES == false)
 								{
-									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+									decimal precioBase = juego.Regiones.ES.PrecioBase;
+									decimal precioRebajado = juego.Regiones.ES.PrecioRebajado;
 
-									JuegoPrecio oferta = new JuegoPrecio
-									{
-										Nombre = WebUtility.HtmlDecode(juego.Nombre),
-										Enlace = "https://www.greenmangaming.com" + juego.Enlace,
-										Imagen = "https://images.greenmangaming.com" + juego.Imagen,
-										Moneda = JuegoMoneda.Euro,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = GenerarGold().Id,
-										DRM = drm,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now
-									};
+									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-									try
+									if (descuento > 0)
 									{
-										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(GenerarGold().Id, ex, conexion);
-									}
+										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
 
-									juegos2 += 1;
+										JuegoPrecio oferta = new JuegoPrecio
+										{
+											Nombre = WebUtility.HtmlDecode(juego.Nombre),
+											Enlace = "https://www.greenmangaming.com" + juego.Enlace,
+											Imagen = "https://images.greenmangaming.com" + juego.Imagen,
+											Moneda = JuegoMoneda.Euro,
+											Precio = precioRebajado,
+											Descuento = descuento,
+											Tienda = GenerarGold().Id,
+											DRM = drm,
+											FechaDetectado = DateTime.Now,
+											FechaActualizacion = DateTime.Now
+										};
 
-									try
-									{
-										BaseDatos.Admin.Actualizar.Tiendas(GenerarGold().Id, DateTime.Now, juegos2, conexion);
+										try
+										{
+											BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(GenerarGold().Id, ex, conexion);
+										}
+
+										juegos2 += 1;
+
+										try
+										{
+											BaseDatos.Admin.Actualizar.Tiendas(GenerarGold().Id, DateTime.Now, juegos2, conexion);
+										}
+										catch (Exception ex)
+										{
+											BaseDatos.Errores.Insertar.Mensaje(GenerarGold().Id, ex, conexion);
+										}
 									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(GenerarGold().Id, ex, conexion);
-									}
-								}									
+								}					
 							}
 						}
 					}
@@ -278,8 +284,8 @@ namespace APIs.GreenManGaming
 		[XmlElement("drm")]
 		public string DRM { get; set; }
 
-		[XmlElement("steamapp_id")]
-		public string SteamId { get; set; }
+		[XmlElement("stock_level")]
+		public string Stock { get; set; }
 	}
 
 	#endregion
@@ -314,6 +320,9 @@ namespace APIs.GreenManGaming
 
 		[JsonPropertyName("Regions")]
 		public GreenManGamingGoldJuegoRegiones Regiones { get; set; }
+
+		[JsonPropertyName("OutOfStockRegions")]
+		public GreenManGamingGoldJuegoStocks SinStocks { get; set; }
 	}
 
 	public class GreenManGamingGoldJuegoRegiones
@@ -329,6 +338,12 @@ namespace APIs.GreenManGaming
 
 		[JsonPropertyName("Rrp")]
 		public decimal PrecioBase { get; set; }
+	}
+
+	public class GreenManGamingGoldJuegoStocks
+	{
+		[JsonPropertyName("ES")]
+		public bool ES { get; set; }
 	}
 
 	#endregion

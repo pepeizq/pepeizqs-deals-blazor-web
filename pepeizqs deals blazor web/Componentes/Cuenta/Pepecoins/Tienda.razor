@@ -46,7 +46,7 @@
 	@if (usuario?.PatreonCoins >= 120)
 	{
 		<div style="background-color: var(--fondoPeligro); border: 1px solid var(--fondoBotonPequeño); padding: 20px 30px; display: flex; align-items: center; gap: 20px;">
-			<div style="max-width: 26px;">
+			<div style="max-width: 30px;">
 				<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 					<path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24l0 112c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-112c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
 				</svg>
@@ -56,15 +56,23 @@
 		</div>
 	}
 
-	<div class="caja-cuenta-contenido" style="padding: 30px;">
-		@Herramientas.Idiomas.BuscarTexto(idioma, "Problem", "PatreonStore")
+	<div class="caja-cuenta-contenido" style="display: flex; align-items: center; gap: 30px;">
+		<div style="max-width: 30px;">
+			<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+				<path d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM288 224C288 206.3 302.3 192 320 192C337.7 192 352 206.3 352 224C352 241.7 337.7 256 320 256C302.3 256 288 241.7 288 224zM280 288L328 288C341.3 288 352 298.7 352 312L352 400L360 400C373.3 400 384 410.7 384 424C384 437.3 373.3 448 360 448L280 448C266.7 448 256 437.3 256 424C256 410.7 266.7 400 280 400L304 400L304 336L280 336C266.7 336 256 325.3 256 312C256 298.7 266.7 288 280 288z" />
+			</svg>
+		</div>
+		
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "Problem", "PatreonStore")
+		</div>
 	</div>
 </div>
 
 <div class="subcabecera" style="background-color: var(--fondoSubsubcabecera); margin-top: 40px; margin-bottom: 40px;">
 	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
 		<h1 style="font-size: 18px; margin: 0px;">
-			@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "PatreonStore")
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "PatreonStore") (@juegos?.Count)
 		</h1>
 
 		<div style="margin-left: auto; display: flex; justify-content: right;">
@@ -256,7 +264,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		juegos = BaseDatos.Recompensas.Juegos.Todo();
+		juegos = BaseDatos.Recompensas.Juegos.Disponibles();
 
 		usuario = await UserManager.FindByIdAsync(usuarioId);
 
@@ -320,7 +328,7 @@
 		catch { }
 
 		juegos.Clear();
-		juegos = BaseDatos.Recompensas.Juegos.Todo();
+		juegos = BaseDatos.Recompensas.Juegos.Disponibles();
 
 		mostrarAvisoClave = true;
 	}

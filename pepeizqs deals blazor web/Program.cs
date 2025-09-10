@@ -60,6 +60,11 @@ builder.Services.AddRazorComponents(opciones =>
 {
 	opciones.EnableDetailedErrors = true;
 	opciones.MaximumReceiveMessageSize = null;
+	opciones.ClientTimeoutInterval = TimeSpan.FromSeconds(70);
+	opciones.HandshakeTimeout = TimeSpan.FromSeconds(60);
+}).AddCircuitOptions(opciones =>
+{
+	opciones.DetailedErrors = true;
 });
 
 builder.Services.AddCascadingAuthenticationState();

@@ -244,11 +244,6 @@ namespace BaseDatos.Juegos
 				catch (Exception ex)
 				{
 					Errores.Insertar.Mensaje("Actualizar Juego " + id, ex);
-
-					if (ex.Message.Contains("The transaction log for database") == true)
-					{
-						Mantenimiento.Encoger.Ejecutar(conexion);
-					}
 				}
 			}
 		}

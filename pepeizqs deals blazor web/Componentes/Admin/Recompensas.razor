@@ -34,7 +34,16 @@
 				<label>Fecha Empieza</label>
 			</div>
 			<div style="width: 80%;">
-				<input type="datetime-local" class="entrada-texto" @onchange="@(e => CambiarFecha(e))" value="@fecha" />
+				<input type="datetime-local" class="entrada-texto" @onchange="@(e => CambiarFechaEmpieza(e))" value="@fechaEmpieza" />
+			</div>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-top: 20px; gap: 15px;">
+			<div style="width: 20%; padding: 5px; text-align: right;">
+				<label>Fecha Caduca</label>
+			</div>
+			<div style="width: 80%;">
+				<input type="datetime-local" class="entrada-texto" @onchange="@(e => CambiarFechaCaduca(e))" value="@fechaCaduca" />
 			</div>
 		</div>
 	</div>
@@ -145,7 +154,8 @@ else
 	private string idSeleccionada = null;
 	private string clave = null;
 	private string coins = null;
-	private string fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+	private string fechaEmpieza = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+	private string fechaCaduca = null;
 
 	private List<RecompensaHistorial> entradas = new List<RecompensaHistorial>();
 
@@ -192,9 +202,14 @@ else
 		coins = texto.Value.ToString();
 	}
 
-	private void CambiarFecha(ChangeEventArgs texto)
+	private void CambiarFechaEmpieza(ChangeEventArgs texto)
 	{
-		fecha = texto.Value.ToString();
+		fechaEmpieza = texto.Value.ToString();
+	}
+
+	private void CambiarFechaCaduca(ChangeEventArgs texto)
+	{
+		fechaCaduca = texto.Value.ToString();
 	}
 
 	private void AñadirRecompensa(MouseEventArgs e)
@@ -203,9 +218,14 @@ else
 		recompensa.JuegoId = int.Parse(idSeleccionada);
 		recompensa.Clave = clave;
 		recompensa.Coins = int.Parse(coins);
-		recompensa.FechaEmpieza = Convert.ToDateTime(fecha);
 		recompensa.DRM = global::Juegos.JuegoDRM.Steam;
 		recompensa.JuegoNombre = juegoSeleccionado;
+		recompensa.FechaEmpieza = Convert.ToDateTime(fechaEmpieza);
+
+		if (string.IsNullOrEmpty(fechaCaduca) == false)
+		{
+			recompensa.FechaCaduca = Convert.ToDateTime(fechaCaduca);
+		}
 
 		BaseDatos.Recompensas.Juegos.Insertar(recompensa);
 
@@ -213,6 +233,7 @@ else
 		juegoSeleccionado = null;
 		clave = null;
 		coins = null;
-		fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+		fechaEmpieza = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+		fechaCaduca = null;
 	}
 }

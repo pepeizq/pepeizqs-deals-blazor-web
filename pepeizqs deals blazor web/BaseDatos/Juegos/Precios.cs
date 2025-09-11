@@ -318,7 +318,7 @@ namespace BaseDatos.Juegos
 
 							if (nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro)
 							{
-								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, nuevaOferta.Moneda);
+								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, nuevaOferta.Moneda, conexion);
 							}
 
 							if (tempPrecio < minimo.Precio)

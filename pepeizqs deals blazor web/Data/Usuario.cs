@@ -166,14 +166,6 @@ public class Usuario : IdentityUser
 	public string? IndexCategories { get; set; }
 
 	[PersonalData]
-	[Column(TypeName = "int(4)")]
-	public int? RewardsCoins { get; set; }
-
-	[PersonalData]
-	[Column(TypeName = "nvarchar(100)")]
-	public string? RewardsLastLogin { get; set; }
-
-	[PersonalData]
 	[Column(TypeName = "nvarchar(100)")]
 	public string? Language { get; set; }
 
@@ -204,6 +196,10 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "int(4)")]
 	public int? PatreonContribution { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
+	public bool? PatreonOption1 { get; set; }
 
 	[PersonalData]
 	[Column(TypeName = "nvarchar(256)")]

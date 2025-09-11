@@ -110,7 +110,7 @@ namespace Herramientas
 			return mensaje;
 		}
 
-		public static decimal Cambio(decimal cantidad, JuegoMoneda moneda)
+		public static decimal Cambio(decimal cantidad, JuegoMoneda moneda, SqlConnection conexion = null)
 		{
 			string buscar = string.Empty;
 
@@ -125,7 +125,17 @@ namespace Herramientas
 
 			if (buscar != string.Empty)
 			{
-				SqlConnection conexion = BaseDatos.Conectar();
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
 
 				using (conexion)
 				{
@@ -139,7 +149,7 @@ namespace Herramientas
 				}	
 			}
 
-			return 0;
+			return cantidad;
 		}
 
 		public static string DevolverSimbolo(decimal cantidad, JuegoMoneda moneda)

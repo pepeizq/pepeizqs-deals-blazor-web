@@ -3,6 +3,15 @@
   "String1": "tienes {0} Pepe Coins para gastar",
   "String2": "Juegos Disponibles",
   "String3": "Historial",
+  "String4": "Opciones",
+  "String5": "Ocultar juegos que ya tengas",
+  "String6": "No tienes suficientes Pepe Coins para comprar este juego. Para ganar Coins puedes contribuir en Patreon para ayudar a mantener la web libre de anuncios y basura.",
+  "String7": "Abrir Patreon",
+  "String8": "Comprar",
+  "String9": "Si compras este juegos vas a gastar {0} Pepe Coins de tu saldo actual.",
+  "String10": "Accede a tus claves",
+  "String11": "La clave de este juego debe ser activada antes de {0}",
+  "String12": "No tienes suficientes Pepe Coins, pero si esperas {0} días tendrás las suficientes para comprar el juego.",
   "Daily": "Entrada diaria",
   "Buy2": "Adquirido",
   "Buy": "¿Estás seguro de adquirir {0}?",
@@ -10,7 +19,6 @@
   "No": "No",
   "Close": "Cerrar",
   "Redeem": "Canjear en Steam",
-  "Poor": "No tienes las suficientes Pepe Coins para adquirir {0}.",
   "Problem": "Todos estos juegos proceden de bundles de Humble Bundle y Fanatical, pero si tenéis algún problema con la clave mandar un correo a admin@pepeizqdeals.com para que os devuelva las Pepe Coins que gastéis.",
   "Limit": "Has llegado al limite de 120 Pepe Coins en la cuenta, si gastas Pepe Coins en cualquier juego volverás a ganar coins cada día."
 }

@@ -39,11 +39,7 @@ namespace BaseDatos.Divisas
                 {
 
                 }
-
-                comando.Dispose();
 			}
-
-            conexion.Dispose();
 		}
 	}
 }

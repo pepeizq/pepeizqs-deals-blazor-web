@@ -59,16 +59,16 @@ else
 			<label>Buscar Juego</label>
 		</div>
 		<div style="width: 100%;">
-			<input type="text" @oninput="CambiarBuscador" class="entrada-texto" />
+			<input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
-			@if (string.IsNullOrEmpty(cadenaBusqueda) == false)
+			@if (string.IsNullOrEmpty(textoBuscador) == false)
 			{
-				if (resultadosBusqueda != null)
+				if (juegosBuscador != null)
 				{
-					if (resultadosBusqueda.Count > 0)
+					if (juegosBuscador.Count > 0)
 					{
-						<div>
-							@foreach (var juego in resultadosBusqueda)
+						<div style="margin-top: 20px;">
+							@foreach (var juego in juegosBuscador)
 							{
 								<hr />
 
@@ -148,8 +148,9 @@ else
 
 	private SqlConnection conexion = new SqlConnection();
 
-	private string cadenaBusqueda = null;
-	private List<global::Juegos.Juego> resultadosBusqueda = new List<global::Juegos.Juego>();
+	private string textoBuscador = null;
+	private List<global::Juegos.Juego> juegosBuscador = new List<global::Juegos.Juego>();
+
 	private string juegoSeleccionado = null;
 	private string idSeleccionada = null;
 	private string clave = null;
@@ -164,22 +165,36 @@ else
 		entradas = BaseDatos.Recompensas.Historial.Leer();
 	}
 
-	private void CambiarBuscador(ChangeEventArgs texto)
+	private void TextoCambiaBuscador()
 	{
-		if (conexion.State != System.Data.ConnectionState.Open)
+		if (conexion == null)
 		{
 			conexion = Herramientas.BaseDatos.Conectar();
+		}
+		else
+		{
+			if (conexion.State != System.Data.ConnectionState.Open)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
 		}
 
 		using (conexion)
 		{
-			resultadosBusqueda.Clear();
-
-			if (texto.Value.ToString().Trim().Length > 2)
+			if (string.IsNullOrEmpty(textoBuscador) == false && textoBuscador.Trim().Length > 2)
 			{
-				cadenaBusqueda = texto.Value.ToString().Trim();
+				List<global::Juegos.Juego> resultados = BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 250, true, -1, true);
 
-				resultadosBusqueda = BaseDatos.Juegos.Buscar.Nombre(cadenaBusqueda, conexion, 250, true, -1, true);
+				if (resultados.Count > 0)
+				{
+					juegosBuscador.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+
+					juegosBuscador.AddRange(resultados.Where(x => juegosBuscador.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
+				}
+			}
+			else
+			{
+				juegosBuscador.Clear();
 			}
 		}
 	}
@@ -189,7 +204,7 @@ else
 		juegoSeleccionado = nombre;
 		idSeleccionada = id;
 
-		resultadosBusqueda.Clear();
+		juegosBuscador.Clear();
 	}
 
 	private void CambiarClave(ChangeEventArgs texto)

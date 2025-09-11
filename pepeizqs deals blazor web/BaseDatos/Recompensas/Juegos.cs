@@ -38,7 +38,7 @@ namespace BaseDatos.Recompensas
 
 			if (lector.IsDBNull(6) == false)
 			{
-				juego.DRM = Enum.Parse<JuegoDRM>(lector.GetString(6));
+				juego.DRM = Enum.Parse<JuegoDRM>(lector.GetInt32(6).ToString());
 			}
 			else
 			{

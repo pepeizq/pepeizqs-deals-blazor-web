@@ -2,7 +2,6 @@
 
 using Herramientas;
 using Microsoft.Data.SqlClient;
-using System.Globalization;
 
 namespace BaseDatos.Divisas
 {
@@ -37,7 +36,7 @@ namespace BaseDatos.Divisas
                             Divisa divisa = new Divisa
                             {
                                 Id = lector.GetString(0),
-                                Cantidad = Convert.ToDecimal(lector.GetString(1)),
+                                Cantidad = lector.GetDecimal(1),
                                 FechaActualizacion = lector.GetDateTime(2)
                             };
 

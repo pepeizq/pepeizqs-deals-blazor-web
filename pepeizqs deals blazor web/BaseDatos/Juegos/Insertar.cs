@@ -262,11 +262,7 @@ namespace BaseDatos.Juegos
 
 					Errores.Insertar.Mensaje("Añadir Juego en " + tabla + " - Id Steam: " + añadido, ex);
 				}
-				
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static async Task<string> GogReferencia(string idReferencia, SqlConnection conexion = null)
@@ -328,15 +324,11 @@ namespace BaseDatos.Juegos
 						{
 							Errores.Insertar.Mensaje("Añadir GOG Referencia " + idJuego, ex);
 						}
-
-						comando.Dispose();
 					}
 
 					return idJuego;
 				}
 			}
-
-			conexion.Dispose();
 
 			return idReferencia;
 		}

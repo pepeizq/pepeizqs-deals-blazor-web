@@ -37,11 +37,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void Nombre(string id, string nombre, SqlConnection conexion)
@@ -64,11 +60,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void FechaEmpieza(string id, string fechaEmpieza, SqlConnection conexion)
@@ -91,11 +83,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void FechaTermina(string id, string fechaTermina, SqlConnection conexion)
@@ -118,11 +106,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
         public static void ImagenBundle(string id, string imagen, SqlConnection conexion)
@@ -145,11 +129,7 @@ namespace BaseDatos.Bundles
                 {
 
                 }
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
         public static void ImagenNoticia(string id, string imagen, SqlConnection conexion)
@@ -195,11 +175,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void Tiers(string id, string tiers, SqlConnection conexion)
@@ -222,11 +198,7 @@ namespace BaseDatos.Bundles
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 	}
 }

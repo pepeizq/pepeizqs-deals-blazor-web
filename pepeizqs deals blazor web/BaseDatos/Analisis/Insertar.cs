@@ -93,12 +93,8 @@ namespace BaseDatos.Analisis
 						{
 
 						}
-
-						comando.Dispose();
 					}
 				}
-
-				conexion.Dispose();
 			}
 		}
 	}

@@ -45,8 +45,6 @@ namespace BaseDatos.JuegosActualizar
 				{
 					BaseDatos.Errores.Insertar.Mensaje("Buscar Fichas Actualizar", ex);
 				}
-
-				comando.Dispose();
 			}
 
 			return existe;
@@ -85,14 +83,8 @@ namespace BaseDatos.JuegosActualizar
 
 						fichas.Add(ficha);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return fichas;
 		}

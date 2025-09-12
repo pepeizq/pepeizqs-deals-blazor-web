@@ -68,14 +68,8 @@ namespace BaseDatos.Gratis
 					{
 						listaGratis.Add(Cargar(lector));
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return listaGratis;
 		}
@@ -106,14 +100,8 @@ namespace BaseDatos.Gratis
 					{
 						listaGratis.Add(Cargar(lector));
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return listaGratis;
         }
@@ -165,14 +153,8 @@ namespace BaseDatos.Gratis
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return listaGratis;
 		}
@@ -205,14 +187,8 @@ namespace BaseDatos.Gratis
 					{
 						juegoGratis = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegoGratis;
 		}
@@ -245,14 +221,8 @@ namespace BaseDatos.Gratis
 					{
 						juegoGratis = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegoGratis;
 		}
@@ -283,14 +253,8 @@ namespace BaseDatos.Gratis
                     {
                         juegos.Add(Cargar(lector));
                     }
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return juegos;
         }

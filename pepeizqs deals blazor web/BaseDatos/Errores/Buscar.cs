@@ -65,14 +65,8 @@ namespace BaseDatos.Errores
 
                             listaErrores.Add(error);
                         }
-
-                        lector.Dispose();
                     }
-
-                    comando.Dispose();
 				}
-
-                conexion.Dispose();
 			}
 
             return listaErrores;

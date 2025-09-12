@@ -132,7 +132,7 @@ namespace BaseDatos.Recompensas
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM recompensasJuegos WHERE usuarioId IS NULL AND (fechaCaduca IS NULL OR fechaCaduca < GETDATE()) ORDER BY juegoNombre";
+				string busqueda = "SELECT * FROM recompensasJuegos WHERE usuarioId IS NULL AND (fechaCaduca IS NULL OR fechaCaduca > GETDATE()) ORDER BY juegoNombre";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

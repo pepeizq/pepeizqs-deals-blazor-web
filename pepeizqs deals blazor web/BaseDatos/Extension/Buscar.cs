@@ -180,17 +180,11 @@ namespace BaseDatos.Extension
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
 
 			if (buscarDivisas == false)
 			{
-				conexion.Dispose();
-
 				return extension;
 			}
 
@@ -215,14 +209,8 @@ namespace BaseDatos.Extension
 							}
 						}
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return extension;
 		}

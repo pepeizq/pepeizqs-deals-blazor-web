@@ -108,16 +108,12 @@ namespace BaseDatos.Bundles
 										{
 
 										}
-
-										comando.Dispose();
 									}
 								}
 							}
 						}
 					}					
 				}		
-
-				conexion.Dispose();
 			}
 		}
 	}

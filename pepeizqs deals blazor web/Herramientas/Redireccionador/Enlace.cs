@@ -22,7 +22,7 @@ namespace Herramientas.Redireccionador
 				return Redirect("~/");
 			}
 
-			return Redirect("/game/" + juego.Id.ToString());
+			return Redirect("/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
 		}
 
 		[HttpGet("/game/gog/{id}/")]
@@ -35,7 +35,7 @@ namespace Herramientas.Redireccionador
 				return Redirect("~/");
 			}
 
-			return Redirect("/game/" + juego.Id.ToString());
+			return Redirect("/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
 		}
 
 		[HttpGet("/game/epic/{id}/")]
@@ -48,7 +48,7 @@ namespace Herramientas.Redireccionador
 				return Redirect("~/");
 			}
 
-			return Redirect("/game/" + juego.Id.ToString());
+			return Redirect("/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
 		}
 	}
 }

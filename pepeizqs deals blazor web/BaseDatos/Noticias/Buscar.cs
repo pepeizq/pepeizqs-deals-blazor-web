@@ -128,15 +128,9 @@ namespace BaseDatos.Noticias
 						{
 							noticia = Cargar(lector, conexion);
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return noticia;
 		}
@@ -167,14 +161,8 @@ namespace BaseDatos.Noticias
 					{
 						noticia = Cargar(lector, conexion);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return noticia;
 		}
@@ -219,15 +207,9 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-				
-			conexion.Dispose();
 
 			return noticias;
 		}
@@ -260,15 +242,9 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return noticias;
 		}
@@ -301,15 +277,9 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return noticias;
 		}
@@ -344,15 +314,9 @@ namespace BaseDatos.Noticias
 						{
 							noticias.Add(Cargar(lector, conexion));
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return noticias;
 		}

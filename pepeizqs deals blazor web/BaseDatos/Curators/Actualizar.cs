@@ -55,11 +55,7 @@ namespace BaseDatos.Curators
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 
 		public static void ImagenFondo(string imagenFondo, int id, SqlConnection conexion = null)
@@ -92,11 +88,7 @@ namespace BaseDatos.Curators
 				{
 
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 	}
 }

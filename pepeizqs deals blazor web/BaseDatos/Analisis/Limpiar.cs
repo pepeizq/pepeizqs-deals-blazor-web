@@ -25,10 +25,7 @@ namespace BaseDatos.Analisis
 			using (SqlCommand comando = new SqlCommand(limpiar, conexion))
 			{
 				comando.ExecuteNonQuery();
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 		}
 	}
 }

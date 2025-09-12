@@ -52,15 +52,9 @@ namespace BaseDatos.Analisis
 								analisis.CantidadNegativos = lector.GetInt32(lector.GetOrdinal("negativos" + idioma));
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return analisis;
 		}
@@ -111,15 +105,9 @@ namespace BaseDatos.Analisis
 								}
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return debeModificarse;
 		}

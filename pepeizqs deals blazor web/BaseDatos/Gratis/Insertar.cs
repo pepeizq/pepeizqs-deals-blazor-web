@@ -58,11 +58,7 @@ namespace BaseDatos.Gratis
 					{
 						BaseDatos.Errores.Insertar.Mensaje("Insertar juego gratis", ex);
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 		}
 	}

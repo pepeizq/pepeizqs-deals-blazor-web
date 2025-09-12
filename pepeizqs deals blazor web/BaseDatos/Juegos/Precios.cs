@@ -318,7 +318,7 @@ namespace BaseDatos.Juegos
 
 							if (nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro)
 							{
-								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, nuevaOferta.Moneda, conexion);
+								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, nuevaOferta.Moneda);
 							}
 
 							if (tempPrecio < minimo.Precio)
@@ -327,7 +327,12 @@ namespace BaseDatos.Juegos
 
 								bool notificar = false;
 
-								if (decimal.Add(tempPrecio, 0.2m) < minimo.Precio)
+								//if (decimal.Add(tempPrecio, 0.2m) < minimo.Precio)
+								//{
+								//	notificar = true;
+								//}
+
+								if (tempPrecio < minimo.Precio)
 								{
 									notificar = true;
 								}

@@ -34,11 +34,7 @@ namespace BaseDatos.Juegos
 					{
 
 					}
-
-					comando.Dispose();
 				}
-
-				conexion.Dispose();
 			}
 		}
 	}

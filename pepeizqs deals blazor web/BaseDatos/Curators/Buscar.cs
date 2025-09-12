@@ -64,14 +64,8 @@ namespace BaseDatos.Curators
 					{
 						curators.Add(Cargar(lector));
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return curators;
 		}
@@ -104,14 +98,8 @@ namespace BaseDatos.Curators
 					{
 						curator = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return curator;
 		}
@@ -144,14 +132,8 @@ namespace BaseDatos.Curators
 					{
 						curator = Cargar(lector);
 					}
-
-					lector.Dispose();
 				}
-
-				comando.Dispose();
 			}
-
-			conexion.Dispose();
 
 			return curator;
 		}

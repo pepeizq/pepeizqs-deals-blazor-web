@@ -46,15 +46,9 @@ namespace BaseDatos.Sitemaps
 							}
 							catch { }
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return cantidad;
 		}
@@ -137,15 +131,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -231,15 +219,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -325,15 +307,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -419,15 +395,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -533,15 +503,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -647,15 +611,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}
@@ -728,15 +686,9 @@ namespace BaseDatos.Sitemaps
 								lineas.Add(texto);
 							}
 						}
-
-						lector.Dispose();
 					}
-
-					comando.Dispose();
 				}
 			}
-
-			conexion.Dispose();
 
 			return lineas;
 		}

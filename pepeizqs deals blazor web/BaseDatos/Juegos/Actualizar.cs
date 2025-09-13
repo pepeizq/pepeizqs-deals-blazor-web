@@ -159,7 +159,7 @@ namespace BaseDatos.Juegos
 			}
 		}
 
-		public static void Comprobacion(int id, List<JuegoPrecio> ofertasActuales, List<JuegoPrecio> ofertasHistoricas, List<JuegoHistorico> historicos, SqlConnection conexion = null, string slugGOG = null, string idGOG = null, string slugEpic = null, DateTime? ultimaModificacion = null, JuegoAnalisis analisis = null)
+		public static void Comprobacion(bool cambioPrecio, int id, List<JuegoPrecio> ofertasActuales, List<JuegoPrecio> ofertasHistoricas, List<JuegoHistorico> historicos, SqlConnection conexion = null, string slugGOG = null, string idGOG = null, string slugEpic = null, DateTime? ultimaModificacion = null, JuegoAnalisis analisis = null)
 		{
 			if (conexion == null)
 			{
@@ -171,6 +171,13 @@ namespace BaseDatos.Juegos
 				{
 					conexion = Herramientas.BaseDatos.Conectar();
 				}
+			}
+
+			string añadirPrecioMinimosHistoricos = null;
+
+			if (cambioPrecio == true)
+			{
+				añadirPrecioMinimosHistoricos = ", precioMinimosHistoricos=@precioMinimosHistoricos, historicos=@historicos";
 			}
 
 			string añadirSlugGog = null;
@@ -196,21 +203,25 @@ namespace BaseDatos.Juegos
 
 			string añadirAnalisis = null;
 
-			if (analisis != null)
-			{
-				añadirAnalisis = ", analisis=@analisis";
-			}
+			//if (analisis != null)
+			//{
+			//	añadirAnalisis = ", analisis=@analisis";
+			//}
 
 			string sqlActualizar = "UPDATE juegos " +
-					"SET precioMinimosHistoricos=@precioMinimosHistoricos, precioActualesTiendas=@precioActualesTiendas, historicos=@historicos" +
+					"SET precioActualesTiendas=@precioActualesTiendas" + añadirPrecioMinimosHistoricos +
 					añadirUltimaModificacion + añadirSlugGog + añadirSlugEpic + añadirAnalisis + " WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 			{
 				comando.Parameters.AddWithValue("@id", id);
-				comando.Parameters.AddWithValue("@precioMinimosHistoricos", JsonSerializer.Serialize(ofertasHistoricas));
 				comando.Parameters.AddWithValue("@precioActualesTiendas", JsonSerializer.Serialize(ofertasActuales));
-				comando.Parameters.AddWithValue("@historicos", JsonSerializer.Serialize(historicos));
+
+				if (cambioPrecio == true)
+				{
+					comando.Parameters.AddWithValue("@precioMinimosHistoricos", JsonSerializer.Serialize(ofertasHistoricas));
+					comando.Parameters.AddWithValue("@historicos", JsonSerializer.Serialize(historicos));
+				}
 
 				if (ultimaModificacion != null)
 				{
@@ -228,10 +239,10 @@ namespace BaseDatos.Juegos
 					comando.Parameters.AddWithValue("@slugEpic", slugEpic);
 				}
 
-				if (analisis != null)
-				{
-					comando.Parameters.AddWithValue("@analisis", JsonSerializer.Serialize(analisis));
-				}
+				//if (analisis != null)
+				//{
+				//	comando.Parameters.AddWithValue("@analisis", JsonSerializer.Serialize(analisis));
+				//}
 
 				try
 				{
@@ -239,7 +250,7 @@ namespace BaseDatos.Juegos
 				}
 				catch (Exception ex)
 				{
-					Errores.Insertar.Mensaje("Actualizar Juego " + id, comando.CommandText);
+					Errores.Insertar.Mensaje("Actualizar Juego " + id, ex);
 				}
 			}
 		}

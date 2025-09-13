@@ -88,6 +88,7 @@
 
                 <div>
                     <button class="boton-pestañas" @onclick="MostrarRecompensas" style="@estiloRecompensas;">Recompensas</button>
+                    <button class="boton-pestañas" @onclick="MostrarCupones" style="@estiloCupones;">Cupones</button>
                 </div>
             </div>
 
@@ -155,6 +156,11 @@
                 @if (mostrarRecompensas == true)
                 {
                     <Recompensas/>
+                }
+
+                @if (mostrarCupones == true)
+                {
+                    <Cupones/>
                 }
             </div>
         </div>
@@ -254,7 +260,7 @@
     {
         if (primerRender == true)
         {
-             await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
+            await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
         }
     }
 
@@ -275,6 +281,7 @@
         mostrarGratis = false;
         mostrarSuscripciones = false;
         mostrarRecompensas = false;
+        mostrarCupones = false;
 
         estiloEnlaces = null;
         estiloDuplicados = null;
@@ -289,6 +296,7 @@
         estiloGratis = null;
         estiloSuscripciones = null;
         estiloRecompensas = null;
+        estiloCupones = null;
     }
 
     #region Enlaces
@@ -497,6 +505,20 @@
         CerrarPestañas();
         mostrarRecompensas = true;
         estiloRecompensas = fondo;
+    }
+
+    #endregion
+
+    #region Cupones
+
+    private bool mostrarCupones = false;
+    private string estiloCupones = null;
+
+    private void MostrarCupones()
+    {
+        CerrarPestañas();
+        mostrarCupones = true;
+        estiloCupones = fondo;
     }
 
     #endregion

@@ -1,0 +1,145 @@
+﻿<div class="caja-diseño" style="padding: 30px;">
+	<div class="menu-dropdown" style="width: auto;">
+		<button class="boton-pequeño" style="background-color: var(--buscadorSubcabecera); display: flex; align-items: center; width: 100%; padding: 8px 15px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+			<div style="font-size: 16px; padding-right: 5px;">
+				Tienda Elegida:
+			</div>
+
+			<div style="font-size: 16px; color: var(--colorEnlace); padding-right: 15px;">
+				@tiendaElegida
+			</div>
+
+			<div style="max-width: 9px;">
+				<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+					<path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+				</svg>
+			</div>
+		</button>
+
+		<div class="menu-dropdown-contenido" style="right: 0; width: 100%; background-color: var(--buscadorSubcabecera);">
+			@foreach (var tienda in Tiendas2.TiendasCargar.GenerarListado())
+			{
+				<button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => ElegirTienda(tienda.Id))">
+					@tienda.Nombre
+				</button>
+			}			
+		</div>
+	</div>
+
+	<hr/>
+
+	<div style="display: flex; align-items: center; gap: 15px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Código</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="text" @bind-value="@codigo" @bind-value:event="oninput" class="entrada-texto" />
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Porcentaje</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="text" @bind-value="@porcentaje" @bind-value:event="oninput" class="entrada-texto" />
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Precio Rebaja</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="text" @bind-value="@precioRebaja" @bind-value:event="oninput" class="entrada-texto" />
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Precio Mínimo</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="text" @bind-value="@precioMinimo" @bind-value:event="oninput" class="entrada-texto" />
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: center; margin-top: 20px; gap: 15px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Fecha Empieza</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="datetime-local" class="entrada-texto" @onchange="@(e => CambiarFechaEmpieza(e))" value="@fechaEmpieza" />
+		</div>
+	</div>
+
+	<div style="display: flex; align-items: center; margin-top: 20px; gap: 15px;">
+		<div style="width: 20%; padding: 5px; text-align: right;">
+			<label>Fecha Termina</label>
+		</div>
+		<div style="width: 80%;">
+			<input type="datetime-local" class="entrada-texto" @onchange="@(e => CambiarFechaTermina(e))" value="@fechaTermina" />
+		</div>
+	</div>
+</div>
+
+<div class="caja-diseño" style="padding: 40px; margin-top: 20px;">
+	<button @onclick="@(e => AñadirCupon(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">Añadir Cupón</button>
+</div>
+
+@code {
+
+	#nullable disable
+
+	private string tiendaElegida = string.Empty;
+
+	private void ElegirTienda(string nuevaTiendaElegida)
+	{
+		tiendaElegida = nuevaTiendaElegida;
+	}
+
+	private string codigo = string.Empty;
+	private string porcentaje = string.Empty;
+	private string precioRebaja = string.Empty;
+	private string precioMinimo = string.Empty;
+
+	private string fechaEmpieza = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+
+	private void CambiarFechaEmpieza(ChangeEventArgs texto)
+	{
+		fechaEmpieza = texto.Value.ToString();
+	}
+
+	private string fechaTermina = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+
+	private void CambiarFechaTermina(ChangeEventArgs texto)
+	{
+		fechaTermina = texto.Value.ToString();
+	}
+
+	private void AñadirCupon(MouseEventArgs e)
+	{
+		int? porcentaje2 = null;
+
+		if (string.IsNullOrEmpty(porcentaje) == false)
+		{
+			porcentaje2 = int.Parse(porcentaje);
+		}
+
+		decimal? precioMinimo2 = null;
+
+		if (string.IsNullOrEmpty(precioMinimo) == false)
+		{
+			precioMinimo2 = decimal.Parse(precioMinimo);
+		}
+
+		decimal? precioRebaja2 = null;
+
+		if (string.IsNullOrEmpty(precioRebaja) == false)
+		{
+			precioRebaja2 = decimal.Parse(precioRebaja);
+		}
+
+		BaseDatos.Cupones.Insertar.Ejecutar(codigo, porcentaje2, precioMinimo2, precioRebaja2, tiendaElegida, DateTime.Parse(fechaEmpieza), DateTime.Parse(fechaTermina));
+	}
+}

@@ -119,14 +119,17 @@
 
                     <button @onclick="@(e => ClickearBuscarPendientes(e, nombrePendiente))" class="boton-pequeño" style="width: 130px; text-align: center;">Buscar</button>
 
-                    @if (permitirHacerCosas == true)
+                    @if (idsPendiente != "0")
                     {
-                        <button @onclick="@(e => ClickearActualizarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center;">Actualizar</button>
+                        if (permitirHacerCosas == true)
+                        {
+                            <button @onclick="@(e => ClickearActualizarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center;">Actualizar</button>
+                        }
+                        else
+                        {
+                            <button class="boton-pequeño" style="width: 130px; text-align: center; backdrop-filter: brightness(60%);">Actualizar</button>
+                        }
                     }
-                    else
-                    {
-                        <button class="boton-pequeño" style="width: 130px; text-align: center; backdrop-filter: brightness(60%);">Actualizar</button>
-                    }   
                 </div>
 
                 <div>

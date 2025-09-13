@@ -5,6 +5,7 @@
 
 #nullable disable
 
+using BaseDatos.Cupones;
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
@@ -36,6 +37,8 @@ namespace APIs.Ubisoft
 
 		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador)
 		{
+			Cupon cupon = BaseDatos.Cupones.Buscar.Activos(Generar().Id, conexion);
+
 			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
 			int paginas = 10;
@@ -102,6 +105,18 @@ namespace APIs.Ubisoft
 														FechaDetectado = DateTime.Now,
 														FechaActualizacion = DateTime.Now
 													};
+
+													if (cupon != null)
+													{
+														if (cupon.PrecioRebaja != null && cupon.PrecioRebaja > 0 && cupon.PrecioMinimo != null && cupon.PrecioMinimo > 0)
+														{
+															if (oferta.Precio > cupon.PrecioMinimo)
+															{
+																oferta.CodigoTexto = cupon.Codigo;
+																oferta.Precio = oferta.Precio - (decimal)cupon.PrecioRebaja;
+															}
+														}
+													}
 
 													try
 													{

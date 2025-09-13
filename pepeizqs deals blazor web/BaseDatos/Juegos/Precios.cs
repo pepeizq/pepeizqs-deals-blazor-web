@@ -227,8 +227,8 @@ namespace BaseDatos.Juegos
 		public static void Actualizar(int id, int idSteam, List<JuegoPrecio> ofertasActuales, List<JuegoPrecio> ofertasHistoricas, List<JuegoHistorico> historicos, JuegoPrecio nuevaOferta, SqlConnection conexion, 
 			string slugGOG = null, string idGOG = null, string slugEpic = null, List<JuegoUsuariosInteresados> usuariosInteresados = null, JuegoAnalisis analisis = null)
 		{
+			bool cambioPrecio = true;
 			bool ultimaModificacion = false;
-
 			bool añadir = true;
 
 			if (ofertasActuales != null)
@@ -409,6 +409,7 @@ namespace BaseDatos.Juegos
 								historicos = ComprobarHistoricos(historicos, nuevaOferta);
 
 								ultimaModificacion = true;
+								cambioPrecio = false;
 
 								minimo.Imagen = nuevaOferta.Imagen;
 								minimo.Enlace = nuevaOferta.Enlace;
@@ -462,7 +463,7 @@ namespace BaseDatos.Juegos
 				ahora = DateTime.Now;
 			}
 
-			Juegos.Actualizar.Comprobacion(id, ofertasActuales, ofertasHistoricas, historicos, conexion, slugGOG, idGOG, slugEpic, ahora, analisis);
+			Juegos.Actualizar.Comprobacion(cambioPrecio, id, ofertasActuales, ofertasHistoricas, historicos, conexion, slugGOG, idGOG, slugEpic, ahora, analisis);
 		}
 
 		private static List<JuegoHistorico> ComprobarHistoricos(List<JuegoHistorico> historicos, JuegoPrecio nuevaOferta)

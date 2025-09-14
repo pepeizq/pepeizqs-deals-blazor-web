@@ -116,7 +116,7 @@ namespace Herramientas
 				diferenciaTiempo = fecha.Subtract(DateTime.Now);
 			}
 
-			if (diferenciaTiempo <= TimeSpan.FromSeconds(60))
+            if (diferenciaTiempo <= TimeSpan.FromSeconds(60))
 			{
 				if (diferenciaTiempo.Seconds == 1)
 				{
@@ -197,7 +197,7 @@ namespace Herramientas
 			}
 			else
 			{
-				if (diferenciaTiempo.Days > 365 && diferenciaTiempo.Days < 730)
+				if (diferenciaTiempo.Days >= 365 && diferenciaTiempo.Days < 730)
 				{
 					int meses = (diferenciaTiempo.Days - 365) / 30;
 

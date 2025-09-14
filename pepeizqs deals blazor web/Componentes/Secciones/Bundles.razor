@@ -377,8 +377,8 @@ else
 
 	private bool usuarioPatreon = false;
 
-	private List<Bundles2.Bundle> bundlesActuales = new List<Bundles2.Bundle>();
-	private List<Bundles2.Bundle> bundlesPasados = new List<Bundles2.Bundle>();
+	[PersistentState] public List<Bundles2.Bundle> bundlesActuales { get; set; }
+	[PersistentState] public List<Bundles2.Bundle> bundlesPasados { get; set; }
 	private Bundles2.Bundle bundleSeleccionado = new Bundles2.Bundle();
 	private bool mostrarBundleSeleccionado = false;
 
@@ -417,9 +417,9 @@ else
 
 		//--------------------------------------------------------------------
 
-		if (bundlesActuales.Count == 0)
+		if (bundlesActuales == null)
 		{
-			bundlesActuales = BaseDatos.Bundles.Buscar.Actuales();
+			bundlesActuales ??= BaseDatos.Bundles.Buscar.Actuales();
 		}
 
 		if (bundlesActuales.Count > 0)

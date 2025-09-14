@@ -412,7 +412,7 @@
                                     string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
                                 }
 
-                                <a href="@enlace" @onclick="(e => LimpiarBusqueda(e))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+                                <button @onclick="(e => AbrirJuego(e, enlace))" class="boton-pequeño" style="cursor: pointer; padding: 0px; @fondoColor">
                                     <div class="perfil-flexible-centrado">
                                         <div>
                                             <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
@@ -428,7 +428,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </a>
+                                </button>
                             </div>
                         }
                     </ItemContent>
@@ -457,10 +457,10 @@
     [SupplyParameterFromQuery]
     private string Search { get; set; }
 
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-    private Usuario deseadosUsuario = null;
+    [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+    [PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
-    private Usuario opcionesCabecera = null;
+    [PersistentState] public Usuario opcionesCabecera { get; set; }
 
     private SqlConnection conexion = new SqlConnection();
 
@@ -468,10 +468,10 @@
     {
         if (string.IsNullOrEmpty(usuarioId) == false)
         {
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
-            opcionesCabecera = BaseDatos.Usuarios.Buscar.OpcionesCabecera(usuarioId);
+            opcionesCabecera ??= BaseDatos.Usuarios.Buscar.OpcionesCabecera(usuarioId);
         }
     }
 
@@ -509,7 +509,7 @@
     #region Buscador
 
     private bool encontroAlgo = false;
-    private List<Juegos.Juego> resultadosMostrar = new List<Juegos.Juego>();
+    [PersistentState] public List<Juegos.Juego> resultadosMostrar { get; set; }
 
     private string textoBuscador = string.Empty;
 
@@ -519,6 +519,11 @@
 
         if (textoBuscador.Trim().Length > 3)
         {
+            if (resultadosMostrar == null)
+            {
+                resultadosMostrar = new List<Juegos.Juego>();
+            }
+
             resultadosMostrar.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
 
             if (conexion == null)
@@ -535,8 +540,6 @@
 
             using (conexion)
             {
-                await InvokeAsync(StateHasChanged);
-
                 if (APIs.Steam.Juego.Detectar(textoBuscador) == true)
                 {
                     textoBuscador = APIs.Steam.Juego.LimpiarID(textoBuscador);
@@ -614,6 +617,15 @@
     private async Task CopiarAlClipboardEnlace(MouseEventArgs e)
     {
         await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", "https://pepeizqdeals.com/?search=" + textoBuscador);
+    }
+
+    #endregion
+
+    #region Abrir Juego
+
+    private async void AbrirJuego(MouseEventArgs e, string enlace)
+    {
+        await JavaScript.InvokeVoidAsync("open", enlace, "_self");
     }
 
     #endregion

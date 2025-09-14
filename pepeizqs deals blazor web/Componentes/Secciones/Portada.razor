@@ -15,8 +15,6 @@
 
 @inject IHttpContextAccessor Contexto
 @inject IBlazorNotificationService ServicioNotificaciones
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @{
 	#nullable disable
@@ -720,14 +718,12 @@
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
 	private bool usuarioAdmin = false;
 
@@ -746,8 +742,8 @@
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 
@@ -797,14 +793,7 @@
 		{
 			#region Destacados
 
-			if (!ApplicationState.TryTakeFromJson<List<Juegos.Juego>>("juegosGuardados", out var juegosGuardados))
-			{
-				juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
-			}
-			else
-			{
-				juegosDestacadosMostrar = juegosGuardados;
-			}
+			juegosDestacadosMostrar ??= BaseDatos.Portada.Buscar.Destacados(conexion);
 
 			if (juegosDestacadosMostrar.Count > 0)
 			{
@@ -820,7 +809,7 @@
 
 			try
 			{
-				noticias = BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
+				noticias ??= BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
 
 				if (noticias != null)
 				{
@@ -870,7 +859,7 @@
 
 			#region Minimos
 
-			Filtros();
+			Filtros(true);
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
@@ -886,16 +875,7 @@
 
 			#endregion
 		}
-
-		persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-		{
-			ApplicationState.PersistAsJson("juegosGuardados", juegosDestacadosMostrar);
-
-			return Task.CompletedTask;
-		});
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{
@@ -923,7 +903,7 @@
 
 	#region Destacados
 
-	private List<Juegos.Juego> juegosDestacadosMostrar = new List<Juegos.Juego>();
+	[PersistentState] public List<Juegos.Juego> juegosDestacadosMostrar { get; set; }
 	private Juegos.Juego juegoSeleccionado = new Juegos.Juego();
 	private PeriodicTimer cronometro = null;
 	private int cronometroContador = 0;
@@ -1000,7 +980,7 @@
 
 	private int cantidadJuegosMinimos = 100;
 
-	private void GenerarListaMinimos()
+	private void GenerarListaMinimos(bool cargaInicial = false)
 	{
 		try
 		{
@@ -1038,7 +1018,14 @@
 
 			if (tipoSeleccionadoMinimos == MinimosTipo.Nuevos)
 			{
-				juegosMinimosGestor = BaseDatos.Portada.Buscar.Minimos(0, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+				if (cargaInicial == false)
+				{
+					juegosMinimosGestor = BaseDatos.Portada.Buscar.Minimos(0, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+				}
+				else
+				{
+					juegosMinimosGestor ??= BaseDatos.Portada.Buscar.Minimos(0, cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion, 199);
+				}				
 			}
 			else if (tipoSeleccionadoMinimos == MinimosTipo.Populares)
 			{
@@ -1123,7 +1110,7 @@
 
 	#region Minimos Filtrado
 
-	private List<Juegos.Juego> juegosMinimosGestor = new List<Juegos.Juego>();
+	[PersistentState] public List<Juegos.Juego> juegosMinimosGestor { get; set; }
 	private List<Juegos.Juego> juegosMinimosMostrar = new List<Juegos.Juego>();
     private MinimosTipo tipoSeleccionadoMinimos = MinimosTipo.Nuevos;
 
@@ -1135,9 +1122,9 @@
 		Proximamente
 	}
 
-	private async void Filtros()
+	private async void Filtros(bool cargaInicial = false)
 	{
-		GenerarListaMinimos();
+		GenerarListaMinimos(cargaInicial);
 
 		if (juegosMinimosGestor != null)
 		{
@@ -1390,7 +1377,8 @@
 
 	#region Noticias
 
-	private List<Noticias.Noticia> noticias = new List<Noticias.Noticia>();
+	[PersistentState]
+	public List<Noticias.Noticia> noticias { get; set; }
 
 	private PeriodicTimer cronometroNoticias = null;
 	private int cronometroNoticiasContador = 0;

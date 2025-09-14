@@ -1088,7 +1088,7 @@
                                                         }
                                                     }
 
-                                                    if (drmsGeforceNOW.Count > 0)
+                                                    if (drmsGeforceNOW?.Count > 0)
                                                     {
                                                         foreach (var drmG in drmsGeforceNOW)
                                                         {
@@ -1099,7 +1099,7 @@
                                                         }
                                                     }
 
-                                                    if (drmsBoosteroid.Count > 0)
+                                                    if (drmsBoosteroid?.Count > 0)
                                                     {
                                                         foreach (var drmB in drmsBoosteroid)
                                                         {
@@ -1385,7 +1385,7 @@
                                                                 </button>
                                                             }
 
-                                                            @if (drmsGeforceNOW.Count > 0)
+                                                            @if (drmsGeforceNOW?.Count > 0)
                                                             {
                                                                 foreach (var drmG in drmsGeforceNOW)
                                                                 {
@@ -1398,7 +1398,7 @@
                                                                 }
                                                             }
 
-                                                            @if (drmsBoosteroid.Count > 0)
+                                                            @if (drmsBoosteroid?.Count > 0)
                                                             {
                                                                 foreach (var drmB in drmsBoosteroid)
                                                                 {
@@ -2901,6 +2901,14 @@
                                                 </div>
                                             </a>
                                         }
+                                        else if (enlace.Contains("https://www.xiaohongshu.com/") == true)
+                                        {
+                                            <a href="@enlace" target="_blank" class="boton-pequeño" title="REDnote" style="width: fit-content; padding: 10px;">
+                                                <div>
+                                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/otros/rednote.webp")" style="width: 30px; height: 30px;" loading="lazy"/>
+                                                </div>
+                                            </a>
+                                        }
                                         else
                                         {
                                             global::BaseDatos.Errores.Insertar.Mensaje("Enlace no encontrado en juego", enlace + " - " + juego.Nombre);
@@ -3891,8 +3899,8 @@
     private string usuarioId = null;
     private string userAgent = null;
 
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-    private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
     private bool usuarioAdmin = false;
 
@@ -3905,11 +3913,11 @@
     public string juegoNombre { get; set; }
 
     private string idiomaJuego = null;
-    private Juegos.Juego juego = null;
-    private List<Juegos.Juego> dlcs = new List<Juegos.Juego>();
-    private List<Juegos.JuegoDRM> drmsGeforceNOW = new List<JuegoDRM>();
-    private List<Juegos.JuegoDRM> drmsBoosteroid = new List<JuegoDRM>();
-    private List<global::BaseDatos.Curators.CuratorFicha> curators = null;
+    [PersistentState] public Juegos.Juego juego { get; set; }
+    [PersistentState] public List<Juegos.Juego> dlcs { get; set; }
+    [PersistentState] public List<Juegos.JuegoDRM> drmsGeforceNOW { get; set; }
+    [PersistentState] public List<Juegos.JuegoDRM> drmsBoosteroid { get; set; }
+    [PersistentState] public List<global::BaseDatos.Curators.CuratorFicha> curators { get; set; }
 
     private ApexChartOptions<PuntoGrafico> opcionesGrafico;
     private JuegoDRM drmGrafico = JuegoDRM.NoEspecificado;
@@ -3925,8 +3933,8 @@
         if (string.IsNullOrEmpty(usuarioId) == false)
         {
             idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
             usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 
@@ -3941,19 +3949,19 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        juego = BaseDatos.Juegos.Buscar.UnJuego(juegoId);
+        juego ??= BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 
         mediaMostrar = null;
         mediaMostrarPosicion = 0;
 
         if (juego != null)
         {
-            dlcs = global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
+            dlcs ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
 
             if (juego.Tipo == JuegoTipo.Game)
             {
-                drmsGeforceNOW = global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
-                drmsBoosteroid = global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
+                drmsGeforceNOW ??= global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
+                drmsBoosteroid ??= global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
             }
 
             if (juego.IdSteam > 0)

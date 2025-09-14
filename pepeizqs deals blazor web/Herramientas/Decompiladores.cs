@@ -68,7 +68,7 @@ namespace Herramientas
 			{
 				cliente.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0");
 
-				try
+                try
 				{
 					using (HttpResponseMessage respuesta = await cliente.GetAsync(enlace, HttpCompletionOption.ResponseContentRead))
 					{
@@ -153,7 +153,7 @@ namespace Herramientas
 			{
 				using (HttpClient cliente = new HttpClient(handler) { BaseAddress = new Uri(enlace) })
 				{
-					HttpResponseMessage respuesta = await cliente.SendAsync(mensaje);
+                    HttpResponseMessage respuesta = await cliente.SendAsync(mensaje);
 
 					Stream stream = await respuesta.Content.ReadAsStreamAsync();
 					respuesta.Dispose();

@@ -789,10 +789,10 @@ else
 	private string usuarioId = null;
 	private string userAgent = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
-	private Usuario opcionesMinimos = null;
+	[PersistentState] public Usuario opcionesMinimos { get; set; }
 
 	[SupplyParameterFromQuery]
 	private string DRMs { get; set; }
@@ -839,10 +839,10 @@ else
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
-			opcionesMinimos = BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
+			opcionesMinimos ??= BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
 
 			if (opcionesMinimos != null)
 			{
@@ -1227,7 +1227,7 @@ else
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
-			opcionesMinimos = BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
+			opcionesMinimos ??= BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
 		}
 
 		if (opcionesMinimos == null)

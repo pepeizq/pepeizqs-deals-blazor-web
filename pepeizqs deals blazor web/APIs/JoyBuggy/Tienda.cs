@@ -67,7 +67,7 @@ namespace APIs.JoyBuggy
 
                             foreach (JoyBuggyJuego juego in listaJuegos.Datos.Juegos)
                             {
-                                if (string.IsNullOrEmpty(juego.Disponibilidad) == false && juego.Disponibilidad.ToLower() == "in stock")
+                                if (string.IsNullOrEmpty(juego.Disponibilidad) == true)
                                 {
 									if (string.IsNullOrEmpty(juego.PrecioBase) == false && string.IsNullOrEmpty(juego.PrecioRebajado) == false)
 									{

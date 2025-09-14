@@ -619,7 +619,69 @@ namespace BaseDatos.Juegos
 			return juego;
 		}
 
-		public static List<Juego> MultiplesJuegosSteam(List<int> ids, SqlConnection conexion = null)
+        public static List<Juego> MultiplesJuegosDeseados(List<JuegoDeseado> ids, SqlConnection conexion = null)
+        {
+            List<Juego> juegos = new List<Juego>();
+            string sqlBuscar = string.Empty;
+
+            if (ids != null)
+            {
+                if (ids.Count > 0)
+                {
+                    sqlBuscar = "SELECT * FROM juegos WHERE id IN (";
+
+                    int i = 0;
+                    while (i < ids.Count)
+                    {
+                        if (i == 0)
+                        {
+                            sqlBuscar = sqlBuscar + "'" + ids[i].IdBaseDatos + "'";
+                        }
+                        else
+                        {
+                            sqlBuscar = sqlBuscar + ", '" + ids[i].IdBaseDatos + "'";
+                        }
+
+                        i += 1;
+                    }
+
+                    sqlBuscar = sqlBuscar + ")";
+                    sqlBuscar = sqlBuscar + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+                }
+            }
+
+            if (string.IsNullOrEmpty(sqlBuscar) == false)
+            {
+                if (conexion == null)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+                else
+                {
+                    if (conexion.State != System.Data.ConnectionState.Open)
+                    {
+                        conexion = Herramientas.BaseDatos.Conectar();
+                    }
+                }
+
+                using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+                {
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            Juego juego = new Juego();
+                            juego = Cargar(juego, lector);
+                            juegos.Add(juego);
+                        }
+                    }
+                }
+            }
+
+            return juegos;
+        }
+
+        public static List<Juego> MultiplesJuegosSteam(List<int> ids, SqlConnection conexion = null)
 		{
 			List<string> idsTexto = new List<string>();
 

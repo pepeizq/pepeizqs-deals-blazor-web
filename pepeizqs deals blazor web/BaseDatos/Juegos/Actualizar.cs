@@ -177,7 +177,7 @@ namespace BaseDatos.Juegos
 
 			if (cambioPrecio == true)
 			{
-				añadirPrecioMinimosHistoricos = ", precioMinimosHistoricos=@precioMinimosHistoricos, historicos=@historicos";
+				añadirPrecioMinimosHistoricos = ", historicos=@historicos";
 			}
 
 			string añadirSlugGog = null;
@@ -209,17 +209,17 @@ namespace BaseDatos.Juegos
 			//}
 
 			string sqlActualizar = "UPDATE juegos " +
-					"SET precioActualesTiendas=@precioActualesTiendas" + añadirPrecioMinimosHistoricos +
+                    "SET precioActualesTiendas=@precioActualesTiendas, precioMinimosHistoricos=@precioMinimosHistoricos" + añadirPrecioMinimosHistoricos +
 					añadirUltimaModificacion + añadirSlugGog + añadirSlugEpic + añadirAnalisis + " WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 			{
 				comando.Parameters.AddWithValue("@id", id);
 				comando.Parameters.AddWithValue("@precioActualesTiendas", JsonSerializer.Serialize(ofertasActuales));
+                comando.Parameters.AddWithValue("@precioMinimosHistoricos", JsonSerializer.Serialize(ofertasHistoricas));
 
-				if (cambioPrecio == true)
+                if (cambioPrecio == true)
 				{
-					comando.Parameters.AddWithValue("@precioMinimosHistoricos", JsonSerializer.Serialize(ofertasHistoricas));
 					comando.Parameters.AddWithValue("@historicos", JsonSerializer.Serialize(historicos));
 				}
 

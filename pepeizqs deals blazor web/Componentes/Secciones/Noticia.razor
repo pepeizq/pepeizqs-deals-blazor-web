@@ -13,8 +13,6 @@
 
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
-@inject PersistentComponentState ApplicationState
-@implements IDisposable
 
 @{
 	string tituloSeo = titulo + " • pepeizq's deals";
@@ -340,7 +338,7 @@
 							{
 								string enlaceAnterior = "/news/" + noticiaAnterior.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(Herramientas.Idiomas.ElegirTexto(idioma, noticiaAnterior.TituloEn, noticiaAnterior.TituloEs)) + "/";
 
-								<a href="@enlaceAnterior" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+								<button @onclick="(e => AbrirNoticia(e, enlaceAnterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
 									<div style="max-width: 16px;">
 										<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
 											<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
@@ -348,7 +346,7 @@
 									</div>
 
 									@Herramientas.Idiomas.ElegirTexto(idioma, noticiaAnterior.TituloEn, noticiaAnterior.TituloEs)
-								</a>
+								</button>
 							}
 						}
 
@@ -358,7 +356,7 @@
 							{
 								string enlacePosterior = "/news/" + noticiaPosterior.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(Herramientas.Idiomas.ElegirTexto(idioma, noticiaPosterior.TituloEn, noticiaPosterior.TituloEs)) + "/";
 
-								<a href="@enlacePosterior" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+								<button @onclick="(e => AbrirNoticia(e, enlacePosterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
 									@Herramientas.Idiomas.ElegirTexto(idioma, noticiaPosterior.TituloEn, noticiaPosterior.TituloEs)
 
 									<div style="max-width: 16px;">
@@ -366,7 +364,7 @@
 											<path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
 										</svg>
 									</div>
-								</a>
+								</button>
 							}
 						}
 					</div>
@@ -380,13 +378,11 @@
 
 	#nullable disable
 
-	private PersistingComponentStateSubscription? persistingSubscription;
-
 	private string idioma = "en";
 	private string usuarioId = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
 	private bool usuarioAdmin = false;
 
@@ -408,9 +404,9 @@
 	[Parameter]
 	public Tipo tipo { get; set; } = Tipo.UltimasNoticias;
 
-	private Noticias.Noticia noticia = null;
-	private Noticias.Noticia noticiaAnterior = null;
-	private Noticias.Noticia noticiaPosterior = null;
+	[PersistentState] public Noticias.Noticia noticia { get; set; }
+	[PersistentState] public Noticias.Noticia noticiaAnterior { get; set; }
+	[PersistentState] public Noticias.Noticia noticiaPosterior { get; set; }
 
 	private string titulo = string.Empty;
 	private string enlaceIngles = string.Empty;
@@ -418,7 +414,7 @@
 	private string video = string.Empty;
 	private string fondo = string.Empty;
 
-	private List<Juegos.Juego> juegos = new List<Juegos.Juego>();
+	[PersistentState] public List<Juegos.Juego> juegos { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -428,8 +424,8 @@
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
@@ -437,18 +433,11 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-        await Task.Yield();
+		await Task.Yield();
 
 		if (id > 0)
 		{
-			if (!ApplicationState.TryTakeFromJson<Noticias.Noticia>("noticiaGuardada", out var noticiaGuardada))
-			{
-				noticia = BaseDatos.Noticias.Buscar.UnaNoticia(id);
-			}
-			else
-			{
-				noticia = noticiaGuardada;
-			}
+			noticia ??= BaseDatos.Noticias.Buscar.UnaNoticia(id);
 
 			if (noticia != null)
 			{
@@ -461,15 +450,7 @@
 				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
 				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
 
-				List<string> juegosTexto = Herramientas.Listados.Generar(noticia.Juegos);
-
-				if (juegosTexto != null)
-				{
-					foreach (var juego in juegosTexto)
-					{
-						juegos.Add(BaseDatos.Juegos.Buscar.UnJuego(juego));
-					}
-				}
+				juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
 
 				if (noticia.Tipo == NoticiaTipo.Suscripciones)
 				{
@@ -520,20 +501,11 @@
 					}
 				}
 
-				noticiaAnterior = BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
-				noticiaPosterior = BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
+				noticiaAnterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
+				noticiaPosterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
 			}
-
-			persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-			{
-				ApplicationState.PersistAsJson("noticiaGuardada", noticia);
-
-				return Task.CompletedTask;
-			});
 		}
 	}
-
-	public void Dispose() => persistingSubscription?.Dispose();
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{
@@ -557,6 +529,22 @@
 			}
 		}
 	}
+
+	#region Abrir Noticia
+
+	private async void AbrirNoticia(MouseEventArgs e, string enlace, bool nuevaVentana = true)
+	{
+		string comando = "_blank";
+
+		if (nuevaVentana == false)
+		{
+			comando = "_self";
+		}
+
+		await JavaScript.InvokeVoidAsync("open", enlace, comando);
+	}
+
+	#endregion
 
 	public enum Tipo
 	{

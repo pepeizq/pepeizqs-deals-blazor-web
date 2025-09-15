@@ -7,7 +7,7 @@ namespace Herramientas
 {
     public static class Tooltip
     {
-        public static ToolTipDatos Generar(string idioma, CajaJuego.Tipo tipo, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0)
+        public static ToolTipDatos Generar(string idioma, CajaJuego.Tipo tipo, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0, int idGratisDescartar = 0)
         {
             ToolTipDatos datos = new ToolTipDatos
             {
@@ -154,38 +154,48 @@ namespace Herramientas
 
 				foreach (var gratis in juego.Gratis)
 				{
-					if (gratis.FechaEmpieza < DateTime.Now && gratis.FechaTermina > DateTime.Now)
-					{
-						gratisActuales += 1;
+					bool contar = true;
 
-						if (gratisActuales == 1)
-						{
-							gratisExtraActual = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre;
-						}
-						else if (gratisActuales > 1)
-						{
-							if (Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre != gratisExtraActual)
-							{
-								gratisExtraActual = null;
-							}
-						}
-					}
-					else
+					if (idGratisDescartar > 0 && gratis.Id == idGratisDescartar)
 					{
-						gratisPasados += 1;
+						contar = false;
+                    }
 
-						if (gratisPasados == 1)
-						{
-							gratisExtraPasado = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre;
-						}
-						else if (gratisPasados > 1)
-						{
-							if (Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre != gratisExtraPasado)
-							{
-								gratisExtraPasado = null;
-							}
-						}
-					}
+					if (contar == true)
+					{
+                        if (gratis.FechaEmpieza < DateTime.Now && gratis.FechaTermina > DateTime.Now)
+                        {
+                            gratisActuales += 1;
+
+                            if (gratisActuales == 1)
+                            {
+                                gratisExtraActual = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre;
+                            }
+                            else if (gratisActuales > 1)
+                            {
+                                if (Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre != gratisExtraActual)
+                                {
+                                    gratisExtraActual = null;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            gratisPasados += 1;
+
+                            if (gratisPasados == 1)
+                            {
+                                gratisExtraPasado = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre;
+                            }
+                            else if (gratisPasados > 1)
+                            {
+                                if (Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre != gratisExtraPasado)
+                                {
+                                    gratisExtraPasado = null;
+                                }
+                            }
+                        }
+                    }
 				}
 
 				if (gratisActuales == 1)

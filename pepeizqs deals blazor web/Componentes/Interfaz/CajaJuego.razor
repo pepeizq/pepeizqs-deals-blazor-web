@@ -706,7 +706,7 @@
 
 		@if (tipo == Tipo.CuratorLista)
 		{
-			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" class="boton-pequeño" style="@fondoColor">
+			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="display: flex; align-items: center;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 230px; height: 107px;" alt="@juego.Nombre" />
@@ -727,7 +727,7 @@
 
 		@if (tipo == Tipo.CuratorJuego)
 		{
-			<a href="@enlace" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirOferta(e, enlace, false))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
                 <div style="display: flex; flex-direction: column; height: 100%;" title="@juego.Nombre">
                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 255, 120)" style="max-width: 100vw; max-height: 100vh; object-fit: cover;" alt="@juego.Nombre" loading="lazy" />
 				
@@ -735,12 +735,12 @@
                         @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
                     </div>
                 </div>
-            </a>
+            </button>
 		}
 
 		@if (tipo == Tipo.Gratis)
 		{
-			<button @onclick="(e => AbrirOferta(e, enlaceGratis))" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor">
+			<button @onclick="(e => AbrirOferta(e, enlaceGratis, true))" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor">
 				<div style="width: 100%; text-align: center;">
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
 
@@ -764,7 +764,7 @@
 
 		@if (tipo == Tipo.Suscripciones)
 		{
-			<button @onclick="(e => AbrirOferta(e, enlaceSuscripcion))" class="boton-pequeño" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
+			<button @onclick="(e => AbrirOferta(e, enlaceSuscripcion, true))" class="boton-pequeño" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
 				<div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
@@ -831,6 +831,9 @@
 	public int idCurator { get; set; }
 
 	[Parameter]
+	public int idGratis { get; set; }
+
+	[Parameter]
 	public string enlaceGratis { get; set; }
 
 	[Parameter]
@@ -864,9 +867,16 @@
 
 	#region Abrir Oferta
 
-	private async void AbrirOferta(MouseEventArgs e, string enlace)
+	private async void AbrirOferta(MouseEventArgs e, string enlace, bool nuevaVentana = true)
 	{
-		await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
+		string comando = "_blank";
+
+		if (nuevaVentana == false)
+		{
+			comando = "_self";
+		}
+
+		await JavaScript.InvokeVoidAsync("open", enlace, comando);
 	}
 
 	#endregion

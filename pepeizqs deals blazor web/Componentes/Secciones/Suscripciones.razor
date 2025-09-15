@@ -601,13 +601,14 @@ else
     private string usuarioId = null;
     private string userAgent = null;
 
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-    private Usuario deseadosUsuario = null;
+    [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+    [PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
 
+    [PersistentState] public List<Juegos.JuegoSuscripcion> juegosActuales { get; set; }
     private List<Suscripciones2.SuscripcionComponente> suscripcionesActuales = new List<Suscripciones2.SuscripcionComponente>();
     private List<Suscripciones2.SuscripcionComponente> suscripcionesPasadas = new List<Suscripciones2.SuscripcionComponente>();
-    private List<JuegoSuscripcion> suscripcionesUltimas = new List<JuegoSuscripcion>();
+    [PersistentState] public List<JuegoSuscripcion> suscripcionesUltimas { get; set; }
 
     [Parameter]
     public string suscripcionSeleccionadaTexto { get; set; }
@@ -621,8 +622,8 @@ else
         if (string.IsNullOrEmpty(usuarioId) == false)
         {
             idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
         }
 
@@ -646,9 +647,9 @@ else
 
         //--------------------------------------------------------------------
 
-        List<Juegos.JuegoSuscripcion> juegosActuales = BaseDatos.Suscripciones.Buscar.Actuales();
+        juegosActuales ??= BaseDatos.Suscripciones.Buscar.Actuales();
 
-        if (juegosActuales.Count > 0)
+        if (juegosActuales?.Count > 0)
         {
             foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
             {
@@ -675,7 +676,7 @@ else
 
         //--------------------------------------------------------------------
 
-        suscripcionesUltimas = BaseDatos.Suscripciones.Buscar.UltimasAñadidas();
+        suscripcionesUltimas ??= BaseDatos.Suscripciones.Buscar.UltimasAñadidas();
     }
 
     protected override async Task OnAfterRenderAsync(bool primerRender)

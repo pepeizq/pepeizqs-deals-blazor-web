@@ -231,8 +231,8 @@
             {
                 enlaceGratis = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
             }
-            
-            <CajaJuego enlaceGratis="@enlaceGratis" drmGratis="@juego.DRM" tipoGratis="@juego.Tipo" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Gratis"/> 
+
+            <CajaJuego idGratis="@juego.Id" enlaceGratis="@enlaceGratis" drmGratis="@juego.DRM" tipoGratis="@juego.Tipo" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Gratis"/> 
         }
     </div>
 }
@@ -359,11 +359,11 @@ else
     private string usuarioId = null;
     private string userAgent = null;
 
-    private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-    private Usuario deseadosUsuario = null;
+    [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+    [PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
 
-    private List<Juegos.JuegoGratis> juegosActuales = new List<Juegos.JuegoGratis>();
+    [PersistentState] public List<Juegos.JuegoGratis> juegosActuales { get; set; }
     private List<Gratis2.GratisComponente> gratisPasados = new List<Gratis2.GratisComponente>();
 
     private List<string> años = new List<string>();
@@ -378,8 +378,8 @@ else
         if (string.IsNullOrEmpty(usuarioId) == false)
         {
             idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-            juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-            deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+            juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+            deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
         }
 
@@ -403,9 +403,9 @@ else
 
         //--------------------------------------------------------------------
 
-        juegosActuales = BaseDatos.Gratis.Buscar.Actuales();
+        juegosActuales ??= BaseDatos.Gratis.Buscar.Actuales();
 
-        if (juegosActuales.Count > 0)
+        if (juegosActuales?.Count > 0)
         {
             foreach (var juegoActual in juegosActuales)
             {

@@ -335,12 +335,12 @@
 				{
 					List<JuegoDeseadoMostrar> deseadosFinales = new List<JuegoDeseadoMostrar>();
 
-					if (pestañaMostrar == 0)
+					if (pestañaMostrar == 0 && deseadosOfertas != null)
 					{
 						deseadosFinales = deseadosOfertas;
 					}
 
-					if (pestañaMostrar == 1)
+					if (pestañaMostrar == 1 && deseadosHistoricos != null)
 					{
 						deseadosFinales = deseadosHistoricos;
 					}
@@ -752,7 +752,7 @@
 			{
 				if (deseadosWeb.Count > 0)
 				{
-					deseadosWebJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegosDeseados(deseadosWeb);
+					deseadosWebJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(deseadosWeb);
 
 					int i = 0;
 
@@ -1235,34 +1235,14 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
 
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosBundles != null)
-				{
-					if (deseadosBundles.Count > 0)
-					{
-						deseadosBundles = deseadosBundles.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosSuscripciones != null)
-				{
-					if (deseadosSuscripciones.Count > 0)
-					{
-						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
-					}
-				}		
+				deseadosBundles = deseadosBundles?.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
+				deseadosSuscripciones = deseadosSuscripciones?.AsParallel().OrderByDescending(x => int.Parse(x.ReseñasCantidad ??= "0")).ThenBy(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
@@ -1287,34 +1267,14 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderBy(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderBy(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderBy(x => x.Nombre).ToList();
 
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderBy(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosBundles != null)
-				{
-					if (deseadosBundles.Count > 0)
-					{
-						deseadosBundles = deseadosBundles.AsParallel().OrderBy(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosSuscripciones != null)
-				{
-					if (deseadosSuscripciones.Count > 0)
-					{
-						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderBy(x => x.Nombre).ToList();
-					}
-				}	
+				deseadosBundles = deseadosBundles?.AsParallel().OrderBy(x => x.Nombre).ToList();
+				deseadosSuscripciones = deseadosSuscripciones?.AsParallel().OrderBy(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
@@ -1339,34 +1299,14 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderByDescending(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderByDescending(x => x.Nombre).ToList();
 
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosBundles != null)
-				{
-					if (deseadosBundles.Count > 0)
-					{
-						deseadosBundles = deseadosBundles.AsParallel().OrderByDescending(x => x.Nombre).ToList();
-					}
-				}
-
-				if (deseadosSuscripciones != null)
-				{
-					if (deseadosSuscripciones.Count > 0)
-					{
-						deseadosSuscripciones = deseadosSuscripciones.AsParallel().OrderByDescending(x => x.Nombre).ToList();
-					}
-				}			
+				deseadosBundles = deseadosBundles?.AsParallel().OrderByDescending(x => x.Nombre).ToList();
+				deseadosSuscripciones = deseadosSuscripciones?.AsParallel().OrderByDescending(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
@@ -1391,18 +1331,11 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
-
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
-					}
-				}		
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderBy(x => x.Precio.Precio).ThenBy(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
@@ -1427,18 +1360,11 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
-
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
-					}
-				}		
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderByDescending(x => x.Precio.Descuento).ThenBy(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)
@@ -1463,18 +1389,11 @@
 			{
 				deseadosOfertas.Clear();
 				deseadosOfertas = Filtros(false);
-				deseadosOfertas = deseadosOfertas.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
+				deseadosOfertas = deseadosOfertas?.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
 
 				deseadosHistoricos.Clear();
 				deseadosHistoricos = Filtros(true);
-
-				if (deseadosHistoricos != null)
-				{
-					if (deseadosHistoricos.Count > 0)
-					{
-						deseadosHistoricos = deseadosHistoricos.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
-					}
-				}
+				deseadosHistoricos = deseadosHistoricos?.AsParallel().OrderByDescending(x => x.Precio.FechaDetectado).ThenBy(x => x.Nombre).ToList();
 			}
 
 			if (string.IsNullOrEmpty(usuarioId) == false)

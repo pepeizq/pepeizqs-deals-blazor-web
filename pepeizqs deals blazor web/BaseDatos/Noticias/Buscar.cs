@@ -232,7 +232,7 @@ namespace BaseDatos.Noticias
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM noticias WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY nombre DESC";
+				string busqueda = "SELECT * FROM noticias WHERE YEAR(fechaEmpieza) = " + año + " AND GETDATE() > fechaTermina ORDER BY id DESC";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

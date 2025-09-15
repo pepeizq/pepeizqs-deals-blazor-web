@@ -269,7 +269,7 @@
 				}
 			</div>
 
-			@if (noticiasAntiguas.Count > 0)
+			@if (noticiasAntiguas?.Count > 0)
 			{
 				List<Noticias.Noticia> noticiasAño = new List<Noticias.Noticia>();
 
@@ -336,8 +336,8 @@
 	private string userAgent = null;
 
 	private List<string> fechas = new List<string>();
-	private List<Noticias.Noticia> noticiasMostrar = new List<Noticias.Noticia>();
-	private List<Noticias.Noticia> noticiasAntiguas = new List<Noticias.Noticia>();
+	[PersistentState] public List<Noticias.Noticia> noticiasMostrar { get; set; }
+	[PersistentState] public List<Noticias.Noticia> noticiasAntiguas { get; set; }
 
 	private List<string> años = new List<string>();
 	private string añoSeleccionado = null;
@@ -355,9 +355,9 @@
 
 		//--------------------------------------------------------------------
 
-		noticiasMostrar = BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionado);
+		noticiasMostrar ??= BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionado);
 
-		if (noticiasMostrar.Count > 0)
+		if (noticiasMostrar?.Count > 0)
 		{
 			foreach (var noticia in noticiasMostrar)
 			{

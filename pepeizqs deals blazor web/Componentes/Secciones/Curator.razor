@@ -279,15 +279,15 @@
 	private string usuarioId = null;
 	private string userAgent = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
 
 	[Parameter]
 	public string slug { get; set; }
 
-	private BaseDatos.Curators.Curator curator = null;
-	private List<Juegos.Juego> juegosCurator = new List<Juegos.Juego>();
+	[PersistentState] public BaseDatos.Curators.Curator curator { get; set; }
+	[PersistentState] public List<Juegos.Juego> juegosCurator { get; set; }
 	private List<Juegos.Juego> juegosDestacados = new List<Juegos.Juego>();
 
 	private int filtrado = 0;
@@ -306,8 +306,8 @@
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 		}
 	}
@@ -316,7 +316,7 @@
 	{
 		if (string.IsNullOrEmpty(slug) == false)
 		{
-			curator = BaseDatos.Curators.Buscar.Uno(slug);
+			curator ??= BaseDatos.Curators.Buscar.Uno(slug);
 
 			if (curator != null)
 			{
@@ -348,7 +348,7 @@
 						}
 					}
 
-					juegosCurator = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.SteamIds);
+					juegosCurator ??= global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.SteamIds);
 
 					if (juegosCurator.Count > 0)
 					{

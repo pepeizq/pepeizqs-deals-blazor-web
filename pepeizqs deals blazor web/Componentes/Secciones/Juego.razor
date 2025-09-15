@@ -21,7 +21,6 @@
 @using Tiendas2
 
 @inject IHttpContextAccessor Contexto
-@inject NavigationManager NavManager
 @inject IJSRuntime JavaScript
 
 @if (juego != null)
@@ -3947,7 +3946,7 @@
         }      
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         juego ??= BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 

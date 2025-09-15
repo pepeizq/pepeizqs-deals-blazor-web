@@ -285,14 +285,7 @@ else
             gratis.FechaTermina = Convert.ToDateTime(fechaTerminaSeleccionadaGratis);
             gratis.ImagenNoticia = imagenNoticiaGratis;
 
-            if (juegoGratis.Gratis == null)
-            {
-                juegoGratis.Gratis = new List<global::Juegos.JuegoGratis>();
-            }
-
-            juegoGratis.Gratis.Add(gratis);
-
-            BaseDatos.Gratis.Insertar.Ejecutar(int.Parse(idSeleccionadaGratis), juegoGratis.Gratis, gratis);
+            BaseDatos.Gratis.Insertar.Ejecutar(int.Parse(idSeleccionadaGratis), juegoGratis, gratis);
         }
 
         idSeleccionadaGratis = null;

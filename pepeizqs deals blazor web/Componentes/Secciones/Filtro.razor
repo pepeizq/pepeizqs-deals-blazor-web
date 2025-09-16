@@ -715,14 +715,14 @@ else
 	private string idioma = "en";
 	private string usuarioId = null;
 
-	private Herramientas.UsuarioListadosJuegos juegosUsuario = null;
-	private Usuario deseadosUsuario = null;
+	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+	[PersistentState] public Usuario deseadosUsuario { get; set; }
 
 	private bool cargado = false;
 
 	private List<string> idsLista = new List<string>();
 
-	private List<Juegos.Juego> resultadosGestor = new List<Juegos.Juego>();
+	[PersistentState] public List<Juegos.Juego> resultadosGestor { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -734,8 +734,8 @@ else
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
-			juegosUsuario = Herramientas.UsuarioJuegos.Cargar(usuarioId);
-			deseadosUsuario = BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+			juegosUsuario ??= Herramientas.UsuarioJuegos.Cargar(usuarioId);
+			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 		}
 
 		CargarDeck();
@@ -785,7 +785,7 @@ else
             }
 		}
 
-		resultadosGestor = BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
+		resultadosGestor ??= BaseDatos.Juegos.Buscar.Filtro(idsLista, 250);
 
 		cargado = true;
 	}

@@ -94,7 +94,7 @@ namespace BaseDatos.Juegos
 
 								bool notificar = false;
 
-								if (decimal.Add(tempPrecio, 0.1m) < minimo.Precio)
+								if (tempPrecio + 0.2m < minimo.Precio)
 								{
 									notificar = true;
 								}
@@ -296,7 +296,7 @@ namespace BaseDatos.Juegos
 				ofertasActuales.Add(nuevaOferta);
 			}
 
-			if (ofertasHistoricas != null)
+            if (ofertasHistoricas != null)
 			{
 				if (ofertasHistoricas.Count > 0)
 				{
@@ -310,13 +310,13 @@ namespace BaseDatos.Juegos
 
 							decimal tempPrecio = nuevaOferta.Precio;
 
-							if (string.IsNullOrEmpty(nuevaOferta.CodigoTexto) == false)
+							if (string.IsNullOrEmpty(nuevaOferta.CodigoTexto) == false && nuevaOferta.CodigoDescuento > 0)
 							{
 								decimal descuento = (decimal) nuevaOferta.CodigoDescuento / 100;
 								tempPrecio = tempPrecio - (tempPrecio * descuento);
 							}
 
-							if (nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro)
+							if (nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.PrecioCambiado == 0)
 							{
 								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, nuevaOferta.Moneda);
 							}
@@ -327,12 +327,7 @@ namespace BaseDatos.Juegos
 
 								bool notificar = false;
 
-								//if (decimal.Add(tempPrecio, 0.2m) < minimo.Precio)
-								//{
-								//	notificar = true;
-								//}
-
-								if (tempPrecio < minimo.Precio)
+								if (tempPrecio + 0.2m < minimo.Precio)
 								{
 									notificar = true;
 								}

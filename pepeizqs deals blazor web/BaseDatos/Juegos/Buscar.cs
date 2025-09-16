@@ -1754,7 +1754,7 @@ namespace BaseDatos.Juegos
 						}
 						else
 						{
-							etiquetasTexto = etiquetasTexto + " OR etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta + Strings.ChrW(34) + "%'";
+							etiquetasTexto = etiquetasTexto + " AND etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta + Strings.ChrW(34) + "%'";
 						}
 
 						i += 1;
@@ -1780,7 +1780,7 @@ namespace BaseDatos.Juegos
 						}
 						else
 						{
-							categoriasTexto = categoriasTexto + " OR categorias LIKE '%" + Strings.ChrW(34) + categoria + Strings.ChrW(34) + "%'";
+							categoriasTexto = categoriasTexto + " AND categorias LIKE '%" + Strings.ChrW(34) + categoria + Strings.ChrW(34) + "%'";
 						}
 
 						i += 1;
@@ -1806,7 +1806,7 @@ namespace BaseDatos.Juegos
 						}
 						else
 						{
-							generosTexto = generosTexto + " OR generos LIKE '%" + Strings.ChrW(34) + genero + Strings.ChrW(34) + "%'";
+							generosTexto = generosTexto + " AND generos LIKE '%" + Strings.ChrW(34) + genero + Strings.ChrW(34) + "%'";
 						}
 
 						i += 1;
@@ -1832,7 +1832,7 @@ namespace BaseDatos.Juegos
 						}
 						else
 						{
-							deckTexto = deckTexto + " OR deck = " + deck;
+							deckTexto = deckTexto + " AND deck = " + deck;
 						}
 
 						i += 1;
@@ -1852,7 +1852,7 @@ namespace BaseDatos.Juegos
 					{
 						if (string.IsNullOrEmpty(sistemasTexto) == false)
 						{
-							sistemasTexto = sistemasTexto + " OR ";
+							sistemasTexto = sistemasTexto + " AND ";
 						}
 
 						if (sistema == "1")
@@ -1891,7 +1891,7 @@ namespace BaseDatos.Juegos
 						}
 						else
 						{
-							tiposTexto = tiposTexto + " OR tipo = " + tipo;
+							tiposTexto = tiposTexto + " AND tipo = " + tipo;
 						}
 
 						i += 1;

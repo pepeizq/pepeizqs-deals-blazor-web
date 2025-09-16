@@ -429,81 +429,81 @@
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
+
+		if (id > 0)
+		{
+			noticia ??= BaseDatos.Noticias.Buscar.UnaNoticia(id);
+		}
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await Task.Yield();
 
-		if (id > 0)
+		if (noticia != null)
 		{
-			noticia ??= BaseDatos.Noticias.Buscar.UnaNoticia(id);
-
-			if (noticia != null)
+			if (string.IsNullOrEmpty(Language) == false)
 			{
-				if (string.IsNullOrEmpty(Language) == false)
+				idioma = Language;
+			}
+
+			titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
+			enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
+			enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
+
+			juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
+
+			if (noticia.Tipo == NoticiaTipo.Suscripciones)
+			{
+				if (string.IsNullOrEmpty(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo) == false)
 				{
-					idioma = Language;
+					fondo = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo;
 				}
+			}
 
-				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
-				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
-
-				juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
-
-				if (noticia.Tipo == NoticiaTipo.Suscripciones)
+			if (juegos != null)
+			{
+				if (juegos.Count == 1)
 				{
-					if (string.IsNullOrEmpty(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo) == false)
+					if (juegos[0].Media?.Videos != null)
 					{
-						fondo = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo;
-					}
-				}
-
-				if (juegos != null)
-				{
-					if (juegos.Count == 1)
-					{
-						if (juegos[0].Media?.Videos != null)
+						if (juegos[0].Media?.Videos.Count > 0)
 						{
-							if (juegos[0].Media?.Videos.Count > 0)
-							{
-								video = juegos[0].Media?.Videos[0].Enlace;
-							}
+							video = juegos[0].Media?.Videos[0].Enlace;
 						}
 					}
+				}
 
-					if (string.IsNullOrEmpty(fondo) == true)
+				if (string.IsNullOrEmpty(fondo) == true)
+				{
+					if (juegos.Count > 0)
 					{
-						if (juegos.Count > 0)
+						int analisis = 0;
+
+						foreach (var juego in juegos)
 						{
-							int analisis = 0;
-
-							foreach (var juego in juegos)
+							if (juego.Analisis != null)
 							{
-								if (juego.Analisis != null)
+								if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
 								{
-									if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
-									{
-										string temp = juego.Analisis.Cantidad;
-										temp = temp.Replace(",", null);
-										int analisisJuego = int.Parse(temp);
+									string temp = juego.Analisis.Cantidad;
+									temp = temp.Replace(",", null);
+									int analisisJuego = int.Parse(temp);
 
-										if (analisisJuego > analisis)
-										{
-											analisis = analisisJuego;
-											fondo = juego.Imagenes.Library_1920x620;
-										}
+									if (analisisJuego > analisis)
+									{
+										analisis = analisisJuego;
+										fondo = juego.Imagenes.Library_1920x620;
 									}
 								}
 							}
 						}
 					}
 				}
-
-				noticiaAnterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
-				noticiaPosterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
 			}
+
+			noticiaAnterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
+			noticiaPosterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
 		}
 	}
 

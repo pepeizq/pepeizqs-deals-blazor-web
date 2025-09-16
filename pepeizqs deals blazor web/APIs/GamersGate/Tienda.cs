@@ -37,11 +37,11 @@ namespace APIs.GamersGate
 
 		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador, ViewDataDictionary objeto = null)
 		{
-			BaseDatos.Admin.Actualizar.Tiendas(Tienda.Generar().Id, DateTime.Now, 0, conexion);
+			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
 
-			List<JuegoPrecio> ofertas = new List<JuegoPrecio>();
+            int juegos2 = 0;
 
-			string html = await Decompiladores.Estandar("https://www.gamersgate.com/feeds/products?country=DEU");
+            string html = await Decompiladores.Estandar("https://www.gamersgate.com/feeds/products?country=DEU");
 
 			if (string.IsNullOrEmpty(html) == false)
 			{
@@ -51,86 +51,70 @@ namespace APIs.GamersGate
                 using (StringReader lector = new StringReader(html))
                 {
                     listaJuegos = (GamersGateJuegos)xml.Deserialize(lector);
-                }        
+                }
 
-                if (listaJuegos != null)
-				{
-					if (listaJuegos.Juegos != null)
-					{
-						if (listaJuegos.Juegos.Count > 0)
-						{
-							foreach (GamersGateJuego juego in listaJuegos.Juegos)
-							{
-								decimal precioBase = decimal.Parse(juego.PrecioBase);
-								decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                if (listaJuegos?.Juegos?.Count > 0)
+                {
+                    foreach (GamersGateJuego juego in listaJuegos.Juegos)
+                    {
+                        decimal precioBase = decimal.Parse(juego.PrecioBase);
+                        decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                        int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-								if (descuento > 0)
-								{
-									string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                        if (descuento > 0)
+                        {
+                            string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-									string enlace = juego.Enlace;
+                            string enlace = juego.Enlace;
 
-									string imagen = juego.ImagenGrande;
+                            string imagen = juego.ImagenGrande;
 
-									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+                            JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
 
-									JuegoPrecio oferta = new JuegoPrecio
-									{
-										Nombre = nombre,
-										Enlace = enlace,
-										Imagen = imagen,
-										Moneda = JuegoMoneda.Euro,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = Generar().Id,
-										DRM = drm,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now
-									};
+                            JuegoPrecio oferta = new JuegoPrecio
+                            {
+                                Nombre = nombre,
+                                Enlace = enlace,
+                                Imagen = imagen,
+                                Moneda = JuegoMoneda.Euro,
+                                Precio = precioRebajado,
+                                Descuento = descuento,
+                                Tienda = Generar().Id,
+                                DRM = drm,
+                                FechaDetectado = DateTime.Now,
+                                FechaActualizacion = DateTime.Now
+                            };
 
-									if (juego.Fecha != null)
-									{
-										DateTime fechaTermina = DateTime.Parse(juego.Fecha, CultureInfo.InvariantCulture);
-										oferta.FechaTermina = fechaTermina;
-									}
+                            if (juego.Fecha != null)
+                            {
+                                DateTime fechaTermina = DateTime.Parse(juego.Fecha, CultureInfo.InvariantCulture);
+                                oferta.FechaTermina = fechaTermina;
+                            }
 
-									ofertas.Add(oferta);
-								}
-							}
-						}
-					}
-				}
-			}
+                            try
+                            {
+                                BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                            }
+                            catch (Exception ex)
+                            {
+                                BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                            }
 
-			int juegos2 = 0;
+                            juegos2 += 1;
 
-			if (ofertas.Count > 0)
-			{
-				foreach (var oferta in ofertas)
-				{
-					try
-					{
-						BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-					}
-
-					juegos2 += 1;
-
-					try
-					{
-						BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-					}
-				}
-			}
+                            try
+                            {
+                                BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+                            }
+                            catch (Exception ex)
+                            {
+                                BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                            }
+                        }
+                    }
+                }
+            }
 		}
     }
 

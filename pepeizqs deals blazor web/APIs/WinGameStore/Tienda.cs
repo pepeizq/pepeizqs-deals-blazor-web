@@ -39,124 +39,121 @@ namespace APIs.WinGameStore
 
 			string html = await Decompiladores.Estandar("https://www.macgamestore.com/affiliate/feeds/p_C1B2A3.json");
 
-			if (html != null)
+			if (string.IsNullOrEmpty(html) == false)
 			{
 				List<WinGameStoreJuego> juegos = JsonSerializer.Deserialize<List<WinGameStoreJuego>>(html);
 
-				if (juegos != null)
-				{
-					if (juegos.Count > 0)
-					{
-						int juegos2 = 0;
+                if (juegos?.Count > 0)
+                {
+                    int juegos2 = 0;
 
-						foreach (WinGameStoreJuego juego in juegos)
-						{
-							bool buscar = true;
+                    foreach (WinGameStoreJuego juego in juegos)
+                    {
+                        bool buscar = true;
 
-							if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
-							{
-								List<string> listaPaisesRestringidos = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
+                        {
+                            List<string> listaPaisesRestringidos = new List<string>();
 
-								string[] datosPartidos = juego.PaisesRestringidos.Split(',');
-								listaPaisesRestringidos.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+                            listaPaisesRestringidos.AddRange(datosPartidos);
 
-								if (listaPaisesRestringidos.Count > 0)
-								{
-									foreach (var pais in listaPaisesRestringidos)
-									{
-										if (pais.ToLower() == "es")
-										{
-											buscar = false;
-											break;
-										}
-									}
-								}
-							}
+                            if (listaPaisesRestringidos.Count > 0)
+                            {
+                                foreach (var pais in listaPaisesRestringidos)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        buscar = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-							if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
-							{
-								List<string> listaPaisesAprobados = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+                        {
+                            List<string> listaPaisesAprobados = new List<string>();
 
-								string[] datosPartidos = juego.PaisesAprobados.Split(',');
-								listaPaisesAprobados.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesAprobados.Split(',');
+                            listaPaisesAprobados.AddRange(datosPartidos);
 
-								if (listaPaisesAprobados.Count > 0)
-								{
-									bool encontrado = false;
-									foreach (var pais in listaPaisesAprobados)
-									{
-										if (pais.ToLower() == "es")
-										{
-											encontrado = true;
-											break;
-										}
-									}
+                            if (listaPaisesAprobados.Count > 0)
+                            {
+                                bool encontrado = false;
+                                foreach (var pais in listaPaisesAprobados)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        encontrado = true;
+                                        break;
+                                    }
+                                }
 
-									if (encontrado == false)
-									{
-										buscar = false;
-									}
-								}
-							}
+                                if (encontrado == false)
+                                {
+                                    buscar = false;
+                                }
+                            }
+                        }
 
-							if (buscar == true)
-							{
-								decimal precioBase = decimal.Parse(juego.PrecioBase);
-								decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                        if (buscar == true)
+                        {
+                            decimal precioBase = decimal.Parse(juego.PrecioBase);
+                            decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                            int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-								if (descuento > 0)
-								{
-									string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                            if (descuento > 0)
+                            {
+                                string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-									string enlace = juego.Enlace;
+                                string enlace = juego.Enlace;
 
-									enlace = enlace.Replace("?ars=pepeizqdeals", null);
+                                enlace = enlace.Replace("?ars=pepeizqdeals", null);
 
-									string imagen = juego.Imagen;
+                                string imagen = juego.Imagen;
 
-									JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
+                                JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, Generar().Id);
 
-									JuegoPrecio oferta = new JuegoPrecio
-									{
-										Nombre = nombre,
-										Enlace = enlace,
-										Imagen = imagen,
-										Moneda = JuegoMoneda.Dolar,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = Generar().Id,
-										DRM = drm,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now
-									};
+                                JuegoPrecio oferta = new JuegoPrecio
+                                {
+                                    Nombre = nombre,
+                                    Enlace = enlace,
+                                    Imagen = imagen,
+                                    Moneda = JuegoMoneda.Dolar,
+                                    Precio = precioRebajado,
+                                    Descuento = descuento,
+                                    Tienda = Generar().Id,
+                                    DRM = drm,
+                                    FechaDetectado = DateTime.Now,
+                                    FechaActualizacion = DateTime.Now
+                                };
 
-									try
-									{
-										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-									}
+                                try
+                                {
+                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                                }
 
-									juegos2 += 1;
+                                juegos2 += 1;
 
-									try
-									{
-										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+                                try
+                                {
+                                    BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		}
 	}
 

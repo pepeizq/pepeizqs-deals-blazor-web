@@ -3943,16 +3943,16 @@
             {
                 idiomaJuego = idiomaJuegoTemp;
             }
-        }      
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
+        } 
+        
         juego ??= BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 
         mediaMostrar = null;
         mediaMostrarPosicion = 0;
+    }
 
+    protected override async Task OnParametersSetAsync()
+    {
         if (juego != null)
         {
             dlcs ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());

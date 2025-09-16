@@ -44,6 +44,11 @@ namespace Herramientas
 				s2 = s2.Remove(0, 1);
 			}
 
+			if (s2.Length == 0)
+			{
+				s2 = "_";
+			}
+
 			return s2;
 		}
 	}

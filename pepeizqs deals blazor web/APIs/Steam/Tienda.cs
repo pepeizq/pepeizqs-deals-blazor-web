@@ -74,13 +74,19 @@ namespace APIs.Steam
 
 			int juegos = 0;
 
+			bool rapido = false;
 			int arranque = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional", conexion);
 			int tope = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional2", conexion);
 
-			if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 10)
+			if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 5)
 			{
 				arranque = 0;
+				rapido = true;
 			}
+			else if (DateTime.Now.Hour == 20)
+			{
+				rapido = true;
+            }
 
 			if (arranque >= tope - 50)
 			{
@@ -371,7 +377,7 @@ namespace APIs.Steam
 													{
 														try
 														{
-															BaseDatos.Tiendas.Comprobar.Steam(oferta, reseñas, conexion);
+															BaseDatos.Tiendas.Comprobar.Steam(oferta, reseñas, rapido, conexion);
 														}
 														catch (Exception ex)
 														{

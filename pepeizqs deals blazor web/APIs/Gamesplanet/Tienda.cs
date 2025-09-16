@@ -84,13 +84,13 @@ namespace APIs.Gamesplanet
 			return enlace + "?ref=pepeizq";
 		}
 
-		public static async Task BuscarOfertasUk(SqlConnection conexion, IDecompiladores decompilador, ViewDataDictionary objeto = null)
+		public static async Task BuscarOfertasUk(SqlConnection conexion, IDecompiladores decompilador)
 		{
 			BaseDatos.Admin.Actualizar.Tiendas(GenerarUk().Id, DateTime.Now, 0, conexion);
 
-			List<JuegoPrecio> ofertas = new List<JuegoPrecio>();
+            int juegos2 = 0;
 
-			string htmluk = await Decompiladores.Estandar("https://uk.gamesplanet.com/api/v1/products/feed.xml");
+            string htmluk = await Decompiladores.Estandar("https://uk.gamesplanet.com/api/v1/products/feed.xml");
 
 			if (string.IsNullOrEmpty(htmluk) == false)
 			{
@@ -99,136 +99,120 @@ namespace APIs.Gamesplanet
                 XmlSerializer xml = new XmlSerializer(typeof(GamesplanetJuegos));
                 listaJuegos = (GamesplanetJuegos)xml.Deserialize(new StringReader(htmluk));
 
-                if (listaJuegos != null)
+                if (listaJuegos?.Juegos?.Count > 0)
                 {
-                    if (listaJuegos.Juegos != null)
+                    foreach (GamesplanetJuego juego in listaJuegos.Juegos)
                     {
-                        if (listaJuegos.Juegos.Count > 0)
+                        bool buscar = true;
+
+                        if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
                         {
-                            foreach (GamesplanetJuego juego in listaJuegos.Juegos)
+                            List<string> listaPaisesRestringidos = new List<string>();
+
+                            string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+                            listaPaisesRestringidos.AddRange(datosPartidos);
+
+                            if (listaPaisesRestringidos.Count > 0)
                             {
-								bool buscar = true;
+                                foreach (var pais in listaPaisesRestringidos)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        buscar = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-								if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
-								{
-									List<string> listaPaisesRestringidos = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+                        {
+                            List<string> listaPaisesAprobados = new List<string>();
 
-									string[] datosPartidos = juego.PaisesRestringidos.Split(',');
-									listaPaisesRestringidos.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesAprobados.Split(',');
+                            listaPaisesAprobados.AddRange(datosPartidos);
 
-									if (listaPaisesRestringidos.Count > 0)
-									{
-										foreach (var pais in listaPaisesRestringidos)
-										{
-											if (pais.ToLower() == "es")
-											{
-												buscar = false;
-												break;
-											}
-										}
-									}
-								}
+                            if (listaPaisesAprobados.Count > 0)
+                            {
+                                bool encontrado = false;
+                                foreach (var pais in listaPaisesAprobados)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        encontrado = true;
+                                        break;
+                                    }
+                                }
 
-								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
-								{
-									List<string> listaPaisesAprobados = new List<string>();
+                                if (encontrado == false)
+                                {
+                                    buscar = false;
+                                }
+                            }
+                        }
 
-									string[] datosPartidos = juego.PaisesAprobados.Split(',');
-									listaPaisesAprobados.AddRange(datosPartidos);
+                        if (buscar == true)
+                        {
+                            decimal precioBase = decimal.Parse(juego.PrecioBase);
+                            decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-									if (listaPaisesAprobados.Count > 0)
-									{
-										bool encontrado = false;
-										foreach (var pais in listaPaisesAprobados)
-										{
-											if (pais.ToLower() == "es")
-											{
-												encontrado = true;
-												break;
-											}
-										}
+                            int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-										if (encontrado == false)
-										{
-											buscar = false;
-										}
-									}
-								}
+                            if (descuento > 0)
+                            {
+                                string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-								if (buscar == true)
-								{
-									decimal precioBase = decimal.Parse(juego.PrecioBase);
-									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                                string enlace = juego.Enlace;
 
-									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                                string imagen = juego.Imagen;
 
-									if (descuento > 0)
-									{
-										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                                JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarUk().Id);
 
-										string enlace = juego.Enlace;
+                                JuegoPrecio oferta = new JuegoPrecio
+                                {
+                                    Nombre = nombre,
+                                    Enlace = enlace,
+                                    Imagen = imagen,
+                                    Moneda = JuegoMoneda.Libra,
+                                    Precio = precioRebajado,
+                                    Descuento = descuento,
+                                    Tienda = GenerarUk().Id,
+                                    DRM = drm,
+                                    FechaDetectado = DateTime.Now,
+                                    FechaActualizacion = DateTime.Now
+                                };
 
-										string imagen = juego.Imagen;
+                                try
+                                {
+                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarUk().Id, ex, conexion);
+                                }
 
-										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarUk().Id);
+                                juegos2 += 1;
 
-										JuegoPrecio oferta = new JuegoPrecio
-										{
-											Nombre = nombre,
-											Enlace = enlace,
-											Imagen = imagen,
-											Moneda = JuegoMoneda.Libra,
-											Precio = precioRebajado,
-											Descuento = descuento,
-											Tienda = GenerarUk().Id,
-											DRM = drm,
-											FechaDetectado = DateTime.Now,
-											FechaActualizacion = DateTime.Now
-										};
-
-										ofertas.Add(oferta);
-									}
-								}
+                                try
+                                {
+                                    BaseDatos.Admin.Actualizar.Tiendas(GenerarUk().Id, DateTime.Now, juegos2, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarUk().Id, ex, conexion);
+                                }
                             }
                         }
                     }
                 }
             }
-
-			int juegos2 = 0;
-
-			if (ofertas.Count > 0)
-			{
-				foreach (var oferta in ofertas)
-				{
-					try
-					{
-						BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarUk().Id, ex, conexion);
-					}
-
-					juegos2 += 1;
-
-					try
-					{
-						BaseDatos.Admin.Actualizar.Tiendas(GenerarUk().Id, DateTime.Now, juegos2, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarUk().Id, ex, conexion);
-					}
-				}
-			}
 		}
 
-        public static async Task BuscarOfertasFr(SqlConnection conexion, IDecompiladores decompilador, ViewDataDictionary objeto = null)
+        public static async Task BuscarOfertasFr(SqlConnection conexion, IDecompiladores decompilador)
         {
 			BaseDatos.Admin.Actualizar.Tiendas(GenerarFr().Id, DateTime.Now, 0, conexion);
 
-			List<JuegoPrecio> ofertas = new List<JuegoPrecio>();
+            int juegos2 = 0;
 
 			string htmlfr = await Decompiladores.Estandar("https://fr.gamesplanet.com/api/v1/products/feed.xml");
 
@@ -239,136 +223,120 @@ namespace APIs.Gamesplanet
                 XmlSerializer xml = new XmlSerializer(typeof(GamesplanetJuegos));
                 listaJuegos = (GamesplanetJuegos)xml.Deserialize(new StringReader(htmlfr));
 
-                if (listaJuegos != null)
+                if (listaJuegos?.Juegos?.Count > 0)
                 {
-                    if (listaJuegos.Juegos != null)
+                    foreach (GamesplanetJuego juego in listaJuegos.Juegos)
                     {
-                        if (listaJuegos.Juegos.Count > 0)
+                        bool buscar = true;
+
+                        if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
                         {
-                            foreach (GamesplanetJuego juego in listaJuegos.Juegos)
+                            List<string> listaPaisesRestringidos = new List<string>();
+
+                            string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+                            listaPaisesRestringidos.AddRange(datosPartidos);
+
+                            if (listaPaisesRestringidos.Count > 0)
                             {
-								bool buscar = true;
+                                foreach (var pais in listaPaisesRestringidos)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        buscar = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-								if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
-								{
-									List<string> listaPaisesRestringidos = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+                        {
+                            List<string> listaPaisesAprobados = new List<string>();
 
-									string[] datosPartidos = juego.PaisesRestringidos.Split(',');
-									listaPaisesRestringidos.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesAprobados.Split(',');
+                            listaPaisesAprobados.AddRange(datosPartidos);
 
-									if (listaPaisesRestringidos.Count > 0)
-									{
-										foreach (var pais in listaPaisesRestringidos)
-										{
-											if (pais.ToLower() == "es")
-											{
-												buscar = false;
-												break;
-											}
-										}
-									}
-								}
+                            if (listaPaisesAprobados.Count > 0)
+                            {
+                                bool encontrado = false;
+                                foreach (var pais in listaPaisesAprobados)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        encontrado = true;
+                                        break;
+                                    }
+                                }
 
-								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
-								{
-									List<string> listaPaisesAprobados = new List<string>();
+                                if (encontrado == false)
+                                {
+                                    buscar = false;
+                                }
+                            }
+                        }
 
-									string[] datosPartidos = juego.PaisesAprobados.Split(',');
-									listaPaisesAprobados.AddRange(datosPartidos);
+                        if (buscar == true)
+                        {
+                            decimal precioBase = decimal.Parse(juego.PrecioBase);
+                            decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-									if (listaPaisesAprobados.Count > 0)
-									{
-										bool encontrado = false;
-										foreach (var pais in listaPaisesAprobados)
-										{
-											if (pais.ToLower() == "es")
-											{
-												encontrado = true;
-												break;
-											}
-										}
+                            int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-										if (encontrado == false)
-										{
-											buscar = false;
-										}
-									}
-								}
+                            if (descuento > 0)
+                            {
+                                string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-								if (buscar == true)
-								{
-									decimal precioBase = decimal.Parse(juego.PrecioBase);
-									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                                string enlace = juego.Enlace;
 
-									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                                string imagen = juego.Imagen;
 
-									if (descuento > 0)
-									{
-										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                                JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarFr().Id);
 
-										string enlace = juego.Enlace;
+                                JuegoPrecio oferta = new JuegoPrecio
+                                {
+                                    Nombre = nombre,
+                                    Enlace = enlace,
+                                    Imagen = imagen,
+                                    Moneda = JuegoMoneda.Euro,
+                                    Precio = precioRebajado,
+                                    Descuento = descuento,
+                                    Tienda = GenerarFr().Id,
+                                    DRM = drm,
+                                    FechaDetectado = DateTime.Now,
+                                    FechaActualizacion = DateTime.Now
+                                };
 
-										string imagen = juego.Imagen;
+                                try
+                                {
+                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarFr().Id, ex, conexion);
+                                }
 
-										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarFr().Id);
+                                juegos2 += 1;
 
-										JuegoPrecio oferta = new JuegoPrecio
-										{
-											Nombre = nombre,
-											Enlace = enlace,
-											Imagen = imagen,
-											Moneda = JuegoMoneda.Euro,
-											Precio = precioRebajado,
-											Descuento = descuento,
-											Tienda = GenerarFr().Id,
-											DRM = drm,
-											FechaDetectado = DateTime.Now,
-											FechaActualizacion = DateTime.Now
-										};
-
-										ofertas.Add(oferta);
-									}
-								}
+                                try
+                                {
+                                    BaseDatos.Admin.Actualizar.Tiendas(GenerarFr().Id, DateTime.Now, juegos2, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarFr().Id, ex, conexion);
+                                }
                             }
                         }
                     }
                 }
             }
-
-			int juegos2 = 0;
-
-			if (ofertas.Count > 0)
-			{
-				foreach (var oferta in ofertas)
-				{
-					try
-					{
-						BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarFr().Id, ex, conexion);
-					}
-
-					juegos2 += 1;
-
-					try
-					{
-						BaseDatos.Admin.Actualizar.Tiendas(GenerarFr().Id, DateTime.Now, juegos2, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarFr().Id, ex, conexion);
-					}
-				}
-			}
 		}
 
-		public static async Task BuscarOfertasDe(SqlConnection conexion, IDecompiladores decompilador, ViewDataDictionary objeto = null)
+		public static async Task BuscarOfertasDe(SqlConnection conexion, IDecompiladores decompilador)
 		{
 			BaseDatos.Admin.Actualizar.Tiendas(GenerarDe().Id, DateTime.Now, 0, conexion);
 
-			List<JuegoPrecio> ofertas = new List<JuegoPrecio>();
+            int juegos2 = 0;
 
 			string htmlde = await Decompiladores.Estandar("https://de.gamesplanet.com/api/v1/products/feed.xml");
 
@@ -379,136 +347,120 @@ namespace APIs.Gamesplanet
                 XmlSerializer xml = new XmlSerializer(typeof(GamesplanetJuegos));
                 listaJuegos = (GamesplanetJuegos)xml.Deserialize(new StringReader(htmlde));
 
-                if (listaJuegos != null)
+                if (listaJuegos?.Juegos?.Count > 0)
                 {
-                    if (listaJuegos.Juegos != null)
+                    foreach (GamesplanetJuego juego in listaJuegos.Juegos)
                     {
-                        if (listaJuegos.Juegos.Count > 0)
+                        bool buscar = true;
+
+                        if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
                         {
-                            foreach (GamesplanetJuego juego in listaJuegos.Juegos)
+                            List<string> listaPaisesRestringidos = new List<string>();
+
+                            string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+                            listaPaisesRestringidos.AddRange(datosPartidos);
+
+                            if (listaPaisesRestringidos.Count > 0)
                             {
-								bool buscar = true;
+                                foreach (var pais in listaPaisesRestringidos)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        buscar = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-								if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
-								{
-									List<string> listaPaisesRestringidos = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+                        {
+                            List<string> listaPaisesAprobados = new List<string>();
 
-									string[] datosPartidos = juego.PaisesRestringidos.Split(',');
-									listaPaisesRestringidos.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesAprobados.Split(',');
+                            listaPaisesAprobados.AddRange(datosPartidos);
 
-									if (listaPaisesRestringidos.Count > 0)
-									{
-										foreach (var pais in listaPaisesRestringidos)
-										{
-											if (pais.ToLower() == "es")
-											{
-												buscar = false;
-												break;
-											}
-										}
-									}
-								}
+                            if (listaPaisesAprobados.Count > 0)
+                            {
+                                bool encontrado = false;
+                                foreach (var pais in listaPaisesAprobados)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        encontrado = true;
+                                        break;
+                                    }
+                                }
 
-								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
-								{
-									List<string> listaPaisesAprobados = new List<string>();
+                                if (encontrado == false)
+                                {
+                                    buscar = false;
+                                }
+                            }
+                        }
 
-									string[] datosPartidos = juego.PaisesAprobados.Split(',');
-									listaPaisesAprobados.AddRange(datosPartidos);
+                        if (buscar == true)
+                        {
+                            decimal precioBase = decimal.Parse(juego.PrecioBase);
+                            decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-									if (listaPaisesAprobados.Count > 0)
-									{
-										bool encontrado = false;
-										foreach (var pais in listaPaisesAprobados)
-										{
-											if (pais.ToLower() == "es")
-											{
-												encontrado = true;
-												break;
-											}
-										}
+                            int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-										if (encontrado == false)
-										{
-											buscar = false;
-										}
-									}
-								}
+                            if (descuento > 0)
+                            {
+                                string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-								if (buscar == true)
-								{
-									decimal precioBase = decimal.Parse(juego.PrecioBase);
-									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                                string enlace = juego.Enlace;
 
-									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                                string imagen = juego.Imagen;
 
-									if (descuento > 0)
-									{
-										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                                JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarDe().Id);
 
-										string enlace = juego.Enlace;
+                                JuegoPrecio oferta = new JuegoPrecio
+                                {
+                                    Nombre = nombre,
+                                    Enlace = enlace,
+                                    Imagen = imagen,
+                                    Moneda = JuegoMoneda.Euro,
+                                    Precio = precioRebajado,
+                                    Descuento = descuento,
+                                    Tienda = GenerarDe().Id,
+                                    DRM = drm,
+                                    FechaDetectado = DateTime.Now,
+                                    FechaActualizacion = DateTime.Now
+                                };
 
-										string imagen = juego.Imagen;
+                                try
+                                {
+                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarDe().Id, ex, conexion);
+                                }
 
-										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarDe().Id);
+                                juegos2 += 1;
 
-										JuegoPrecio oferta = new JuegoPrecio
-										{
-											Nombre = nombre,
-											Enlace = enlace,
-											Imagen = imagen,
-											Moneda = JuegoMoneda.Euro,
-											Precio = precioRebajado,
-											Descuento = descuento,
-											Tienda = GenerarDe().Id,
-											DRM = drm,
-											FechaDetectado = DateTime.Now,
-											FechaActualizacion = DateTime.Now
-										};
-
-										ofertas.Add(oferta);
-									}
-								}
+                                try
+                                {
+                                    BaseDatos.Admin.Actualizar.Tiendas(GenerarDe().Id, DateTime.Now, juegos2, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarDe().Id, ex, conexion);
+                                }
                             }
                         }
                     }
                 }
             }
-
-			int juegos2 = 0;
-
-			if (ofertas.Count > 0)
-			{
-				foreach (var oferta in ofertas)
-				{
-					try
-					{
-						BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarDe().Id, ex, conexion);
-					}
-
-					juegos2 += 1;
-
-					try
-					{
-						BaseDatos.Admin.Actualizar.Tiendas(GenerarDe().Id, DateTime.Now, juegos2, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarDe().Id, ex, conexion);
-					}
-				}
-			}
 		}
 
-		public static async Task BuscarOfertasUs(SqlConnection conexion, IDecompiladores decompilador, ViewDataDictionary objeto = null)
+		public static async Task BuscarOfertasUs(SqlConnection conexion, IDecompiladores decompilador)
 		{
 			BaseDatos.Admin.Actualizar.Tiendas(GenerarUs().Id, DateTime.Now, 0, conexion);
 
-			List<JuegoPrecio> ofertas = new List<JuegoPrecio>();
+            int juegos2 = 0;
 
 			string htmlus = await Decompiladores.Estandar("https://us.gamesplanet.com/api/v1/products/feed.xml");
 
@@ -519,129 +471,113 @@ namespace APIs.Gamesplanet
                 XmlSerializer xml = new XmlSerializer(typeof(GamesplanetJuegos));
                 listaJuegos = (GamesplanetJuegos)xml.Deserialize(new StringReader(htmlus));
 
-                if (listaJuegos != null)
+                if (listaJuegos?.Juegos?.Count > 0)
                 {
-                    if (listaJuegos.Juegos != null)
+                    foreach (GamesplanetJuego juego in listaJuegos.Juegos)
                     {
-                        if (listaJuegos.Juegos.Count > 0)
+                        bool buscar = true;
+
+                        if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
                         {
-                            foreach (GamesplanetJuego juego in listaJuegos.Juegos)
+                            List<string> listaPaisesRestringidos = new List<string>();
+
+                            string[] datosPartidos = juego.PaisesRestringidos.Split(',');
+                            listaPaisesRestringidos.AddRange(datosPartidos);
+
+                            if (listaPaisesRestringidos.Count > 0)
                             {
-								bool buscar = true;
+                                foreach (var pais in listaPaisesRestringidos)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        buscar = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-								if (string.IsNullOrEmpty(juego.PaisesRestringidos) == false)
-								{
-									List<string> listaPaisesRestringidos = new List<string>();
+                        if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
+                        {
+                            List<string> listaPaisesAprobados = new List<string>();
 
-									string[] datosPartidos = juego.PaisesRestringidos.Split(',');
-									listaPaisesRestringidos.AddRange(datosPartidos);
+                            string[] datosPartidos = juego.PaisesAprobados.Split(',');
+                            listaPaisesAprobados.AddRange(datosPartidos);
 
-									if (listaPaisesRestringidos.Count > 0)
-									{
-										foreach (var pais in listaPaisesRestringidos)
-										{
-											if (pais.ToLower() == "es")
-											{
-												buscar = false;
-												break;
-											}
-										}
-									}
-								}
+                            if (listaPaisesAprobados.Count > 0)
+                            {
+                                bool encontrado = false;
+                                foreach (var pais in listaPaisesAprobados)
+                                {
+                                    if (pais.ToLower() == "es")
+                                    {
+                                        encontrado = true;
+                                        break;
+                                    }
+                                }
 
-								if (string.IsNullOrEmpty(juego.PaisesAprobados) == false)
-								{
-									List<string> listaPaisesAprobados = new List<string>();
+                                if (encontrado == false)
+                                {
+                                    buscar = false;
+                                }
+                            }
+                        }
 
-									string[] datosPartidos = juego.PaisesAprobados.Split(',');
-									listaPaisesAprobados.AddRange(datosPartidos);
+                        if (buscar == true)
+                        {
+                            decimal precioBase = decimal.Parse(juego.PrecioBase);
+                            decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
 
-									if (listaPaisesAprobados.Count > 0)
-									{
-										bool encontrado = false;
-										foreach (var pais in listaPaisesAprobados)
-										{
-											if (pais.ToLower() == "es")
-											{
-												encontrado = true;
-												break;
-											}
-										}
+                            int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-										if (encontrado == false)
-										{
-											buscar = false;
-										}
-									}
-								}
+                            if (descuento > 0)
+                            {
+                                string nombre = WebUtility.HtmlDecode(juego.Nombre);
 
-								if (buscar == true)
-								{
-									decimal precioBase = decimal.Parse(juego.PrecioBase);
-									decimal precioRebajado = decimal.Parse(juego.PrecioRebajado);
+                                string enlace = juego.Enlace;
 
-									int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
+                                string imagen = juego.Imagen;
 
-									if (descuento > 0)
-									{
-										string nombre = WebUtility.HtmlDecode(juego.Nombre);
+                                JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarUs().Id);
 
-										string enlace = juego.Enlace;
+                                JuegoPrecio oferta = new JuegoPrecio
+                                {
+                                    Nombre = nombre,
+                                    Enlace = enlace,
+                                    Imagen = imagen,
+                                    Moneda = JuegoMoneda.Dolar,
+                                    Precio = precioRebajado,
+                                    Descuento = descuento,
+                                    Tienda = GenerarUs().Id,
+                                    DRM = drm,
+                                    FechaDetectado = DateTime.Now,
+                                    FechaActualizacion = DateTime.Now
+                                };
 
-										string imagen = juego.Imagen;
+                                try
+                                {
+                                    BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarUs().Id, ex, conexion);
+                                }
 
-										JuegoDRM drm = JuegoDRM2.Traducir(juego.DRM, GenerarUs().Id);
+                                juegos2 += 1;
 
-										JuegoPrecio oferta = new JuegoPrecio
-										{
-											Nombre = nombre,
-											Enlace = enlace,
-											Imagen = imagen,
-											Moneda = JuegoMoneda.Dolar,
-											Precio = precioRebajado,
-											Descuento = descuento,
-											Tienda = GenerarUs().Id,
-											DRM = drm,
-											FechaDetectado = DateTime.Now,
-											FechaActualizacion = DateTime.Now
-										};
-
-										ofertas.Add(oferta);
-									}
-								}
+                                try
+                                {
+                                    BaseDatos.Admin.Actualizar.Tiendas(GenerarUs().Id, DateTime.Now, juegos2, conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje(GenerarUs().Id, ex, conexion);
+                                }
                             }
                         }
                     }
                 }
             }
-
-			int juegos2 = 0;
-
-			if (ofertas.Count > 0)
-			{
-				foreach (var oferta in ofertas)
-				{
-					try
-					{
-						BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarUs().Id, ex, conexion);
-					}
-
-					juegos2 += 1;
-
-					try
-					{
-						BaseDatos.Admin.Actualizar.Tiendas(GenerarUs().Id, DateTime.Now, juegos2, conexion);
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje(GenerarUs().Id, ex, conexion);
-					}
-				}
-			}
 		}
     }
 

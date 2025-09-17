@@ -1223,8 +1223,6 @@ else
 	{
 		await Task.Yield();
 
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
 			opcionesMinimos ??= BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);

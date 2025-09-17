@@ -433,77 +433,72 @@
 		if (id > 0)
 		{
 			noticia ??= BaseDatos.Noticias.Buscar.UnaNoticia(id);
-		}
-	}
 
-	protected override async Task OnParametersSetAsync()
-	{
-		await Task.Yield();
-
-		if (noticia != null)
-		{
-			if (string.IsNullOrEmpty(Language) == false)
+			if (noticia != null)
 			{
-				idioma = Language;
-			}
-
-			titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-			enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
-			enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
-
-			juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
-
-			if (noticia.Tipo == NoticiaTipo.Suscripciones)
-			{
-				if (string.IsNullOrEmpty(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo) == false)
+				if (string.IsNullOrEmpty(Language) == false)
 				{
-					fondo = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo;
+					idioma = Language;
 				}
-			}
 
-			if (juegos != null)
-			{
-				if (juegos.Count == 1)
+				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
+				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
+				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
+
+				juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
+
+				if (noticia.Tipo == NoticiaTipo.Suscripciones)
 				{
-					if (juegos[0].Media?.Videos != null)
+					if (string.IsNullOrEmpty(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo) == false)
 					{
-						if (juegos[0].Media?.Videos.Count > 0)
-						{
-							video = juegos[0].Media?.Videos[0].Enlace;
-						}
+						fondo = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(noticia.SuscripcionTipo).ImagenFondo;
 					}
 				}
 
-				if (string.IsNullOrEmpty(fondo) == true)
+				if (juegos != null)
 				{
-					if (juegos.Count > 0)
+					if (juegos.Count == 1)
 					{
-						int analisis = 0;
-
-						foreach (var juego in juegos)
+						if (juegos[0].Media?.Videos != null)
 						{
-							if (juego.Analisis != null)
+							if (juegos[0].Media?.Videos.Count > 0)
 							{
-								if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
-								{
-									string temp = juego.Analisis.Cantidad;
-									temp = temp.Replace(",", null);
-									int analisisJuego = int.Parse(temp);
+								video = juegos[0].Media?.Videos[0].Enlace;
+							}
+						}
+					}
 
-									if (analisisJuego > analisis)
+					if (string.IsNullOrEmpty(fondo) == true)
+					{
+						if (juegos.Count > 0)
+						{
+							int analisis = 0;
+
+							foreach (var juego in juegos)
+							{
+								if (juego.Analisis != null)
+								{
+									if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
 									{
-										analisis = analisisJuego;
-										fondo = juego.Imagenes.Library_1920x620;
+										string temp = juego.Analisis.Cantidad;
+										temp = temp.Replace(",", null);
+										int analisisJuego = int.Parse(temp);
+
+										if (analisisJuego > analisis)
+										{
+											analisis = analisisJuego;
+											fondo = juego.Imagenes.Library_1920x620;
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-			}
 
-			noticiaAnterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
-			noticiaPosterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
+				noticiaAnterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id - 1);
+				noticiaPosterior ??= BaseDatos.Noticias.Buscar.UnaNoticia(id + 1);
+			}
 		}
 	}
 

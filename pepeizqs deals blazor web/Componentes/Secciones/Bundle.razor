@@ -281,11 +281,11 @@
 
 					foreach (var juego in juegosTier)
 					{
-						if (juego.Juego.Tipo == Juegos.JuegoTipo.DLC)
+						if (juego.Juego?.Tipo == Juegos.JuegoTipo.DLC)
 						{
-							if (string.IsNullOrEmpty(juego.Juego.Maestro) == false)
+							if (string.IsNullOrEmpty(juego.Juego?.Maestro) == false)
 							{
-								if (juego.Juego.Maestro != "no")
+								if (juego.Juego?.Maestro != "no")
 								{
 									foreach (var juego2 in juegosTier)
 									{
@@ -359,7 +359,7 @@
 
 								@foreach (var juego in juegosTier)
 								{
-									if (juego.Juego.PrecioMinimosHistoricos != null)
+									if (juego.Juego?.PrecioMinimosHistoricos != null)
 									{
 										foreach (var historico in juego.Juego.PrecioMinimosHistoricos)
 										{
@@ -384,7 +384,7 @@
 							{
 								bool mostrar = true;
 
-								if (juego.Juego.Tipo == Juegos.JuegoTipo.DLC)
+								if (juego.Juego?.Tipo == Juegos.JuegoTipo.DLC)
 								{
 									if (string.IsNullOrEmpty(juego.Juego.Maestro) == false)
 									{
@@ -460,19 +460,22 @@
 			usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
 			usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
 		}
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		await Task.Yield();
 
 		bundle ??= BaseDatos.Bundles.Buscar.UnBundle(bundleId);
+	}
 
-		if (bundle != null)
+	protected override async Task OnAfterRenderAsync(bool primerRender)
+	{
+		if (primerRender == true)
 		{
-			if (bundle.Juegos != null)
+			if (bundle != null)
 			{
-				if (bundle.Juegos.Count > 0)
+				if (tipo == Tipo.Bundle)
+				{
+					await JavaScript.InvokeVoidAsync("ChangeUrl", "/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/");
+				}
+
+				if (bundle?.Juegos?.Count > 0)
 				{
 					foreach (var juego in bundle.Juegos)
 					{
@@ -483,18 +486,9 @@
 						}
 					}
 				}
-			}
-		}
-	}
-
-	protected override async Task OnAfterRenderAsync(bool primerRender)
-	{
-		if (primerRender == true && tipo == Tipo.Bundle)
-		{
-			if (bundle != null)
-			{
-				await JavaScript.InvokeVoidAsync("ChangeUrl", "/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/");
-			}			
+			}	
+			
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 

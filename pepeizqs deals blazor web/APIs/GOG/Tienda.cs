@@ -147,12 +147,23 @@ namespace APIs.GOG
 			int limite = 100;
 			while (i < limite + 1)
 			{
-				string html = await Decompiladores.Estandar("https://catalog.gog.com/v1/catalog?limit=48&order=desc:trending&discounted=eq:true&productType=in:game,pack,dlc,extras&page=" + i.ToString() + "&countryCode=ES&locale=en-US&currencyCode=EUR");
+				string enlace2 = "https://catalog.gog.com/v1/catalog?limit=48&order=desc:trending&discounted=eq:true&productType=in:game,pack,dlc,extras&page=" + i.ToString() + "&countryCode=ES&locale=en-US&currencyCode=EUR";
+
+                string html = await Decompiladores.Estandar(enlace2);
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
-					GOGOfertas datos = JsonSerializer.Deserialize<GOGOfertas>(html);
-
+					GOGOfertas datos = null;
+					
+					try
+					{
+                        datos = JsonSerializer.Deserialize<GOGOfertas>(html);
+                    }
+					catch
+					{
+						BaseDatos.Errores.Insertar.Mensaje("GOG API", html, enlace2);
+                    }
+                    
 					if (datos != null)
 					{
 						limite = datos.Paginas;

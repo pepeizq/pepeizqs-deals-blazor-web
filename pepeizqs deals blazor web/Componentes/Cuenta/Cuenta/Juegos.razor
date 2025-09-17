@@ -241,12 +241,12 @@ else
 
 	}
 
-	protected override async Task OnParametersSetAsync()
+	protected override async Task OnInitializedAsync()
 	{
-		await Task.Yield();
-
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
+			await Task.Yield();
+
 			juegos = Herramientas.UsuarioJuegos.Cargar(usuarioId);
 
 			if (juegos != null)

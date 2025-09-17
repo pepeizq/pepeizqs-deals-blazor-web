@@ -693,200 +693,251 @@
 		}
 	}
 
-	protected override async Task OnParametersSetAsync()
+	protected override async Task OnAfterRenderAsync(bool primerRender)
 	{
-		await Task.Yield();
-
-		if (string.IsNullOrEmpty(usuarioId) == false)
+		if (primerRender == true)
 		{
-			deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
-			opcionesDeseados ??= BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
-
-			if (opcionesDeseados.WishlistPosition != null)
+			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
-				pestañaMostrar = (int)opcionesDeseados.WishlistPosition;
-			}
+				deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
+				opcionesDeseados ??= BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
 
-			if (deseadosGestor == null)
-			{
-				deseadosGestor = new List<JuegoDeseadoMostrar>();
-			}
-
-			#region Deseados Steam
-
-			if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
-			{
-				deseadosSteam ??= Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
-			}
-
-			if (deseadosSteam.Count > 0)
-			{
-				deseadosSteamJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(deseadosSteam);
-
-				if (deseadosSteamJuegos != null)
+				if (opcionesDeseados.WishlistPosition != null)
 				{
-					int i = 0;
-
-					foreach (var juego in deseadosSteamJuegos)
-					{
-						i += 1;
-
-						if (juego != null)
-						{
-							AñadirJuegoMostrar(juego, JuegoDRM.Steam, true);
-						}
-					}
+					pestañaMostrar = (int)opcionesDeseados.WishlistPosition;
 				}
-			}
 
-			#endregion
-
-			#region Deseados Web
-
-			if (string.IsNullOrEmpty(deseadosUsuario.Wishlist) == false)
-			{
-				deseadosWeb ??= JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosUsuario.Wishlist);
-			}
-
-			if (deseadosWeb != null)
-			{
-				if (deseadosWeb.Count > 0)
+				if (deseadosGestor == null)
 				{
-					deseadosWebJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(deseadosWeb);
+					deseadosGestor = new List<JuegoDeseadoMostrar>();
+				}
 
-					int i = 0;
+				#region Deseados Steam
 
-					foreach (var deseadoWeb in deseadosWebJuegos)
+				if (string.IsNullOrEmpty(deseadosUsuario.SteamWishlist) == false)
+				{
+					deseadosSteam ??= Herramientas.Listados.Generar(deseadosUsuario.SteamWishlist);
+				}
+
+				if (deseadosSteam.Count > 0)
+				{
+					deseadosSteamJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(deseadosSteam);
+
+					if (deseadosSteamJuegos != null)
 					{
-						i += 1;
+						int i = 0;
 
-						Juegos.JuegoDRM drmDeseado = JuegoDRM.NoEspecificado;
-
-						foreach (var deseado in deseadosWeb)
+						foreach (var juego in deseadosSteamJuegos)
 						{
-							if (deseado.IdBaseDatos == deseadoWeb.Id.ToString())
+							i += 1;
+
+							if (juego != null)
 							{
-								drmDeseado = deseado.DRM;
-								break;
+								AñadirJuegoMostrar(juego, JuegoDRM.Steam, true);
 							}
 						}
-
-						AñadirJuegoMostrar(deseadoWeb, drmDeseado, false);
 					}
 				}
-			}
 
-			#endregion
+				#endregion
 
-			#region Deseados GOG
+				#region Deseados Web
 
-			if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
-			{
-				deseadosGog ??= Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
-			}
-
-			if (deseadosGog.Count > 0)
-			{
-				deseadosGogJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegosGOG(deseadosGog);
-
-				if (deseadosGogJuegos != null)
+				if (string.IsNullOrEmpty(deseadosUsuario.Wishlist) == false)
 				{
-					int i = 0;
+					deseadosWeb ??= JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosUsuario.Wishlist);
+				}
 
-					foreach (var juego in deseadosGogJuegos)
+				if (deseadosWeb != null)
+				{
+					if (deseadosWeb.Count > 0)
 					{
-						i += 1;
+						deseadosWebJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(deseadosWeb);
 
-						if (juego != null)
+						int i = 0;
+
+						foreach (var deseadoWeb in deseadosWebJuegos)
 						{
-							AñadirJuegoMostrar(juego, JuegoDRM.GOG, true);
+							i += 1;
+
+							Juegos.JuegoDRM drmDeseado = JuegoDRM.NoEspecificado;
+
+							foreach (var deseado in deseadosWeb)
+							{
+								if (deseado.IdBaseDatos == deseadoWeb.Id.ToString())
+								{
+									drmDeseado = deseado.DRM;
+									break;
+								}
+							}
+
+							AñadirJuegoMostrar(deseadoWeb, drmDeseado, false);
 						}
 					}
 				}
-			}
 
-			#endregion
+				#endregion
 
-			#region Filtrado
+				#region Deseados GOG
 
-			if (opcionesDeseados.WishlistOption3 == null)
-			{
-				minimoDescuento = 1;
-			}
-			else
-			{
-				if (opcionesDeseados.WishlistOption3 == 0 || opcionesDeseados.WishlistOption3 == null)
+				if (string.IsNullOrEmpty(deseadosUsuario.GogWishlist) == false)
+				{
+					deseadosGog ??= Herramientas.Listados.Generar(deseadosUsuario.GogWishlist);
+				}
+
+				if (deseadosGog.Count > 0)
+				{
+					deseadosGogJuegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegosGOG(deseadosGog);
+
+					if (deseadosGogJuegos != null)
+					{
+						int i = 0;
+
+						foreach (var juego in deseadosGogJuegos)
+						{
+							i += 1;
+
+							if (juego != null)
+							{
+								AñadirJuegoMostrar(juego, JuegoDRM.GOG, true);
+							}
+						}
+					}
+				}
+
+				#endregion
+
+				#region Filtrado
+
+				if (opcionesDeseados.WishlistOption3 == null)
 				{
 					minimoDescuento = 1;
 				}
-				else if (opcionesDeseados.WishlistOption3 > 0)
+				else
 				{
-					minimoDescuento = opcionesDeseados.WishlistOption3;
+					if (opcionesDeseados.WishlistOption3 == 0 || opcionesDeseados.WishlistOption3 == null)
+					{
+						minimoDescuento = 1;
+					}
+					else if (opcionesDeseados.WishlistOption3 > 0)
+					{
+						minimoDescuento = opcionesDeseados.WishlistOption3;
+					}
 				}
-			}
 
-			if (opcionesDeseados.WishlistOption4 == null)
-			{
-				maximoPrecio = 90;
-			}
-			else
-			{
-				if (opcionesDeseados.WishlistOption4 == 0 || opcionesDeseados.WishlistOption4 == null)
+				if (opcionesDeseados.WishlistOption4 == null)
 				{
 					maximoPrecio = 90;
 				}
-				else if (opcionesDeseados.WishlistOption4 > 0)
+				else
 				{
-					maximoPrecio = opcionesDeseados.WishlistOption4;
-				}
-			}
-
-			#endregion
-
-			if (deseadosGestor?.Count > 0)
-			{
-				if (opcionesDeseados?.WishlistSort == null)
-				{
-					opcionesDeseados.WishlistSort = 3;
+					if (opcionesDeseados.WishlistOption4 == 0 || opcionesDeseados.WishlistOption4 == null)
+					{
+						maximoPrecio = 90;
+					}
+					else if (opcionesDeseados.WishlistOption4 > 0)
+					{
+						maximoPrecio = opcionesDeseados.WishlistOption4;
+					}
 				}
 
-				ElegirOrdenamiento();
-			}
+				#endregion
 
-			#region Bundles
-
-			bundlesActuales ??= BaseDatos.Bundles.Buscar.Actuales();
-
-			if (bundlesActuales.Count > 0)
-			{
-				foreach (var bundle in bundlesActuales)
+				if (deseadosGestor?.Count > 0)
 				{
-					foreach (var bundleJuego in bundle.Juegos)
+					if (opcionesDeseados?.WishlistSort == null)
+					{
+						opcionesDeseados.WishlistSort = 3;
+					}
+
+					ElegirOrdenamiento();
+				}
+
+				#region Bundles
+
+				bundlesActuales ??= BaseDatos.Bundles.Buscar.Actuales();
+
+				if (bundlesActuales.Count > 0)
+				{
+					foreach (var bundle in bundlesActuales)
+					{
+						foreach (var bundleJuego in bundle.Juegos)
+						{
+							foreach (var deseado in deseadosGestor)
+							{
+								if (bundleJuego.JuegoId == deseado.Id.ToString() && bundleJuego.DRM == deseado.DRM)
+								{
+									JuegoDeseadoMostrar nuevoDeseadoBundle = new JuegoDeseadoMostrar();
+									nuevoDeseadoBundle.Id = deseado.Id;
+									nuevoDeseadoBundle.Nombre = deseado.Nombre;
+									nuevoDeseadoBundle.IdBundle = bundle.Id;
+									nuevoDeseadoBundle.DRM = deseado.DRM;
+									nuevoDeseadoBundle.Imagen = deseado.Imagen;
+									nuevoDeseadoBundle.Importado = deseado.Importado;
+
+									if (deseadosBundles == null)
+									{
+										deseadosBundles = new List<JuegoDeseadoMostrar>();
+									}
+
+									bool añadir = true;
+
+									if (deseadosBundles.Count > 0)
+									{
+										foreach (var yaEnLista in deseadosBundles)
+										{
+											if (yaEnLista.Id == nuevoDeseadoBundle.Id && yaEnLista.DRM == nuevoDeseadoBundle.DRM && yaEnLista.IdBundle == nuevoDeseadoBundle.IdBundle)
+											{
+												añadir = false;
+												break;
+											}
+										}
+									}
+
+									if (añadir == true)
+									{
+										deseadosBundles.Add(nuevoDeseadoBundle);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				#endregion
+
+				#region Suscripciones
+
+				suscripcionesActuales ??= BaseDatos.Suscripciones.Buscar.Actuales();
+
+				if (suscripcionesActuales.Count > 0)
+				{
+					foreach (var juegoSuscripcion in suscripcionesActuales)
 					{
 						foreach (var deseado in deseadosGestor)
 						{
-							if (bundleJuego.JuegoId == deseado.Id.ToString() && bundleJuego.DRM == deseado.DRM)
+							if (juegoSuscripcion.JuegoId == deseado.Id && juegoSuscripcion.DRM == deseado.DRM)
 							{
-								JuegoDeseadoMostrar nuevoDeseadoBundle = new JuegoDeseadoMostrar();
-								nuevoDeseadoBundle.Id = deseado.Id;
-								nuevoDeseadoBundle.Nombre = deseado.Nombre;
-								nuevoDeseadoBundle.IdBundle = bundle.Id;
-								nuevoDeseadoBundle.DRM = deseado.DRM;
-								nuevoDeseadoBundle.Imagen = deseado.Imagen;
-								nuevoDeseadoBundle.Importado = deseado.Importado;
+								JuegoDeseadoMostrar nuevoDeseadoSuscripcion = new JuegoDeseadoMostrar();
+								nuevoDeseadoSuscripcion.Id = deseado.Id;
+								nuevoDeseadoSuscripcion.Nombre = deseado.Nombre;
+								nuevoDeseadoSuscripcion.IdSuscripcion = juegoSuscripcion.Id;
+								nuevoDeseadoSuscripcion.DRM = deseado.DRM;
+								nuevoDeseadoSuscripcion.Imagen = deseado.Imagen;
+								nuevoDeseadoSuscripcion.Importado = deseado.Importado;
 
-								if (deseadosBundles == null)
+								if (deseadosSuscripciones == null)
 								{
-									deseadosBundles = new List<JuegoDeseadoMostrar>();
+									deseadosSuscripciones = new List<JuegoDeseadoMostrar>();
 								}
 
 								bool añadir = true;
 
-								if (deseadosBundles.Count > 0)
+								if (deseadosSuscripciones.Count > 0)
 								{
-									foreach (var yaEnLista in deseadosBundles)
+									foreach (var yaEnLista in deseadosSuscripciones)
 									{
-										if (yaEnLista.Id == nuevoDeseadoBundle.Id && yaEnLista.DRM == nuevoDeseadoBundle.DRM && yaEnLista.IdBundle == nuevoDeseadoBundle.IdBundle)
+										if (yaEnLista.Id == nuevoDeseadoSuscripcion.Id && yaEnLista.DRM == nuevoDeseadoSuscripcion.DRM && yaEnLista.IdSuscripcion == nuevoDeseadoSuscripcion.IdSuscripcion)
 										{
 											añadir = false;
 											break;
@@ -896,71 +947,23 @@
 
 								if (añadir == true)
 								{
-									deseadosBundles.Add(nuevoDeseadoBundle);
+									deseadosSuscripciones.Add(nuevoDeseadoSuscripcion);
 								}
 							}
 						}
 					}
 				}
+
+				#endregion
+				cargado = true;
 			}
 
-			#endregion
+			deseadosSteam.Clear();
+			deseadosWeb.Clear();
+			deseadosGog.Clear();
 
-			#region Suscripciones
-
-			suscripcionesActuales ??= BaseDatos.Suscripciones.Buscar.Actuales();
-
-			if (suscripcionesActuales.Count > 0)
-			{
-				foreach (var juegoSuscripcion in suscripcionesActuales)
-				{
-					foreach (var deseado in deseadosGestor)
-					{
-						if (juegoSuscripcion.JuegoId == deseado.Id && juegoSuscripcion.DRM == deseado.DRM)
-						{
-							JuegoDeseadoMostrar nuevoDeseadoSuscripcion = new JuegoDeseadoMostrar();
-							nuevoDeseadoSuscripcion.Id = deseado.Id;
-							nuevoDeseadoSuscripcion.Nombre = deseado.Nombre;
-							nuevoDeseadoSuscripcion.IdSuscripcion = juegoSuscripcion.Id;
-							nuevoDeseadoSuscripcion.DRM = deseado.DRM;
-							nuevoDeseadoSuscripcion.Imagen = deseado.Imagen;
-							nuevoDeseadoSuscripcion.Importado = deseado.Importado;
-
-							if (deseadosSuscripciones == null)
-							{
-								deseadosSuscripciones = new List<JuegoDeseadoMostrar>();
-							}
-
-							bool añadir = true;
-
-							if (deseadosSuscripciones.Count > 0)
-							{
-								foreach (var yaEnLista in deseadosSuscripciones)
-								{
-									if (yaEnLista.Id == nuevoDeseadoSuscripcion.Id && yaEnLista.DRM == nuevoDeseadoSuscripcion.DRM && yaEnLista.IdSuscripcion == nuevoDeseadoSuscripcion.IdSuscripcion)
-									{
-										añadir = false;
-										break;
-									}
-								}
-							}
-
-							if (añadir == true)
-							{
-								deseadosSuscripciones.Add(nuevoDeseadoSuscripcion);
-							}
-						}
-					}
-				}
-			}
-
-			#endregion
-			cargado = true;
+			await InvokeAsync(StateHasChanged);
 		}
-
-		deseadosSteam.Clear();
-		deseadosWeb.Clear();
-		deseadosGog.Clear();
 	}
 
 	private string CambiarEstilo(int pestañaClickeada)

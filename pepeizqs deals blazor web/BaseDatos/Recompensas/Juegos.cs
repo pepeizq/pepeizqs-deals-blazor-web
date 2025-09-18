@@ -184,5 +184,42 @@ namespace BaseDatos.Recompensas
 				}
 			}				
 		}
-	}
+
+        public static List<RecompensaJuego> LeerJuegosUsuario(string usuarioId, SqlConnection conexion = null)
+		{
+            List<RecompensaJuego> juegos = new List<RecompensaJuego>();
+
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            using (conexion)
+            {
+                string busqueda = "SELECT * FROM recompensasJuegos WHERE usuarioId=@usuarioId ORDER BY juegoNombre";
+
+                using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+                {
+                    comando.Parameters.AddWithValue("@usuarioId", usuarioId);
+
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            juegos.Add(Cargar(lector));
+                        }
+                    }
+                }
+            }
+
+            return juegos;
+        }
+    }
 }

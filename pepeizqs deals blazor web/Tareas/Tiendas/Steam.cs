@@ -55,7 +55,7 @@ namespace Tareas.Tiendas
 						{
 							if (DateTime.Now.Minute < 30)
 							{
-								siguienteComprobacion = TimeSpan.FromMinutes(2);
+								siguienteComprobacion = TimeSpan.FromSeconds(10);
 							}
 							else
 							{

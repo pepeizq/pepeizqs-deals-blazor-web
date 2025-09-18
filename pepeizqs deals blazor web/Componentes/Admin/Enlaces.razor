@@ -9,7 +9,19 @@
         </div>
 
         <div>
-            <a class="boton-pequeño" href="@dealsCloudflare" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare</a>
+            @{
+                string enlaceBots = dealsCloudflare + "ai/bots";
+            }
+
+            <a class="boton-pequeño" href="@enlaceBots" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Bots)</a>
+        </div>
+
+        <div>
+            @{
+                string enlaceVisitas = dealsCloudflare + "analytics/web/overview/visits?excludeBots=Yes&time-window=10080";
+            }
+
+            <a class="boton-pequeño" href="@enlaceVisitas" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Visitas)</a>
         </div>
 
         <div>

@@ -846,9 +846,10 @@ select {
 }
 
 .subcabecera {
-    width: 100vw;
+    width: calc(100vw - 10px);
     position: relative;
-    margin-left: -50vw;
+    margin-left: calc((-100vw + 5px) / 2);
+    margin-right: calc((-100vw + 5px) / 2);
     left: 50%;
     background-color: var(--fondoSubcabecera);
 }

@@ -281,7 +281,7 @@
 								else
 								{
 									<div style="display: flex; flex-direction: column; gap: 10px;">
-										<div style="min-width: 250px;">
+										<div style="min-width: 250px; text-align: center;">
 											@claveJuegoSeleccionado
 										</div>
 
@@ -454,7 +454,7 @@
 		mostrarJuego = false;
 	}
 
-	private void ComprarJuego(MouseEventArgs e, RecompensaJuego juego)
+	private async void ComprarJuego(MouseEventArgs e, RecompensaJuego juego)
 	{
 		BaseDatos.Recompensas.Juegos.Actualizar(recompensaMostrar.Id, usuario.Id);
 		BaseDatos.Recompensas.Historial.Insertar(usuario.Id, -recompensaMostrar.Coins, "Buy " + recompensaMostrar.JuegoNombre, DateTime.Now);
@@ -486,7 +486,7 @@
 
 		try
 		{
-			UserManager.UpdateAsync(usuario);
+			await UserManager.UpdateAsync(usuario);
 		}
 		catch { }
 

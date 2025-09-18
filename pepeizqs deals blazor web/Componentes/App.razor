@@ -129,7 +129,10 @@
         };
     </script>
 
-    <script async src='https://visitas.pepeizq.workers.dev/script.js' data-cf-beacon='{"send":{"to": "https://visitas.pepeizq.workers.dev/"},"token": "b8f0af1685ca4f0484bb45dba08198cb"}'></script>
+    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false)
+    {
+        <script async src='https://visitas.pepeizq.workers.dev/script.js' data-cf-beacon='{"send":{"to": "https://visitas.pepeizq.workers.dev/"},"token": "b8f0af1685ca4f0484bb45dba08198cb"}'></script>
+    }
 </body>
 
 </html>
@@ -146,6 +149,7 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private bool usuarioAdmin = false;
 
     private string codigoFuente = null;
     private string cloudflareApi = null;
@@ -165,6 +169,7 @@
             idioma = HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+            usuarioAdmin = BaseDatos.Usuarios.Buscar.RolDios(usuarioId);
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)

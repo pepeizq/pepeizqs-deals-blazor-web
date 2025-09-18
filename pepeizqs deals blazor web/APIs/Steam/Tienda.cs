@@ -78,7 +78,7 @@ namespace APIs.Steam
 			int arranque = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional", conexion);
 			int tope = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional2", conexion);
 
-			if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 5)
+			if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 10)
 			{
 				arranque = 0;
 				rapido = true;

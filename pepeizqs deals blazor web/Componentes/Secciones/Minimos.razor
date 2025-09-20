@@ -1217,11 +1217,6 @@ else
 				minimoReseñas = 0;
 			}
 		}
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
-		await Task.Yield();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -1277,7 +1272,12 @@ else
 		if (primerRender == true)
 		{
 			await CambiarEnlace();
+
+
+
+			
 		}
+
 	}
 
 	#region Ordenar

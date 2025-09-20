@@ -3956,6 +3956,206 @@
 
         juego ??= BaseDatos.Juegos.Buscar.UnJuego(juegoId);
 
+        if (juego != null)
+        {
+            if (juego.Tipo == JuegoTipo.Game)
+            {
+                drmsGeforceNOW ??= global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
+                drmsBoosteroid ??= global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
+            }
+
+            #region Avisos 
+
+            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+            {
+                avisos.Clear();
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
+                    {
+                        if (juego.FreeToPlay.ToLower() == "true")
+                        {
+                            avisos.Add(new JuegoAviso
+                            {
+                                Id = "f2p",
+                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
+                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
+                                Color = "fondoBotonPequeño",
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                EnlaceNuevaPestaña = true
+                            });
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+                {
+                    if (juego.MayorEdad.ToLower() == "true")
+                    {
+                        string cadenaSexo = null;
+
+                        if (juego.Tipo == JuegoTipo.Game)
+                        {
+                            cadenaSexo = "String4";
+                        }
+                        else if (juego.Tipo == JuegoTipo.DLC)
+                        {
+                            cadenaSexo = "String5";
+                        }
+
+                        string contenidoSexo = Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages");
+
+                        if (string.IsNullOrEmpty(usuarioId) == true)
+                        {
+                            contenidoSexo = string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages"), Herramientas.Idiomas.BuscarTexto(idioma, "String6", "GameMessages"));
+                        }
+
+                        avisos.Add(new JuegoAviso
+                        {
+                            Id = "sexo",
+                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "GameMessages"),
+                            Contenido = contenidoSexo,
+                            Color = "fondoAlerta"
+                        });      
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.InteligenciaArtificial == true)
+                    {
+                        avisos.Add(new JuegoAviso
+                        {
+                            Id = "ia",
+                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "GameMessages"),
+                            Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "GameMessages"),
+                            Color = "fondoBotonPequeño",
+                            Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                            EnlaceNuevaPestaña = true
+                        });
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Caracteristicas != null)
+                    {
+                        if (juego.Caracteristicas.AccesoAnticipado == true)
+                        {
+                            bool alarmaNoActualizacion = false;
+
+                            if (juego.UltimaActualizacionSteam != null)
+                            {
+                                if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-180))
+                                {
+                                    alarmaNoActualizacion = true;
+                                }
+                            }
+
+                            if (alarmaNoActualizacion == false)
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "accesoanticipado",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String11", "GameMessages"),
+                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String12", "GameMessages"),
+                                    Color = "fondoMinimo"
+                                });
+                            }
+                            else
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "abandonado",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "GameMessages"),
+                                    Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String10", "GameMessages"), Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam, idioma)),
+                                    Color = "fondoPeligro"
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Categorias != null)
+                    {
+                        foreach (var categoria in juego.Categorias)
+                        {
+                            if (categoria == "54")
+                            {
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "rv",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String13", "GameMessages"),
+                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String14", "GameMessages"),
+                                    Color = "fondoMinimo"
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.DLC)
+                {
+                    if (string.IsNullOrEmpty(juego.Maestro) == false)
+                    {
+                        if (juego.Maestro != "no")
+                        {
+                            Juegos.Juego juegoMaestro = global::BaseDatos.Juegos.Buscar.UnJuego(juego.Maestro);
+
+                            if (juegoMaestro != null)
+                            {
+                                string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
+
+                                avisos.Add(new JuegoAviso
+                                {
+                                    Id = "dlc",
+                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String15", "GameMessages"),
+                                    Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "GameMessages"), juegoMaestro.Nombre),
+                                    Color = "fondoDlc",
+                                    Enlace = enlaceMaestro
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (juego.Tipo == JuegoTipo.Music)
+                {
+                    avisos.Add(new JuegoAviso
+                    {
+                        Id = "musica",
+                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String17", "GameMessages"),
+                        Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "GameMessages"),
+                        Color = "fondoBandaSonora"
+                    });
+                }
+
+                if (juego.Tipo == JuegoTipo.Game)
+                {
+                    if (juego.Caracteristicas != null)
+                    {
+                        if (juego.Caracteristicas.DemoIdSteam > 0)
+                        {
+                            avisos.Add(new JuegoAviso
+                            {
+                                Id = "demo",
+                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "GameMessages"),
+                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "GameMessages"),
+                                Color = "fondoBotonPequeño",
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                EnlaceNuevaPestaña = true
+                            });
+                        }
+                    }
+                }
+            }
+
+            #endregion
+        }
+
         mediaMostrar = null;
         mediaMostrarPosicion = 0;
     }
@@ -3981,12 +4181,6 @@
             if (juego != null)
             {
                 dlcs ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
-
-                if (juego.Tipo == JuegoTipo.Game)
-                {
-                    drmsGeforceNOW ??= global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
-                    drmsBoosteroid ??= global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
-                }
 
                 if (juego.IdSteam > 0)
                 {
@@ -4226,197 +4420,6 @@
                         }
                     }
                 }
-
-                #region Avisos 
-
-                if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
-                {
-                    avisos.Clear();
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
-                        {
-                            if (juego.FreeToPlay.ToLower() == "true")
-                            {
-                                avisos.Add(new JuegoAviso
-                                {
-                                    Id = "f2p",
-                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
-                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
-                                    Color = "fondoBotonPequeño",
-                                    Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
-                                    EnlaceNuevaPestaña = true
-                                });
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                    {
-                        if (juego.MayorEdad.ToLower() == "true")
-                        {
-                            string cadenaSexo = null;
-
-                            if (juego.Tipo == JuegoTipo.Game)
-                            {
-                                cadenaSexo = "String4";
-                            }
-                            else if (juego.Tipo == JuegoTipo.DLC)
-                            {
-                                cadenaSexo = "String5";
-                            }
-
-                            string contenidoSexo = Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages");
-
-                            if (string.IsNullOrEmpty(usuarioId) == true)
-                            {
-                                contenidoSexo = string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages"), Herramientas.Idiomas.BuscarTexto(idioma, "String6", "GameMessages"));
-                            }
-
-                            avisos.Add(new JuegoAviso
-                            {
-                                Id = "sexo",
-                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "GameMessages"),
-                                Contenido = contenidoSexo,
-                                Color = "fondoAlerta"
-                            });      
-                        }
-                    }
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        if (juego.InteligenciaArtificial == true)
-                        {
-                            avisos.Add(new JuegoAviso
-                            {
-                                Id = "ia",
-                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "GameMessages"),
-                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "GameMessages"),
-                                Color = "fondoBotonPequeño",
-                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
-                                EnlaceNuevaPestaña = true
-                            });
-                        }
-                    }
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        if (juego.Caracteristicas != null)
-                        {
-                            if (juego.Caracteristicas.AccesoAnticipado == true)
-                            {
-                                bool alarmaNoActualizacion = false;
-
-                                if (juego.UltimaActualizacionSteam != null)
-                                {
-                                    if (juego.UltimaActualizacionSteam < DateTime.Now.AddDays(-180))
-                                    {
-                                        alarmaNoActualizacion = true;
-                                    }
-                                }
-
-                                if (alarmaNoActualizacion == false)
-                                {
-                                    avisos.Add(new JuegoAviso
-                                    {
-                                        Id = "accesoanticipado",
-                                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String11", "GameMessages"),
-                                        Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String12", "GameMessages"),
-                                        Color = "fondoMinimo"
-                                    });
-                                }
-                                else
-                                {
-                                    avisos.Add(new JuegoAviso
-                                    {
-                                        Id = "abandonado",
-                                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String9", "GameMessages"),
-                                        Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String10", "GameMessages"), Herramientas.Calculadora.DiferenciaTiempo(juego.UltimaActualizacionSteam, idioma)),
-                                        Color = "fondoPeligro"
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        if (juego.Categorias != null)
-                        {
-                            foreach (var categoria in juego.Categorias)
-                            {
-                                if (categoria == "54")
-                                {
-                                    avisos.Add(new JuegoAviso
-                                    {
-                                        Id = "rv",
-                                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String13", "GameMessages"),
-                                        Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String14", "GameMessages"),
-                                        Color = "fondoMinimo"
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    if (juego.Tipo == JuegoTipo.DLC)
-                    {
-                        if (string.IsNullOrEmpty(juego.Maestro) == false)
-                        {
-                            if (juego.Maestro != "no")
-                            {
-                                Juegos.Juego juegoMaestro = global::BaseDatos.Juegos.Buscar.UnJuego(juego.Maestro);
-
-                                if (juegoMaestro != null)
-                                {
-                                    string enlaceMaestro = "/game/" + juegoMaestro.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegoMaestro.Nombre) + "/";
-
-                                    avisos.Add(new JuegoAviso
-                                    {
-                                        Id = "dlc",
-                                        Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String15", "GameMessages"),
-                                        Contenido = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String16", "GameMessages"), juegoMaestro.Nombre),
-                                        Color = "fondoDlc",
-                                        Enlace = enlaceMaestro
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    if (juego.Tipo == JuegoTipo.Music)
-                    {
-                        avisos.Add(new JuegoAviso
-                        {
-                            Id = "musica",
-                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String17", "GameMessages"),
-                            Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String18", "GameMessages"),
-                            Color = "fondoBandaSonora"
-                        });
-                    }
-
-                    if (juego.Tipo == JuegoTipo.Game)
-                    {
-                        if (juego.Caracteristicas != null)
-                        {
-                            if (juego.Caracteristicas.DemoIdSteam > 0)
-                            {
-                                avisos.Add(new JuegoAviso
-                                {
-                                    Id = "demo",
-                                    Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "GameMessages"),
-                                    Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "GameMessages"),
-                                    Color = "fondoBotonPequeño",
-                                    Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
-                                    EnlaceNuevaPestaña = true
-                                });
-                            }
-                        }
-                    }
-                }
-
-                #endregion
 
                 #region Curators
 

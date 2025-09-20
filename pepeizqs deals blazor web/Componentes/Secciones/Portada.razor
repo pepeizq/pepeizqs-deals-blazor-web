@@ -463,27 +463,27 @@
 			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Nuevos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Nuevos))">
-					<h1 style="font-size: 18px; margin: 0px;">
+					<div style="font-size: 18px; margin: 0px;">
 						@CambiarTexto(MinimosTipo.Nuevos, Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Index"))
-					</h1>
+					</div>
 				</button>
 
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Populares) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Populares))">
-					<h1 style="font-size: 18px; margin: 0px;">
+					<div style="font-size: 18px; margin: 0px;">
 						@CambiarTexto(MinimosTipo.Populares, Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Index"))
-					</h1>
+					</div>
 				</button>
 
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Lanzamientos) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Lanzamientos))">
-					<h1 style="font-size: 18px; margin: 0px;">
+					<div style="font-size: 18px; margin: 0px;">
 						@CambiarTexto(MinimosTipo.Lanzamientos, Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Index"))
-					</h1>
+					</div>
 				</button>
 
 				<button class="boton-pequeño" style="@CambiarEstilo(MinimosTipo.Proximamente) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, MinimosTipo.Proximamente))">
-					<h1 style="font-size: 18px; margin: 0px;">
+					<div style="font-size: 18px; margin: 0px;">
 						@CambiarTexto(MinimosTipo.Proximamente, Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Index"))
-					</h1>
+					</div>
 				</button>
 
 				<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
@@ -498,9 +498,9 @@
 			}
 			else
 			{
-				<h1 style="font-size: 18px; margin: 0px;">
+				<div style="font-size: 18px; margin: 0px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Index")
-				</h1>
+				</div>
 			}
 		</div>
 	</div>

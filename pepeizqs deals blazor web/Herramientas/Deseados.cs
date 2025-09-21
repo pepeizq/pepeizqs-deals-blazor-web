@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using Juegos;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using pepeizqs_deals_web.Data;
 using System.Text.Json;

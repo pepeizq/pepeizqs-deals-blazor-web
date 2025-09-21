@@ -178,6 +178,12 @@
 
     protected override void OnInitialized()
     {
+        if (Contexto == null || Contexto.HttpContext == null || Contexto.HttpContext.User == null || Contexto.HttpContext.User.Identity == null || Contexto.HttpContext.User.Identity.IsAuthenticated == false)
+        {
+            NavManager.NavigateTo("/");
+            return;
+		}
+
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
         usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
 

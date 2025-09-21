@@ -193,7 +193,11 @@
 						if (usuarioAdmin == true)
 						{
 							<div style="margin-top: 20px; text-align: center;">
-								
+								<button @onclick="(e => CopiarAlClipboard(e, bundle))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px;">
+									<div style="display: flex; flex-direction: column; gap: 10px; text-align: center;">
+										BBCode
+									</div>
+								</button>
 							</div>
 						}
 					}
@@ -544,6 +548,15 @@
 		}
 
 		await JavaScript.InvokeVoidAsync("open", enlace, comando);
+	}
+
+	#endregion
+
+	#region Portapapeles
+
+	private async Task CopiarAlClipboard(MouseEventArgs e, Bundles2.Bundle bundle)
+	{
+		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", Herramientas.BBCode.Bundle(idioma, bundle));
 	}
 
 	#endregion

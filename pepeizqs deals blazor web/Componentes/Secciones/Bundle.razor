@@ -109,23 +109,101 @@
 			<meta name="robots" content="index, follow" />
 			<meta name="keywords" content="@keywords" />
 
+			@{
+				#nullable disable
+
+				string nombreJson = bundle.NombreBundle.Replace(Strings.ChrW(34).ToString(), null) + " " + bundle.NombreTienda.Replace(Strings.ChrW(34).ToString(), null);
+				string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+				string fechaJson = bundle.FechaEmpieza.ToString("yyyy-MM-dd");
+				string estadoJson = "https://schema.org/InStock"; 
+
+				if (DateTime.Now > bundle.FechaTermina)
+				{
+					estadoJson = "https://schema.org/Discontinued";
+				}
+
+				bundle.Tiers.Sort(delegate (Bundles2.BundleTier t1, Bundles2.BundleTier t2)
+				{
+					return t1.Posicion.CompareTo(t2.Posicion);
+				});
+
+				string precioBajoJson = bundle.Tiers.First().Precio.ToString();
+				string precioAltoJson = bundle.Tiers.Last().Precio.ToString();
+				int cantidadTiersJson = 0;
+
+				if (bundle.Tiers != null)
+				{
+					cantidadTiersJson = bundle.Tiers.Count;
+				}
+
+				decimal reseñasMediaJson = 1;
+				int reseñasCantidadJson = 10;
+
+				if (bundle.Juegos?.Count > 0)
+				{
+					foreach (var juego in bundle.Juegos)
+					{
+						if (juego.Juego == null)
+						{
+							juego.Juego = BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
+						}
+
+						if (juego.Juego != null)
+						{
+							reseñasMediaJson = (reseñasMediaJson + decimal.Parse(juego.Juego.Analisis.Porcentaje) / 20) / 2;
+
+							if (reseñasMediaJson < 1)
+							{
+								reseñasMediaJson = 1;
+							}
+
+							reseñasCantidadJson = reseñasCantidadJson + int.Parse(juego.Juego.Analisis.Cantidad.Replace(",", null));
+
+							if (reseñasCantidadJson < 10)
+							{
+								reseñasCantidadJson = 10;
+							}
+						}
+					}
+				}
+			}
+
 			<script type="application/ld+json">
-            @{
-                string seoJson = "{" + Environment.NewLine +
-                    Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
-                    Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "SoftwareApplication" + Strings.ChrW(34) + "," + Environment.NewLine +
-                    Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.NombreBundle + Strings.ChrW(34) + "," + Environment.NewLine +
-                    Strings.ChrW(34) + "operatingSystem" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "WINDOWS" + Strings.ChrW(34) + "," + Environment.NewLine +
-                    Strings.ChrW(34) + "applicationCategory" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "GameApplication" + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "image" + Strings.ChrW(34) + ": {" + Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ImageObject" + Strings.ChrW(34) + "," + Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.ImagenBundle + Strings.ChrW(34) + "," + Strings.ChrW(34) + "contentUrl" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + bundle.NombreBundle + Strings.ChrW(34) + "}";
-
-                seoJson = seoJson + "}";
-            }
-
-            @((MarkupString)seoJson)
-        </script>
+			{
+				"@@context": "https://schema.org/",
+				"@@type": "Product",
+				"name": "@nombreJson",
+				"description": "@descripcionJson",
+				"url": "@enlace",
+				"sku": "@bundle.Id.ToString()",
+				"image": {
+					"@@type": "ImageObject",
+					"url": "@imagen",
+					"contentUrl": "@imagen",
+					"name": "@nombreJson",
+					"caption": "@nombreJson"
+				},
+				"productionDate": "@fechaJson",
+				"offers": {
+					"@@type": "AggregateOffer",
+					"availability": "@estadoJson",
+					"priceCurrency": "EUR",
+					"price": @precioBajoJson,
+					"url": "@enlace",
+					"offerCount": @cantidadTiersJson,
+					"lowPrice": @precioBajoJson,
+					"highPrice": @precioAltoJson
+				},
+				"aggregateRating": {
+					"@@type": "AggregateRating",
+					"ratingValue": @reseñasMediaJson.ToString(),
+					"ratingCount": @reseñasCantidadJson
+				}
+			}
+			</script>
 
 			<link rel="canonical" href="@enlace" />
+			<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
 		</HeadContent>
 	}
 }

@@ -247,7 +247,7 @@ namespace BaseDatos.Juegos
 				try
 				{
 					comando.ExecuteNonQuery();
-				}
+                }
 				catch (Exception ex)
 				{
 					Errores.Insertar.Mensaje("Actualizar Juego " + id, ex);
@@ -782,7 +782,7 @@ namespace BaseDatos.Juegos
 						{
 							comando.Parameters.AddWithValue("@analisis", JsonSerializer.Serialize(nuevoJuego.Analisis));
 						}
-
+						
 						try
 						{
 							comando.ExecuteNonQuery();

@@ -204,27 +204,6 @@
                     }
                 }
             }
-            
-            string desarrolladorJson = "not detected";
-
-            if (juego.Caracteristicas != null)
-            {
-                if (juego.Caracteristicas.Desarrolladores2 != null)
-                {
-                    if (juego.Caracteristicas.Desarrolladores2.Count > 0)
-                    {
-                        if (string.IsNullOrEmpty(juego.Caracteristicas.Desarrolladores2[0].Nombre) == false)
-                        {
-                            desarrolladorJson = juego.Caracteristicas.Desarrolladores2[0].Nombre;
-                        }
-                    }
-                }
-            } 
-
-            if (desarrolladorJson.Length > 96)
-            {
-                desarrolladorJson = desarrolladorJson.Substring(0, 96) + " ...";
-            }
 
             if (preciosJson?.Count > 0 && string.IsNullOrEmpty(imagen) == false && string.IsNullOrEmpty(fechaJson) == false && estrellasJson > 0 && string.IsNullOrEmpty(cantidadJson) == false)
             {
@@ -322,6 +301,7 @@
         }
 
         <link rel="canonical" href="@enlace" />
+        <link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
     </HeadContent>
 }
 

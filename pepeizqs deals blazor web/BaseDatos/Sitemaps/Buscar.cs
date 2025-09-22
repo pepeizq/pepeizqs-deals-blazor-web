@@ -484,7 +484,7 @@ namespace BaseDatos.Sitemaps
 
 								string texto = "<url>" + Environment.NewLine +
 									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/</loc>" + Environment.NewLine +
-									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "es" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/" + Strings.ChrW(34) + " />" + Environment.NewLine +
+									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "es" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/?Language=es" + Strings.ChrW(34) + " />" + Environment.NewLine +
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
 									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +

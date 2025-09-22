@@ -186,6 +186,11 @@ namespace Herramientas
                                         texto = texto + " +" + juego.DLCs?.Count.ToString() + " DLCs";
                                     }
 
+                                    if (juego.Juego.Bundles.Count == 1)
+                                    {
+                                        texto = texto + " • [b]" + Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Bundle") + "[/b]";
+                                    }
+
                                     texto = texto + Environment.NewLine;
                                 }
                             }

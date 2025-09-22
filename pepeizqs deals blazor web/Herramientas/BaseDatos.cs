@@ -13,7 +13,7 @@ namespace Herramientas
 		{
 			WebApplicationBuilder builder = WebApplication.CreateBuilder();
 			string conexionTexto = builder.Configuration.GetConnectionString(cadenaConexion);
-			SqlConnection conexion = new SqlConnection(conexionTexto);
+            SqlConnection conexion = new SqlConnection(conexionTexto);
 			
             ConnectionState estado = conexion.State;
             

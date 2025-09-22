@@ -91,6 +91,7 @@
 		<meta name="keywords" content="@keywords" />
 
 		<link rel="canonical" href="@enlace" />
+		<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
 	</HeadContent>
 }
 
@@ -1045,7 +1046,7 @@ else
 							@Bundles2.BundlesCargar.DevolverBundle(bundle).NombreTienda
 						</div>
 
-									@if (id1 > 0 && juego1 != null)
+						@if (id1 > 0 && juego1 != null)
 						{
 							<div style="width: 33%; text-align: center;">
 								@{
@@ -2057,10 +2058,10 @@ else
 	public int id3 = 0;
 	public int id4 = 0;
 
-	public Juegos.Juego juego1 = null;
-	public Juegos.Juego juego2 = null;
-	public Juegos.Juego juego3 = null;
-	public Juegos.Juego juego4 = null;
+	[PersistentState] public Juegos.Juego juego1 { get; set; }
+	[PersistentState] public Juegos.Juego juego2 { get; set; }
+	[PersistentState] public Juegos.Juego juego3 { get; set; }
+	[PersistentState] public Juegos.Juego juego4 { get; set; }
 
 	public List<Juegos.JuegoDRM> preciosHistoricos = new List<Juegos.JuegoDRM>();
 	public List<Juegos.JuegoDRM> preciosActuales = new List<Juegos.JuegoDRM>();
@@ -2155,7 +2156,7 @@ else
 
 			if (id1 > 0)
 			{
-				juego1 = BaseDatos.Juegos.Buscar.UnJuego(id1);
+				juego1 ??= BaseDatos.Juegos.Buscar.UnJuego(id1);
 
 				ActualizarCantidadJugadores(juego1);
 				ActualizarPreciosHistoricos(juego1);
@@ -2170,7 +2171,7 @@ else
 
 			if (id2 > 0)
 			{
-				juego2 = BaseDatos.Juegos.Buscar.UnJuego(id2);
+				juego2 ??= BaseDatos.Juegos.Buscar.UnJuego(id2);
 
 				ActualizarCantidadJugadores(juego2);
 				ActualizarPreciosHistoricos(juego2);
@@ -2185,7 +2186,7 @@ else
 
 			if (id3 > 0)
 			{
-				juego3 = BaseDatos.Juegos.Buscar.UnJuego(id3);
+				juego3 ??= BaseDatos.Juegos.Buscar.UnJuego(id3);
 
 				ActualizarCantidadJugadores(juego3);
 				ActualizarPreciosHistoricos(juego3);
@@ -2200,7 +2201,7 @@ else
 
 			if (id4 > 0)
 			{
-				juego4 = BaseDatos.Juegos.Buscar.UnJuego(id4);
+				juego4 ??= BaseDatos.Juegos.Buscar.UnJuego(id4);
 
 				ActualizarCantidadJugadores(juego4);
 				ActualizarPreciosHistoricos(juego4);

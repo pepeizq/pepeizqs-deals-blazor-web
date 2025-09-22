@@ -24,8 +24,19 @@
 		<meta name="keywords" content="deals, games, free, offers, bundles" />
 
 		<link rel="canonical" href="@enlace" />
+		<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
 	</HeadContent>
 }
+
+<style>
+	.caja-rss-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 40px;
+		margin: 40px 0px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
 
 <div class="subcabecera">
 	<div class="cuerpo-ancho sub-subcabecera">
@@ -41,7 +52,7 @@
 	</div>
 </div>
 
-<div style="display: flex; flex-direction: column; gap: 20px; margin: 40px auto;">
+<div class="caja-rss-contenido" style="display: flex; flex-direction: column; gap: 20px;">
 	<div>
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "RSS")
 	</div>
@@ -69,7 +80,7 @@
 	</div>
 </div>
 
-<div style="display: flex; flex-direction: column; gap: 20px; margin: 40px auto;">
+<div class="caja-rss-contenido" style="display: flex; flex-direction: column; gap: 20px;">
 	<div>
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "RSS")
 	</div>

@@ -46,18 +46,24 @@
         text-decoration: none;
         background-color: transparent;
         border: 0;
-        color: var(--colorTexto);
+        color: var(--colorTextoVisitado);
     }
 
-    .boton-superior:hover {
-        transform: scale(1.01);
-        color: var(--colorEnlace);
-    }
+        .boton-superior:hover {
+            transform: scale(1.01);
+            color: var(--colorEnlace);
+            
+        }
 
-    @@media (max-width: 900px) {
+    @@media (max-width: 1100px) {
         .boton-superior {
             float: none;
         }
+
+            .boton-superior:hover {
+                transform: scale(1.005);
+                background-color: var(--fondoBotonHover);
+            }
     }
 
     .botones-superiores {
@@ -261,13 +267,18 @@
                         </div>
 
                         <div class="menu-dropdown-contenido" style="right: -10px;">
-                            <a href="/account" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
-                            </a>
+                            @{
+							    string enlaceCuenta = "/account";
+                                string enlaceDeslogear = "/account/logout";
+                            }
 
-                            <a href="/account/logout" class="texto-cabecera menu-dropdown-item" style="text-align: right; border: 0; width: 100%; font-size: 14px;">
+                            <button @onclick="(e => AbrirEnlace(e, enlaceCuenta, false))" class="texto-cabecera boton-superior" style="font-size: 15px; width: 100%; text-align: right;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
+                            </button>
+
+                            <button @onclick="(e => AbrirEnlace(e, enlaceDeslogear, false))" class="texto-cabecera boton-superior" style="font-size: 15px; width: 100%; text-align: right;">
                                 @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -290,72 +301,95 @@
         </AuthorizeView>
     </div>
 
-    <div class="botones-superiores2" style="cursor: pointer;">
-        <div class="menu-dropdown">
+    <div class="botones-superiores2" style="cursor: pointer;" @onclick="(e => MostrarPanel(e))">
+        <div>
             <div style="width: 18px; height: 18px;">
-                <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
-                </svg>
-            </div>
-
-            <div class="menu-dropdown-contenido" style="left: -200px;">
-                @if (string.IsNullOrEmpty(usuarioId) == false)
+                @if (mostrarPanel == false)
                 {
-                    <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                    </a>
-                }   
-
-                <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
-                </a>
-
-                <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
-                </a>
-
-                <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
-                </a>
-
-                <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
-                </a>
-
-                <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" style="font-size: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")
-                </a>
-
-                @if (usuarioPatreon == false)
-                {
-                    <a class="texto-cabecera boton-superior" href="/patreon" style="font-size: 15px;">
-                        Patreon
-                    </a>
+                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+                    </svg>
                 }
-
-                <hr/>
-
-                <AuthorizeView>
-                    <Authorized>
-                        <a class="texto-cabecera boton-superior" href="/account" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
-                        </a>
-
-                        <a class="texto-cabecera boton-superior" href="/account/logout" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
-                        </a>
-                    </Authorized>
-                    <NotAuthorized>
-                        <a class="texto-cabecera boton-superior" href="/account/login" target="_blank" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
-                        </a>
-
-                        <a class="texto-cabecera boton-superior" href="/account/register" target="_blank" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
-                        </a>
-                    </NotAuthorized>
-                </AuthorizeView>
+                else
+                {
+                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                        <path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+                    </svg>
+                }
             </div>
+
+            @if (mostrarPanel == true)
+            {
+                <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); color: var(--colorTextoHover); background-color: var(--fondoOscuro);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                        @if (string.IsNullOrEmpty(usuarioId) == false)
+                        {
+                            <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
+                                @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                            </a>
+                        }
+
+                        <a class="texto-cabecera boton-superior" href="/historical-lows" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "HistoricalLows", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="/bundles" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Bundles", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="/free" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Free", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="/subscriptions" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Subscriptions", "Header")
+                        </a>
+
+                        <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" style="font-size: 15px;">
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")
+                        </a>
+
+                        @if (usuarioPatreon == false)
+                        {
+                            <a class="texto-cabecera boton-superior" href="/patreon" style="font-size: 15px;">
+                                Patreon
+                            </a>
+                        }
+                    </div>
+
+                    <hr />
+
+                    <AuthorizeView>
+                        <Authorized>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                                @{
+                                    string enlaceCuenta = "/account";
+                                    string enlaceDeslogear = "/account/logout";
+                                }
+
+                                <button @onclick="(e => AbrirEnlace(e, enlaceCuenta, false))" class="boton-superior" style="font-size: 15px; width: 100%; text-align: left; overflow: hidden;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Account", "Header")
+                                </button>
+
+                                <button @onclick="(e => AbrirEnlace(e, enlaceDeslogear, false))" class="boton-superior" style="font-size: 15px; width: 100%; text-align: left; overflow: hidden;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Logout", "Header")
+                                </button>
+                            </div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                                <a class="texto-cabecera boton-superior" href="/account/login" target="_blank" style="font-size: 15px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Login", "Header")
+                                </a>
+
+                                <a class="texto-cabecera boton-superior" href="/account/register" target="_blank" style="font-size: 15px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "Register", "Header")
+                                </a>
+                            </div>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            }
         </div>
     </div>
 
@@ -398,7 +432,7 @@
                             string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
                         }
 
-                        <button @onclick="(e => AbrirEnlace(e, enlace))" class="boton-pequeño" style="cursor: pointer; padding: 0px; @fondoColor">
+                        <button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="cursor: pointer; padding: 0px; @fondoColor">
                             <div class="perfil-flexible-centrado">
                                 <div>
                                     <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
@@ -472,7 +506,7 @@
     {
         enlace = NavManager.Uri;
 
-		await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     #region Botones Cabecera
@@ -602,9 +636,34 @@
 
     #region Abrir Enlace
 
-    private async void AbrirEnlace(MouseEventArgs e, string enlace)
+    private async void AbrirEnlace(MouseEventArgs e, string enlace, bool nuevaVentana = true)
     {
-        await JavaScript.InvokeVoidAsync("open", enlace, "_self");
+        string comando = "_blank";
+
+        if (nuevaVentana == false)
+        {
+            comando = "_self";
+        }
+
+        await JavaScript.InvokeVoidAsync("open", enlace, comando);
+    }
+
+    #endregion
+
+    #region Panel Moviles
+
+    bool mostrarPanel = false;
+
+    private void MostrarPanel(MouseEventArgs e)
+    {
+        if (mostrarPanel == true)
+        {
+            mostrarPanel = false;
+        }
+        else
+        {
+            mostrarPanel = true;
+        } 
     }
 
     #endregion

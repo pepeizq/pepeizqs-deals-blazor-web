@@ -748,15 +748,15 @@
                                     {
                                         if (aviso.EnlaceNuevaPestaña == true)
                                         {
-                                            <a href="@aviso.Enlace" target="_blank" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
+                                            <button @onclick="(e => AbrirEnlace(e, aviso.Enlace, true))" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
                                                 <div>@aviso.Titulo</div>
-                                            </a>
+                                            </button>
                                         }
                                         else
                                         {
-                                            <a href="@aviso.Enlace" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
+                                            <button @onclick="(e => AbrirEnlace(e, aviso.Enlace, false))" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
                                                 <div>@aviso.Titulo</div>
-                                            </a>                                            
+                                            </button>                                            
                                         } 
                                     }
                                     else
@@ -1006,8 +1006,30 @@
                                                     <div>
                                                         <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Game") @JuegoDRM2.DevolverDRM(drm.Id):</div>
 
-                                                        <div style="margin-top: 5px;">
-                                                            <label>@PrepararPrecio(juego.PrecioMinimosHistoricos, drm.Id, true)</label>
+                                                        <div style="margin-top: 5px; display: flex; align-items: baseline; gap: 8px;">
+                                                            @{
+                                                                string precioMinimoDRM = string.Empty;
+
+                                                                if (juego.PrecioMinimosHistoricos?.Count > 0)
+                                                                {
+                                                                    foreach (var historico in juego.PrecioMinimosHistoricos)
+                                                                    {
+                                                                        if (historico.DRM == drm.Id)
+                                                                        {
+                                                                            if (historico.Moneda != Herramientas.JuegoMoneda.Euro && historico.PrecioCambiado > 0)
+                                                                            {
+                                                                                precioMinimoDRM = Herramientas.Precios.Euro(historico.PrecioCambiado);
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                precioMinimoDRM = Herramientas.Precios.Euro(historico.Precio);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            <label>@precioMinimoDRM</label>
                                                             <label style="font-size: 14px;">@mensajeMinimoDRM</label>
                                                         </div>
                                                     </div>
@@ -1621,7 +1643,7 @@
                                                         {
                                                             string enlaceSteam = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false);
 
-                                                            <button @onclick="(e => AbrirOferta(e, enlaceSteam))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
+                                                            <button @onclick="(e => AbrirEnlace(e, enlaceSteam))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Steam")
                                                             </button>
                                                         }
@@ -1633,7 +1655,7 @@
                                                         {
                                                             string enlaceGog = Herramientas.EnlaceAcortador.Generar("https://www.gog.com/game/" + juego.SlugGOG, APIs.GOG.Tienda.Generar().Id, usuarioPatreon, false);
 
-                                                            <button @onclick="(e => AbrirOferta(e, enlaceGog))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
+                                                            <button @onclick="(e => AbrirEnlace(e, enlaceGog))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "GOG")
                                                             </button>
                                                         }
@@ -1645,7 +1667,7 @@
                                                         {
                                                             string enlaceEpic = Herramientas.EnlaceAcortador.Generar("https://store.epicgames.com/p/" + juego.SlugEpic, APIs.EpicGames.Tienda.Generar().Id, usuarioPatreon, false);
 
-                                                            <button @onclick="(e => AbrirOferta(e, enlaceEpic))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
+                                                            <button @onclick="(e => AbrirEnlace(e, enlaceEpic))" class="juego-boton-pequeño" style="width: auto; min-width: 200px; text-align: center;">
                                                                 @string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Game"), "Epic Games")
                                                             </button>
                                                         }
@@ -1744,7 +1766,7 @@
                                                         </div>
                                                     }
 
-                                                    <button @onclick="(e => AbrirOferta(e, enlace))" class="juego-boton-pequeño" style="display: block; width: 100%;">
+                                                    <button @onclick="(e => AbrirEnlace(e, enlace))" class="juego-boton-pequeño" style="display: block; width: 100%;">
                                                         <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
                                                             <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
 
@@ -1807,14 +1829,15 @@
                                                                     @precio.Descuento.ToString()%
                                                                 </div>
 
-                                                                <div class="juego-precio" style="text-align: center;">
-                                                                    @PrepararPrecio(precio, false)
-
-                                                                    @if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+                                                                <div class="juego-precio">
+                                                                    @if (precio.PrecioCambiado > 0 && precio.Moneda != Herramientas.JuegoMoneda.Euro)
                                                                     {
-                                                                        <br />
-
-                                                                        <label style="font-size: 13px;">@Herramientas.Divisas.DevolverSimbolo(precio.Precio, precio.Moneda)</label>
+                                                                        <div style="text-align: center;">@Herramientas.Precios.Euro(precio.PrecioCambiado)</div>
+                                                                        <div style="text-align: center; font-size: 13px; margin-top: 5px;">@Herramientas.Divisas.DevolverSimbolo(precio.Precio, precio.Moneda)</div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div style="text-align: center;">@Herramientas.Precios.Euro(precio.Precio)</div>
                                                                     }
                                                                 </div>
                                                             </div>
@@ -1890,7 +1913,7 @@
                                                                 </div>
                                                             }
 
-                                                            <button @onclick="(e => AbrirOferta(e, enlaceBajo))" class="juego-boton-pequeño" style="display: block; width: 100%;">
+                                                            <button @onclick="(e => AbrirEnlace(e, enlaceBajo))" class="juego-boton-pequeño" style="display: block; width: 100%;">
                                                                 <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precioBajo.Tienda)" class="juego-imagen-boton" alt="@precioBajo.Tienda" loading="lazy" />
 
@@ -1953,14 +1976,15 @@
                                                                             @precioBajo.Descuento.ToString()%
                                                                         </div>
 
-                                                                        <div class="juego-precio" style="text-align: center;">
-                                                                            @PrepararPrecio(precioBajo, false)
-
-                                                                            @if (precioBajo.Moneda != Herramientas.JuegoMoneda.Euro)
+                                                                        <div class="juego-precio">
+                                                                            @if (precioBajo.PrecioCambiado > 0 && precioBajo.Moneda != Herramientas.JuegoMoneda.Euro)
                                                                             {
-                                                                                <br />
-
-                                                                                <label style="font-size: 13px;">@Herramientas.Divisas.DevolverSimbolo(precioBajo.Precio, precioBajo.Moneda)</label>
+                                                                                <div style="text-align: center;">@Herramientas.Precios.Euro(precioBajo.PrecioCambiado)</div>
+                                                                                <div style="text-align: center; font-size: 13px; margin-top: 5px;">@Herramientas.Divisas.DevolverSimbolo(precioBajo.Precio, precioBajo.Moneda)</div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div style="text-align: center;">@Herramientas.Precios.Euro(precioBajo.Precio)</div>
                                                                             }
                                                                         </div>
                                                                     </div>
@@ -5043,44 +5067,6 @@
         return drmPreparado;
     }
 
-    public static string PrepararPrecio(List<JuegoPrecio> precios, JuegoDRM drm, bool historico)
-    {
-        if (precios != null)
-        {
-            if (precios.Count > 0)
-            {
-                foreach (var precio in precios)
-                {
-                    if (precio.DRM == drm)
-                    {
-                        return PrepararPrecio(precio, historico);
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public static string PrepararPrecio(JuegoPrecio precio, bool historico)
-    {
-        if (historico == true)
-        {
-            return Herramientas.Precios.Euro(precio.Precio);
-        }
-        else
-        {
-            if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
-            {
-                return Herramientas.Precios.Euro(precio.PrecioCambiado);
-            }
-            else
-            {
-                return Herramientas.Precios.Euro(precio.Precio);
-            }
-        }
-    }
-
     public static List<JuegoPrecio> OrdenarPrecios(List<JuegoPrecio> precios, JuegoDRM drm = JuegoDRM.NoEspecificado)
     {
         List<JuegoPrecio> preciosOrdenados = new List<JuegoPrecio>();
@@ -6476,11 +6462,18 @@
 
     #endregion
 
-    #region Abrir Oferta
+    #region Abrir Enlace
 
-    private async void AbrirOferta(MouseEventArgs e, string enlace)
+    private async void AbrirEnlace(MouseEventArgs e, string enlace, bool nuevaVentana = true)
 	{
-        await JavaScript.InvokeVoidAsync("open", enlace, "_blank");
+		string comando = "_blank";
+
+		if (nuevaVentana == false)
+		{
+			comando = "_self";
+		}
+
+		await JavaScript.InvokeVoidAsync("open", enlace, comando);
 	}
 
     #endregion

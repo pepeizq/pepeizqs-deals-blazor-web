@@ -263,5 +263,18 @@ namespace Tiendas2
 				await APIs.Nexus.Tienda.BuscarOfertas(conexion, decompilador);
 			}
 		}
+
+		public static Tienda DevolverTienda(string tiendaTexto)
+		{
+			foreach (var tienda in GenerarListado())
+			{
+				if (tienda.Id.ToString() == tiendaTexto)
+				{
+					return tienda;
+				}
+            }
+
+			return null;
+        }
     }
 }

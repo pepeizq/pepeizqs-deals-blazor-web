@@ -97,16 +97,21 @@ namespace Herramientas
 
                         if (bundle.Pick == true)
                         {
-                            foreach (var tier2 in bundle.Tiers)
+                            if (tier.Posicion == 1)
                             {
-                                if (tier2.CantidadJuegos == 1)
+                                foreach (var tier2 in bundle.Tiers)
                                 {
-                                    texto = texto + "[b]" + tier2.CantidadJuegos.ToString() + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Bundle") + " • " + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio)) + "[/b]" + Environment.NewLine;
+                                    if (tier2.CantidadJuegos == 1)
+                                    {
+                                        texto = texto + "[b]" + tier2.CantidadJuegos.ToString() + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Bundle") + " • " + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio)) + "[/b]" + Environment.NewLine;
+                                    }
+                                    else if (tier2.CantidadJuegos > 1)
+                                    {
+                                        texto = texto + "[b]" + tier2.CantidadJuegos.ToString() + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Bundle") + " • " + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio)) + "[/b] / " + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio) / tier2.CantidadJuegos) + " (" + Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Bundle") + ")" + Environment.NewLine;
+                                    }
                                 }
-                                else if (tier2.CantidadJuegos > 1)
-                                {
-                                    texto = texto + "[b]" + tier2.CantidadJuegos.ToString() + " " + Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Bundle") + " • " + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio)) + "[/b]/" + Herramientas.Precios.Euro(decimal.Parse(tier2.Precio) / tier2.CantidadJuegos) + "(" + Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Bundle") + ")" + Environment.NewLine;
-                                }
+
+                                texto = texto + Environment.NewLine;
                             }
                         }
                         else
@@ -143,6 +148,11 @@ namespace Herramientas
 
                             foreach (var juego in juegosTier)
                             {
+                                if (juego.Juego == null)
+                                {
+                                    juego.Juego = global::BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
+                                }
+
                                 bool mostrar = true;
 
                                 if (juego.Juego?.Tipo == Juegos.JuegoTipo.DLC)
@@ -166,17 +176,20 @@ namespace Herramientas
                                 {
                                     string nombre = juego.Nombre;
 
-                                    if (juego.DRM == Juegos.JuegoDRM.Steam && juego.Juego.IdSteam > 0)
+                                    if (juego.Juego != null)
                                     {
-                                        nombre = "[url=https://store.steampowered.com/app/" + juego.Juego.IdSteam + "]" + nombre + "[/url]";
-                                    }
-                                    else if (juego.DRM == Juegos.JuegoDRM.GOG && string.IsNullOrEmpty(juego.Juego.SlugGOG) == false)
-                                    {
-                                        nombre = "[url=https://www.gog.com/game/" + juego.Juego.SlugGOG + "]" + nombre + "[/url]";
-                                    }
-                                    else if (juego.DRM == Juegos.JuegoDRM.Epic && string.IsNullOrEmpty(juego.Juego.SlugEpic) == false)
-                                    {
-                                        nombre = "[url=https://www.epicgames.com/store/p/" + juego.Juego.SlugEpic + "]" + nombre + "[/url]";
+                                        if (juego.DRM == Juegos.JuegoDRM.Steam && juego.Juego.IdSteam > 0)
+                                        {
+                                            nombre = "[url=https://store.steampowered.com/app/" + juego.Juego.IdSteam + "]" + nombre + "[/url]";
+                                        }
+                                        else if (juego.DRM == Juegos.JuegoDRM.GOG && string.IsNullOrEmpty(juego.Juego.SlugGOG) == false)
+                                        {
+                                            nombre = "[url=https://www.gog.com/game/" + juego.Juego.SlugGOG + "]" + nombre + "[/url]";
+                                        }
+                                        else if (juego.DRM == Juegos.JuegoDRM.Epic && string.IsNullOrEmpty(juego.Juego.SlugEpic) == false)
+                                        {
+                                            nombre = "[url=https://www.epicgames.com/store/p/" + juego.Juego.SlugEpic + "]" + nombre + "[/url]";
+                                        }
                                     }
 
                                     texto = texto + "[*]" + nombre + " (" + Juegos.JuegoDRM2.DevolverDRM(juego.DRM) + ")";

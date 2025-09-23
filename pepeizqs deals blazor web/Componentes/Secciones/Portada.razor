@@ -339,7 +339,20 @@
 									@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
 								</div>
 								<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
-									@Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos[0].Precio)
+									@{
+										string precioMostrar = string.Empty;
+
+										if (juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado > 0)
+										{
+											precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado);
+										}
+										else
+										{
+											precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].Precio);
+										}
+									}
+
+									@precioMostrar
 								</div>
 							</div>
 						</div>

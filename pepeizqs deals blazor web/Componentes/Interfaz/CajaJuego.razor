@@ -125,7 +125,16 @@
 		if (oferta != null)
 		{
 			descuento = oferta.Descuento.ToString() + "%";
-			precio = Herramientas.Precios.Euro(oferta.Precio);
+
+			if (oferta.PrecioCambiado > 0)
+			{
+				precio = Herramientas.Precios.Euro(oferta.PrecioCambiado);
+			}
+			else
+			{
+				precio = Herramientas.Precios.Euro(oferta.Precio);
+			}
+			
 			codigoTexto = oferta.CodigoTexto;
 			fechaDetectado = oferta.FechaDetectado;
 

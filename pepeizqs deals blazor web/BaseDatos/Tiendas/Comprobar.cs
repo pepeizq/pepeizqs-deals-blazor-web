@@ -323,21 +323,21 @@ namespace BaseDatos.Tiendas
 							}
 						}
 
-						JuegoAnalisis analisis = null;
+						JuegoAnalisis reseñas = null;
 						if (lector.IsDBNull(6) == false)
 						{
 							if (string.IsNullOrEmpty(lector.GetString(6)) == false)
 							{
 								if (lector.GetString(6) != "null")
 								{
-									analisis = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(6));
+									reseñas = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(6));
 								}
 							}
 						}
 
 						if (id > 0)
 						{
-							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic, usuariosInteresados, analisis);
+							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic, usuariosInteresados, reseñas);
 						}
 					}
 				}

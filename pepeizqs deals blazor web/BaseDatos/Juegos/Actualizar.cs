@@ -220,8 +220,8 @@ namespace BaseDatos.Juegos
 
                 if (cambioPrecio == true)
 				{
-					comando.Parameters.AddWithValue("@historicos", JsonSerializer.Serialize(historicos));
-				}
+                    comando.Parameters.AddWithValue("@historicos", JsonSerializer.Serialize(historicos));
+                }
 
 				if (ultimaModificacion != null)
 				{

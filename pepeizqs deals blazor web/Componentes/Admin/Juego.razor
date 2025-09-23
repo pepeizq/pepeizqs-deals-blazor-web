@@ -544,7 +544,31 @@
 		}
 		else if (pestañaMostrar == 8)
 		{
-			<textarea @onchange="(e => TextoCambiaHistoricos(e))" class="entrada-texto" rows="16">@textoHistoricos</textarea>
+			if (juego.Historicos?.Count > 0)
+			{
+				foreach (var historico in juego.Historicos)
+				{
+					string imagenTienda = Tiendas2.TiendasCargar.DevolverTienda(historico.Tienda).ImagenIcono;
+					string imagenDRM = global::Juegos.JuegoDRM2.SacarImagen(historico.DRM);
+
+					<div style="margin-bottom: 10px; padding: 10px; background: var(--fondoBotonPequeño); border: 1px solid var(--fondoBotonPequeño); display: flex; align-items: center; gap: 10px;">
+						<div>
+							Fecha: @historico.Fecha.ToString("dd/MM/yyyy HH:mm")
+						</div>
+						<div>
+							Precio: @historico.Precio€
+						</div>
+						<div>
+							<img src="@imagenTienda" style="width: 20px; height: 20px;" />
+						</div>
+						<div>
+							<img src="@imagenDRM" style="width: 20x; height: 20px;"/>
+						</div>
+
+						<button @onclick="(e => BorrarRegistroHistorico(e, historico))" class="boton-pequeño-peligro" style="background-color: var(--fondoPeligro); width: fit-content; padding: 5px 15px; margin-left: auto;">Borrar</button>
+					</div>
+				}
+			}
 		}
 	}
 </div>
@@ -1184,7 +1208,7 @@
 			{
 				BaseDatos.Errores.Insertar.Mensaje("Admin Steam Actualizar", ex);
 			}
-		
+
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -1361,6 +1385,21 @@
 
 			textoHistoricos = nuevoTexto;
 			juego.Historicos = JsonSerializer.Deserialize<List<global::Juegos.JuegoHistorico>>(textoHistoricos);
+
+			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+
+			using (conexion)
+			{
+				BaseDatos.Juegos.Actualizar.Historicos(juego, conexion);
+			}
+		}
+	}
+
+	private void BorrarRegistroHistorico(MouseEventArgs e, JuegoHistorico historicoBorrar)
+	{
+		if (historicoBorrar != null)
+		{
+			juego.Historicos.Remove(historicoBorrar);
 
 			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 

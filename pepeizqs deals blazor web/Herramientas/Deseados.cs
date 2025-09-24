@@ -9,7 +9,7 @@ namespace Herramientas
 {
 	public static class Deseados
 	{
-		public static void ActualizarJuegoConUsuarios(int idJuego, List<JuegoUsuariosInteresados> usuariosInteresados, JuegoDRM drm, string usuarioId, bool estado)
+        public static void ActualizarJuegoConUsuarios(int idJuego, List<JuegoUsuariosInteresados> usuariosInteresados, JuegoDRM drm, string usuarioId, bool estado)
 		{
 			SqlConnection conexion = BaseDatos.Conectar();
 

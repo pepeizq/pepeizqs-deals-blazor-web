@@ -131,7 +131,14 @@ namespace Herramientas
                                     {
                                         if (historico.DRM == juego.DRM)
                                         {
-                                            totalMinimos = totalMinimos + historico.Precio;
+                                            if (historico.PrecioCambiado > 0)
+                                            {
+                                                totalMinimos = totalMinimos + historico.PrecioCambiado;
+                                            }
+                                            else
+                                            {
+                                                totalMinimos = totalMinimos + historico.Precio;
+                                            }
 
                                             break;
                                         }

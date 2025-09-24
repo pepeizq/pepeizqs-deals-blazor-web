@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Bundles2;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Globalization;
@@ -134,48 +135,35 @@ namespace BaseDatos.Bundles
 			return bundles;
 		}
 
-		public static List<Bundles2.Bundle> UnTipo(string tipo, Herramientas.Tiempo tiempo)
+		public static List<Bundles2.Bundle> UnTipo(BundleTipo tipo, SqlConnection conexion = null)
 		{
 			List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
 
-			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
 
-			using (conexion)
+            using (conexion)
 			{
-				string busqueda = "SELECT * FROM bundles";
+				string busqueda = "SELECT * FROM bundles WHERE bundleTipo=@bundleTipo AND fechaEmpieza < GETDATE() AND fechaTermina > GETDATE()";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
-					using (SqlDataReader lector = comando.ExecuteReader())
+                    comando.Parameters.AddWithValue("@bundleTipo", tipo);
+
+                    using (SqlDataReader lector = comando.ExecuteReader())
 					{
 						while (lector.Read())
 						{
-							Bundles2.Bundle bundle = Cargar(lector);
-
-                            if (tipo != "0")
-							{
-								if (bundle.Tipo == Bundles2.BundlesCargar.DevolverBundle(tipo).Tipo)
-								{
-									if (tiempo == Herramientas.Tiempo.Atemporal)
-									{
-										bundles.Add(bundle);
-									}
-									else if (tiempo == Herramientas.Tiempo.Actual)
-									{
-										if (DateTime.Now >= bundle.FechaEmpieza && DateTime.Now <= bundle.FechaTermina)
-										{
-											bundles.Add(bundle);
-										}
-									}
-									else if (tiempo == Herramientas.Tiempo.Pasado)
-									{
-										if (DateTime.Now > bundle.FechaTermina)
-										{
-											bundles.Add(bundle);
-										}
-									}
-								}
-							}												
+							bundles.Add(Cargar(lector));									
 						}
 					}
 				}

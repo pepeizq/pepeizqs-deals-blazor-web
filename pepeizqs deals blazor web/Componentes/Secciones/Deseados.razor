@@ -1076,9 +1076,13 @@
 										{
 											decimal tempPrecio = actual.Precio;
 
-											if (actual.Moneda != Herramientas.JuegoMoneda.Euro)
+											if (actual.Moneda != Herramientas.JuegoMoneda.Euro && actual.PrecioCambiado > 0)
 											{
-												tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, actual.Moneda);
+												tempPrecio = actual.PrecioCambiado;
+											}
+											else if (actual.Moneda != Herramientas.JuegoMoneda.Euro && actual.PrecioCambiado == 0)
+											{
+												tempPrecio = Herramientas.Divisas.Cambio(actual.Precio, actual.Moneda);
 											}
 
 											if (precioReferencia > tempPrecio)
@@ -1105,7 +1109,26 @@
 							nuevoDeseado.DRM = drm;
 							nuevoDeseado.Precio = precioFinal;
 							nuevoDeseado.Historico = false;
-							nuevoDeseado.HistoricoPrecio = MensajeMinimo(SacarMinimo(juego, drm), false);
+							
+							foreach (var minimo in juego.PrecioMinimosHistoricos)
+							{
+								if (drm == minimo.DRM)
+								{
+									if (minimo.PrecioCambiado > 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
+									{
+										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.PrecioCambiado);
+									}
+									else if (minimo.PrecioCambiado == 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
+									{
+										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(Herramientas.Divisas.Cambio(minimo.Precio, minimo.Moneda));
+									}
+									else
+									{
+										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.Precio);
+									}
+								}
+							}
+
 							nuevoDeseado.Importado = importado;
 
 							if (juego.Analisis != null)

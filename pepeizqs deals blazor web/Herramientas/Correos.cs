@@ -376,6 +376,12 @@ namespace Herramientas
 							</html>";
 
 			string precio2 = Herramientas.Precios.Euro(precio.Precio);
+
+			if (precio.PrecioCambiado > 0)
+			{
+                precio2 = Herramientas.Precios.Euro(precio.PrecioCambiado);
+            }
+
 			string tiendaFinal = string.Empty;
 			string imagenTienda = string.Empty;
 			List<Tiendas2.Tienda> tiendas = Tiendas2.TiendasCargar.GenerarListado();

@@ -30,20 +30,20 @@
 {
     <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
         <div class="opciones-combobox" style="width: 33%;">
-            <select @onchange="@(e => CambiarBundleNoticias(e))">
+            <select>
                 @foreach (Bundles2.Bundle bundle in BundlesCargar.GenerarListado())
                 {
-                    <option value="@bundle.Tipo">
-                         @bundle.NombreTienda
+                    <option @onclick="@(e => CambiarBundleNoticias(e, bundle.Tipo))">
+                        @bundle.NombreTienda
                     </option>
                 }
             </select>
         </div>
 
-        @if (bundleSeleccionadoNoticias != null)
+        @if (bundleTipoSeleccionado != BundleTipo.Desconocido)
         {
             <div>
-                @foreach (var bundle in BaseDatos.Bundles.Buscar.UnTipo(bundleSeleccionadoNoticias, Herramientas.Tiempo.Actual))
+                @foreach (var bundle in BaseDatos.Bundles.Buscar.UnTipo(bundleTipoSeleccionado))
                 {
                     <button @onclick="@(e => ClickearBundleNoticias(e, bundle.Id))" class="boton-pequeño" style="margin: 20px 0px 0px 0px;">
                         <div style="display: flex; align-items: center;">
@@ -549,8 +549,6 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
     </div>
 }
 
-
-
 @if (abrirEnlace == true)
 {
     <div class="opciones-panel">
@@ -616,7 +614,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
     private NoticiaTipo noticiaTipoSeleccionada = NoticiaTipo.Bundles;
 
-    private string bundleSeleccionadoNoticias = null;
+    private BundleTipo bundleTipoSeleccionado = BundleTipo.Desconocido;
     private string gratisSeleccionadoNoticias = null;
     private string suscripcionSeleccionadaNoticias = null;
 
@@ -653,11 +651,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
             //-------------------------------------------------------
 
-            if (noticiaTipoSeleccionada == NoticiaTipo.Bundles)
-            {
-                bundleSeleccionadoNoticias = BundlesCargar.GenerarListado()[1].Id.ToString();
-            }
-            else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
+            if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
             {
                 gratisSeleccionadoNoticias = GratisCargar.GenerarListado()[0].Tipo.ToString();
             }
@@ -716,7 +710,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 if (noticiaTipoSeleccionada == NoticiaTipo.Bundles)
                 {
-                    noticiaAñadir.BundleTipo = BundlesCargar.DevolverBundle(bundleSeleccionadoNoticias).Tipo;
+                    noticiaAñadir.BundleTipo = BundlesCargar.DevolverBundle(bundleTipoSeleccionado).Tipo;
                     noticiaAñadir.BundleId = int.Parse(noticia.BundleId);
                 }
                 else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
@@ -846,7 +840,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
                 noticia = new Plantilla();
                 plantillaCargada = false;
 
-                bundleSeleccionadoNoticias = null;
+                bundleTipoSeleccionado = BundleTipo.Desconocido;
                 gratisSeleccionadoNoticias = null;
                 suscripcionSeleccionadaNoticias = null;
 
@@ -860,9 +854,9 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         enviandoNoticia = false;
     }
 
-    private void CambiarBundleNoticias(ChangeEventArgs texto)
+    private void CambiarBundleNoticias(MouseEventArgs e, BundleTipo nuevoTipo)
     {
-        bundleSeleccionadoNoticias = texto.Value.ToString();
+        bundleTipoSeleccionado = nuevoTipo;
     }
 
     private void ClickearBundleNoticias(MouseEventArgs e, int bundleId)

@@ -367,7 +367,7 @@
 								{
 									foreach (var juego2 in juegosTier)
 									{
-										if (juego2.JuegoId == juego.Juego.Maestro)
+										if (juego2.JuegoId == juego.Juego?.Maestro)
 										{
 											if (juego2.DLCs == null)
 											{
@@ -443,7 +443,14 @@
 										{
 											if (historico.DRM == juego.DRM)
 											{
-												totalMinimos = totalMinimos + historico.Precio;
+												if (historico.PrecioCambiado > 0)
+												{
+													totalMinimos = totalMinimos + historico.PrecioCambiado;
+												}
+												else
+												{
+													totalMinimos = totalMinimos + historico.Precio;
+												}
 
 												break;
 											}

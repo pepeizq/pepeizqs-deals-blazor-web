@@ -96,7 +96,7 @@ namespace BaseDatos.Extension
 									{
 										foreach (var precio in extension.MinimosHistoricos)
 										{
-											if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+											if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado == 0)
 											{
 												buscarDivisas = true;
 												break;
@@ -119,7 +119,7 @@ namespace BaseDatos.Extension
 									{
 										foreach (var precio in extension.PreciosActuales)
 										{
-											if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
+											if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado == 0)
 											{
 												buscarDivisas = true;
 												break;
@@ -200,13 +200,13 @@ namespace BaseDatos.Extension
 						{
 							if (lector.GetString(0) == "USD")
 							{
-								extension.Dolar = double.Parse(lector.GetString(1));
+								extension.Dolar = decimal.ToDouble(lector.GetDecimal(1));
 							}
 
 							if (lector.GetString(0) == "GBP")
 							{
-								extension.Libra = double.Parse(lector.GetString(1));
-							}
+								extension.Libra = decimal.ToDouble(lector.GetDecimal(1));
+                            }
 						}
 					}
 				}

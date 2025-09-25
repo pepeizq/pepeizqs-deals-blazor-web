@@ -150,7 +150,7 @@
         <div style="background-color: var(--fondoEntrada); padding-right: 10px; display: flex; align-items: center; gap: 10px;">
             <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
 
-            @if (encontroAlgo == false)
+            @if (resultadosMostrar == null || resultadosMostrar?.Count == 0)
             {
                 <div style="max-width: 16px;">
                     <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -393,10 +393,10 @@
         </div>
     </div>
 
-    @if (encontroAlgo == true)
+    @if (resultadosMostrar?.Count > 0)
     {
         <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); display: flex; align-items: start; flex-direction: column; backdrop-filter: blur(5px); background: color-mix(in srgb, var(--fondoCuerpo) 90%, transparent);">
-            <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;">
+            <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;">               
                 @foreach (var juego in resultadosMostrar)
                 {
                     string fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));"; ;
@@ -527,10 +527,8 @@
 
     #region Buscador
 
-    private bool encontroAlgo = false;
     [PersistentState] public List<Juegos.Juego> resultadosMostrar { get; set; }
-
-    private string textoBuscador = string.Empty;
+    public string textoBuscador { get; set; } = string.Empty;
 
     private void TextoCambiaBuscador()
     {
@@ -603,28 +601,14 @@
 
                     resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
                 }
-
-                if (resultadosMostrar.Count > 0)
-                {
-                    encontroAlgo = true;
-                }
-                else
-                {
-                    encontroAlgo = false;
-                }
             }
-        }
-        else
-        {
-            encontroAlgo = false;
         }
     }
 
     private void LimpiarBusqueda(MouseEventArgs e)
     {
         textoBuscador = string.Empty;
-        resultadosMostrar.Clear();
-        encontroAlgo = false;
+        resultadosMostrar?.Clear();
     }
 
     private async Task CopiarAlClipboardEnlace(MouseEventArgs e)

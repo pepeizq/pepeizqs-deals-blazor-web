@@ -160,6 +160,48 @@ namespace Herramientas
                                     juego.Juego = global::BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
                                 }
 
+                                if (juego.Juego?.Tipo == Juegos.JuegoTipo.DLC)
+                                {
+                                    if (string.IsNullOrEmpty(juego.Juego?.Maestro) == false)
+                                    {
+                                        if (juego.Juego?.Maestro != "no")
+                                        {
+                                            foreach (var juego2 in juegosTier)
+                                            {
+                                                if (juego2.JuegoId == juego.Juego?.Maestro)
+                                                {
+                                                    if (juego2.DLCs == null)
+                                                    {
+                                                        juego2.DLCs = new List<string>();
+                                                    }
+
+                                                    bool añadir = true;
+
+                                                    if (juego2.DLCs.Count > 0)
+                                                    {
+                                                        foreach (var dlc in juego2.DLCs)
+                                                        {
+                                                            if (dlc == juego.JuegoId)
+                                                            {
+                                                                añadir = false;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (añadir == true)
+                                                    {
+                                                        juego2.DLCs.Add(juego.JuegoId);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            foreach (var juego in juegosTier)
+                            {
                                 bool mostrar = true;
 
                                 if (juego.Juego?.Tipo == Juegos.JuegoTipo.DLC)
@@ -182,6 +224,7 @@ namespace Herramientas
                                 if (mostrar == true)
                                 {
                                     string nombre = juego.Nombre;
+                                    string precioMinimo = null;
 
                                     if (juego.Juego != null)
                                     {
@@ -197,13 +240,78 @@ namespace Herramientas
                                         {
                                             nombre = "[url=https://www.epicgames.com/store/p/" + juego.Juego.SlugEpic + "]" + nombre + "[/url]";
                                         }
+
+                                        if (juego.Juego.PrecioMinimosHistoricos != null)
+                                        {
+                                            decimal precioMinimoDecimal = 0;
+
+                                            foreach (var historico in juego.Juego.PrecioMinimosHistoricos)
+                                            {
+                                                if (historico.DRM == juego.DRM)
+                                                {
+                                                    if (historico.PrecioCambiado > 0)
+                                                    {
+                                                        precioMinimoDecimal = historico.PrecioCambiado;
+                                                    }
+                                                    else
+                                                    {
+                                                        precioMinimoDecimal = historico.Precio;
+                                                    }
+                                                }
+                                            }
+
+                                            if (juego.DLCs?.Count > 0)
+                                            {
+                                                foreach (var dlc in juego.DLCs)
+                                                {
+                                                    Juegos.Juego juegoDLC = global::BaseDatos.Juegos.Buscar.UnJuego(dlc);
+
+                                                    if (juegoDLC?.PrecioMinimosHistoricos != null)
+                                                    {
+                                                        foreach (var historico in juegoDLC.PrecioMinimosHistoricos)
+                                                        {
+                                                            if (historico.DRM == juego.DRM)
+                                                            {
+                                                                if (historico.PrecioCambiado > 0)
+                                                                {
+                                                                    precioMinimoDecimal = precioMinimoDecimal + historico.PrecioCambiado;
+                                                                }
+                                                                else
+                                                                {
+                                                                    precioMinimoDecimal = precioMinimoDecimal + historico.Precio;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (precioMinimoDecimal > 0)
+                                            {
+                                                precioMinimo = Herramientas.Precios.Euro(precioMinimoDecimal);
+                                            }
+                                        }
                                     }
 
-                                    texto = texto + "[*]" + nombre + " (" + Juegos.JuegoDRM2.DevolverDRM(juego.DRM) + ")";
+                                    if (string.IsNullOrEmpty(precioMinimo) == true)
+                                    {
+                                        texto = texto + "[*]" + nombre + " (" + Juegos.JuegoDRM2.DevolverDRM(juego.DRM) + ")";
+                                    }
+                                    else
+                                    {
+                                        texto = texto + "[*]" + nombre + " (" + Juegos.JuegoDRM2.DevolverDRM(juego.DRM) + ") (" + precioMinimo + ")";
+                                    }    
 
                                     if (juego.DLCs?.Count > 0)
                                     {
-                                        texto = texto + " +" + juego.DLCs?.Count.ToString() + " DLCs";
+                                        if (juego.DLCs.Count == 1)
+                                        {
+                                            texto = texto + " +" + juego.DLCs?.Count.ToString() + " DLC";
+                                        }
+                                        else if (juego.DLCs.Count > 1)
+                                        {
+                                            texto = texto + " +" + juego.DLCs?.Count.ToString() + " DLCs";
+                                        }
                                     }
 
                                     if (juego.Juego.Bundles.Count == 1)

@@ -110,7 +110,7 @@ namespace Herramientas
 
 			if (enlace.Contains("https://2game.com") == true)
 			{
-				cookieContainer.Add(new Uri(enlace), new Cookie("store", "en_es"));
+				cookieContainer.Add(new Uri(enlace), new Cookie("store", "es_es"));
 			}
 			
 			using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate })

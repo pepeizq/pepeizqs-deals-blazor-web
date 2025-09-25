@@ -39,7 +39,7 @@ namespace APIs._2Game
             int i = 1;
             while (i <= paginas)
             {
-                string html = await Decompiladores.GZipFormato("https://2game.com/graphql?hash=2427175844&sort_1={%22bestsellers%22:%22DESC%22}&filter_1={%22price%22:{},%22special_price%22:{%22from%22:0.01},%22category_id%22:{%22eq%22:510}}&pageSize_1=48&currentPage_1=" + i.ToString() + "&popularBlockPageSize_1=12&storeCode=%22en_es%22");
+                string html = await Decompiladores.GZipFormato("https://2game.com/graphql?hash=2427175844&sort_1={%22bestsellers%22:%22DESC%22}&filter_1={%22price%22:{},%22special_price%22:{%22from%22:0.01},%22category_id%22:{%22eq%22:510}}&pageSize_1=48&currentPage_1=" + i.ToString() + "&popularBlockPageSize_1=12&storeCode=%22es_es%22");
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
@@ -53,53 +53,57 @@ namespace APIs._2Game
 
 							foreach (var juego in resultados.Datos.Productos.Juegos)
 							{
-								decimal precioRebajado = juego.Precios.Datos.PrecioRebajado.Cantidad;
-								decimal precioBase = juego.Precios.Datos.PrecioBase.Cantidad;
-
-								int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
-
-								if (descuento > 0)
+								if (juego.Precios.Datos.PrecioRebajado.Moneda.ToLower() == "eur" && juego.Precios.Datos.PrecioBase.Moneda.ToLower() == "eur")
 								{
-									string imagen = juego.Imagen.Enlace;
+                                    decimal precioRebajado = juego.Precios.Datos.PrecioRebajado.Cantidad;
+                                    decimal precioBase = juego.Precios.Datos.PrecioBase.Cantidad;
 
-									string enlace = "https://2game.com" + juego.Enlace;
-									enlace = enlace.Replace("/en_gb/", "/");
-									enlace = enlace.Replace("/en_es/", "/");
+                                    int descuento = Calculadora.SacarDescuento(precioBase, precioRebajado);
 
-									JuegoPrecio oferta = new JuegoPrecio
-									{
-										Nombre = juego.Nombre,
-										Enlace = enlace,
-										Imagen = imagen,
-										Moneda = JuegoMoneda.Euro,
-										Precio = precioRebajado,
-										Descuento = descuento,
-										Tienda = Generar().Id,
-										DRM = JuegoDRM.Steam,
-										FechaDetectado = DateTime.Now,
-										FechaActualizacion = DateTime.Now
-									};
+                                    if (descuento > 0)
+                                    {
+                                        string imagen = juego.Imagen.Enlace;
 
-									try
-									{
-										BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-									}
+                                        string enlace = "https://2game.com" + juego.Enlace;
+                                        enlace = enlace.Replace("/en_gb/", "/");
+                                        enlace = enlace.Replace("/en_es/", "/");
+                                        enlace = enlace.Replace("/es_es/", "/");
 
-									juegos2 += 1;
+                                        JuegoPrecio oferta = new JuegoPrecio
+                                        {
+                                            Nombre = juego.Nombre,
+                                            Enlace = enlace,
+                                            Imagen = imagen,
+                                            Moneda = JuegoMoneda.Euro,
+                                            Precio = precioRebajado,
+                                            Descuento = descuento,
+                                            Tienda = Generar().Id,
+                                            DRM = JuegoDRM.Steam,
+                                            FechaDetectado = DateTime.Now,
+                                            FechaActualizacion = DateTime.Now
+                                        };
 
-									try
-									{
-										BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
-									}
-									catch (Exception ex)
-									{
-										BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-									}
-								}
+                                        try
+                                        {
+                                            BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                                        }
+
+                                        juegos2 += 1;
+
+                                        try
+                                        {
+                                            BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos2, conexion);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+                                        }
+                                    }
+                                }
 							}
 						}
 					}
@@ -182,7 +186,10 @@ namespace APIs._2Game
 	{
 		[JsonPropertyName("value")]
 		public decimal Cantidad { get; set; }
-	}
+
+        [JsonPropertyName("currency")]
+        public string Moneda { get; set; }
+    }
 
 	#endregion
 }

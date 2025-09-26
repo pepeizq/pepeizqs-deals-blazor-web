@@ -49,16 +49,6 @@
                         <button class="boton-pestañas" @onclick="MostrarErrores" style="@estiloErrores">Errores (@nuevosErroresCantidad)</button>
                     }
 
-                    @if (nuevosCorreosDeals > 0)
-                    {
-                        <button class="boton-pestañas" @onclick="MostrarEnlaces">Correos Deals (@nuevosCorreosDeals)</button>
-                    }
-
-                    @if (nuevosCorreosApps > 0)
-                    {
-                        <button class="boton-pestañas" @onclick="MostrarEnlaces">Correos Apps (@nuevosCorreosApps)</button>
-                    }
-
                     @if (nuevosPendientesCantidad > 0)
                     {
                         <button class="boton-pestañas" @onclick="MostrarPendientes" style="@estiloPendientes">Pendientes (@nuevosPendientesCantidad)</button>
@@ -95,7 +85,7 @@
             <div style="width: 85%;">
                 @if (mostrarEnlaces == true)
                 {
-                    <Enlaces correosDeals="nuevosCorreosDeals" correosApps="nuevosCorreosApps" />
+                    <Enlaces/>
                 }
 
                 @if (mostrarDuplicados == true)
@@ -224,22 +214,6 @@
                     pestañaAbierta = true;
                 }
 
-                nuevosCorreosDeals = BaseDatos.Admin.Buscar.Dato("correos", conexion);
-
-                if (nuevosCorreosDeals > 0 && pestañaAbierta == false)
-                {
-                    MostrarEnlaces();
-                    pestañaAbierta = true;
-                }
-
-                nuevosCorreosApps = BaseDatos.Admin.Buscar.Dato("correos2", conexion);
-
-                if (nuevosCorreosApps > 0 && pestañaAbierta == false)
-                {
-                    MostrarEnlaces();
-                    pestañaAbierta = true;
-                }
-
                 nuevosDLCsCantidad = BaseDatos.Juegos.Buscar.DLCsCantidad(conexion);
 
                 if (nuevosDLCsCantidad > 0 && pestañaAbierta == false)
@@ -247,8 +221,6 @@
                     MostrarDLCs();
                     pestañaAbierta = true;
                 }
-
-                ActualizarMensajeCorreos(nuevosCorreosDeals, nuevosCorreosApps);
             }
 
             if (pestañaAbierta == false)
@@ -349,20 +321,6 @@
         estiloErrores = fondo;
 
         nuevosErroresCantidad = BaseDatos.Admin.Buscar.CantidadErrores();
-    }
-
-    #endregion
-
-    #region Correos
-
-    private List<Herramientas.CorreoConId> correos = new List<Herramientas.CorreoConId>();
-    private int nuevosCorreosDeals = 0;
-    private int nuevosCorreosApps = 0;
-
-    private void ActualizarMensajeCorreos(int correosDeals, int correosApps)
-    {
-        nuevosCorreosDeals = correosDeals;
-        nuevosCorreosApps = correosApps;
     }
 
     #endregion

@@ -118,20 +118,17 @@ namespace Herramientas
 
 			if (buscarGratis == true)
 			{
-				if (juego.Gratis != null)
-				{
-					if (juego.Gratis.Count > 0)
-					{
-						foreach (var gratis in juego.Gratis)
-						{
-							if (DateTime.Now >= gratis.FechaEmpieza && DateTime.Now <= gratis.FechaTermina)
-							{
-								return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage5", "Header"), Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre);
-							}
-						}
-					}
-				}
-			}
+                if (juego.Gratis?.Count > 0)
+                {
+                    foreach (var gratis in juego.Gratis)
+                    {
+                        if (DateTime.Now >= gratis.FechaEmpieza && DateTime.Now <= gratis.FechaTermina)
+                        {
+                            return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage5", "Header"), Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre);
+                        }
+                    }
+                }
+            }
 
 			//--------------------------------------------------------------
 
@@ -142,62 +139,56 @@ namespace Herramientas
 
 			if (buscarBundles == true)
 			{
-				if (juego.Bundles != null)
-				{
-					if (juego.Bundles.Count > 0)
-					{
-						foreach (var bundle in juego.Bundles)
-						{
-							if (DateTime.Now >= bundle.FechaEmpieza && DateTime.Now <= bundle.FechaTermina)
-							{
-								mensajeComplementoTipo = "bundle";
-								mensajeComplementoTexto = Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).NombreTienda;
-								mensajeComplementoCantidadBundles = mensajeComplementoCantidadBundles + 1;
-							}
-						}
-					}
-				}
-			}
+                if (juego.Bundles?.Count > 0)
+                {
+                    foreach (var bundle in juego.Bundles)
+                    {
+                        if (DateTime.Now >= bundle.FechaEmpieza && DateTime.Now <= bundle.FechaTermina)
+                        {
+                            mensajeComplementoTipo = "bundle";
+                            mensajeComplementoTexto = Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).NombreTienda;
+                            mensajeComplementoCantidadBundles = mensajeComplementoCantidadBundles + 1;
+                        }
+                    }
+                }
+            }
 
 			if (buscarSuscripciones == true)
 			{
-				if (juego.Suscripciones != null)
-				{
-					if (juego.Suscripciones.Count > 0)
-					{
-						foreach (var suscripcion in juego.Suscripciones)
-						{
-							if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
-							{
-								bool añadir = true;
+                if (juego.Suscripciones?.Count > 0)
+                {
+                    foreach (var suscripcion in juego.Suscripciones)
+                    {
+                        if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
+                        {
+                            bool añadir = true;
 
-								if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion != null)
-								{
-									foreach (var suscripcion2 in juego.Suscripciones)
-									{
-										if (suscripcion2.Tipo == Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion)
-										{
-											añadir = false;
-										}
-									}
-								}
+                            if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion != null)
+                            {
+                                foreach (var suscripcion2 in juego.Suscripciones)
+                                {
+                                    if (suscripcion2.Tipo == Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion)
+                                    {
+                                        añadir = false;
+                                    }
+                                }
+                            }
 
-								if (añadir == true)
-								{
-									mensajeComplementoTipo = "suscripcion";
-									mensajeComplementoTexto = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
-									mensajeComplementoCantidadSuscripciones = mensajeComplementoCantidadSuscripciones + 1;
-								}
-							}
-						}
-					}
-				}
-			}
+                            if (añadir == true)
+                            {
+                                mensajeComplementoTipo = "suscripcion";
+                                mensajeComplementoTexto = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
+                                mensajeComplementoCantidadSuscripciones = mensajeComplementoCantidadSuscripciones + 1;
+                            }
+                        }
+                    }
+                }
+            }
 
 			decimal minimoCantidad = 10000000;
 			Juegos.JuegoPrecio minimoFinal = new Juegos.JuegoPrecio();
 
-			if (juego.PrecioActualesTiendas != null)
+			if (juego.PrecioActualesTiendas?.Count > 0)
 			{
 				foreach (var oferta in juego.PrecioActualesTiendas)
 				{
@@ -218,7 +209,12 @@ namespace Herramientas
 						{
 							decimal tempPrecio = oferta.Precio;
 
-							if (oferta.Moneda != Herramientas.JuegoMoneda.Euro)
+							if (oferta.PrecioCambiado > 0)
+							{
+								tempPrecio = oferta.PrecioCambiado;
+                            }
+
+                            if (oferta.Moneda != Herramientas.JuegoMoneda.Euro && oferta.PrecioCambiado == 0)
 							{
 								tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, oferta.Moneda);
 							}

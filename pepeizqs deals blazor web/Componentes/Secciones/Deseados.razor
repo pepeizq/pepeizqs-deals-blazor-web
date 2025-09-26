@@ -1057,95 +1057,93 @@
 
 			if (añadido == false)
 			{
-				if (juego.PrecioActualesTiendas != null)
+				if (juego.PrecioActualesTiendas?.Count > 0)
 				{
-					if (juego.PrecioActualesTiendas.Count > 0)
+					JuegoPrecio precioFinal = null;
+					decimal precioReferencia = 1000000;
+
+					foreach (var actual in juego.PrecioActualesTiendas)
 					{
-						JuegoPrecio precioFinal = null;
-						decimal precioReferencia = 1000000;
-
-						foreach (var actual in juego.PrecioActualesTiendas)
+						if (actual != null)
 						{
-							if (actual != null)
+							if (actual.DRM == drm)
 							{
-								if (actual.DRM == drm)
+								if (Herramientas.OfertaActiva.Verificar(actual) == true)
 								{
-									if (Herramientas.OfertaActiva.Verificar(actual) == true)
+									if (actual.Precio > 0)
 									{
-										if (actual.Precio > 0)
+										if (actual.Moneda != Herramientas.JuegoMoneda.Euro && actual.PrecioCambiado == 0)
 										{
-											decimal tempPrecio = actual.Precio;
+											actual.PrecioCambiado = Herramientas.Divisas.Cambio(actual.Precio, actual.Moneda);
+										}
 
-											if (actual.Moneda != Herramientas.JuegoMoneda.Euro && actual.PrecioCambiado > 0)
-											{
-												tempPrecio = actual.PrecioCambiado;
-											}
-											else if (actual.Moneda != Herramientas.JuegoMoneda.Euro && actual.PrecioCambiado == 0)
-											{
-												tempPrecio = Herramientas.Divisas.Cambio(actual.Precio, actual.Moneda);
-											}
-
-											if (precioReferencia > tempPrecio)
-											{
-												precioReferencia = tempPrecio;
-												precioFinal = actual;
-												precioFinal.Precio = precioReferencia;
-											}
+										if (precioReferencia > actual.Precio && actual.Precio > 0 && actual.Moneda == Herramientas.JuegoMoneda.Euro)
+										{
+											precioReferencia = actual.Precio;
+											precioFinal = actual;
+											precioFinal.Precio = actual.Precio;
+										}
+										else if (precioReferencia > actual.PrecioCambiado && actual.PrecioCambiado > 0 && actual.Moneda != Herramientas.JuegoMoneda.Euro)
+										{
+											precioReferencia = actual.PrecioCambiado;
+											precioFinal = actual;
+											precioFinal.Precio = actual.Precio;
+											precioFinal.PrecioCambiado = actual.PrecioCambiado;
 										}
 									}
 								}
 							}
 						}
+					}
 
-						if (precioFinal != null)
+					if (precioFinal != null)
+					{
+						JuegoDeseadoMostrar nuevoDeseado = new JuegoDeseadoMostrar();
+						nuevoDeseado.Id = juego.Id;
+						nuevoDeseado.IdSteam = juego.IdSteam;
+						nuevoDeseado.IdGog = juego.IdGog;
+						nuevoDeseado.SlugEpic = juego.SlugEpic;
+						nuevoDeseado.Nombre = juego.Nombre;
+						nuevoDeseado.Imagen = juego.Imagenes.Header_460x215;
+						nuevoDeseado.DRM = drm;
+						nuevoDeseado.Precio = precioFinal;
+						nuevoDeseado.Historico = false;
+
+						foreach (var minimo in juego.PrecioMinimosHistoricos)
 						{
-							JuegoDeseadoMostrar nuevoDeseado = new JuegoDeseadoMostrar();
-							nuevoDeseado.Id = juego.Id;
-							nuevoDeseado.IdSteam = juego.IdSteam;
-							nuevoDeseado.IdGog = juego.IdGog;
-							nuevoDeseado.SlugEpic = juego.SlugEpic;
-							nuevoDeseado.Nombre = juego.Nombre;
-							nuevoDeseado.Imagen = juego.Imagenes.Header_460x215;
-							nuevoDeseado.DRM = drm;
-							nuevoDeseado.Precio = precioFinal;
-							nuevoDeseado.Historico = false;
-							
-							foreach (var minimo in juego.PrecioMinimosHistoricos)
+							if (drm == minimo.DRM)
 							{
-								if (drm == minimo.DRM)
+								if (minimo.PrecioCambiado > 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
 								{
-									if (minimo.PrecioCambiado > 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
-									{
-										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.PrecioCambiado);
-									}
-									else if (minimo.PrecioCambiado == 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
-									{
-										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(Herramientas.Divisas.Cambio(minimo.Precio, minimo.Moneda));
-									}
-									else
-									{
-										nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.Precio);
-									}
+									nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.PrecioCambiado);
+								}
+								else if (minimo.PrecioCambiado == 0 && minimo.Moneda != Herramientas.JuegoMoneda.Euro)
+								{
+									nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(Herramientas.Divisas.Cambio(minimo.Precio, minimo.Moneda));
+								}
+								else
+								{
+									nuevoDeseado.HistoricoPrecio = Herramientas.Precios.Euro(minimo.Precio);
 								}
 							}
-
-							nuevoDeseado.Importado = importado;
-
-							if (juego.Analisis != null)
-							{
-								nuevoDeseado.ReseñasPorcentaje = juego.Analisis.Porcentaje.Replace("%", null);
-								nuevoDeseado.ReseñasCantidad = juego.Analisis.Cantidad.Replace(",", null);
-							}
-							else
-							{
-								nuevoDeseado.ReseñasPorcentaje = "0";
-								nuevoDeseado.ReseñasCantidad = "0";
-							}
-
-							deseadosGestor.Add(nuevoDeseado);
-
-							cantidadOfertas = cantidadOfertas + 1;
 						}
+
+						nuevoDeseado.Importado = importado;
+
+						if (juego.Analisis != null)
+						{
+							nuevoDeseado.ReseñasPorcentaje = juego.Analisis.Porcentaje.Replace("%", null);
+							nuevoDeseado.ReseñasCantidad = juego.Analisis.Cantidad.Replace(",", null);
+						}
+						else
+						{
+							nuevoDeseado.ReseñasPorcentaje = "0";
+							nuevoDeseado.ReseñasCantidad = "0";
+						}
+
+						deseadosGestor.Add(nuevoDeseado);
+
+						cantidadOfertas = cantidadOfertas + 1;
 					}
 				}
 			}
@@ -1167,19 +1165,18 @@
 
 	private string MensajeMinimo(JuegoPrecio precio, bool moneda)
 	{
-		if (precio.Precio >= 0)
+		if (precio != null)
 		{
-			decimal tempPrecio = precio.Precio;
-
-			if (moneda == true)
+			if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado == 0)
 			{
-				if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
-				{
-					tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, precio.Moneda);
-				}
+				return Herramientas.Precios.Euro(Herramientas.Divisas.Cambio(precio.Precio, precio.Moneda));
+			}
+			else if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado > 0)
+			{
+				return Herramientas.Precios.Euro(precio.PrecioCambiado);
 			}
 
-			return Herramientas.Precios.Euro(tempPrecio);
+			return Herramientas.Precios.Euro(precio.Precio);
 		}
 
 		return null;

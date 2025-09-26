@@ -52,44 +52,6 @@
 
 <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
     <div>
-        Correo
-    </div>
-
-    <div style="display: flex; align-items: center; margin-top: 20px;">
-        <div style="margin-right: 20px;">
-            <a class="boton-pequeño" href="https://member5-7.smarterasp.net/cp/email" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Abrir Correo</a>
-        </div>
-
-        <div style="margin-right: 20px;">
-            @{
-                if (correosDeals == 1)
-                {
-                    <label>deals: 1 nuevo correo</label>
-                }
-                else if (correosDeals > 1)
-                {
-                    <label>deals: @correosDeals nuevos correos</label>
-                }
-            }
-        </div>
-
-        <div style="margin-right: 20px;">
-            @{
-                if (correosApps == 1)
-                {
-                    <label>apps: 1 nuevo correo</label>
-                }
-                else if (correosApps > 1)
-                {
-                    <label>apps: @correosApps nuevos correos</label>
-                }
-            }
-        </div>
-    </div>
-</div>
-
-<div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
-    <div>
         Afiliados
     </div>
 
@@ -159,12 +121,6 @@
 @code {
 
     #nullable disable
-
-    [Parameter]
-    public int correosDeals { get; set; }
-
-    [Parameter]
-    public int correosApps { get; set; }
 
     private string dealsGoogleSearch = string.Empty;
     private string dealsCloudflare = string.Empty;

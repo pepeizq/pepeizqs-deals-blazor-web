@@ -1,0 +1,23 @@
+﻿@mensaje
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    [Parameter]
+    public Juegos.Juego juego { get; set; }
+
+    public string mensaje = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (juego != null)
+        {
+            mensaje = Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

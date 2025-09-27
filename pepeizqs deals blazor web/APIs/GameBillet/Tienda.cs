@@ -9,6 +9,7 @@
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -110,7 +111,7 @@ namespace APIs.GameBillet
 
 											JuegoPrecio oferta = new JuegoPrecio
 											{
-												Nombre = juego.Nombre,
+												Nombre = WebUtility.HtmlDecode(juego.Nombre),
 												Enlace = juego.Enlace,
 												Imagen = "nada",
 												Moneda = JuegoMoneda.Euro,

@@ -3,92 +3,68 @@
 @using Microsoft.Data.SqlClient
 
 <div class="caja-diseño" style="padding: 30px;">
-    <button @onclick="@(e => LimpiarErrores(e))" class="boton-pequeño" style="text-align: center; width: 200px;">Limpiar</button>
+    <button @onclick="@(e => LimpiarErrores(e))" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px;">Limpiar Todo</button>
 
-    @if (listaErrores != null)
+    @if (listaErrores?.Count > 0)
     {
-        if (listaErrores.Count > 0)
+        <hr />
+
+        foreach (var error in listaErrores)
         {
-            <hr />
-
-            foreach (var error in listaErrores)
-            {
-                bool conEnlace = false;
-
-                @if (string.IsNullOrEmpty(error.Enlace) == false)
-                {
-                    if (error.Enlace != "nada")
-                    {
-                        conEnlace = true;
-                    }
-                }
-
-                if (conEnlace == true)
-                {
-                    <a href="@error.Enlace" target="_blank">
-                        <div style="display: flex; align-items: start; margin-top: 10px; margin-bottom: 10px; gap: 20px;">
-                            <div>
-                                <div>
-                                    @error.Seccion
-                                </div>
-                                <div style="margin-top: 15px;">
-                                    @error.Fecha
-                                </div>
-                            </div>
-
-                            <div style="width: 100%;">
-                                @if (string.IsNullOrEmpty(error.Mensaje) == false)
-                                {
-                                    if (error.Mensaje != "nada")
-                                    {
-                                        <div style="margin-bottom: 10px;">
-                                            @error.Mensaje
-                                        </div>
-                                    }
-                                }
-
-                                <div>
-                                    @error.Stacktrace
-                                </div>                             
-                            </div>
-                        </div>
-                    </a>
-                }
-                else
-                {
-                    <div style="display: flex; align-items: start; margin-top: 10px; margin-bottom: 10px; gap: 20px;">
+            <div style="display: flex; flex-direction: column; margin-top: 10px; margin-bottom: 10px;">
+                <button @onclick="@(e => AmpliarError(e, error))" class="boton-pequeño" style="padding: 10px 15px;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
                         <div>
-                            <div>
-                                @error.Seccion
-                            </div>
-                            <div style="margin-top: 15px;">
-                                @error.Fecha
-                            </div>
+                            @error.Fecha
                         </div>
-
-                        <div style="width: 100%;">
-                            @if (string.IsNullOrEmpty(error.Mensaje) == false)
-                            {
-                                if (error.Mensaje != "nada")
-                                {
-                                    <div style="margin-bottom: 10px;">
-                                        @error.Mensaje
-                                    </div>
-                                }
-                            }
-
-                            <div>
-                                @error.Stacktrace
-                            </div>
+                        <div>
+                            @error.Seccion
                         </div>
                     </div>
-                }
-
-                <hr />
-            }
+                </button>
+            </div>
         }
     }
 </div>
+
+@if (errorSeleccionado != null)
+{
+    <div class="caja-diseño" style="padding: 30px; margin-top: 40px;">
+        <div style="width: 100%;">
+            @if (string.IsNullOrEmpty(errorSeleccionado.Mensaje) == false)
+            {
+                if (errorSeleccionado.Mensaje != "nada")
+                {
+                    <div>
+                        @errorSeleccionado.Mensaje
+                    </div>
+                    <hr />
+                }
+            }
+
+            <div>
+                @errorSeleccionado.Stacktrace
+            </div>
+
+            @if (string.IsNullOrEmpty(errorSeleccionado.Enlace) == false)
+            {
+                <hr />
+                <div>
+                    <a href="@errorSeleccionado.Enlace" target="_blank">@errorSeleccionado.Enlace</a>
+                </div>
+            }
+
+            @if (string.IsNullOrEmpty(errorSeleccionado.SentenciaSQL) == false)
+            {
+                <hr />
+                <div>
+                    @errorSeleccionado.SentenciaSQL
+                </div>
+            }
+        </div>
+    </div>
+}
+
 
 @code {
 
@@ -97,6 +73,7 @@
     private SqlConnection conexion = new SqlConnection();
 
     List<BaseDatos.Errores.Error> listaErrores = new List<BaseDatos.Errores.Error>();
+    BaseDatos.Errores.Error errorSeleccionado = null;
 
     protected override void OnInitialized()
     {
@@ -120,7 +97,12 @@
             BaseDatos.Errores.Limpiar.Ejecutar(conexion);
 
             listaErrores = new List<BaseDatos.Errores.Error>();
+			errorSeleccionado = null;
         }
     }
 
+    private void AmpliarError(MouseEventArgs e, BaseDatos.Errores.Error error)
+    {
+        errorSeleccionado = error;
+    }
 }

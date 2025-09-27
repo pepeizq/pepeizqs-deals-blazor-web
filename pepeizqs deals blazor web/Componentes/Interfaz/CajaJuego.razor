@@ -672,7 +672,7 @@
 
 		@if (tipo == Tipo.Filtro)
 		{
-			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" class="boton-pequeño" style="padding: 0px; margin: 10px 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="padding: 0px; margin: 10px 0px; @fondoColor">
 				<div style="display: flex; align-items: center;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 230px; height: 107px;" />
@@ -684,39 +684,29 @@
 						</div>
 
 						<div style="margin-top: 10px; font-size: 15px;">
-							@Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
+							<CajaJuegoMensaje idioma="@idioma" juego="@juego" />
 						</div>
 					</div>
 				</div>
-			</a>
+			</button>
 		}
 
 		@if (tipo == Tipo.CuratorDestacado)
 		{
-			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" target="_blank" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
 				<div style="display: flex; flex-direction: column; height: 100%;" title="@juego.Nombre">
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-height: 278px; object-fit: cover;" alt="@juego.Nombre" />
 
-					@{
-						string mensaje = Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true);
-						string fuente = "font-size: 16px;";
-
-						if (mensaje.Contains("€") == true)
-						{
-							fuente = "font-size: 14px;";
-						}
-					}
-
-					<div style="@fuente display: flex; align-items: center; justify-content: center; height: 100%; padding: 10px; text-align: center;">
-						@mensaje
+					<div style="font-size: 14px; display: flex; align-items: center; justify-content: center; height: 100%; padding: 10px; text-align: center;">
+						<CajaJuegoMensaje idioma="@idioma" juego="@juego" />
 					</div>
 				</div>
-			</a>
+			</button>
 		}
 
 		@if (tipo == Tipo.CuratorLista)
 		{
-			<a href="/game/@juego.Id.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juego.Nombre)/" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="display: flex; align-items: center;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 230px; height: 107px;" alt="@juego.Nombre" />
@@ -728,11 +718,11 @@
 						</div>
 
 						<div style="margin-top: 10px; font-size: 15px;">
-							@Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
+							<CajaJuegoMensaje idioma="@idioma" juego="@juego" />
 						</div>
 					</div>
 				</div>
-			</a>
+			</button>
 		}
 
 		@if (tipo == Tipo.CuratorJuego)
@@ -742,7 +732,7 @@
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 255, 120)" style="max-width: 100vw; max-height: 100vh; object-fit: cover;" alt="@juego.Nombre" loading="lazy" />
 
 					<div style="font-size: 14px; display: flex; align-items: center; justify-content: center; height: 100%; padding: 10px; text-align: center;">
-						@Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
+						<CajaJuegoMensaje idioma="@idioma" juego="@juego" />
 					</div>
 				</div>
 			</button>

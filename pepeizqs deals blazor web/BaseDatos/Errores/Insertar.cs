@@ -6,7 +6,7 @@ namespace BaseDatos.Errores
 {
     public static class Insertar
 	{
-        public static void Mensaje(string seccion, Exception ex, SqlConnection conexion = null, bool reiniciar = true)
+        public static void Mensaje(string seccion, Exception ex, SqlConnection conexion = null, bool reiniciar = true, SqlCommand comandoUsado = null)
 		{
             if (conexion == null)
             {
@@ -20,11 +20,20 @@ namespace BaseDatos.Errores
                 }
             }
 
+            string añadirComando1 = string.Empty;
+            string añadirComando2 = string.Empty;
+
+            if (comandoUsado != null)
+            {
+                añadirComando1 = ", sentenciaSQL";
+                añadirComando2 = ", @sentenciaSQL";
+            }
+
             using (conexion)
             {
                 string sqlInsertar = "INSERT INTO errores " +
-                                "(seccion, mensaje, stacktrace, fecha) VALUES " +
-                                "(@seccion, @mensaje, @stacktrace, @fecha) ";
+                                "(seccion, mensaje, stacktrace, fecha" + añadirComando1 + ") VALUES " +
+                                "(@seccion, @mensaje, @stacktrace, @fecha" + añadirComando2 + ") ";
 
                 using (SqlCommand comando = new SqlCommand(sqlInsertar, conexion))
                 {
@@ -32,6 +41,11 @@ namespace BaseDatos.Errores
                     comando.Parameters.AddWithValue("@mensaje", ex.Message);
                     comando.Parameters.AddWithValue("@stacktrace", ex.StackTrace);
                     comando.Parameters.AddWithValue("@fecha", DateTime.Now);
+
+                    if (comandoUsado != null)
+                    {
+                        comando.Parameters.AddWithValue("@sentenciaSQL", GenerarSentencia(comandoUsado));
+                    }
 
                     try
                     {
@@ -57,7 +71,7 @@ namespace BaseDatos.Errores
 			}  
         }
 
-        public static void Mensaje(string seccion, string mensaje, string enlace = null, SqlConnection conexion = null)
+        public static void Mensaje(string seccion, string mensaje, string enlace = null, SqlCommand comandoUsado = null, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -71,14 +85,27 @@ namespace BaseDatos.Errores
                 }
             }
 
-            if (enlace == null)
+            string añadirEnlace1 = string.Empty;
+            string añadirEnlace2 = string.Empty;
+
+            if (string.IsNullOrEmpty(enlace) == false)
             {
-                enlace = "nada";
+                añadirEnlace1 = ", enlace";
+                añadirEnlace2 = ", @enlace";
+            }
+
+            string añadirComando1 = string.Empty;
+            string añadirComando2 = string.Empty;
+
+            if (comandoUsado != null)
+            {
+                añadirComando1 = ", sentenciaSQL";
+                añadirComando2 = ", @sentenciaSQL";
             }
 
             string sqlInsertar = "INSERT INTO errores " +
-                               "(seccion, mensaje, stacktrace, fecha, enlace) VALUES " +
-                               "(@seccion, @mensaje, @stacktrace, @fecha, @enlace) ";
+                               "(seccion, mensaje, stacktrace, fecha" + añadirEnlace1 + añadirComando1 + ") VALUES " +
+                               "(@seccion, @mensaje, @stacktrace, @fecha" + añadirEnlace2 + añadirComando2 + ") ";
 
             using (SqlCommand comando = new SqlCommand(sqlInsertar, conexion))
             {
@@ -86,7 +113,16 @@ namespace BaseDatos.Errores
                 comando.Parameters.AddWithValue("@mensaje", "nada");
                 comando.Parameters.AddWithValue("@stacktrace", mensaje);
                 comando.Parameters.AddWithValue("@fecha", DateTime.Now);
-                comando.Parameters.AddWithValue("@enlace", enlace);
+
+                if (string.IsNullOrEmpty(enlace) == false)
+                {
+                    comando.Parameters.AddWithValue("@enlace", enlace);
+                }
+
+                if (comandoUsado != null)
+                {
+                    comando.Parameters.AddWithValue("@sentenciaSQL", GenerarSentencia(comandoUsado));
+                }
 
                 try
                 {
@@ -98,5 +134,39 @@ namespace BaseDatos.Errores
                 }
 			}
 		}
+
+        public static string GenerarSentencia(SqlCommand comandoUsado)
+        {
+            string comandoSQL = comandoUsado.CommandText;
+
+            foreach (SqlParameter parametro in comandoUsado.Parameters)
+            {
+                string valorParametro = parametro.Value.ToString();
+
+                if (parametro.DbType == System.Data.DbType.String || parametro.DbType == System.Data.DbType.DateTime)
+                {
+                    valorParametro = "'" + valorParametro.Replace("'", "''") + "'";
+                }
+                else if (parametro.DbType == System.Data.DbType.Boolean)
+                {
+                    if (valorParametro == "True")
+                    {
+                        valorParametro = "1";
+                    }
+                    else
+                    {
+                        valorParametro = "0";
+                    }
+                }
+                else if (parametro.Value == null)
+                {
+                    valorParametro = "NULL";
+                }
+
+                comandoSQL = comandoSQL.Replace(parametro.ParameterName, valorParametro);
+            }
+
+            return comandoSQL;
+        }
     }
 }

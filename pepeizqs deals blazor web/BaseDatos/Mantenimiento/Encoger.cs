@@ -28,7 +28,7 @@ namespace BaseDatos.Mantenimiento
 
 			using (SqlCommand comando = new SqlCommand(sqlEncoger, conexion))
 			{
-				comando.CommandTimeout = 1000;
+				comando.CommandTimeout = 5000;
 
 				try
 				{
@@ -36,7 +36,7 @@ namespace BaseDatos.Mantenimiento
 				}
 				catch (Exception ex)
 				{
-					BaseDatos.Errores.Insertar.Mensaje("Encoger Base Datos", ex);
+					BaseDatos.Errores.Insertar.Mensaje("Encoger Base Datos", ex, null, true, comando);
 				}
 			}
 		}

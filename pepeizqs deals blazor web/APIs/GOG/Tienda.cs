@@ -161,7 +161,15 @@ namespace APIs.GOG
                     }
 					catch
 					{
-						BaseDatos.Errores.Insertar.Mensaje("GOG API", html, enlace2);
+						if (html.Contains("overcapacity.jpg") == true)
+						{
+							await Task.Delay(60000);
+							i -= 1;
+						}
+						else
+						{
+                            BaseDatos.Errores.Insertar.Mensaje("GOG API", html, enlace2);
+                        }
                     }
                     
 					if (datos != null)

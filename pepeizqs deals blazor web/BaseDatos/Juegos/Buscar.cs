@@ -1708,33 +1708,32 @@ namespace BaseDatos.Juegos
 						{
 							if (id.Contains("t") == true)
 							{
-								etiquetas.Add(id.Replace("t", null));
+								etiquetas.Add(id);
 							}
 
 							if (id.Contains("c") == true || id.Contains("a") == true)
 							{
-								categorias.Add(id.Replace("c", null));
-								categorias.Add(id.Replace("a", null));
+								categorias.Add(id);
 							}
 
 							if (id.Contains("g") == true)
 							{
-								generos.Add(id.Replace("g", null));
+								generos.Add(id);
 							}
 
 							if (id.Contains("d") == true)
 							{
-								decks.Add(id.Replace("d", null));
+								decks.Add(id);
 							}
 
 							if (id.Contains("s") == true)
 							{
-								sistemas.Add(id.Replace("s", null));
+								sistemas.Add(id);
 							}
 
 							if (id.Contains("i") == true)
 							{
-								tipos.Add(id.Replace("i", null));
+								tipos.Add(id);
 							}
 						}
 					}
@@ -1748,16 +1747,22 @@ namespace BaseDatos.Juegos
 
 					foreach (var etiqueta in etiquetas)
 					{
-						if (i == 0)
-						{
-							etiquetasTexto = "etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta + Strings.ChrW(34) + "%'";
-						}
-						else
-						{
-							etiquetasTexto = etiquetasTexto + " AND etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta + Strings.ChrW(34) + "%'";
-						}
+						string etiqueta2 = etiqueta;
+						etiqueta2 = etiqueta2.Replace("t", null);
 
-						i += 1;
+						if (etiquetasTexto.Contains(etiqueta2) == false)
+						{
+                            if (i == 0)
+                            {
+                                etiquetasTexto = "etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta2 + Strings.ChrW(34) + "%'";
+                            }
+                            else
+                            {
+                                etiquetasTexto = etiquetasTexto + " AND etiquetas LIKE '%" + Strings.ChrW(34) + etiqueta2 + Strings.ChrW(34) + "%'";
+                            }
+
+                            i += 1;
+                        }   
 					}
 
 					if (string.IsNullOrEmpty(etiquetasTexto) == false)
@@ -1774,21 +1779,28 @@ namespace BaseDatos.Juegos
 
 					foreach (var categoria in categorias)
 					{
-						if (i == 0)
-						{
-							categoriasTexto = "categorias LIKE '%" + Strings.ChrW(34) + categoria + Strings.ChrW(34) + "%'";
-						}
-						else
-						{
-							categoriasTexto = categoriasTexto + " AND categorias LIKE '%" + Strings.ChrW(34) + categoria + Strings.ChrW(34) + "%'";
-						}
+						string categoria2 = categoria;
+                        categoria2 = categoria2.Replace("c", null);
+						categoria2 = categoria2.Replace("a", null);
 
-						i += 1;
+						if (categoriasTexto.Contains(categoria2) == false)
+						{
+                            if (i == 0)
+                            {
+                                categoriasTexto = "categorias LIKE '%" + Strings.ChrW(34) + categoria2 + Strings.ChrW(34) + "%'";
+                            }
+                            else
+                            {
+                                categoriasTexto = categoriasTexto + " AND categorias LIKE '%" + Strings.ChrW(34) + categoria2 + Strings.ChrW(34) + "%'";
+                            }
+
+                            i += 1;
+                        }
 					}
 
 					if (string.IsNullOrEmpty(categoriasTexto) == false)
 					{
-						categoriasTexto = "  AND ISJSON(categorias) > 0 AND (" + categoriasTexto + ")";
+						categoriasTexto = " AND ISJSON(categorias) > 0 AND (" + categoriasTexto + ")";
 					}
 				}
 
@@ -1800,16 +1812,22 @@ namespace BaseDatos.Juegos
 
 					foreach (var genero in generos)
 					{
-						if (i == 0)
-						{
-							generosTexto = "generos LIKE '%" + Strings.ChrW(34) + genero + Strings.ChrW(34) + "%'";
-						}
-						else
-						{
-							generosTexto = generosTexto + " AND generos LIKE '%" + Strings.ChrW(34) + genero + Strings.ChrW(34) + "%'";
-						}
+						string genero2 = genero;
+						genero2 = genero2.Replace("g", null);
 
-						i += 1;
+						if (generosTexto.Contains(genero2) == false)
+						{
+                            if (i == 0)
+                            {
+                                generosTexto = "generos LIKE '%" + Strings.ChrW(34) + genero2 + Strings.ChrW(34) + "%'";
+                            }
+                            else
+                            {
+                                generosTexto = generosTexto + " AND generos LIKE '%" + Strings.ChrW(34) + genero2 + Strings.ChrW(34) + "%'";
+                            }
+
+                            i += 1;
+                        }
 					}
 
 					if (string.IsNullOrEmpty(generosTexto) == false)
@@ -1826,16 +1844,22 @@ namespace BaseDatos.Juegos
 
 					foreach (var deck in decks)
 					{
-						if (i == 0)
-						{
-							deckTexto = "deck = " + deck;
-						}
-						else
-						{
-							deckTexto = deckTexto + " AND deck = " + deck;
-						}
+						string deck2 = deck;
+						deck2 = deck2.Replace("d", null);
 
-						i += 1;
+						if (deckTexto.Contains(deck2) == false)
+						{
+                            if (i == 0)
+                            {
+                                deckTexto = "deck = " + deck2;
+                            }
+                            else
+                            {
+                                deckTexto = deckTexto + " AND deck = " + deck2;
+                            }
+
+                            i += 1;
+                        } 
 					}
 
 					if (string.IsNullOrEmpty(deckTexto) == false)
@@ -1850,22 +1874,25 @@ namespace BaseDatos.Juegos
 				{
 					foreach (var sistema in sistemas)
 					{
-						if (string.IsNullOrEmpty(sistemasTexto) == false)
+						string sistema2 = sistema;
+						sistema2 = sistema2.Replace("s", null);
+
+                        if (string.IsNullOrEmpty(sistemasTexto) == false)
 						{
 							sistemasTexto = sistemasTexto + " AND ";
 						}
 
-						if (sistema == "1")
+						if (sistema2 == "1")
 						{
 							sistemasTexto = sistemasTexto + "caracteristicas LIKE '%" + Strings.ChrW(34) + "Windows" + Strings.ChrW(34) + ":true%'";
 						}
 
-						if (sistema == "2")
+						if (sistema2 == "2")
 						{
 							sistemasTexto = sistemasTexto + "caracteristicas LIKE '%" + Strings.ChrW(34) + "Mac" + Strings.ChrW(34) + ":true%'";
 						}
 
-						if (sistema == "3")
+						if (sistema2 == "3")
 						{
 							sistemasTexto = sistemasTexto + "caracteristicas LIKE '%" + Strings.ChrW(34) + "Linux" + Strings.ChrW(34) + ":true%'";
 						}
@@ -1885,16 +1912,22 @@ namespace BaseDatos.Juegos
 
 					foreach (var tipo in tipos)
 					{
-						if (i == 0)
-						{
-							tiposTexto = "tipo = " + tipo;
-						}
-						else
-						{
-							tiposTexto = tiposTexto + " AND tipo = " + tipo;
-						}
+						string tipo2 = tipo;
+						tipo2 = tipo2.Replace("i", null);
 
-						i += 1;
+						if (tiposTexto.Contains(tipo2) == false)
+						{
+                            if (i == 0)
+                            {
+                                tiposTexto = "tipo = " + tipo2;
+                            }
+                            else
+                            {
+                                tiposTexto = tiposTexto + " AND tipo = " + tipo2;
+                            }
+
+                            i += 1;
+                        }
 					}
 
 					if (string.IsNullOrEmpty(tiposTexto) == false)

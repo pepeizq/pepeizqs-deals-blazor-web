@@ -244,21 +244,27 @@ namespace Herramientas
                                         if (juego.Juego.PrecioMinimosHistoricos != null)
                                         {
                                             decimal precioMinimoDecimal = 0;
+                                            decimal precioMinimoComparar = 10000;
 
                                             foreach (var historico in juego.Juego.PrecioMinimosHistoricos)
                                             {
                                                 if (historico.DRM == juego.DRM)
                                                 {
-                                                    if (historico.PrecioCambiado > 0)
+                                                    if (historico.PrecioCambiado > 0 && historico.PrecioCambiado < precioMinimoComparar)
                                                     {
-                                                        precioMinimoDecimal = historico.PrecioCambiado;
+                                                        precioMinimoComparar = historico.PrecioCambiado;
                                                     }
-                                                    else
+                                                    else if (historico.Precio > 0 && historico.Precio < precioMinimoComparar)
                                                     {
-                                                        precioMinimoDecimal = historico.Precio;
+                                                        precioMinimoComparar = historico.Precio;
                                                     }
                                                 }
                                             }
+
+                                            if (precioMinimoComparar < 10000)
+                                            {
+                                                precioMinimoDecimal = precioMinimoComparar;
+                                            }     
 
                                             if (juego.DLCs?.Count > 0)
                                             {
@@ -268,19 +274,26 @@ namespace Herramientas
 
                                                     if (juegoDLC?.PrecioMinimosHistoricos != null)
                                                     {
+                                                        decimal precioMinimoDLCComparar = 10000;
+
                                                         foreach (var historico in juegoDLC.PrecioMinimosHistoricos)
                                                         {
                                                             if (historico.DRM == juego.DRM)
                                                             {
-                                                                if (historico.PrecioCambiado > 0)
+                                                                if (historico.PrecioCambiado > 0 && historico.PrecioCambiado < precioMinimoDLCComparar)
                                                                 {
-                                                                    precioMinimoDecimal = precioMinimoDecimal + historico.PrecioCambiado;
+                                                                    precioMinimoDLCComparar = historico.PrecioCambiado;
                                                                 }
-                                                                else
+                                                                else if (historico.Precio > 0 && historico.Precio < precioMinimoDLCComparar)
                                                                 {
-                                                                    precioMinimoDecimal = precioMinimoDecimal + historico.Precio;
+                                                                    precioMinimoDLCComparar = historico.Precio;
                                                                 }
                                                             }
+                                                        }
+
+                                                        if (precioMinimoDLCComparar < 10000)
+                                                        {
+                                                            precioMinimoDecimal = precioMinimoDecimal + precioMinimoDLCComparar;
                                                         }
                                                     }
                                                 }

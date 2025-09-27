@@ -63,6 +63,14 @@ namespace BaseDatos.Errores
                                 }
                             }
 
+                            if (lector.IsDBNull(6) == false)
+                            {
+                                if (string.IsNullOrEmpty(lector.GetString(6)) == false)
+                                {
+                                    error.SentenciaSQL = lector.GetString(6);
+                                }
+                            }
+
                             listaErrores.Add(error);
                         }
                     }
@@ -80,5 +88,6 @@ namespace BaseDatos.Errores
         public string Stacktrace;
         public DateTime Fecha;
         public string Enlace;
+        public string SentenciaSQL;
     }
 }

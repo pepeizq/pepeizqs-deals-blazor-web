@@ -1222,49 +1222,6 @@ else
 		{
 			opcionesMinimos ??= BaseDatos.Usuarios.Buscar.OpcionesMinimos(usuarioId);
 		}
-
-		if (opcionesMinimos == null)
-		{
-			OrdenarReseñasCantidad(true);
-		}
-		else
-		{
-			if (opcionesMinimos.HistoricalLowsSort == null)
-			{
-				opcionesMinimos.HistoricalLowsSort = 1;
-			}
-
-			if (opcionesMinimos.HistoricalLowsSort == 0)
-			{
-				OrdenarReseñasPorcentaje(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 1)
-			{
-				OrdenarReseñasCantidad(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 2)
-			{
-				OrdenarNombreAZ(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 3)
-			{
-				OrdenarNombreZA(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 4)
-			{
-				OrdenarPrecio(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 5)
-			{
-				OrdenarDescuento(true);
-			}
-			else if (opcionesMinimos.HistoricalLowsSort == 6)
-			{
-				OrdenarFechaDetectado(true);
-			}
-		}
-
-		cargado = true;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool primerRender)
@@ -1273,11 +1230,52 @@ else
 		{
 			await CambiarEnlace();
 
+			cargado = false;
 
+			if (opcionesMinimos == null)
+			{
+				OrdenarReseñasCantidad(true);
+			}
+			else
+			{
+				if (opcionesMinimos.HistoricalLowsSort == null)
+				{
+					opcionesMinimos.HistoricalLowsSort = 1;
+				}
 
-			
+				if (opcionesMinimos.HistoricalLowsSort == 0)
+				{
+					OrdenarReseñasPorcentaje(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 1)
+				{
+					OrdenarReseñasCantidad(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 2)
+				{
+					OrdenarNombreAZ(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 3)
+				{
+					OrdenarNombreZA(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 4)
+				{
+					OrdenarPrecio(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 5)
+				{
+					OrdenarDescuento(true);
+				}
+				else if (opcionesMinimos.HistoricalLowsSort == 6)
+				{
+					OrdenarFechaDetectado(true);
+				}
+			}
+
+			cargado = true;
+			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	#region Ordenar

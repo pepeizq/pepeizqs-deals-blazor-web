@@ -250,7 +250,7 @@ namespace BaseDatos.Juegos
                 }
 				catch (Exception ex)
 				{
-					Errores.Insertar.Mensaje("Actualizar Juego " + id, ex);
+					Errores.Insertar.Mensaje("Actualizar Juego " + id, ex, null, false, comando);
 				}
 			}
 		}

@@ -454,9 +454,21 @@ namespace BaseDatos.Juegos
 			}
 		}
 
-		public static void DlcMaestro(Juego juego, SqlConnection conexion)
+		public static void DlcMaestro(Juego juego, SqlConnection conexion = null)
 		{
-			string sqlActualizar = "UPDATE juegos " +
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            string sqlActualizar = "UPDATE juegos " +
 					"SET maestro=@maestro WHERE id=@id";
 
 			using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))

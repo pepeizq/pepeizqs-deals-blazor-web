@@ -78,7 +78,7 @@ namespace Herramientas
 				}
 				catch (Exception ex) 
 				{
-					global::BaseDatos.Errores.Insertar.Mensaje("Decompilador", ex);
+					global::BaseDatos.Errores.Insertar.Mensaje("Decompilador", ex.StackTrace, enlace);
 				}
 			}
 

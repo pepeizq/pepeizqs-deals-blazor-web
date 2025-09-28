@@ -1,26 +1,37 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Data.SqlClient
 
-<div class="caja-diseño" style="padding: 30px;">
-    <button @onclick="(async () => await BuscarDlcMaestro())" class="boton-pequeño" style="padding: 10px 15px; width: 250px;">
+<div class="caja-diseño" style="padding: 30px; display: flex; align-items: center; gap: 30px;">
+    <button @onclick="(async () => await BuscarDlcMaestro())" class="boton-pequeño" style="padding: 10px 30px; width: fit-content;">
         Buscar Maestro
     </button>
 
-    @if (dlcsPendientes.Count > 0)
-    {
-        <div style="margin-top: 30px; display: flex; align-items: center; gap: 20px;">
-            <a href="/game/@dlcsPendientes[posicionDLC].Id.ToString()" target="_blank">
-                <img src="@dlcsPendientes[posicionDLC].Imagenes.Header_460x215" style="width: 230px; height: 107px;" />
-            </a>
-
-            <div>
-                <div>@dlcsPendientes[posicionDLC].Nombre</div>
-
-                <a href="https://store.steampowered.com/app/@dlcsPendientes[posicionDLC].IdSteam" target="_blank" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px; margin-top: 15px;">Abrir Steam</a>
-            </div>   
-        </div>
-    }
+    <button @onclick="DescartarDlcMaestro" class="boton-pequeño" style="padding: 10px 30px; width: fit-content;">
+        Descartar
+    </button>
 </div>
+
+@if (dlcsPendientes?.Count > 0)
+{
+    <div class="caja-diseño" style="padding: 30px; margin-top: 40px; display: flex; align-items: center; gap: 20px;">
+        <a href="/game/@dlcMostrar.Id.ToString()" target="_blank">
+            <img src="@dlcMostrar.Imagenes.Header_460x215" style="width: 230px; height: 107px;" />
+        </a>
+
+        <div>
+            <div>@dlcMostrar.Nombre</div>
+
+            <a href="https://store.steampowered.com/app/@dlcMostrar.IdSteam" target="_blank" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px; margin-top: 15px;">Abrir Steam</a>
+        </div>
+
+        @if (noEncontrado == true)
+        {
+            <div style="background-color: var(--fondoPeligro); padding: 10px 30px;">
+                No Encontrado
+            </div>
+        }
+    </div>
+}
 
 @code {
 
@@ -29,6 +40,7 @@
     private SqlConnection conexion = new SqlConnection();
 
     private List<global::Juegos.Juego> dlcsPendientes = new List<global::Juegos.Juego>();
+    private global::Juegos.Juego dlcMostrar = new global::Juegos.Juego();
 
     protected override void OnInitialized()
     {
@@ -37,11 +49,11 @@
             conexion = Herramientas.BaseDatos.Conectar();
         }
 
-        dlcsPendientes = BaseDatos.Juegos.Buscar.DLCs(null, conexion);
+        dlcsPendientes = BaseDatos.Juegos.Buscar.DLCs(null, global::Juegos.JuegoTipo.DLC, conexion);
+		dlcMostrar = dlcsPendientes.FirstOrDefault();
     }
 
-    private int posicionDLC = 0;
-    private string textoDlcMaestro = string.Empty;
+    private bool noEncontrado = false;
 
     private async Task BuscarDlcMaestro()
     {
@@ -50,22 +62,52 @@
             conexion = Herramientas.BaseDatos.Conectar();
         }
 
-        global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(dlcsPendientes[posicionDLC].IdSteam.ToString());
+        noEncontrado = false;
 
-        if (nuevoJuego != null)
+        foreach (var dlcPendiente in dlcsPendientes)
         {
-            textoDlcMaestro = nuevoJuego.Maestro;
+            await Task.Yield();
+			dlcMostrar = dlcPendiente;
 
-            if (string.IsNullOrEmpty(textoDlcMaestro) == false)
+            global::Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(dlcPendiente.IdSteam.ToString());
+
+            if (nuevoJuego != null)
             {
-                using (conexion)
+                if (string.IsNullOrEmpty(nuevoJuego.Maestro) == false)
                 {
-                    dlcsPendientes[posicionDLC].Maestro = textoDlcMaestro;
-                    BaseDatos.Juegos.Actualizar.DlcMaestro(dlcsPendientes[posicionDLC], conexion);
+                    using (conexion)
+                    {
+                        dlcPendiente.Maestro = nuevoJuego.Maestro;
+                        BaseDatos.Juegos.Actualizar.DlcMaestro(dlcPendiente);
+                    }
                 }
-
-                posicionDLC += 1;
+                else
+                {
+                    noEncontrado = true;
+                    break;
+                }
             }
-        }
+
+            await InvokeAsync(StateHasChanged);
+		}
     }
+
+    private void DescartarDlcMaestro()
+    {
+        if (conexion.State != System.Data.ConnectionState.Open)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
+        }
+
+        noEncontrado = false;
+
+        using (conexion)
+        {
+            dlcMostrar.Maestro = "descartado";
+            BaseDatos.Juegos.Actualizar.DlcMaestro(dlcMostrar, conexion);
+
+			dlcsPendientes.Remove(dlcMostrar);
+            dlcMostrar = dlcsPendientes.FirstOrDefault();
+        }
+	}
 }

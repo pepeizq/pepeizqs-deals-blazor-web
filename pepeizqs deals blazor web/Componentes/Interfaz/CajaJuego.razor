@@ -79,13 +79,40 @@
     };
 </script>
 
+<script>
+	window.clipboardCopy = {
+		copyText: function(text) {
+			navigator.clipboard.writeText(text);
+		}
+	};
+</script>
+
+@if (enseñarAlerta == true)
+{
+	<div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Clipboard")
+			</div>
+
+			<button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+				<div style="width: 20px; height: 20px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+					</svg>
+				</div>
+			</button>
+		</div>
+	</div>
+}
+
 @if (juego != null)
 {
 	#nullable disable
 
 	int idMaestra = juego.IdMaestra;
 
-	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente)
+	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente || tipo == Tipo.JuegoDLC || tipo == Tipo.JuegoBandaSonora)
 	{
 		idMaestra = juego.Id;
 	}
@@ -144,7 +171,7 @@
 			{
 				if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
-					enlace = Herramientas.EnlaceAcortador.Generar(oferta.Enlace, oferta.Tienda, usuarioPatreon);
+					enlace = Herramientas.EnlaceAcortador.Generar(oferta.Enlace, oferta.Tienda, usuarioPatreon, false);
 				}
 				else
 				{
@@ -189,12 +216,9 @@
 	}
 	else
 	{
-		if (juego.PrecioMinimosHistoricos != null)
+		if (juego.PrecioMinimosHistoricos?.Count > 0)
 		{
-			if (juego.PrecioMinimosHistoricos.Count > 0)
-			{
-				drmUsar = juego.PrecioMinimosHistoricos[0].DRM;
-			}
+			drmUsar = juego.PrecioMinimosHistoricos[0].DRM;
 		}
 	}
 
@@ -446,7 +470,7 @@
 				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
 			}
 
-			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
+			<a class="boton-pequeño" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 100%; height: 100%;" alt="@juego.Nombre" loading="lazy" />
@@ -499,7 +523,7 @@
 				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
 			}
 
-			<button @onclick="(e => AbrirEnlace(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 100%; height: 100%;" loading="lazy" />
@@ -563,7 +587,7 @@
 
 		@if (tipo == Tipo.Bundle)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="padding: 0px; position: relative;">
 					@{
 						bool añadirNuevo = false;
@@ -659,7 +683,7 @@
 				imagen = juego.Imagenes.Header_460x215;
 			}
 
-			<button @onclick="(e => AbrirEnlace(e, enlaceNoticia, true))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlaceNoticia, true))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div>
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(imagen)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
 				</div>
@@ -693,7 +717,7 @@
 
 		@if (tipo == Tipo.CuratorDestacado)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
 				<div style="display: flex; flex-direction: column; height: 100%;" title="@juego.Nombre">
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-height: 278px; object-fit: cover;" alt="@juego.Nombre" />
 
@@ -706,7 +730,7 @@
 
 		@if (tipo == Tipo.CuratorLista)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
 				<div style="display: flex; align-items: center;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="width: 230px; height: 107px;" alt="@juego.Nombre" />
@@ -727,7 +751,7 @@
 
 		@if (tipo == Tipo.CuratorJuego)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="height: 100%; padding: 0px; @fondoColor">
 				<div style="display: flex; flex-direction: column; height: 100%;" title="@juego.Nombre">
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 255, 120)" style="max-width: 100vw; max-height: 100vh; object-fit: cover;" alt="@juego.Nombre" loading="lazy" />
 
@@ -740,7 +764,7 @@
 
 		@if (tipo == Tipo.Gratis)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlaceGratis, true))" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor">
+			<button @onclick="(e => AbrirEnlace(e, enlaceGratis, true))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; text-align: center; position: relative; @fondoColor">
 				<div style="width: 100%; text-align: center;">
 					<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 100%; height: 100%;" alt="@juego.Nombre" />
 
@@ -764,7 +788,7 @@
 
 		@if (tipo == Tipo.Suscripciones)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlaceSuscripcion, true))" class="boton-pequeño" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
+			<button @onclick="(e => AbrirEnlace(e, enlaceSuscripcion, true))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; padding: 0px; max-width: 235px;">
 				<div class="boton-expandir" style="@fondoColor display: flex; flex-direction: column;">
 					<div>
 						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Library_600x900)" style="max-width: 100%; max-height: 100%;" alt="@juego.Nombre" />
@@ -775,6 +799,42 @@
 					</div>
 				</div>
 			</button>
+		}
+
+		@if (tipo == Tipo.JuegoDLC)
+		{
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left; width: 100%;">
+				<div class="boton-expandir" style="background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoDlc) 30%); display: flex; align-items: center; gap: 20px;">
+					<div>
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@juego.Nombre" />
+					</div>
+
+					<div style="width: 100%;">
+						<div>@juego.Nombre</div>
+						<div style="margin-top: 10px; font-size: 14px;">
+							<CajaJuegoMensaje juego="@juego" idioma="@idioma" />
+						</div>
+					</div>
+				</div>
+			</button>
+		}
+
+		@if (tipo == Tipo.JuegoBandaSonora)
+		{
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left; width: 100%;">
+                <div class="boton-expandir" style="background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoBandaSonora) 30%); display: flex; align-items: center; gap: 20px;">
+                    <div>
+                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@juego.Nombre" />
+                    </div>
+
+                    <div style="width: 100%;">
+                        <div>@juego.Nombre</div>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            <CajaJuegoMensaje juego="@juego" idioma="@idioma"/>
+                        </div>
+                    </div>
+                </div>
+            </button>
 		}
 	</div>
 }
@@ -789,7 +849,7 @@
 	public string idioma { get; set; }
 
 	[Parameter]
-    public string userAgent { get; set; }
+	public string userAgent { get; set; }
 
 	[Parameter]
 	public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
@@ -862,7 +922,9 @@
 		Suscripciones,
 		PortadaPopulares,
 		PortadaLanzamientos,
-		PortadaProximamente
+		PortadaProximamente,
+		JuegoDLC,
+		JuegoBandaSonora
 	}
 
 	#region Abrir Enlace
@@ -883,14 +945,51 @@
 
 	#region Portapapeles
 
-	private async Task CopiarAlClipboard(MouseEventArgs e, string texto)
+	bool enseñarAlerta = false;
+	private PeriodicTimer cronometro = null;
+	private int cronometroContador = 0;
+	private int cronometroLimite = 10;
+
+	private async void CopiarAlClipboard(MouseEventArgs e, string textoEnlace)
 	{
-		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
+		if (textoEnlace?.Contains("https://") == false)
+		{
+			textoEnlace = "https://pepeizqdeals.com" + textoEnlace;
+		}
+
+		enseñarAlerta = true;
+		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", textoEnlace);
+
+		cronometroContador = 0;
+		cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometro.WaitForNextTickAsync())
+		{
+			cronometroContador += 1;
+
+			if (cronometroContador > cronometroLimite)
+			{
+				enseñarAlerta = false;
+				cronometro.Dispose();
+				await InvokeAsync(StateHasChanged);
+			}
+		}
+	}
+
+	private void CerrarAvisoClipboard()
+	{
+		enseñarAlerta = false;
+		cronometroContador = 0;
+
+		if (cronometro != null)
+		{
+			cronometro.Dispose();
+		}
 	}
 
 	#endregion
 
-	#region Enseñar Tooltip
+	#region Enseñar Tooltip Juego
 
 	bool enseñarTooltip = false;
 

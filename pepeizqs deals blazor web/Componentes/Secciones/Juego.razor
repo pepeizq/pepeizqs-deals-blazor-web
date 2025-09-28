@@ -618,7 +618,7 @@
 
                             @if (dlcs?.Count > 0)
                             {
-                                <button onclick="moverScroll('dlcs')" class="boton" style="padding: 8px 10px; background-color: var(--fondoDlc); color: var(--colorTextoDlc); font-size: 16px; width: fit-content;">@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Game") (@dlcs.Count.ToString())</button>
+                                <button onclick="moverScroll('dlcs')" class="boton" style="padding: 8px 10px; background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoDlc) 70%); color: var(--colorTextoDlc); font-size: 16px; width: fit-content;">@Herramientas.Idiomas.BuscarTexto(idioma, "String34", "Game") (@dlcs.Count.ToString())</button>
                             }
                         </div>
                     </div>
@@ -1015,7 +1015,7 @@
 
                                                                 if (precioMinimoValor < 100000)
                                                                 {
-                                                                    <label>@Herramientas.Precios.Euro(precioMinimoValor)</label>
+                                                                    <div style="background-color: var(--fondoOscuro); padding: 5px 10px">@Herramientas.Precios.Euro(precioMinimoValor)</div>
                                                                     <label style="font-size: 14px;">@mensajeMinimoDRM</label>
                                                                 }
                                                             }
@@ -3355,22 +3355,24 @@
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <Virtualize Context="dlc" Items="dlcs" ItemSize="107">
                             <ItemContent>
-                                @{
-                                    string enlaceDLC = "/game/" + dlc.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(dlc.Nombre) + "/";
-                                }
+                                 <CajaJuego juego="dlc" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoDLC"/>
+                            </ItemContent>
+                        </Virtualize>
+                    </div>
+                </div>
+            }
 
-                                <a href="@enlaceDLC" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left;">
-                                    <div class="boton-expandir" style="background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoDlc) 30%); display: flex; align-items: center; gap: 20px;">
-                                        <div>
-                                            <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(dlc.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@dlc.Nombre" loading="lazy" />
-                                        </div>
+            @if (bandasSonoras?.Count > 0)
+            {
+                <div id="bandassonoras" class="caja-diseño" style="background: color-mix(in srgb, var(--fondoOscuro), var(--fondoBandaSonora) 60%); padding: 30px 40px 20px 40px;">
+                    <div>
+                        <label style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String82", "Game") (@bandasSonoras.Count.ToString())</label>
+                    </div>
 
-                                        <div style="width: 100%;">
-                                            <div>@dlc.Nombre</div>
-                                            <div style="margin-top: 10px; font-size: 14px;">@PrecioMinimoActual(dlc, idioma)</div>
-                                        </div>
-                                    </div>
-                                </a>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <Virtualize Context="bandaSonora" Items="bandasSonoras" ItemSize="107">
+                            <ItemContent>
+                                <CajaJuego juego="bandaSonora" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoBandaSonora"/>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -3915,6 +3917,7 @@
     private string idiomaJuego = null;
     [PersistentState] public Juegos.Juego juego { get; set; }
     [PersistentState] public List<Juegos.Juego> dlcs { get; set; }
+    [PersistentState] public List<Juegos.Juego> bandasSonoras { get; set; }
     [PersistentState] public List<Juegos.JuegoDRM> drmsGeforceNOW { get; set; }
     [PersistentState] public List<Juegos.JuegoDRM> drmsBoosteroid { get; set; }
     [PersistentState] public List<global::BaseDatos.Curators.CuratorFicha> curators { get; set; }
@@ -4172,7 +4175,8 @@
 
             if (juego != null)
             {
-                dlcs ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString());
+                dlcs ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString(), JuegoTipo.DLC);
+                bandasSonoras ??= global::BaseDatos.Juegos.Buscar.DLCs(juego.Id.ToString(), JuegoTipo.Music);
 
                 if (juego.IdSteam > 0)
                 {
@@ -4952,42 +4956,39 @@
 
                 if (historicosDRM[0].FechaActualizacion + tiempo > DateTime.Now && historicosDRM[0].Descuento > 0)
                 {
-                    drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Game"), tiendaFinal) + ")";
+                    drmPreparado = drmPreparado + " " + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Game"), tiendaFinal);
                 }
                 else
                 {
                     string mensaje = string.Empty;
 
-                    if (listaHistoricos != null)
+                    if (listaHistoricos?.Count > 0)
                     {
-                        if (listaHistoricos.Count > 0)
-                        {
-                            bool generarMensaje = false;
-                            JuegoHistorico ultimo = new JuegoHistorico();
-                            ultimo.Fecha = DateTime.Now - TimeSpan.FromDays(900);
+                        bool generarMensaje = false;
+                        JuegoHistorico ultimo = new JuegoHistorico();
+                        ultimo.Fecha = DateTime.Now - TimeSpan.FromDays(900);
 
-                            foreach (var historico in listaHistoricos)
+                        foreach (var historico in listaHistoricos)
+                        {
+                            if (historico.DRM == drm)
                             {
-                                if (historico.DRM == drm)
+                                if (ultimo.Fecha < historico.Fecha)
                                 {
-                                    if (ultimo.Fecha < historico.Fecha)
-                                    {
-                                        ultimo = historico;
-                                        generarMensaje = true;
-                                    }
+                                    ultimo = historico;
+                                    generarMensaje = true;
                                 }
                             }
-
-                            if (generarMensaje == true)
-                            {
-                                mensaje = " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Game"), Herramientas.Calculadora.DiferenciaTiempo(ultimo.Fecha, idioma), tiendaFinal) + ")";
-                            }
                         }
-                    }                 
+
+                        if (generarMensaje == true)
+                        {
+                            mensaje = " " + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Game"), Herramientas.Calculadora.DiferenciaTiempo(ultimo.Fecha, idioma), tiendaFinal);
+                        }
+                    }                
 
                     if (string.IsNullOrEmpty(mensaje) == true)
                     {
-                        mensaje = " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Game"), Herramientas.Calculadora.DiferenciaTiempo(historicosDRM[0].FechaDetectado, idioma), tiendaFinal) + ")";
+                        mensaje = " " + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Game"), Herramientas.Calculadora.DiferenciaTiempo(historicosDRM[0].FechaDetectado, idioma), tiendaFinal);
                     }
 
                     drmPreparado = drmPreparado + mensaje;
@@ -5911,43 +5912,6 @@
         }
 
         mediaMostrarPosicion = nuevaCaptura;
-    }
-
-    #endregion
-
-    #region Minimo
-
-    public static string PrecioMinimoActual(global::Juegos.Juego minimo, string idioma)
-    {
-        decimal minimoCantidad = 10000000;
-
-        if (minimo.PrecioActualesTiendas != null)
-        {
-            foreach (var precio in minimo.PrecioActualesTiendas)
-            {
-                if (Herramientas.OfertaActiva.Verificar(precio) == true)
-                {
-                    decimal tempPrecio = precio.Precio;
-
-                    if (precio.Moneda != Herramientas.JuegoMoneda.Euro)
-                    {
-                        tempPrecio = Herramientas.Divisas.Cambio(tempPrecio, precio.Moneda);
-                    }
-
-                    if (tempPrecio < minimoCantidad)
-                    {
-                        minimoCantidad = tempPrecio;
-                    }
-                }
-            }
-        }
-
-        if (minimoCantidad > 0 && minimoCantidad < 10000000)
-        {
-            return string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage1", "Header"), Herramientas.Precios.Euro(minimoCantidad));
-        }
-
-        return Herramientas.Idiomas.BuscarTexto(idioma, "SearchMessage2", "Header");
     }
 
     #endregion

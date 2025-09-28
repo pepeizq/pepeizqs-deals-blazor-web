@@ -654,7 +654,7 @@ namespace APIs.Steam
 								Analisis = reseñas
 							};
 
-							if (tipo == Juegos.JuegoTipo.DLC)
+							if (tipo == Juegos.JuegoTipo.DLC || tipo == Juegos.JuegoTipo.Music)
 							{
 								juego.Imagenes.Logo = null;
 								juego.Imagenes.Library_600x900 = null;
@@ -664,20 +664,11 @@ namespace APIs.Steam
 								{
 									Juegos.Juego maestro = BaseDatos.Juegos.Buscar.UnJuego(null, idMaestro.ToString());
 
-									if (maestro != null)
-									{
-										if (maestro.IdSteam > 0)
-										{
-											juego.Maestro = maestro.Id.ToString();
-										}
-									}
-								}
-							}
-							else if (tipo == Juegos.JuegoTipo.Music)
-							{
-								juego.Imagenes.Logo = null;
-								juego.Imagenes.Library_600x900 = null;
-								juego.Imagenes.Library_1920x620 = null;
+                                    if (maestro?.IdSteam > 0)
+                                    {
+                                        juego.Maestro = maestro.Id.ToString();
+                                    }
+                                }
 							}
 							else if (tipo == Juegos.JuegoTipo.Software)
 							{
@@ -721,7 +712,7 @@ namespace APIs.Steam
 			return null;
 		}
 
-		public static async Task<SteamDeckAPI> CargarDatosDeck(int juegoId, int steamId)
+        public static async Task<SteamDeckAPI> CargarDatosDeck(int juegoId, int steamId)
 		{
 			string id = steamId.ToString();
 

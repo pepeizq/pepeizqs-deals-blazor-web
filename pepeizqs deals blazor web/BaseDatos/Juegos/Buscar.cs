@@ -1602,7 +1602,7 @@ namespace BaseDatos.Juegos
 			return juegos;
 		}
 
-		public static List<Juego> DLCs(string idMaestro = null, SqlConnection conexion = null)
+		public static List<Juego> DLCs(string idMaestro = null, JuegoTipo tipo = JuegoTipo.DLC, SqlConnection conexion = null)
 		{
 			List<Juego> dlcs = new List<Juego>();
 
@@ -1624,11 +1624,18 @@ namespace BaseDatos.Juegos
 
 				if (string.IsNullOrEmpty(idMaestro) == false)
 				{
-					busqueda = "SELECT * FROM juegos WHERE maestro='" + idMaestro + "' ORDER BY nombre DESC";
+					if (tipo == JuegoTipo.DLC)
+					{
+                        busqueda = "SELECT * FROM juegos WHERE maestro='" + idMaestro + "' AND tipo='1' ORDER BY nombre DESC";
+                    }
+					else if (tipo == JuegoTipo.Music)
+					{
+                        busqueda = "SELECT * FROM juegos WHERE maestro='" + idMaestro + "' AND tipo='3' ORDER BY nombre DESC";
+                    }
 				}
 				else
 				{
-					busqueda = "SELECT * FROM juegos WHERE (maestro IS NULL AND tipo='1') or (maestro='no' AND tipo='1') ORDER BY nombre DESC";
+					busqueda = "SELECT * FROM juegos WHERE (maestro IS NULL AND tipo='1') OR (maestro='no' AND tipo='1') OR (maestro IS NULL AND tipo='3') OR (maestro='no' AND tipo='3') ORDER BY nombre DESC";
 				}
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
@@ -1665,7 +1672,7 @@ namespace BaseDatos.Juegos
 
 			int cantidad = 0;
 
-			string busqueda = "SELECT COUNT(*) FROM juegos WHERE (maestro IS NULL AND tipo='1') or (maestro='no' AND tipo='1')";
+			string busqueda = "SELECT COUNT(*) FROM juegos WHERE (maestro IS NULL AND tipo='1') OR (maestro='no' AND tipo='1') OR (maestro IS NULL AND tipo='3') OR (maestro='no' AND tipo='3')";
 
 			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 			{

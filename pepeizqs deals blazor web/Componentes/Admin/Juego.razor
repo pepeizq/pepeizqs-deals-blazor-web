@@ -204,9 +204,16 @@
 		else if (pestañaMostrar == 6)
 		{
 			<div style="display: flex; flex-direction: column; gap: 20px;">
-				@if (juego.Tipo == global::Juegos.JuegoTipo.DLC)
+				@if (juego.Tipo == global::Juegos.JuegoTipo.DLC || juego.Tipo == global::Juegos.JuegoTipo.Music)
 				{
-					<div style="display: flex; align-items: center; gap: 20px; background: color-mix(in srgb, var(--fondoDlc) 50%, transparent); border: 1px solid var(--fondoBotonPequeño); padding: 20px 40px;">
+					string fondo = "var(--fondoDlc)";
+
+					if (juego.Tipo == global::Juegos.JuegoTipo.Music)
+					{
+						fondo = "var(--fondoBandaSonora)";
+					};
+
+					<div style="display: flex; align-items: center; gap: 20px; background: color-mix(in srgb, @fondo 50%, transparent); border: 1px solid var(--fondoBotonPequeño); padding: 20px 40px;">
 						<div>
 							Juego Maestro
 						</div>
@@ -614,7 +621,7 @@
 			textoSuscripciones = JsonSerializer.Serialize(juego.Suscripciones);
 		}
 
-		if (juego.Tipo == global::Juegos.JuegoTipo.DLC)
+		if (juego.Tipo == global::Juegos.JuegoTipo.DLC || juego.Tipo == global::Juegos.JuegoTipo.Music)
 		{
 			textoDlcMaestro = juego.Maestro;
 		}

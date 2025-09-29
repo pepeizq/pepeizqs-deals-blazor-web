@@ -120,6 +120,33 @@
 	}
 </script>
 
+<script>
+	window.clipboardCopy = {
+		copyText: function(text) {
+			navigator.clipboard.writeText(text);
+		}
+	};
+</script>
+
+@if (enseñarAlerta == true)
+{
+	<div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Clipboard")
+			</div>
+
+			<button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+				<div style="width: 20px; height: 20px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+					</svg>
+				</div>
+			</button>
+		</div>
+	</div>
+}
+
 <style>
 	.caja-noticia-contenido {
 		background-color: var(--fondoSubsubcabecera);
@@ -191,10 +218,16 @@
 							<Bundle bundleId="@bundle.Id" tipo="Bundle.Tipo.Noticia" />
 						</div>
 
-						<div class="caja-noticia-contenido" style="margin-top: 0px;">
-							<button @onclick="(e => CopiarAlClipboard(e, bundle))" class="boton-pequeño" style="width: fit-content; padding: 10px 30px;">
+						<div class="caja-noticia-contenido" style="margin-top: 0px; display: flex; align-items: center; gap: 20px;">
+							<button @onclick="(e => CopiarAlClipboard(e, Herramientas.RedesSociales.BBCode.Bundle(idioma, bundle)))" class="boton-pequeño" style="width: fit-content; padding: 10px 30px;">
 								<div style="display: flex; flex-direction: column; gap: 10px; text-align: center;">
 									BBCode
+								</div>
+							</button>
+
+							<button @onclick="(e => CopiarAlClipboard(e, Herramientas.RedesSociales.Reddit.Bundle(bundle)))" class="boton-pequeño" style="width: fit-content; padding: 10px 30px;">
+								<div style="display: flex; flex-direction: column; gap: 10px; text-align: center;">
+									Reddit
 								</div>
 							</button>
 						</div>
@@ -257,7 +290,7 @@
 												{
 													string enlaceJuego = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, usuarioPatreon);
 
-													<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
+													<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" userAgent="@userAgent" />
 												}
 											}
 										}
@@ -320,7 +353,7 @@
 											{
 												string enlaceJuego = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon);
 
-												<CajaJuego drmNoticia="@suscripcion.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" />
+												<CajaJuego drmNoticia="@suscripcion.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" userAgent="@userAgent"/>
 											}
 										}
 									}
@@ -389,6 +422,7 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string userAgent = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -429,6 +463,7 @@
 	{
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -552,9 +587,41 @@
 
 	#region Portapapeles
 
-	private async Task CopiarAlClipboard(MouseEventArgs e, Bundles2.Bundle bundle)
+	bool enseñarAlerta = false;
+	private PeriodicTimer cronometro = null;
+	private int cronometroContador = 0;
+	private int cronometroLimite = 10;
+
+	private async void CopiarAlClipboard(MouseEventArgs e, string texto)
 	{
-		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", Herramientas.BBCode.Bundle(idioma, bundle));
+		enseñarAlerta = true;
+		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
+
+		cronometroContador = 0;
+		cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometro.WaitForNextTickAsync())
+		{
+			cronometroContador += 1;
+
+			if (cronometroContador > cronometroLimite)
+			{
+				enseñarAlerta = false;
+				cronometro.Dispose();
+				await InvokeAsync(StateHasChanged);
+			}
+		}
+	}
+
+	private void CerrarAvisoClipboard()
+	{
+		enseñarAlerta = false;
+		cronometroContador = 0;
+
+		if (cronometro != null)
+		{
+			cronometro.Dispose();
+		}
 	}
 
 	#endregion

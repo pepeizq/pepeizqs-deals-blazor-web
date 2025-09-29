@@ -112,7 +112,7 @@
 
 	int idMaestra = juego.IdMaestra;
 
-	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente || tipo == Tipo.JuegoDLC || tipo == Tipo.JuegoBandaSonora)
+	if (tipo == Tipo.Bundle || tipo == Tipo.Noticia || tipo == Tipo.Filtro || tipo == Tipo.CuratorDestacado || tipo == Tipo.CuratorLista || tipo == Tipo.CuratorJuego || tipo == Tipo.Gratis || tipo == Tipo.Suscripciones || tipo == Tipo.PortadaProximamente || tipo == Tipo.JuegoDLC || tipo == Tipo.JuegoBandaSonora || tipo == Tipo.NuevosAñadidos)
 	{
 		idMaestra = juego.Id;
 	}
@@ -836,6 +836,29 @@
                 </div>
             </button>
 		}
+
+		@if (tipo == Tipo.NuevosAñadidos)
+		{
+			if (string.IsNullOrEmpty(fondoColor) == true)
+			{
+				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
+			}
+
+			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" style="font-size: 16px; cursor: pointer; color: var(--colorTexto); text-decoration: none; border: 0px; padding: 0px; background: transparent; text-align: left; width: 100%;">
+				<div class="boton-expandir" style="@fondoColor display: flex; align-items: center; gap: 20px;">
+					<div>
+						<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215)" style="max-width: 230px; max-height: 107px;" alt="@juego.Nombre" />
+					</div>
+
+					<div style="width: 100%;">
+						<div>@juego.Nombre</div>
+						<div style="margin-top: 10px; font-size: 14px;">
+							<CajaJuegoMensaje juego="@juego" idioma="@idioma" />
+						</div>
+					</div>
+				</div>
+			</button>
+		}
 	</div>
 }
 
@@ -924,7 +947,8 @@
 		PortadaLanzamientos,
 		PortadaProximamente,
 		JuegoDLC,
-		JuegoBandaSonora
+		JuegoBandaSonora,
+		NuevosAñadidos
 	}
 
 	#region Abrir Enlace
@@ -995,7 +1019,10 @@
 
 	private void MostrarTooltip(MouseEventArgs e)
 	{
-		enseñarTooltip = true;
+		if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+		{
+			enseñarTooltip = true;
+		}	
     }
 
 	#endregion

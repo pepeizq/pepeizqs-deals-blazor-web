@@ -688,7 +688,7 @@ else
 			<div style="margin: -10px 0px; display: flex; flex-direction: column;">
 				<Virtualize Context="juego" Items="@resultadosGestor" ItemSize="107" OverscanCount="20">
 					<ItemContent>
-						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" />
+						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" userAgent="@userAgent" />
 					</ItemContent>
 				</Virtualize>
 			</div>
@@ -705,6 +705,7 @@ else
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string userAgent = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -721,6 +722,7 @@ else
 
 		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
 		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

@@ -1,8 +1,7 @@
 ﻿#nullable disable
 
-namespace Herramientas
+namespace Herramientas.RedesSociales
 {
-
 	public static class BBCode
 	{
 		public static string Bundle(string idioma, Bundles2.Bundle bundle)

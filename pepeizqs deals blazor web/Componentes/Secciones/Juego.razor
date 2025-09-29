@@ -312,6 +312,33 @@
 </script>
 
 <script>
+	window.clipboardCopy = {
+		copyText: function(text) {
+			navigator.clipboard.writeText(text);
+		}
+	};
+</script>
+
+@if (enseñarAlerta == true)
+{
+	<div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Clipboard")
+			</div>
+
+			<button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+				<div style="width: 20px; height: 20px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+					</svg>
+				</div>
+			</button>
+		</div>
+	</div>
+}
+
+<script>
     function enseñarTooltip(e, id) {
         var x = e.clientX,
             y = e.clientY;
@@ -378,6 +405,10 @@
         margin: 20px;
     }
 
+    .juego-caja-espacio {
+        padding: 40px;
+    }
+
     @@media(max-width: 900px) {
         .boton-reseñas {
             display: none;
@@ -413,6 +444,10 @@
         .juego-precio {
             font-size: 16px;
             margin: 10px;
+        }
+
+        .juego-caja-espacio {
+            padding: 20px;
         }
     }
 
@@ -1755,7 +1790,7 @@
                                                     }
 
                                                     <button @onclick="(e => AbrirEnlace(e, enlace))" class="juego-boton-pequeño" style="display: block; width: 100%;">
-                                                        <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+                                                        <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
                                                             <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
 
                                                             <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
@@ -2000,7 +2035,7 @@
 
             @if (juego.Bundles != null)
             {
-                <div id="bundles" class="caja-diseño" style="padding: 40px;">
+                <div id="bundles" class="caja-diseño juego-caja-espacio">
                     @if (BundlesDisponibles(juego.Bundles).Count > 0)
                     {
                         <div style="margin-bottom: 10px;">
@@ -2023,7 +2058,7 @@
                                     }
 
                                     <a class="juego-boton-pequeño" href="@enlaceBundle" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
-                                        <div style="display: flex; align-items: center;">
+                                        <div style="display: flex; align-items: center; flex-wrap: wrap;">
                                             <div style="margin-right: 15px;">
                                                 <img src="@BundlesCargar.DevolverBundle(bundle3.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Bundle" loading="lazy"/>
                                             </div>
@@ -2032,12 +2067,12 @@
                                                 <img src="@JuegoDRM2.SacarImagen(bundle2.DRM)" style="max-width: 22px; max-height: 22px;" alt="DRM" loading="lazy" />
                                             </div>
 
-                                            <div style="margin-right: 20px; width: 100%;">
+                                            <div style="margin-right: 20px;">
                                                 <label style="cursor: pointer;">@bundle3.NombreBundle • @bundle3.NombreTienda</label><br />
                                                 <label style="font-size: 13px; cursor: pointer;">@Herramientas.Calculadora.DiferenciaTiempo(bundle3.FechaTermina, idioma, 1)</label>
                                             </div>
 
-                                            <div style="text-align: right;">
+                                            <div style="text-align: right; margin-left: auto;">
                                                 <label style="cursor: pointer;">@BundlesPrepararPrecio(bundle3, juego.Id)</label>
                                                 <label style="font-size: 13px; cursor: pointer;">@BundlesPrepararInfo(bundle3, juego.Id)</label>
                                             </div>
@@ -2070,7 +2105,7 @@
                             if (bundle3 != null)
                             {
                                 <button @onclick="(e => BundleAbrir(e, bundle2.BundleId))" class="boton-pequeño" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px;">
-                                    <div style="display: flex; align-items: center;">
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
                                         <div style="margin-right: 15px;">
                                             <img src="@BundlesCargar.DevolverBundle(bundle3.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Bundle" loading="lazy"/>
                                         </div>
@@ -2079,12 +2114,12 @@
                                             <img src="@JuegoDRM2.SacarImagen(bundle2.DRM)" style="max-width: 22px; max-height: 22px;" alt="DRM" loading="lazy" />
                                         </div>
 
-                                        <div style="margin-right: 20px; width: 100%;">
+                                        <div style="margin-right: 20px;">
                                             <div style="cursor: pointer;">@bundle3.NombreBundle • @bundle3.NombreTienda</div>
                                             <div style="font-size: 13px; cursor: pointer;">@Herramientas.Calculadora.DiferenciaTiempo(bundle3.FechaTermina, idioma)</div>
                                         </div>
 
-                                        <div style="text-align: right; width: 15%;">
+                                        <div style="text-align: right; margin-left: auto;">
                                             <div style="cursor: pointer;">@BundlesPrepararPrecio(bundle3, juego.Id)</div>
                                             <div style="font-size: 13px; cursor: pointer;">@BundlesPrepararInfo(bundle3, juego.Id)</div>
                                         </div>
@@ -2098,7 +2133,7 @@
 
             @if (juego.Gratis != null)
             {
-                <div id="gratis" class="caja-diseño" style="padding: 40px;">
+                <div id="gratis" class="caja-diseño juego-caja-espacio">
                     @if (GratisDisponibles(juego.Gratis).Count > 0)
                     {
                         <div style="margin-bottom: 10px;">
@@ -2115,7 +2150,7 @@
                             }
 
                             <a class="juego-boton-pequeño" href="@enlaceGratis" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
-                                <div style="display: flex; align-items: center;">
+                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
                                     <div style="margin-right: 15px;">
                                         <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Free" loading="lazy"/>
                                     </div>
@@ -2150,28 +2185,26 @@
                         foreach (var gratis2 in GratisAntiguos(juego.Gratis))
                         {
                             <hr/>
-                            <div style="display: flex; align-items: center; font-size: 16px; padding: 15px 5px;">
-                                <div style="margin-right: 15px; width: 22px; height: 22px;">
-                                    <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Free" loading="lazy"/>
-                                </div>
-
-                                <div style="margin-right: 30px; width: 22px; height: 22px;">
+                            <div style="display: flex; align-items: center; gap: 30px; font-size: 16px; padding: 15px 5px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="width: 22px; height: 22px;" alt="@GratisCargar.DevolverGratis(gratis2.Tipo).Nombre">
+                                    
                                     @if (gratis2.DRM == JuegoDRM.DRMFree)
                                     {
                                         <label style="max-width: 22px; max-height: 22px; font-size: 8px; text-align: center;">DRM Free</label>
                                     }
                                     else
                                     {
-                                        <img src="@JuegoDRM2.SacarImagen(gratis2.DRM)" style="max-width: 22px; max-height: 22px;" alt="@JuegoDRM2.DevolverDRM(gratis2.DRM)" loading="lazy" />
+                                        <img src="@JuegoDRM2.SacarImagen(gratis2.DRM)" style="width: 22px; height: 22px;" alt="@JuegoDRM2.DevolverDRM(gratis2.DRM)"/>
                                     }
                                 </div>
 
-                                <div style="padding-right: 20px; width: 15%;">
+                                <div style="min-width: 150px;">
                                     <label>@GratisCargar.DevolverGratis(gratis2.Tipo).Nombre</label><br />
                                     <label style="font-size: 13px;">@Herramientas.Calculadora.DiferenciaTiempo(gratis2.FechaTermina, idioma)</label>
                                 </div>
 
-                                <div style="padding-right: 20px; width: 85%;">
+                                <div>
                                     <label>@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "Game") @Herramientas.Calculadora.DiferenciaDuranteDias(gratis2.FechaEmpieza, gratis2.FechaTermina, idioma)</label><br />
                                     <label style="font-size: 13px;">@gratis2.FechaEmpieza.Day.ToString()/@gratis2.FechaEmpieza.Month.ToString()/@gratis2.FechaEmpieza.Year.ToString() • @gratis2.FechaTermina.Day.ToString()/@gratis2.FechaTermina.Month.ToString()/@gratis2.FechaTermina.Year.ToString()</label>
                                 </div> 
@@ -2183,7 +2216,7 @@
 
             @if (juego.Suscripciones != null)
             {
-                <div id="suscripciones" class="caja-diseño" style="padding: 40px;">
+                <div id="suscripciones" class="caja-diseño juego-caja-espacio">
                     @if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
                     {
                         <div style="margin-bottom: 10px;">
@@ -2207,7 +2240,7 @@
                                 }
 
                                 <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
-                                    <div style="display: flex; align-items: center;">
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
                                         <div style="margin-right: 15px;">
                                             <img src="@suscripcionUsar.ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Subscription" loading="lazy" />
                                         </div>
@@ -2216,7 +2249,7 @@
                                             <img src="@JuegoDRM2.SacarImagen(suscripcion2.DRM)" style="max-width: 22px; max-height: 22px;" alt="DRM" loading="lazy" />
                                         </div>
 
-                                        <div style="margin-right: 20px; width: 100%;">
+                                        <div style="margin-right: 20px;">
                                             <div style="display: flex; align-items: center; gap: 5px;">
                                                 <div>
                                                     @suscripcionUsar.Nombre
@@ -2269,21 +2302,18 @@
                             if (suscripcion2 != null)
                             {
                                 <hr />
-                                <div style="display: flex; align-items: center; font-size: 16px; padding: 15px 5px;">
-                                    <div style="margin-right: 15px; width: 22px; height: 22px;">
-                                        <img src="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="Subscription" loading="lazy" />
+                                <div style="display: flex; align-items: center; gap: 30px; font-size: 16px; padding: 15px 5px; flex-wrap: wrap;">
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <img src="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).ImagenIcono" style="width: 22px; height: 22px;" alt="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).Nombre">
+                                        <img src="@JuegoDRM2.SacarImagen(suscripcion2.DRM)" style="width: 22px; height: 22px;" alt="@JuegoDRM2.DevolverDRM(suscripcion2.DRM)" />
                                     </div>
 
-                                    <div style="margin-right: 30px; width: 22px; height: 22px;">
-                                        <img src="@JuegoDRM2.SacarImagen(suscripcion2.DRM)" style="max-width: 22px; max-height: 22px;" alt="DRM" loading="lazy" />
-                                    </div>
-
-                                    <div style="padding-right: 20px; width: 15%;">
+                                    <div style="min-width: 150px;">
                                         <label>@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).Nombre</label><br />
                                         <label style="font-size: 13px;">@Herramientas.Calculadora.DiferenciaTiempo(suscripcion2.FechaTermina, idioma)</label>
                                     </div>
 
-                                    <div style="padding-right: 20px; width: 85%;">
+                                    <div>
                                         <label>@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "Game") @Herramientas.Calculadora.DiferenciaDuranteDias(suscripcion2.FechaEmpieza, suscripcion2.FechaTermina, idioma)</label><br />
                                         <label style="font-size: 13px;">@suscripcion2.FechaEmpieza.Day.ToString()/@suscripcion2.FechaEmpieza.Month.ToString()/@suscripcion2.FechaEmpieza.Year.ToString() • @suscripcion2.FechaTermina.Day.ToString()/@suscripcion2.FechaTermina.Month.ToString()/@suscripcion2.FechaTermina.Year.ToString()</label>
                                     </div>
@@ -2453,14 +2483,14 @@
                 {
                     @if (string.IsNullOrEmpty(juego.Caracteristicas.Descripcion) == false)
                     {
-                        <div class="caja-diseño" style="padding: 40px;">
+                        <div class="caja-diseño juego-caja-espacio">
                             @WebUtility.HtmlDecode(juego.Caracteristicas.Descripcion)
                         </div>
                     }
 
                     @if (juego.Caracteristicas.Desarrolladores2 != null || juego.Caracteristicas.Editores2 != null || juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000) || juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
                     {
-                        <div class="caja-diseño" style="padding: 40px; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="caja-diseño juego-caja-espacio" style="display: flex; flex-direction: column; gap: 20px;">
                             @if (juego.Caracteristicas.Desarrolladores2 != null)
                             {
                                 if (juego.Caracteristicas.Desarrolladores2.Count > 0)
@@ -3034,7 +3064,7 @@
                                                 {
                                                     if (i < juegosCurator.Count)
                                                     {
-                                                        <CajaJuego idCurator="@curator.Curator.Id" idioma="@idioma" juego="@juegosCurator[i]" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorJuego" />
+                                                        <CajaJuego idCurator="@curator.Curator.Id" idioma="@idioma" juego="@juegosCurator[i]" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorJuego" userAgent="@userAgent"/>
                                                     }
 
                                                     i += 1;
@@ -3278,32 +3308,32 @@
                                         </div>
                                     </div>
 
-                                    @if (reseñasAmpliadas != null)
+                                    @if (reseñasAmpliadas?.Contenido != null)
                                     {
-                                        if (reseñasAmpliadas.Contenido != null)
+                                        foreach (var analisis in reseñasAmpliadas.Contenido)
                                         {
-                                            foreach (var analisis in reseñasAmpliadas.Contenido)
-                                            {
-                                                <a href="https://steamcommunity.com/profiles/@analisis.Autor.SteamID/recommended/@juego.IdSteam/" target="_blank" style="color: var(--colorTexto); text-decoration: none;">
-                                                    <div class="boton-expandir2" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; border-radius: 5px;">
-                                                        <div style="display: flex; align-items: center; gap: 20px;">
-                                                            @if (analisis.Positiva == true)
-                                                            {
-                                                                <div style="max-width: 16px;">
-                                                                    <svg class="svg-boton" style="fill: var(--deckVerificado);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                                        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2l144 0c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48l-97.5 0c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3l0-38.3 0-48 0-24.9c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32L0 224c0-17.7 14.3-32 32-32z" />
-                                                                    </svg>
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div style="max-width: 16px;">
-                                                                    <svg class="svg-boton" style="fill: var(--colorTextoPeligro);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                                        <path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2l144 0c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48l-97.5 0c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7l0 38.3 0 48 0 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384l64 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32L32 96C14.3 96 0 110.3 0 128L0 352c0 17.7 14.3 32 32 32z" />
-                                                                    </svg>
-                                                                </div>
-                                                            }
+                                            <a href="https://steamcommunity.com/profiles/@analisis.Autor.SteamID/recommended/@juego.IdSteam/" target="_blank" style="color: var(--colorTexto); text-decoration: none;">
+                                                <div class="boton-expandir2" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; border-radius: 5px;">
+                                                    <div style="display: flex; align-items: center; gap: 20px;">
+                                                        @if (analisis.Positiva == true)
+                                                        {
+                                                            <div style="max-width: 16px;">
+                                                                <svg class="svg-boton" style="fill: var(--deckVerificado);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                                    <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2l144 0c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48l-97.5 0c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3l0-38.3 0-48 0-24.9c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32L0 224c0-17.7 14.3-32 32-32z" />
+                                                                </svg>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div style="max-width: 16px;">
+                                                                <svg class="svg-boton" style="fill: var(--colorTextoPeligro);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                                    <path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2l144 0c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48l-97.5 0c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7l0 38.3 0 48 0 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384l64 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32L32 96C14.3 96 0 110.3 0 128L0 352c0 17.7 14.3 32 32 32z" />
+                                                                </svg>
+                                                            </div>
+                                                        }
 
+                                                        @if (juego.Tipo == JuegoTipo.Game)
+                                                        {
                                                             <div>
                                                                 @{
                                                                     TimeSpan tiempoSpan = TimeSpan.FromMinutes(analisis.Autor.TiempoJugadoSiempre);
@@ -3312,26 +3342,26 @@
                                                                 }
 
                                                                 @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Reviews"), tiempoD.ToString("N1"))
-                                                            </div>
+                                                            </div>                                                                
+                                                        }
 
-                                                            <div>
-                                                                @{
-                                                                    DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(analisis.TicksCreado);
-                                                                    DateTime fechaCreado = fecha.UtcDateTime;
-                                                                }
+                                                        <div>
+                                                            @{
+                                                                DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(analisis.TicksCreado);
+                                                                DateTime fechaCreado = fecha.UtcDateTime;
+                                                            }
 
-                                                                @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Reviews"), Herramientas.Calculadora.DiferenciaTiempo(fechaCreado, idioma))
-                                                            </div>
-                                                        </div>
-
-                                                        <hr />
-
-                                                        <div style="white-space: pre-line; max-width: 100%; overflow-wrap: anywhere;">
-                                                            @analisis.Contenido
+                                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Reviews"), Herramientas.Calculadora.DiferenciaTiempo(fechaCreado, idioma))
                                                         </div>
                                                     </div>
-                                                </a>
-                                            }
+
+                                                    <hr />
+
+                                                    <div style="white-space: pre-line; max-width: 100%; overflow-wrap: anywhere;">
+                                                        @analisis.Contenido
+                                                    </div>
+                                                </div>
+                                            </a>
                                         }
                                     }
                                 </div>
@@ -3355,7 +3385,7 @@
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <Virtualize Context="dlc" Items="dlcs" ItemSize="107">
                             <ItemContent>
-                                 <CajaJuego juego="dlc" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoDLC"/>
+                                 <CajaJuego juego="dlc" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoDLC" userAgent="@userAgent"/>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -3372,7 +3402,7 @@
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <Virtualize Context="bandaSonora" Items="bandasSonoras" ItemSize="107">
                             <ItemContent>
-                                <CajaJuego juego="bandaSonora" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoBandaSonora"/>
+                                <CajaJuego juego="bandaSonora" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoBandaSonora" userAgent="@userAgent"/>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -6435,15 +6465,6 @@
 
     #endregion
 
-    #region Portapapeles
-
-    private async Task CopiarAlClipboard(MouseEventArgs e, string texto)
-    {
-        await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
-    }
-
-    #endregion
-
     #region Ventana Idiomas
 
     private bool enseñarIdiomas = false;
@@ -6506,6 +6527,47 @@
         public string Color { get; set; }
         public string Enlace { get; set; }
         public bool EnlaceNuevaPestaña { get; set; }
+    }
+
+    #endregion
+
+    #region Portapapeles
+
+    bool enseñarAlerta = false;
+    private PeriodicTimer cronometro = null;
+    private int cronometroContador = 0;
+    private int cronometroLimite = 10;
+
+    private async void CopiarAlClipboard(MouseEventArgs e, string texto)
+    {
+        enseñarAlerta = true;
+        await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
+
+        cronometroContador = 0;
+        cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+        while (await cronometro.WaitForNextTickAsync())
+        {
+            cronometroContador += 1;
+
+            if (cronometroContador > cronometroLimite)
+            {
+                enseñarAlerta = false;
+                cronometro.Dispose();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
+    private void CerrarAvisoClipboard()
+    {
+        enseñarAlerta = false;
+        cronometroContador = 0;
+
+        if (cronometro != null)
+        {
+            cronometro.Dispose();
+        }
     }
 
     #endregion

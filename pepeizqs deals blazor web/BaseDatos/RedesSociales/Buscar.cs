@@ -4,81 +4,81 @@ using Microsoft.Data.SqlClient;
 
 namespace BaseDatos.RedesSociales
 {
-	public static class Buscar
-	{
-		public static async Task PendientesPosteo(SqlConnection conexion = null)
-		{
-			if (conexion == null)
-			{
-				conexion = Herramientas.BaseDatos.Conectar();
-			}
-			else
-			{
-				if (conexion.State != System.Data.ConnectionState.Open)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-			}
+    public static class Buscar
+    {
+        public static async Task PendientesPosteo(SqlConnection conexion = null)
+        {
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
 
-			List<string> enlacesBorrar = new List<string>();
+            List<string> enlacesBorrar = new List<string>();
 
-			string busqueda = "SELECT * FROM redesSocialesPosteador";
+            string busqueda = "SELECT * FROM redesSocialesPosteador";
 
-			using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-			{
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read() == true)
-					{
-						if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false && lector.IsDBNull(2) == false && lector.IsDBNull(3) == false && lector.IsDBNull(4) == false && lector.IsDBNull(5) == false)
-						{
-							string enlace = lector.GetString(0);
-							enlacesBorrar.Add(enlace);
+            using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read() == true)
+                    {
+                        if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false && lector.IsDBNull(2) == false && lector.IsDBNull(3) == false && lector.IsDBNull(4) == false && lector.IsDBNull(5) == false)
+                        {
+                            string enlace = lector.GetString(0);
+                            enlacesBorrar.Add(enlace);
 
-							int idJuego = lector.GetInt32(1);
+                            int idJuego = lector.GetInt32(1);
 
-							int descuento = lector.GetInt32(2);
+                            int descuento = lector.GetInt32(2);
 
-							decimal precio = lector.GetDecimal(3);
+                            decimal precio = lector.GetDecimal(3);
 
-							string tipo = lector.GetString(4);
+                            string tipo = lector.GetString(4);
 
-							string tienda = lector.GetString(5);
+                            string tienda = lector.GetString(5);
 
-							int codigoDescuento = 0;
+                            int codigoDescuento = 0;
 
-							if (lector.IsDBNull(6) == false)
-							{
-								codigoDescuento = lector.GetInt32(6);
-							}
+                            if (lector.IsDBNull(6) == false)
+                            {
+                                codigoDescuento = lector.GetInt32(6);
+                            }
 
-							string codigoTexto = string.Empty;
+                            string codigoTexto = string.Empty;
 
-							if (lector.IsDBNull(7) == false)
-							{
-								codigoTexto = lector.GetString(7);
-							}
+                            if (lector.IsDBNull(7) == false)
+                            {
+                                codigoTexto = lector.GetString(7);
+                            }
 
-							await Herramientas.RedesSociales.Reddit.Postear(enlace, idJuego, descuento, precio, tipo, tienda, codigoDescuento, codigoTexto);
-						}
-					}
-				}
-			}
+                            await Herramientas.RedesSociales.Reddit.Postear(enlace, idJuego, descuento, precio, tipo, tienda, codigoDescuento, codigoTexto);
+                        }
+                    }
+                }
+            }
 
-			if (enlacesBorrar.Count > 0)
-			{
-				foreach (var enlace in enlacesBorrar)
-				{
-					string borrar = "DELETE FROM redesSocialesPosteador WHERE enlace=@enlace";
+            if (enlacesBorrar.Count > 0)
+            {
+                foreach (var enlace in enlacesBorrar)
+                {
+                    string borrar = "DELETE FROM redesSocialesPosteador WHERE enlace=@enlace";
 
-					using (SqlCommand comando = new SqlCommand(borrar, conexion))
-					{
-						comando.Parameters.AddWithValue("@enlace", enlace);
+                    using (SqlCommand comando = new SqlCommand(borrar, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@enlace", enlace);
 
-						comando.ExecuteNonQuery();
-					}
-				}
-			}
-		}
-	}
+                        comando.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+    }
 }

@@ -7,7 +7,7 @@ namespace BaseDatos.RedesSociales
 {
     public static class Insertar
     {
-        public static void Ejecutar(int id, JuegoPrecio juego, string tipo, SqlConnection conexion = null)
+        public static void Ejecutar(int id, JuegoPrecio juego, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -21,43 +21,32 @@ namespace BaseDatos.RedesSociales
                 }
             }
 
-            string añadirCodigo1 = null;
-            string añadirCodigo2 = null;
-
-            if (juego.CodigoDescuento > 0 && string.IsNullOrEmpty(juego.CodigoTexto) == false)
+            if (Buscar.ExisteEnlace(juego.Enlace, conexion) == true)
             {
-                añadirCodigo1 = ", codigoDescuento, codigoTexto";
-                añadirCodigo2 = ", @codigoDescuento, @codigoTexto";
+                Actualizar.Tienda(juego.Enlace, juego.Tienda);
             }
-
-            string sqlAñadir = "INSERT INTO redesSocialesPosteador " +
-                    "(enlace, idJuego, descuento, precio, tipo, tienda" + añadirCodigo1 + ") VALUES " +
-                    "(@enlace, @idJuego, @descuento, @precio, @tipo, @tienda" + añadirCodigo2 + ") ";
-
-            using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
+            else
             {
-                comando.Parameters.AddWithValue("@enlace", juego.Enlace);
-                comando.Parameters.AddWithValue("@idJuego", id);
-                comando.Parameters.AddWithValue("@descuento", juego.Descuento);
-                comando.Parameters.AddWithValue("@precio", juego.Precio);
-                comando.Parameters.AddWithValue("@tipo", tipo);
-                comando.Parameters.AddWithValue("@tienda", juego.Tienda);
+                string sqlAñadir = "INSERT INTO redesSocialesPosteador " +
+                        "(enlace, idJuego, tienda) VALUES " +
+                        "(@enlace, @idJuego, @tienda) ";
 
-                if (juego.CodigoDescuento > 0 && string.IsNullOrEmpty(juego.CodigoTexto) == false)
+                using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
                 {
-                    comando.Parameters.AddWithValue("@codigoDescuento", juego.CodigoDescuento);
-                    comando.Parameters.AddWithValue("@codigoTexto", juego.CodigoTexto);
-                }
+                    comando.Parameters.AddWithValue("@enlace", juego.Enlace);
+                    comando.Parameters.AddWithValue("@idJuego", id);
+                    comando.Parameters.AddWithValue("@tienda", juego.Tienda);
 
-                try
-                {
-                    comando.ExecuteNonQuery();
+                    try
+                    {
+                        comando.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Errores.Insertar.Mensaje("Añadir Redes Sociales Posteador", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Errores.Insertar.Mensaje("Añadir Redes Sociales Posteador", ex);
-                }
-            }
+            }   
         }
     }
 }

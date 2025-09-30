@@ -6,6 +6,31 @@ namespace BaseDatos.RedesSociales
 {
     public static class Buscar
     {
+        public static bool ExisteEnlace(string enlace, SqlConnection conexion = null)
+        {
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            string busqueda = "SELECT COUNT(*) FROM redesSocialesPosteador WHERE enlace=@enlace";
+
+            using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+            {
+                comando.Parameters.AddWithValue("@enlace", enlace);
+
+                int count = (int)comando.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
         public static async Task PendientesPosteo(SqlConnection conexion = null)
         {
             if (conexion == null)
@@ -30,36 +55,21 @@ namespace BaseDatos.RedesSociales
                 {
                     while (lector.Read() == true)
                     {
-                        if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false && lector.IsDBNull(2) == false && lector.IsDBNull(3) == false && lector.IsDBNull(4) == false && lector.IsDBNull(5) == false)
+                        if (enlacesBorrar.Count >= 4)
+                        {
+                            break;
+                        }
+
+                        if (lector.IsDBNull(0) == false && lector.IsDBNull(1) == false && lector.IsDBNull(2) == false)
                         {
                             string enlace = lector.GetString(0);
                             enlacesBorrar.Add(enlace);
 
                             int idJuego = lector.GetInt32(1);
 
-                            int descuento = lector.GetInt32(2);
+                            string tienda = lector.GetString(2);
 
-                            decimal precio = lector.GetDecimal(3);
-
-                            string tipo = lector.GetString(4);
-
-                            string tienda = lector.GetString(5);
-
-                            int codigoDescuento = 0;
-
-                            if (lector.IsDBNull(6) == false)
-                            {
-                                codigoDescuento = lector.GetInt32(6);
-                            }
-
-                            string codigoTexto = string.Empty;
-
-                            if (lector.IsDBNull(7) == false)
-                            {
-                                codigoTexto = lector.GetString(7);
-                            }
-
-                            await Herramientas.RedesSociales.Reddit.Postear(enlace, idJuego, descuento, precio, tipo, tienda, codigoDescuento, codigoTexto);
+                            await Herramientas.RedesSociales.Reddit.Postear(enlace, idJuego, tienda);
                         }
                     }
                 }

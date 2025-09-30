@@ -42,13 +42,18 @@ namespace Tareas
                     {
                         if (BaseDatos.Admin.Buscar.TiendasEnUso(TimeSpan.FromSeconds(60), conexion) == null)
                         {
-                            try
+                            if (BaseDatos.Admin.Buscar.TareaPosibleUsar("redessociales", TimeSpan.FromMinutes(10), conexion) == true)
                             {
-                                await BaseDatos.RedesSociales.Buscar.PendientesPosteo(conexion);
-                            }
-                            catch (Exception ex)
-                            {
-                                BaseDatos.Errores.Insertar.Mensaje("Tarea - Redes Sociales", ex, conexion);
+                                BaseDatos.Admin.Actualizar.TareaUso("redessociales", DateTime.Now, conexion);
+
+                                try
+                                {
+                                    await BaseDatos.RedesSociales.Buscar.PendientesPosteo(conexion);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje("Tarea - Redes Sociales", ex, conexion);
+                                }
                             }
                         }
                     }

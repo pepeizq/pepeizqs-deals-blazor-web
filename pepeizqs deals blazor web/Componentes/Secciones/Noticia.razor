@@ -261,45 +261,57 @@
 					}
 				}
 
-				<div class="caja-noticia-contenido">
-					<div>
-						@texto
-					</div>
+				@if (string.IsNullOrEmpty(noticia.GratisIds) == false)
+				{
+					List<string> ids = Herramientas.Listados.Generar(noticia.GratisIds);
+					List<Juegos.JuegoGratis> juegosGratis = new List<Juegos.JuegoGratis>();
 
-					@if (string.IsNullOrEmpty(noticia.GratisIds) == false)
-					{
+					<div class="caja-noticia-contenido">
+						<div>
+							@texto
+						</div>
+
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 30px; margin-top: 30px;">
-							@{
-								List<string> ids = Herramientas.Listados.Generar(noticia.GratisIds);
-
-								if (ids.Count > 0)
+							@if (ids?.Count > 0)
+							{
+								foreach (var id in ids)
 								{
-									foreach (var id in ids)
+									var gratis = BaseDatos.Gratis.Buscar.UnGratis(id);
+
+									if (gratis != null)
 									{
-										var gratis = BaseDatos.Gratis.Buscar.UnGratis(id);
+										juegosGratis.Add(gratis);
 
-										if (gratis != null)
+										string imagen = gratis.Imagen;
+
+										if (gratis.JuegoId > 0)
 										{
-											string imagen = gratis.Imagen;
+											var juego = BaseDatos.Juegos.Buscar.UnJuego(gratis.JuegoId);
 
-											if (gratis.JuegoId > 0)
+											if (juego != null)
 											{
-												var juego = BaseDatos.Juegos.Buscar.UnJuego(gratis.JuegoId);
+												string enlaceJuego = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, usuarioPatreon);
 
-												if (juego != null)
-												{
-													string enlaceJuego = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, usuarioPatreon);
-
-													<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" userAgent="@userAgent" />
-												}
+												<CajaJuego drmNoticia="@gratis.DRM" enlaceNoticia="@enlaceJuego" idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Noticia" userAgent="@userAgent" />
 											}
 										}
 									}
 								}
 							}
 						</div>
+					</div>
+
+					@if (juegosGratis?.Count > 0)
+					{
+						<div class="caja-noticia-contenido" style="margin-top: 0px; display: flex; align-items: center; gap: 20px;">
+							<button @onclick="(e => CopiarAlClipboard(e, Herramientas.RedesSociales.Reddit.Gratis(juegosGratis)))" class="boton-pequeño" style="width: fit-content; padding: 10px 30px;">
+								<div style="display: flex; flex-direction: column; gap: 10px; text-align: center;">
+									Reddit
+								</div>
+							</button>
+						</div>
 					}
-				</div>
+				}
 			}
 			else if (noticia.Tipo == NoticiaTipo.Suscripciones)
 			{

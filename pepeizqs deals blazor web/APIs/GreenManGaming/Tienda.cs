@@ -67,7 +67,7 @@ namespace APIs.GreenManGaming
 
 			string html = await Decompiladores.Estandar("https://api.greenmangaming.com/api/productfeed/prices/current?cc=es&cur=eur&lang=en");
 
-			if (html != null)
+			if (string.IsNullOrEmpty(html) == false)
 			{
                 GreenManGamingJuegos listaJuegos = new GreenManGamingJuegos();
 

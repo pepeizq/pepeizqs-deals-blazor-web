@@ -192,9 +192,30 @@ namespace BaseDatos.Juegos
                             {
                                 notificar = true;
 
-                                if (nuevaOferta.DRM == JuegoDRM.Steam)
+                                if (nuevaOferta.DRM == JuegoDRM.Steam && reseñas != null)
                                 {
-                                    if (reseñas?.Cantidad.Length > 4)
+                                    bool validoRedesSociales = false;
+
+                                    string tempCantidadReseñas = reseñas?.Cantidad;
+                                    tempCantidadReseñas = tempCantidadReseñas?.Replace(",", "").Replace(".", "").Replace(" ", "").Trim();
+
+                                    int cantidadReseñas = int.Parse(tempCantidadReseñas);
+
+                                    string tempValoracionReseñas = reseñas?.Porcentaje;
+                                    tempValoracionReseñas = tempValoracionReseñas?.Replace("%", "").Trim();
+
+                                    int valoracionReseñas = int.Parse(tempValoracionReseñas);
+
+                                    if (nuevaOferta.Tienda.ToLower() == "steam" && cantidadReseñas > 10000 && valoracionReseñas > 60)
+                                    {
+                                        validoRedesSociales = true;
+                                    }
+                                    else if (nuevaOferta.Tienda.ToLower() != "steam" && cantidadReseñas > 5000 && valoracionReseñas > 50)
+                                    {
+                                        validoRedesSociales = true;
+                                    }
+
+                                    if (validoRedesSociales == true)
                                     {
                                         BaseDatos.RedesSociales.Insertar.Ejecutar(id, nuevaOferta);
                                     }

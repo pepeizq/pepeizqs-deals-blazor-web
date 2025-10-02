@@ -2068,13 +2068,13 @@
                                             </div>
 
                                             <div style="margin-right: 20px;">
-                                                <label style="cursor: pointer;">@bundle3.NombreBundle • @bundle3.NombreTienda</label><br />
-                                                <label style="font-size: 13px; cursor: pointer;">@Herramientas.Calculadora.DiferenciaTiempo(bundle3.FechaTermina, idioma, 1)</label>
+                                                <div>@bundle3.NombreBundle • @bundle3.NombreTienda</div>
+                                                <div style="font-size: 13px;">@Herramientas.Calculadora.DiferenciaTiempo(bundle3.FechaTermina, idioma, 1)</div>
                                             </div>
 
                                             <div style="text-align: right; margin-left: auto;">
-                                                <label style="cursor: pointer;">@BundlesPrepararPrecio(bundle3, juego.Id)</label>
-                                                <label style="font-size: 13px; cursor: pointer;">@BundlesPrepararInfo(bundle3, juego.Id)</label>
+                                                <div>@BundlesPrepararPrecio(bundle3, juego.Id)</div>
+                                                <div style="font-size: 13px;">@BundlesPrepararInfo(bundle3, juego.Id)</div>
                                             </div>
                                         </div>
                                     </a>
@@ -5024,59 +5024,57 @@
                     drmPreparado = drmPreparado + mensaje;
                 }
 
-                if (listaHistoricos != null)
+                if (listaHistoricos?.Count > 0)
                 {
-                    if (listaHistoricos.Count > 0)
+                    bool tieneDRM = false;
+
+                    foreach (var historico in listaHistoricos)
                     {
-                        bool tieneDRM = false;
+                        if (historico.DRM == drm)
+                        {
+                            tieneDRM = true;
+                            break;
+                        }
+                    }
+
+                    if (tieneDRM == true)
+                    {
+                        List<JuegoHistorico> mismoPrecio = new List<JuegoHistorico>();
 
                         foreach (var historico in listaHistoricos)
                         {
-                            if (historico.DRM == drm)
+                            if (historico.DRM == drm && historico.Precio == historicosDRM[0].Precio && historicosDRM[0].Precio > 0 && historicosDRM[0].Moneda == Herramientas.JuegoMoneda.Euro ||
+                                historico.DRM == drm && historico.Precio == historicosDRM[0].PrecioCambiado && historicosDRM[0].PrecioCambiado > 0 && historicosDRM[0].Moneda != Herramientas.JuegoMoneda.Euro)
                             {
-                                tieneDRM = true;
-                                break;
+                                bool sePuedeAñadir = true;
+
+                                if (mismoPrecio.Count > 0)
+                                {
+                                    foreach (var mismo in mismoPrecio)
+                                    {
+                                        if (historico.Fecha.Subtract(mismo.Fecha) < TimeSpan.FromDays(22))
+                                        {
+                                            sePuedeAñadir = false;
+                                        }
+                                    }
+                                }
+
+                                if (sePuedeAñadir == true)
+                                {
+                                    mismoPrecio.Add(historico);
+                                }
                             }
                         }
 
-                        if (tieneDRM == true)
+                        if (mismoPrecio.Count > 0)
                         {
-                            List<JuegoHistorico> mismoPrecio = new List<JuegoHistorico>();
-
-                            foreach (var historico in listaHistoricos)
+                            if (mismoPrecio.Count == 1)
                             {
-                                if (historico.DRM == drm && historico.Precio == historicosDRM[0].Precio)
-                                {
-                                    bool sePuedeAñadir = true;
-
-                                    if (mismoPrecio.Count > 0)
-                                    {
-                                        foreach (var mismo in mismoPrecio)
-                                        {
-                                            if (historico.Fecha.Subtract(mismo.Fecha) < TimeSpan.FromDays(22))
-                                            {
-                                                sePuedeAñadir = false;
-                                            }
-                                        }
-                                    }
-
-                                    if (sePuedeAñadir == true)
-                                    {
-                                        mismoPrecio.Add(historico);
-                                    }
-                                }
+                                drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String85", "Game"), mismoPrecio.Count.ToString()) + ")";
                             }
-
-                            if (mismoPrecio.Count > 0)
+                            else
                             {
-                                if (mismoPrecio.Count == 1)
-                                {
-                                    drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String85", "Game"), mismoPrecio.Count.ToString()) + ")";
-                                }
-                                else
-                                {
-                                    drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String86", "Game"), mismoPrecio.Count.ToString()) + ")";
-                                }
+                                drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String86", "Game"), mismoPrecio.Count.ToString()) + ")";
                             }
                         }
                     }

@@ -42,7 +42,7 @@ namespace Tareas
                     {
                         if (BaseDatos.Admin.Buscar.TiendasEnUso(TimeSpan.FromSeconds(60), conexion) == null)
                         {
-                            if (BaseDatos.Admin.Buscar.TareaPosibleUsar("redessociales", TimeSpan.FromMinutes(10), conexion) == true)
+                            if (BaseDatos.Admin.Buscar.TareaPosibleUsar("redessociales", TimeSpan.FromMinutes(5), conexion) == true)
                             {
                                 BaseDatos.Admin.Actualizar.TareaUso("redessociales", DateTime.Now, conexion);
 

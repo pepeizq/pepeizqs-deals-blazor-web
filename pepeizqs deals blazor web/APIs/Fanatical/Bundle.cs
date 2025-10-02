@@ -18,8 +18,9 @@ namespace APIs.Fanatical
 				ImagenTienda = "/imagenes/bundles/fanatical_300x80.webp",
 				ImagenIcono = "/imagenes/tiendas/fanatical_icono.webp",
 				EnlaceBase = "fanatical.com",
-				Pick = false
-			};
+				Pick = false,
+				Twitter = "fanatical"
+            };
 
             DateTime fechaEmpieza = DateTime.Now;
             fechaEmpieza = new DateTime(fechaEmpieza.Year, fechaEmpieza.Month, fechaEmpieza.Day, fechaEmpieza.Hour, 0, 0);

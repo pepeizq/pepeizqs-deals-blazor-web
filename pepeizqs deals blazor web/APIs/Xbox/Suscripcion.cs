@@ -24,7 +24,7 @@ namespace APIs.Xbox
                 AdminInteractuar = true,
                 UsuarioEnlacesEspecificos = true,
                 ParaSiempre = false,
-                Precio = 11.99,
+                Precio = 14.99,
 				AdminPendientes = true,
 				TablaPendientes = "tiendamicrosoftstore"
             };

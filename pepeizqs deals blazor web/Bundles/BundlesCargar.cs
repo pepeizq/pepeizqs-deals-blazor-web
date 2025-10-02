@@ -9,8 +9,9 @@ namespace Bundles2
 		Fanatical,
 		JingleJam,
 		IndieGala,
-		Itchio
-	}
+		Itchio,
+        GreenManGaming
+    }
 
 	public class BundlesCargar
 	{
@@ -23,15 +24,16 @@ namespace Bundles2
 				APIs.Fanatical.Bundle.Generar(),
 				APIs.JingleJam.Bundle.Generar(),
 				APIs.IndieGala.Bundle.Generar(),
-				APIs.itchio.Bundle.Generar()
-			};
+				APIs.itchio.Bundle.Generar(),
+				APIs.GreenManGaming.Bundle.Generar()
+            };
 
 			return bundles;
 		}
 
 		public static async Task<Bundle> SeleccionarBundle(string enlace)
 		{
-			foreach (var bundle in BundlesCargar.GenerarListado())
+			foreach (var bundle in GenerarListado())
 			{
 				if (string.IsNullOrEmpty(enlace) == false && string.IsNullOrEmpty(bundle.EnlaceBase) == false)
 				{
@@ -76,8 +78,9 @@ namespace Bundles2
 			}
 
 			enlace = enlace.Replace("/en/", "/");
+            enlace = enlace.Replace("/es-es/", "/");
 
-			return enlace;
+            return enlace;
 		}
 
 		public static Bundle DevolverBundle(BundleTipo bundleTipo)

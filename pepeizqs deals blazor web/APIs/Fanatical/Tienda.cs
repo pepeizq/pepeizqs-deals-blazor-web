@@ -29,7 +29,7 @@ namespace APIs.Fanatical
 				Color = "#ffcf89",
 				AdminEnseñar = true,
 				AdminInteractuar = true
-			};
+            };
 
 			return tienda;
 		}

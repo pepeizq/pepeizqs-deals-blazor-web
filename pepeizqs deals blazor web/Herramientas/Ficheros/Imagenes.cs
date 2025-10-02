@@ -84,8 +84,12 @@ namespace Herramientas.Ficheros
 				{
 					añadirServidor = false;
 				}
+                else if (enlace.Contains("https://media.greenmangamingbundles.com/") == true)
+                {
+                    añadirServidor = false;
+                }
 
-				if (añadirServidor == true)
+                if (añadirServidor == true)
 				{
 					enlace = "https://wsrv.nl/?n=-1&output=webp&url=" + enlace;
 

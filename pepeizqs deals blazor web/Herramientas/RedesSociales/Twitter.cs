@@ -62,13 +62,26 @@ namespace Herramientas.RedesSociales
 			{
 
 			}
-            
-			if (imagenTweet == null)
+
+			string titulo = noticia.TituloEn;
+
+			if (noticia.Tipo == Noticias.NoticiaTipo.Bundles)
+			{
+				Bundles2.BundleTipo tipoBundle = noticia.BundleTipo;
+				Bundles2.Bundle bundle = Bundles2.BundlesCargar.DevolverBundle(tipoBundle);
+
+				if (string.IsNullOrEmpty(bundle.Twitter) == false)
+				{
+					titulo = titulo + " @" + bundle.Twitter;
+                }
+            }
+
+            if (imagenTweet == null)
 			{
                 ITwitterResult resultado = await PonerTweet(cliente,
 					new TweetV2PostRequest
 					{
-						Text = noticia.TituloEn + " " + Environment.NewLine + Environment.NewLine + enlace
+						Text = titulo + " " + Environment.NewLine + Environment.NewLine + enlace
 					}
 				);
 	
@@ -79,7 +92,7 @@ namespace Herramientas.RedesSociales
                 ITwitterResult resultado = await PonerTweet(cliente,
 					new TweetV2PostRequest
 					{
-						Text = noticia.TituloEn + " " + Environment.NewLine + Environment.NewLine + enlace,
+						Text = titulo + " " + Environment.NewLine + Environment.NewLine + enlace,
 						Media = imagenTweet?.Id == null ? null : new() { MediaIds = new() { imagenTweet.Id.Value } }
 					}
 				);

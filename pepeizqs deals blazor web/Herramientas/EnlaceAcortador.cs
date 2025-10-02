@@ -163,7 +163,11 @@ namespace Herramientas
 				{
 					enlace = APIs.Fanatical.Bundle.Referido(enlace);
 				}
-			}
+                else if (tipo == BundleTipo.GreenManGaming)
+                {
+                    enlace = APIs.GreenManGaming.Bundle.Referido(enlace);
+                }
+            }
 
 			//----------------------------------------
 

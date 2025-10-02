@@ -55,7 +55,7 @@ namespace BaseDatos.RedesSociales
                 {
                     while (lector.Read() == true)
                     {
-                        if (enlacesBorrar.Count >= 4)
+                        if (enlacesBorrar.Count >= 2)
                         {
                             break;
                         }

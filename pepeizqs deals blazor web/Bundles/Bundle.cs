@@ -23,7 +23,8 @@ namespace Bundles2
 		public List<BundleJuego> Juegos { get; set; }
 		public List<BundleTier> Tiers { get; set; }
 		public bool Pick { get; set; }
-	}
+        public string Twitter { get; set; }
+    }
 
 	public class BundleTier
 	{

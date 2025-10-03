@@ -205,7 +205,7 @@ namespace APIs.EA
 
 						string enlace = "https://www.ea.com/games/" + slug + "/buy";
 
-						if (juegoEA.Ediciones != null && juegoEA.Ediciones.Count > 0)
+						if (juegoEA.Ediciones?.Count > 0)
 						{
 							foreach (var edicion in juegoEA.Ediciones)
 							{
@@ -386,45 +386,42 @@ namespace APIs.EA
 																{
 																	bool añadirSuscripcion = true;
 
-																	if (juegobd.Suscripciones != null)
-																	{
-																		if (juegobd.Suscripciones.Count > 0)
-																		{
-																			bool actualizar = false;
+                                                                    if (juegobd.Suscripciones?.Count > 0)
+                                                                    {
+                                                                        bool actualizar = false;
 
-																			foreach (var suscripcion in juegobd.Suscripciones)
-																			{
-																				if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlay)
-																				{
-																					añadirSuscripcion = false;
-																					actualizar = true;
+                                                                        foreach (var suscripcion in juegobd.Suscripciones)
+                                                                        {
+                                                                            if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlay)
+                                                                            {
+                                                                                añadirSuscripcion = false;
+                                                                                actualizar = true;
 
-																					DateTime nuevaFecha = suscripcion.FechaTermina;
-																					nuevaFecha = DateTime.Now;
-																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																					suscripcion.FechaTermina = nuevaFecha;
-																				}
-																			}
+                                                                                DateTime nuevaFecha = suscripcion.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                                suscripcion.FechaTermina = nuevaFecha;
+                                                                            }
+                                                                        }
 
-																			if (actualizar == true)
-																			{
-																				BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+                                                                        if (actualizar == true)
+                                                                        {
+                                                                            BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
 
-																				JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
+                                                                            JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
 
-																				if (suscripcion2 != null)
-																				{
-																					DateTime nuevaFecha = suscripcion2.FechaTermina;
-																					nuevaFecha = DateTime.Now;
-																					nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																					suscripcion2.FechaTermina = nuevaFecha;
-																					BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
-																				}
-																			}
-																		}
-																	}
+                                                                            if (suscripcion2 != null)
+                                                                            {
+                                                                                DateTime nuevaFecha = suscripcion2.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                                suscripcion2.FechaTermina = nuevaFecha;
+                                                                                BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+                                                                            }
+                                                                        }
+                                                                    }
 
-																	if (añadirSuscripcion == true)
+                                                                    if (añadirSuscripcion == true)
 																	{
 																		DateTime nuevaFecha = DateTime.Now;
 																		nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
@@ -466,138 +463,133 @@ namespace APIs.EA
 									}
 								}
 							}
-							else
-							{
-								if (juegoEA.Suscripciones.EaPlayPro != null)
-								{
-									bool encontrado = false;
 
-									if (conexion == null)
-									{
-										conexion = Herramientas.BaseDatos.Conectar();
-									}
-									else
-									{
-										if (conexion.State != System.Data.ConnectionState.Open)
-										{
-											conexion = Herramientas.BaseDatos.Conectar();
-										}
-									}
+                            if (juegoEA.Suscripciones.EaPlayPro != null)
+                            {
+                                bool encontrado = false;
 
-									string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
+                                if (conexion == null)
+                                {
+                                    conexion = Herramientas.BaseDatos.Conectar();
+                                }
+                                else
+                                {
+                                    if (conexion.State != System.Data.ConnectionState.Open)
+                                    {
+                                        conexion = Herramientas.BaseDatos.Conectar();
+                                    }
+                                }
 
-									using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
-									{
-										comando.Parameters.AddWithValue("@enlace", enlaceSuscripcion);
+                                string sqlBuscar = "SELECT idJuegos FROM tiendaea WHERE enlace=@enlace";
 
-										using (SqlDataReader lector = comando.ExecuteReader())
-										{
-											if (lector.Read() == true)
-											{
-												if (lector.IsDBNull(0) == false)
-												{
-													if (string.IsNullOrEmpty(lector.GetString(0)) == false)
-													{
-														string idJuegosTexto = lector.GetString(0);
+                                using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+                                {
+                                    comando.Parameters.AddWithValue("@enlace", enlaceSuscripcion);
 
-														encontrado = true;
+                                    using (SqlDataReader lector = comando.ExecuteReader())
+                                    {
+                                        if (lector.Read() == true)
+                                        {
+                                            if (lector.IsDBNull(0) == false)
+                                            {
+                                                if (string.IsNullOrEmpty(lector.GetString(0)) == false)
+                                                {
+                                                    string idJuegosTexto = lector.GetString(0);
 
-														if (idJuegosTexto != "0")
-														{
-															List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+                                                    encontrado = true;
 
-															if (idJuegos.Count > 0)
-															{
-																foreach (var id in idJuegos)
-																{
-																	Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
+                                                    if (idJuegosTexto != "0")
+                                                    {
+                                                        List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
 
-																	if (juegobd != null)
-																	{
-																		bool añadirSuscripcion = true;
+                                                        if (idJuegos.Count > 0)
+                                                        {
+                                                            foreach (var id in idJuegos)
+                                                            {
+                                                                Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
 
-																		if (juegobd.Suscripciones != null)
-																		{
-																			if (juegobd.Suscripciones.Count > 0)
-																			{
-																				bool actualizar = false;
+                                                                if (juegobd != null)
+                                                                {
+                                                                    bool añadirSuscripcion = true;
 
-																				foreach (var suscripcion in juegobd.Suscripciones)
-																				{
-																					if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlayPro)
-																					{
-																						añadirSuscripcion = false;
-																						actualizar = true;
+                                                                    if (juegobd.Suscripciones?.Count > 0)
+                                                                    {
+                                                                        bool actualizar = false;
 
-																						DateTime nuevaFecha = suscripcion.FechaTermina;
-																						nuevaFecha = DateTime.Now;
-																						nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																						suscripcion.FechaTermina = nuevaFecha;
-																					}
-																				}
+                                                                        foreach (var suscripcion in juegobd.Suscripciones)
+                                                                        {
+                                                                            if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.EAPlayPro)
+                                                                            {
+                                                                                añadirSuscripcion = false;
+                                                                                actualizar = true;
 
-																				if (actualizar == true)
-																				{
-																					BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+                                                                                DateTime nuevaFecha = suscripcion.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                                suscripcion.FechaTermina = nuevaFecha;
+                                                                            }
+                                                                        }
 
-																					JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
+                                                                        if (actualizar == true)
+                                                                        {
+                                                                            BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
 
-																					if (suscripcion2 != null)
-																					{
-																						DateTime nuevaFecha = suscripcion2.FechaTermina;
-																						nuevaFecha = DateTime.Now;
-																						nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
-																						suscripcion2.FechaTermina = nuevaFecha;
-																						BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
-																					}
-																				}
-																			}
-																		}
+                                                                            JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlaceSuscripcion);
 
-																		if (añadirSuscripcion == true)
-																		{
-																			DateTime nuevaFecha = DateTime.Now;
-																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                            if (suscripcion2 != null)
+                                                                            {
+                                                                                DateTime nuevaFecha = suscripcion2.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
+                                                                                suscripcion2.FechaTermina = nuevaFecha;
+                                                                                BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+                                                                            }
+                                                                        }
+                                                                    }
 
-																			JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
-																			{
-																				DRM = JuegoDRM.EA,
-																				Nombre = juegobd.Nombre,
-																				FechaEmpieza = DateTime.Now,
-																				FechaTermina = nuevaFecha,
-																				Imagen = juegobd.Imagenes.Header_460x215,
-																				ImagenNoticia = juegobd.Imagenes.Header_460x215,
-																				JuegoId = juegobd.Id,
-																				Enlace = enlaceSuscripcion,
-																				Tipo = Suscripciones2.SuscripcionTipo.EAPlayPro
-																			};
+                                                                    if (añadirSuscripcion == true)
+                                                                    {
+                                                                        DateTime nuevaFecha = DateTime.Now;
+                                                                        nuevaFecha = nuevaFecha + TimeSpan.FromDays(1);
 
-																			if (juegobd.Suscripciones == null)
-																			{
-																				juegobd.Suscripciones = new List<JuegoSuscripcion>();
-																			}
+                                                                        JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+                                                                        {
+                                                                            DRM = JuegoDRM.EA,
+                                                                            Nombre = juegobd.Nombre,
+                                                                            FechaEmpieza = DateTime.Now,
+                                                                            FechaTermina = nuevaFecha,
+                                                                            Imagen = juegobd.Imagenes.Header_460x215,
+                                                                            ImagenNoticia = juegobd.Imagenes.Header_460x215,
+                                                                            JuegoId = juegobd.Id,
+                                                                            Enlace = enlaceSuscripcion,
+                                                                            Tipo = Suscripciones2.SuscripcionTipo.EAPlayPro
+                                                                        };
 
-																			juegobd.Suscripciones.Add(nuevaSuscripcion);
+                                                                        if (juegobd.Suscripciones == null)
+                                                                        {
+                                                                            juegobd.Suscripciones = new List<JuegoSuscripcion>();
+                                                                        }
 
-																			BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
+                                                                        juegobd.Suscripciones.Add(nuevaSuscripcion);
 
-										if (encontrado == false)
-										{
-											BaseDatos.Suscripciones.Insertar.Temporal(conexion, Suscripcion.GenerarPro().Id.ToString().ToLower(), enlaceSuscripcion, nombre);
-										}
-									}
-								}
-							}
-						}
+                                                                        BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (encontrado == false)
+                                    {
+                                        BaseDatos.Suscripciones.Insertar.Temporal(conexion, Suscripcion.GenerarPro().Id.ToString().ToLower(), enlaceSuscripcion, nombre);
+                                    }
+                                }
+                            }
+                        }
 					}
 				}
 			}

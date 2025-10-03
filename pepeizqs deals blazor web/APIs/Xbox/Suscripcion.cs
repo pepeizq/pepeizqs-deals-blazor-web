@@ -50,160 +50,167 @@ namespace APIs.Xbox
 
             int cantidad = 0;
 
-			await Task.Delay(5000);
+			List<string> enlaces = [
+				"https://catalog.gamepass.com/sigls/v2?id=fdd9e2a7-0fee-49f6-ad69-4354098401ff&language=en-us&market=US",
+                "https://catalog.gamepass.com/sigls/v2?id=1d33fbb9-b895-4732-a8ca-a55c8b99fa2c&language=en-us&market=US"];
 
-            string html = await Decompiladores.Estandar("https://catalog.gamepass.com/sigls/v2?id=fdd9e2a7-0fee-49f6-ad69-4354098401ff&language=en-us&market=US");
+			foreach (var enlace2 in enlaces)
+			{
+                await Task.Delay(5000);
 
-            if (string.IsNullOrEmpty(html) == false)
-            {
-                int int1 = html.IndexOf("{" + Strings.ChrW(34) + "id" + Strings.ChrW(34));
-                string temp1 = html.Remove(0, int1);
-                html = "[" + temp1;
+                string html = await Decompiladores.GZipFormato(enlace2);
 
-                List<XboxGamePassJuego> juegos = JsonSerializer.Deserialize<List<XboxGamePassJuego>>(html);
-
-                if (juegos != null)
+                if (string.IsNullOrEmpty(html) == false)
                 {
-                    foreach (var juego in juegos)
+                    int int1 = html.IndexOf("{" + Strings.ChrW(34) + "id" + Strings.ChrW(34));
+                    string temp1 = html.Remove(0, int1);
+                    html = "[" + temp1;
+
+                    List<XboxGamePassJuego> juegos = JsonSerializer.Deserialize<List<XboxGamePassJuego>>(html);
+
+                    if (juegos != null)
                     {
-                        string enlace = "https://www.microsoft.com/store/productid/" + juego.Id;
-
-						bool encontrado = false;
-
-						if (conexion == null)
-						{
-							conexion = Herramientas.BaseDatos.Conectar();
-						}
-						else
-						{
-							if (conexion.State != System.Data.ConnectionState.Open)
-							{
-								conexion = Herramientas.BaseDatos.Conectar();
-							}
-						}
-
-						string sqlBuscar = "SELECT idJuegos FROM tiendamicrosoftstore WHERE enlace=@enlace";
-
-                        using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+                        foreach (var juego in juegos)
                         {
-                            comando.Parameters.AddWithValue("@enlace", enlace);
+                            string enlace = "https://www.microsoft.com/store/productid/" + juego.Id;
 
-                            using (SqlDataReader lector = comando.ExecuteReader())
+                            bool encontrado = false;
+
+                            if (conexion == null)
                             {
-                                if (lector.Read() == true)
+                                conexion = Herramientas.BaseDatos.Conectar();
+                            }
+                            else
+                            {
+                                if (conexion.State != System.Data.ConnectionState.Open)
                                 {
-									cantidad += 1;
-									BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+                                    conexion = Herramientas.BaseDatos.Conectar();
+                                }
+                            }
 
-                                    if (lector.IsDBNull(0) == false)
+                            string sqlBuscar = "SELECT idJuegos FROM tiendamicrosoftstore WHERE enlace=@enlace";
+
+                            using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+                            {
+                                comando.Parameters.AddWithValue("@enlace", enlace);
+
+                                using (SqlDataReader lector = comando.ExecuteReader())
+                                {
+                                    if (lector.Read() == true)
                                     {
-                                        if (string.IsNullOrEmpty(lector.GetString(0)) == false)
+                                        cantidad += 1;
+                                        BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+
+                                        if (lector.IsDBNull(0) == false)
                                         {
-                                            string idJuegosTexto = lector.GetString(0);
-
-											encontrado = true;
-
-											if (idJuegosTexto != "0")
+                                            if (string.IsNullOrEmpty(lector.GetString(0)) == false)
                                             {
-												List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
+                                                string idJuegosTexto = lector.GetString(0);
 
-												if (idJuegos.Count > 0)
-												{
-													foreach (var id in idJuegos)
-													{
-														Juegos.Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
+                                                encontrado = true;
 
-														if (juegobd != null)
-														{
-															bool añadirSuscripcion = true;
+                                                if (idJuegosTexto != "0")
+                                                {
+                                                    List<string> idJuegos = Herramientas.Listados.Generar(idJuegosTexto);
 
-															if (juegobd.Suscripciones != null)
-															{
-																if (juegobd.Suscripciones.Count > 0)
-																{
-																	bool actualizar = false;
+                                                    if (idJuegos.Count > 0)
+                                                    {
+                                                        foreach (var id in idJuegos)
+                                                        {
+                                                            Juegos.Juego juegobd = BaseDatos.Juegos.Buscar.UnJuego(int.Parse(id));
 
-																	foreach (var suscripcion in juegobd.Suscripciones)
-																	{
-																		if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.PCGamePass)
-																		{
-																			añadirSuscripcion = false;
-																			actualizar = true;
+                                                            if (juegobd != null)
+                                                            {
+                                                                bool añadirSuscripcion = true;
 
-																			DateTime nuevaFecha = suscripcion.FechaTermina;
-																			nuevaFecha = DateTime.Now;
-																			nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
-																			suscripcion.FechaTermina = nuevaFecha;
-																		}
-																	}
+                                                                if (juegobd.Suscripciones != null)
+                                                                {
+                                                                    if (juegobd.Suscripciones.Count > 0)
+                                                                    {
+                                                                        bool actualizar = false;
 
-																	if (actualizar == true)
-																	{
-																		BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
+                                                                        foreach (var suscripcion in juegobd.Suscripciones)
+                                                                        {
+                                                                            if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.PCGamePass)
+                                                                            {
+                                                                                añadirSuscripcion = false;
+                                                                                actualizar = true;
 
-																		if (string.IsNullOrEmpty(juegobd.IdXbox) == true)
-																		{
-																			BaseDatos.Juegos.Actualizar.IdXbox(juegobd.Id, juego.Id);
-																		}
-
-																		JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlace);
-
-																		if (suscripcion2 != null)
-																		{
-                                                                            DateTime nuevaFecha = suscripcion2.FechaTermina;
-                                                                            nuevaFecha = DateTime.Now;
-                                                                            nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
-                                                                            suscripcion2.FechaTermina = nuevaFecha;
-                                                                            BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+                                                                                DateTime nuevaFecha = suscripcion.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+                                                                                suscripcion.FechaTermina = nuevaFecha;
+                                                                            }
                                                                         }
-																	}
-																}
-															}
 
-															if (añadirSuscripcion == true)
-															{
-																DateTime nuevaFecha = DateTime.Now;
-																nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+                                                                        if (actualizar == true)
+                                                                        {
+                                                                            BaseDatos.Juegos.Actualizar.Suscripciones(juegobd, conexion);
 
-																JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
-																{
-																	DRM = JuegoDRM.Microsoft,
-																	Nombre = juegobd.Nombre,
-																	FechaEmpieza = DateTime.Now,
-																	FechaTermina = nuevaFecha,
-																	Imagen = juegobd.Imagenes.Header_460x215,
-																	ImagenNoticia = juegobd.Imagenes.Header_460x215,
-																	JuegoId = juegobd.Id,
-																	Enlace = enlace,
-																	Tipo = Suscripciones2.SuscripcionTipo.PCGamePass
-																};
+                                                                            if (string.IsNullOrEmpty(juegobd.IdXbox) == true)
+                                                                            {
+                                                                                BaseDatos.Juegos.Actualizar.IdXbox(juegobd.Id, juego.Id);
+                                                                            }
 
-																if (juegobd.Suscripciones == null)
-																{
-																	juegobd.Suscripciones = new List<JuegoSuscripcion>();
-																}
+                                                                            JuegoSuscripcion suscripcion2 = BaseDatos.Suscripciones.Buscar.UnJuego(enlace);
 
-																juegobd.Suscripciones.Add(nuevaSuscripcion);
+                                                                            if (suscripcion2 != null)
+                                                                            {
+                                                                                DateTime nuevaFecha = suscripcion2.FechaTermina;
+                                                                                nuevaFecha = DateTime.Now;
+                                                                                nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+                                                                                suscripcion2.FechaTermina = nuevaFecha;
+                                                                                BaseDatos.Suscripciones.Actualizar.FechaTermina(suscripcion2, conexion);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
 
-																BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
-															}
-														}
-													}
-												}
-											}
+                                                                if (añadirSuscripcion == true)
+                                                                {
+                                                                    DateTime nuevaFecha = DateTime.Now;
+                                                                    nuevaFecha = nuevaFecha + TimeSpan.FromDays(2);
+
+                                                                    JuegoSuscripcion nuevaSuscripcion = new JuegoSuscripcion
+                                                                    {
+                                                                        DRM = JuegoDRM.Microsoft,
+                                                                        Nombre = juegobd.Nombre,
+                                                                        FechaEmpieza = DateTime.Now,
+                                                                        FechaTermina = nuevaFecha,
+                                                                        Imagen = juegobd.Imagenes.Header_460x215,
+                                                                        ImagenNoticia = juegobd.Imagenes.Header_460x215,
+                                                                        JuegoId = juegobd.Id,
+                                                                        Enlace = enlace,
+                                                                        Tipo = Suscripciones2.SuscripcionTipo.PCGamePass
+                                                                    };
+
+                                                                    if (juegobd.Suscripciones == null)
+                                                                    {
+                                                                        juegobd.Suscripciones = new List<JuegoSuscripcion>();
+                                                                    }
+
+                                                                    juegobd.Suscripciones.Add(nuevaSuscripcion);
+
+                                                                    BaseDatos.Suscripciones.Insertar.Ejecutar(juegobd.Id, juegobd.Suscripciones, nuevaSuscripcion, conexion);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-								}
+                                }
+                            }
+
+                            if (encontrado == false)
+                            {
+                                BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), enlace);
                             }
                         }
-
-						if (encontrado == false)
-                        {
-							BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), enlace);
-						}
-					}
+                    }
                 }
-			}
+            }
         }
     }
 

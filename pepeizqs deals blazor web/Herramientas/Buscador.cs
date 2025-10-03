@@ -161,25 +161,9 @@ namespace Herramientas
                     {
                         if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
                         {
-                            bool añadir = true;
-
-                            if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion != null)
-                            {
-                                foreach (var suscripcion2 in juego.Suscripciones)
-                                {
-                                    if (suscripcion2.Tipo == Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).IncluyeSuscripcion)
-                                    {
-                                        añadir = false;
-                                    }
-                                }
-                            }
-
-                            if (añadir == true)
-                            {
-                                mensajeComplementoTipo = "suscripcion";
-                                mensajeComplementoTexto = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
-                                mensajeComplementoCantidadSuscripciones = mensajeComplementoCantidadSuscripciones + 1;
-                            }
+                            mensajeComplementoTipo = "suscripcion";
+                            mensajeComplementoTexto = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
+                            mensajeComplementoCantidadSuscripciones = mensajeComplementoCantidadSuscripciones + 1;
                         }
                     }
                 }

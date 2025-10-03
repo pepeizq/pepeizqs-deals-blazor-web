@@ -2159,8 +2159,8 @@
                                         <img src="@JuegoDRM2.SacarImagen(gratis2.DRM)" style="max-width: 22px; max-height: 22px;" alt="DRM" loading="lazy" />
                                     </div>
 
-                                    <div style="margin-right: 20px; width: 100%;">
-                                        <label style="cursor: pointer;">@GratisCargar.DevolverGratis(gratis2.Tipo).Nombre</label>
+                                    <div style="margin-right: 20px;">
+                                        @GratisCargar.DevolverGratis(gratis2.Tipo).Nombre
                                     </div>
                                 </div>
                             </a>
@@ -5797,48 +5797,6 @@
                         {
                             suscripcionesDisponibles.Add(suscripcion);
                         }
-                    }
-                }
-            }
-        }
-
-        if (suscripcionesDisponibles.Count > 0)
-        {
-            foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
-            {
-                if (suscripcion.IncluyeSuscripcion != null)
-                {
-                    bool tieneIncluye = false;
-                    bool tieneMaestro = false;
-
-                    foreach (var suscripcionJuego in suscripcionesDisponibles)
-                    {
-                        if (suscripcionJuego.Tipo == suscripcion.IncluyeSuscripcion)
-                        {
-                            tieneIncluye = true;
-                        }
-
-                        if (suscripcionJuego.Tipo == suscripcion.Id)
-                        {
-                            tieneMaestro = true;
-                        }
-                    }
-
-                    if (tieneIncluye == true && tieneMaestro == true)
-                    {
-                        int i = 0;
-
-                        foreach (var suscripcionJuego in suscripcionesDisponibles)
-                        {
-                            if (suscripcionJuego.Tipo == suscripcion.Id)
-                            {
-                                break;
-                            }
-
-                            i += 1;
-                        }
-
-                        suscripcionesDisponibles.RemoveAt(i);
                     }
                 }
             }

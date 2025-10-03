@@ -208,42 +208,39 @@
                 </h1>
             </button>
 
-            @if (suscripcionesActuales != null)
+            @if (suscripcionesActuales?.Count > 0 && mostrarArchivo == false && mostrarUltimas == false)
             {
-                if (suscripcionesActuales.Count > 0 && mostrarArchivo == false && mostrarUltimas == false)
+                if (tipoSeleccionado == Suscripciones2.SuscripcionTipo.Desconocido)
                 {
-                    if (tipoSeleccionado == Suscripciones2.SuscripcionTipo.Desconocido)
+                    foreach (var suscripcionActual in suscripcionesActuales)
                     {
-                        foreach (var suscripcionActual in suscripcionesActuales)
+                        if (suscripcionActual.Tipo.Id != Suscripciones2.SuscripcionTipo.Desconocido)
                         {
-                            if (suscripcionActual.Tipo.Id != Suscripciones2.SuscripcionTipo.Desconocido)
-                            {
-                                <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
-                                </button>
-                            }
+                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
+                            </button>
                         }
                     }
-                    else
+                }
+                else
+                {
+                    foreach (var suscripcionActual in suscripcionesActuales)
                     {
-                        foreach (var suscripcionActual in suscripcionesActuales)
+                        if (suscripcionActual.Tipo.Id == tipoSeleccionado)
                         {
-                            if (suscripcionActual.Tipo.Id == tipoSeleccionado)
-                            {
-                                <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
-                                    <div style="display: flex; align-items: center; gap: 15px;">
-                                        @{
-                                            var elegido = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id);
-                                        }
+                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    @{
+                                        var elegido = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id);
+                                    }
 
-                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(elegido.ImagenIcono)" style="width: 20px; height: 20px;" alt="@elegido.Nombre" />
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(elegido.ImagenIcono)" style="width: 20px; height: 20px;" alt="@elegido.Nombre" />
 
-                                        <div style="font-size: 16px;">
-                                            @elegido.Nombre
-                                        </div>
+                                    <div style="font-size: 16px;">
+                                        @elegido.Nombre
                                     </div>
-                                </button>
-                            }
+                                </div>
+                            </button>
                         }
                     }
                 }
@@ -349,67 +346,61 @@
                 </div>
 
                 <div class="suscripciones-grid caja-archivo-contenido" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 30px;">
-                    @if (suscripcionesActuales != null)
+                    @if (suscripcionesActuales?.Count > 0)
                     {
-                        if (suscripcionesActuales.Count > 0)
+                        foreach (var suscripcionActual in suscripcionesActuales)
                         {
-                            foreach (var suscripcionActual in suscripcionesActuales)
-                            {
-                                <button @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" class="boton-pequeño suscripcion-grid" style="display: flex; flex-direction: column; align-items: center;">
-                                    <div style="width: 200px; height: 70px; display: flex; justify-content: center;">
-                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(suscripcionActual.Tipo.ImagenLogo, 200, 70)" alt="@suscripcionActual.Tipo.Nombre" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
-                                    </div>
+                            <button @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" class="boton-pequeño suscripcion-grid" style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 200px; height: 70px; display: flex; justify-content: center;">
+                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(suscripcionActual.Tipo.ImagenLogo, 200, 70)" alt="@suscripcionActual.Tipo.Nombre" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                </div>
 
-                                    @if (suscripcionActual.Juegos != null)
+                                @if (suscripcionActual.Juegos?.Count > 0)
+                                {
+                                    List<JuegoDRM> drms = new List<JuegoDRM>();
+
+                                    foreach (var juego in suscripcionActual.Juegos)
                                     {
-                                        if (suscripcionActual.Juegos.Count > 0)
+                                        bool añadirDRM = true;
+
+                                        if (drms.Count > 0)
                                         {
-                                            List<JuegoDRM> drms = new List<JuegoDRM>();
-
-                                            foreach (var juego in suscripcionActual.Juegos)
+                                            foreach (var drm in drms)
                                             {
-                                                bool añadirDRM = true;
-
-                                                if (drms.Count > 0)
+                                                if (drm == juego.DRM)
                                                 {
-                                                    foreach (var drm in drms)
-                                                    {
-                                                        if (drm == juego.DRM)
-                                                        {
-                                                            añadirDRM = false;
-                                                        }
-                                                    }
-                                                }
-
-                                                if (añadirDRM == true)
-                                                {
-                                                    drms.Add(juego.DRM);
+                                                    añadirDRM = false;
                                                 }
                                             }
+                                        }
 
-                                            <div style="display: flex; align-items: center; gap: 20px;">
-                                                @if (suscripcionActual.Tipo.Precio > 0)
-                                                {
-                                                    <div>
-                                                        @Herramientas.Precios.Euro((decimal)suscripcionActual.Tipo.Precio)
-                                                    </div>
-                                                }
-
-                                                <div>
-                                                    @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Subscriptions"), suscripcionActual.Juegos.Count)
-                                                </div>
-
-                                                <div style="display: flex; align-items: center; gap: 10px;">
-                                                    @foreach (var drm in drms)
-                                                    {
-                                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drm), 20, 20)" style="max-width: 20px; max-height: 20px;" />
-                                                    }
-                                                </div>
-                                            </div>
+                                        if (añadirDRM == true)
+                                        {
+                                            drms.Add(juego.DRM);
                                         }
                                     }
-                                </button>
-                            }
+
+                                    <div style="display: flex; align-items: center; gap: 20px;">
+                                        @if (suscripcionActual.Tipo.Precio > 0)
+                                        {
+                                            <div>
+                                                @Herramientas.Precios.Euro((decimal)suscripcionActual.Tipo.Precio)
+                                            </div>
+                                        }
+
+                                        <div>
+                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Subscriptions"), suscripcionActual.Juegos.Count)
+                                        </div>
+
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            @foreach (var drm in drms)
+                                            {
+                                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(drm), 20, 20)" style="max-width: 20px; max-height: 20px;" />
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </button>
                         }
                     }
                 </div>
@@ -685,16 +676,13 @@ else
         {
             if (string.IsNullOrEmpty(suscripcionSeleccionadaTexto) == false)
             {
-                if (suscripcionesActuales != null)
+                if (suscripcionesActuales?.Count > 0)
                 {
-                    if (suscripcionesActuales.Count > 0)
+                    foreach (var componente in suscripcionesActuales)
                     {
-                        foreach (var componente in suscripcionesActuales)
+                        if (Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre.ToLower()) == suscripcionSeleccionadaTexto)
                         {
-                            if (Herramientas.EnlaceAdaptador.Nombre(componente.Tipo.Nombre.ToLower()) == suscripcionSeleccionadaTexto)
-                            {
-                                await SuscripcionAbrir(componente);
-                            }
+                            await SuscripcionAbrir(componente);
                         }
                     }
                 }
@@ -727,28 +715,7 @@ else
             {
                 Juegos.Juego juego2 = BaseDatos.Juegos.Buscar.UnJuego(juegoActual.JuegoId.ToString());
 
-                bool añadir = true;
-
-                if (suscripcionSeleccionadaTipo.IncluyeSuscripcion != null)
-                {
-                    if (juego2.Suscripciones != null)
-                    {
-                        foreach (var suscripcion in juego2.Suscripciones)
-                        {
-                            if (suscripcion.Tipo == suscripcionSeleccionadaTipo.IncluyeSuscripcion)
-                            {
-                                añadir = false;
-                            }
-                        }
-                    }
-                }
-
-                if (juego2.Tipo != JuegoTipo.Game)
-                {
-                    añadir = false;
-                }
-
-                if (añadir == true)
+                if (juego2 != null)
                 {
                     bool añadirVacioAnalisis = false;
 
@@ -781,7 +748,7 @@ else
 
                     juegoActual.Juego = juego2;
                     suscripcionSeleccionadaJuegosGestor.Add(juegoActual);
-                }  
+                }
 
                 //------------------------------------
 

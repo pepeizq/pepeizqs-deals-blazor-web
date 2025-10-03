@@ -6,11 +6,39 @@ namespace BaseDatos.Pendientes
 {
 	public static class Buscar
 	{
-		public static string Nombre(string nombre, SqlConnection conexion)
+		public static string IDs(string nombre, SqlConnection conexion = null)
 		{
-            string busqueda = "SELECT * FROM juegos WHERE nombre=@nombre";
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            string busqueda = "SELECT id FROM juegos WHERE nombre=@nombre OR nombreCodigo=@nombreLimpio";
 
             using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+            {
+                comando.Parameters.AddWithValue("@nombre", nombre);
+                comando.Parameters.AddWithValue("@nombreLimpio", Herramientas.Buscador.LimpiarNombre(nombre, false));
+
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        return lector.GetInt32(0).ToString();
+                    }
+                }
+            }
+
+            string busqueda2 = "SELECT ids FROM juegosIDs WHERE nombre=@nombre";
+
+            using (SqlCommand comando = new SqlCommand(busqueda2, conexion))
             {
                 comando.Parameters.AddWithValue("@nombre", nombre);
 
@@ -18,7 +46,7 @@ namespace BaseDatos.Pendientes
                 {
                     while (lector.Read())
                     {
-                        return lector.GetInt32(0).ToString();
+                        return lector.GetString(0);
                     }
                 }
             }

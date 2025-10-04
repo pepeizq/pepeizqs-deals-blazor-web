@@ -29,6 +29,7 @@ namespace Herramientas.RedesSociales
                     titulo = "[Bundle] " + noticia.TituloEn;
                     texto = Bundle(global::BaseDatos.Bundles.Buscar.UnBundle(noticia.BundleId));
                 }
+
                 if (noticia.Tipo == Noticias.NoticiaTipo.Gratis)
                 {
                     titulo = "[Free] " + noticia.TituloEn;
@@ -52,6 +53,29 @@ namespace Herramientas.RedesSociales
                     texto = Gratis(juegosGratis);
                 }
 
+                if (noticia.Tipo == Noticias.NoticiaTipo.Suscripciones)
+                {
+                    titulo = "[Subscriptions] " + noticia.TituloEn;
+
+                    List<string> ids = Herramientas.Listados.Generar(noticia.SuscripcionesIds);
+                    List<Juegos.JuegoSuscripcion> juegosSuscripciones = new List<Juegos.JuegoSuscripcion>();
+
+                    if (ids?.Count > 0)
+                    {
+                        foreach (var id in ids)
+                        {
+                            var suscripcion = global::BaseDatos.Suscripciones.Buscar.Id(int.Parse(id));
+
+                            if (suscripcion != null)
+                            {
+                                juegosSuscripciones.Add(suscripcion);
+                            }
+                        }
+                    }
+
+                    texto = Suscripciones(juegosSuscripciones);
+                }
+               
                 if (string.IsNullOrEmpty(texto) == false)
                 {
                     try
@@ -485,6 +509,93 @@ namespace Herramientas.RedesSociales
                                 else
                                 {
                                     texto = texto + "* It was in the subscription: " + Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre + " (" + Calculadora.DiferenciaTiempo(suscripcion.FechaEmpieza, "en") + ")" + Environment.NewLine;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return texto;
+        }
+
+        public static string Suscripciones(List<JuegoSuscripcion> suscripciones)
+        {
+            string texto = null;
+
+            if (suscripciones?.Count > 0)
+            {
+                foreach (var suscripcion2 in suscripciones)
+                {
+                    texto = texto + "[" + suscripcion2.Nombre + "](" + suscripcion2.Enlace + ")" + Environment.NewLine + Environment.NewLine;
+
+                    if (suscripcion2.FechaTermina >= DateTime.Now)
+                    {
+                        Juego juego = global::BaseDatos.Juegos.Buscar.UnJuego(suscripcion2.JuegoId);
+
+                        if (juego != null)
+                        {
+                            if (juego.Analisis != null)
+                            {
+                                texto = texto + "* It has an " + juego.Analisis.Porcentaje + "% rating on Steam with " + juego.Analisis.Cantidad + " reviews." + Environment.NewLine;
+                            }
+
+                            List<int> bundlesActivos = new List<int>();
+                            List<int> bundlesViejunos = new List<int>();
+
+                            if (juego.Bundles?.Count > 0)
+                            {
+                                foreach (var bundle in juego.Bundles)
+                                {
+                                    if (bundle.FechaEmpieza <= DateTime.Now && bundle.FechaTermina >= DateTime.Now)
+                                    {
+                                        bundlesActivos.Add(bundle.BundleId);
+                                    }
+                                    else
+                                    {
+                                        bundlesViejunos.Add(bundle.BundleId);
+                                    }
+                                }
+                            }
+
+                            if (bundlesActivos.Count > 0)
+                            {
+                                foreach (var bundle in bundlesActivos)
+                                {
+                                    Bundles2.Bundle bundle2 = global::BaseDatos.Bundles.Buscar.UnBundle(bundle);
+
+                                    if (bundle2 != null)
+                                    {
+                                        texto = texto + "* It's in the bundle: [" + bundle2.NombreBundle + " • " + bundle2.NombreTienda + "](" + bundle2.Enlace + ")" + Environment.NewLine;
+                                    }
+                                }
+                            }
+
+                            if (bundlesViejunos.Count > 0)
+                            {
+                                foreach (var bundle in bundlesViejunos)
+                                {
+                                    Bundles2.Bundle bundle2 = global::BaseDatos.Bundles.Buscar.UnBundle(bundle);
+
+                                    if (bundle2 != null)
+                                    {
+                                        texto = texto + "* It was in the bundle: " + bundle2.NombreBundle + " • " + bundle2.NombreTienda + " (" + Calculadora.DiferenciaTiempo(bundle2.FechaEmpieza, "en") + ")" + Environment.NewLine;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (juego.Gratis?.Count > 0)
+                        {
+                            foreach (var gratis in juego.Gratis)
+                            {
+                                if (gratis.FechaEmpieza <= DateTime.Now && gratis.FechaTermina >= DateTime.Now)
+                                {
+                                    texto = texto + "* It's free in: [" + Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre + "](" + gratis.Enlace + ")" + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    texto = texto + "* It was free in: " + Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre + " (" + Calculadora.DiferenciaTiempo(gratis.FechaEmpieza, "en") + ")" + Environment.NewLine;
                                 }
                             }
                         }

@@ -343,7 +343,38 @@ namespace Noticias
                 }
             }
 
-            List<string> lista = Listados.Generar(plantilla.Juegos);
+            if (string.IsNullOrEmpty(plantilla.SuscripcionesIds) == true)
+            {
+                plantilla.SuscripcionesIds = id.ToString();
+            }
+            else
+            {
+                if (plantilla.SuscripcionesIds.Contains(id.ToString()) == false)
+                {
+                    plantilla.SuscripcionesIds = plantilla.SuscripcionesIds + "," + id.ToString();
+                }
+                else
+                {
+                    int int1 = plantilla.SuscripcionesIds.IndexOf(id.ToString() + ",");
+
+                    if (int1 == -1)
+                    {
+                        int1 = plantilla.SuscripcionesIds.IndexOf(id.ToString());
+                        plantilla.SuscripcionesIds = plantilla.SuscripcionesIds.Remove(int1, id.ToString().Length);
+                    }
+                    else
+                    {
+                        plantilla.SuscripcionesIds = plantilla.SuscripcionesIds.Remove(int1, id.ToString().Length + 1);
+                    }
+
+                    if (plantilla.SuscripcionesIds.Trim().Length == 1)
+                    {
+                        plantilla.SuscripcionesIds = null;
+                    }
+                }
+            }
+
+            List<string> lista = Listados.Generar(plantilla.SuscripcionesIds);
 
             if (lista != null)
             {
@@ -351,22 +382,22 @@ namespace Noticias
 
                 if (lista.Count == 1)
                 {
-                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription1", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
-                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription1", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription1", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription1", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
                 }
                 else if (lista.Count == 2)
                 {
-                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + " " + Idiomas.BuscarTexto("en", "Subscription2", "NewsTemplates") + " " +
-                        BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription3", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
-                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + " " + Idiomas.BuscarTexto("es", "Subscription2", "NewsTemplates") + " " +
-                        BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription3", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + " " + Idiomas.BuscarTexto("en", "Subscription2", "NewsTemplates") + " " +
+                        BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription3", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + " " + Idiomas.BuscarTexto("es", "Subscription2", "NewsTemplates") + " " +
+                        BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription3", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
                 }
                 else if (lista.Count > 2)
                 {
-                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + ", " +
-                        BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription4", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
-                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).Nombre + ", " +
-                        BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription4", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEn = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + ", " +
+                        BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("en", "Subscription4", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
+                    plantilla.TituloEs = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).Nombre + ", " +
+                        BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[1])).Nombre + " " + string.Format(Idiomas.BuscarTexto("es", "Subscription4", "NewsTemplates"), Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(tipoSeleccionado).Nombre);
                 }
 
                 #endregion
@@ -392,7 +423,7 @@ namespace Noticias
 
                 foreach (var juego in lista)
                 {
-                    Juegos.JuegoSuscripcion suscripcion = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(juego));
+                    Juegos.JuegoSuscripcion suscripcion = BaseDatos.Suscripciones.Buscar.Id(int.Parse(juego));
 
                     if (suscripcion != null)
                     {
@@ -408,13 +439,13 @@ namespace Noticias
 
                 #region Imagen
 
-                if (BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).ImagenNoticia != null)
+                if (BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).ImagenNoticia != null)
                 {
-                    plantilla.Imagen = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).ImagenNoticia;
+                    plantilla.Imagen = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).ImagenNoticia;
                 }
                 else
                 {
-                    Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).JuegoId.ToString());
+                    Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).JuegoId.ToString());
                     plantilla.Imagen = juego.Imagenes.Library_1920x620;
                 }
 
@@ -422,18 +453,9 @@ namespace Noticias
 
                 #region Fecha
 
-                plantilla.Fecha = BaseDatos.Suscripciones.Buscar.UnJuego(int.Parse(lista[0])).FechaTermina;
+                plantilla.Fecha = BaseDatos.Suscripciones.Buscar.Id(int.Parse(lista[0])).FechaTermina;
 
                 #endregion
-
-                if (string.IsNullOrEmpty(plantilla.SuscripcionesIds) == true)
-                {
-                    plantilla.SuscripcionesIds = id.ToString();
-                }
-                else
-                {
-                    plantilla.SuscripcionesIds = plantilla.SuscripcionesIds + "," + id.ToString();
-                }
             }
             else
             {

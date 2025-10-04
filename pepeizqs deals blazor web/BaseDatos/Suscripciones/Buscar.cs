@@ -234,15 +234,23 @@ namespace BaseDatos.Suscripciones
 			return juego;
 		}
 
-		public static JuegoSuscripcion UnJuego(int juegoId)
+		public static JuegoSuscripcion JuegoId(int juegoId, SqlConnection conexion = null)
 		{
-			List<JuegoSuscripcion> resultados = new List<JuegoSuscripcion>();
-
-			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
 
 			using (conexion)
 			{
-				string busqueda = "SELECT * FROM suscripciones WHERE juegoId=@juegoId";
+				string busqueda = "SELECT TOP 1 * FROM suscripciones WHERE juegoId=@juegoId";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -252,21 +260,16 @@ namespace BaseDatos.Suscripciones
 					{
 						while (lector.Read())
 						{
-							resultados.Add(Cargar(lector));
+							return Cargar(lector);
 						}
 					}
 				}
 			}
 
-			if (resultados.Count > 0)
-			{
-				return resultados[resultados.Count - 1];
-			}
-
 			return null;
 		}
 
-		public static JuegoSuscripcion UnJuegoId(int id, SqlConnection conexion = null)
+		public static JuegoSuscripcion Id(int id, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{

@@ -955,11 +955,11 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
             if (cantidadIds.Count > 0)
             {
-                string enlace = BaseDatos.Suscripciones.Buscar.UnJuegoId(int.Parse(cantidadIds[0])).Enlace;
+                string enlace = BaseDatos.Suscripciones.Buscar.Id(int.Parse(cantidadIds[0])).Enlace;
 
                 foreach (var id2 in cantidadIds)
                 {
-                    if (BaseDatos.Suscripciones.Buscar.UnJuegoId(int.Parse(id2)).Enlace != enlace)
+                    if (BaseDatos.Suscripciones.Buscar.Id(int.Parse(id2)).Enlace != enlace)
                     {
                         enlace = string.Empty;
                         break;

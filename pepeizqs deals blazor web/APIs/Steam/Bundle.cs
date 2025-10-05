@@ -33,54 +33,51 @@ namespace APIs.Steam
 				{
 					if (datos2.Respuesta.Bundles.Count == 1)
 					{
-						if (datos2.Respuesta.Bundles[0].Apps != null)
-						{
-							if (datos2.Respuesta.Bundles[0].Apps.Count > 0)
-							{
-								string idsBuscar = string.Empty;
+                        if (datos2.Respuesta.Bundles[0].Apps?.Count > 0)
+                        {
+                            string idsBuscar = string.Empty;
 
-								foreach (int idApp in datos2.Respuesta.Bundles[0].Apps)
-								{
-									if (idApp > 0)
-									{
-										Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(null, idApp.ToString());
+                            foreach (int idApp in datos2.Respuesta.Bundles[0].Apps)
+                            {
+                                if (idApp > 0)
+                                {
+                                    Juegos.Juego juego = BaseDatos.Juegos.Buscar.UnJuego(null, idApp.ToString());
 
-										if (juego != null)
-										{
-											if (idsBuscar.Length > 0)
-											{
-												idsBuscar = idsBuscar + ",";
-											}
+                                    if (juego != null)
+                                    {
+                                        if (idsBuscar.Length > 0)
+                                        {
+                                            idsBuscar = idsBuscar + ",";
+                                        }
 
-											idsBuscar = idsBuscar + juego.Id.ToString();
-										}
-										else
-										{
-											Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(idApp.ToString());
+                                        idsBuscar = idsBuscar + juego.Id.ToString();
+                                    }
+                                    else
+                                    {
+                                        Juegos.Juego nuevoJuego = await APIs.Steam.Juego.CargarDatosJuego(idApp.ToString());
 
-											if (nuevoJuego != null)
-											{
-												BaseDatos.Juegos.Insertar.Ejecutar(nuevoJuego);
-												Juegos.Juego nuevoJuego2 = BaseDatos.Juegos.Buscar.UnJuego(null, idApp.ToString());
+                                        if (nuevoJuego != null)
+                                        {
+                                            BaseDatos.Juegos.Insertar.Ejecutar(nuevoJuego);
+                                            Juegos.Juego nuevoJuego2 = BaseDatos.Juegos.Buscar.UnJuego(null, idApp.ToString());
 
-												if (idsBuscar.Length > 0)
-												{
-													idsBuscar = idsBuscar + ",";
-												}
+                                            if (idsBuscar.Length > 0)
+                                            {
+                                                idsBuscar = idsBuscar + ",";
+                                            }
 
-												idsBuscar = idsBuscar + nuevoJuego2.Id.ToString();
-											}
-										}
-									}
-								}
+                                            idsBuscar = idsBuscar + nuevoJuego2.Id.ToString();
+                                        }
+                                    }
+                                }
+                            }
 
-								if (string.IsNullOrEmpty(idsBuscar) == false)
-								{
-									return idsBuscar;
-								}
-							}
-						}
-					}
+                            if (string.IsNullOrEmpty(idsBuscar) == false)
+                            {
+                                return idsBuscar;
+                            }
+                        }
+                    }
 				}
 			}
 

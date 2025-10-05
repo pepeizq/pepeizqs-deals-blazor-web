@@ -111,14 +111,7 @@
     {
         <div style="width: 100%;">
             <div style="display: flex; flex-direction: column; gap: 20px;">
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    @if (string.IsNullOrEmpty(idTiendaPendiente) == false || string.IsNullOrEmpty(idStreamingPendiente) == false || string.IsNullOrEmpty(idPlataformaPendiente) == false)
-                    {
-                        <button @onclick="@(e => ClickearDescartarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center;">Descartar</button>
-                    }
-
-                    <button @onclick="@(e => ClickearBuscarPendientes(e, nombrePendiente))" class="boton-pequeño" style="width: 130px; text-align: center;">Buscar</button>
-
+                <div style="display: flex; align-items: center; gap: 30px;">
                     @if (idsPendiente != "0")
                     {
                         if (permitirHacerCosas == true)
@@ -127,8 +120,21 @@
                         }
                         else
                         {
-                            <button class="boton-pequeño" style="width: 130px; text-align: center; backdrop-filter: brightness(60%);">Actualizar</button>
+                            <div>
+                                Ocupado
+                            </div>
                         }
+                    }
+                    else
+                    {
+                        <div>
+                            ID 0
+                        </div>
+                    }
+
+                    @if (string.IsNullOrEmpty(idTiendaPendiente) == false || string.IsNullOrEmpty(idStreamingPendiente) == false || string.IsNullOrEmpty(idPlataformaPendiente) == false)
+                    {
+                        <button @onclick="@(e => ClickearDescartarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center; margin-left: auto;">Descartar</button>
                     }
                 </div>
 
@@ -200,6 +206,10 @@
 </div>
 
 <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div style="margin-bottom: 10px;">
+        Buscador:
+    </div>
+
     <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
     @if (string.IsNullOrEmpty(textoBuscador) == false)
@@ -759,19 +769,6 @@
 
                 ClickearPlataformaPendientes(idPlataformaPendiente);
             }
-        }
-    }
-
-    private void ClickearBuscarPendientes(MouseEventArgs e, string nombre)
-    {
-        if (conexion.State != System.Data.ConnectionState.Open)
-        {
-            conexion = Herramientas.BaseDatos.Conectar();
-        }
-
-        using (conexion)
-        {
-            idsPendiente = BaseDatos.Pendientes.Buscar.IDs(nombre, conexion);
         }
     }
 

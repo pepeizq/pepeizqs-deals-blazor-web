@@ -12,7 +12,8 @@
                 ImagenTienda = "/imagenes/bundles/gmg_300x80.webp",
                 ImagenIcono = "/imagenes/bundles/gmg_icono.webp",
                 EnlaceBase = "greenmangamingbundles.com",
-                Pick = false
+                Pick = false,
+                Twitter = "GreenManGaming"
             };
 
             DateTime fechaEmpieza = DateTime.Now;

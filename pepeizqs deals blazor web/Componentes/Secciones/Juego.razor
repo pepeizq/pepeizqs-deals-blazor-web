@@ -28,39 +28,49 @@
     string titulo = juego.Nombre + " • pepeizq's deals";
     string tituloDRMs = string.Empty;
 
-    foreach (DRM drm in JuegoDRM2.GenerarListado())
+    foreach (var drm in drmsEnseñar)
     {
-        if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+        if (string.IsNullOrEmpty(drm.Mensaje) == false)
         {
-            if (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG)
+            if (drm.DRM == JuegoDRM.Steam || drm.DRM == JuegoDRM.GOG)
             {
+                bool añadir = true;
+
                 if (string.IsNullOrEmpty(tituloDRMs) == false)
                 {
-                    tituloDRMs = tituloDRMs + ", ";
+                    if (tituloDRMs.Contains(JuegoDRM2.DevolverDRM(drm.DRM)) == true)
+                    {
+                        añadir = false;
+                    }
                 }
 
-                tituloDRMs = tituloDRMs + drm.Nombre;
+                if (añadir == true)
+                {
+                    if (string.IsNullOrEmpty(tituloDRMs) == false)
+                    {
+                        tituloDRMs = tituloDRMs + ", ";
+                    }
+
+                    tituloDRMs = tituloDRMs + JuegoDRM2.DevolverDRM(drm.DRM);
+                } 
             }
         }
     }
 
-    if (juego.Suscripciones != null)
+    if (juego.Suscripciones?.Count > 0)
     {
-        if (juego.Suscripciones.Count > 0)
+        if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
         {
-            if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
+            foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
             {
-                foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
+                if (suscripcion2.Tipo == SuscripcionTipo.PCGamePass)
                 {
-                    if (suscripcion2.Tipo == SuscripcionTipo.PCGamePass)
+                    if (string.IsNullOrEmpty(tituloDRMs) == false)
                     {
-                        if (string.IsNullOrEmpty(tituloDRMs) == false)
-                        {
-                            tituloDRMs = tituloDRMs + ", ";
-                        }
-
-                         tituloDRMs = tituloDRMs + "Game Pass";
+                        tituloDRMs = tituloDRMs + ", ";
                     }
+
+                    tituloDRMs = tituloDRMs + "Game Pass";
                 }
             }
         }
@@ -141,7 +151,6 @@
 
         <meta name="og:url" content="@enlace" />
         <meta name="og:image" content="@imagen" />
-        <meta name="og:video" content="@mediaMostrar" />
         <meta name="og:site_name" content="pepeizq's deals" />
         <meta name="og:type" content="website" />
         <meta name="robots" content="index, follow" />
@@ -534,35 +543,32 @@
 
             <div class="juego-cabecera caja-diseño" style="@fondoCabecera position: sticky; top: 70px; z-index: 3; border-radius: 5px; border: 1px solid var(--fondoOscuro);">
                 <div class="perfil-flexible-centrado">
-                    @if (juego.Imagenes != null)
+                    @if (string.IsNullOrEmpty(juego.Imagenes?.Header_460x215) == false)
                     {
-                        if (string.IsNullOrEmpty(juego.Imagenes.Header_460x215) == false)
-                        {
-                            bool difuminar = false;
+                        bool difuminar = false;
 
-                            if (string.IsNullOrEmpty(usuarioId) == true)
+                        if (string.IsNullOrEmpty(usuarioId) == true)
+                        {
+                            if (string.IsNullOrEmpty(juego.MayorEdad) == false)
                             {
-                                if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+                                if (juego.MayorEdad.ToLower() == "true")
                                 {
-                                    if (juego.MayorEdad.ToLower() == "true")
-                                    {
-                                        difuminar = true;
-                                    }
+                                    difuminar = true;
                                 }
                             }
+                        }
                             
-                            if (difuminar == false)
-                            {
-                                <div class="juego-flexible-izquierda">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 250, 116)" class="juego-imagen" style="border-radius: 5px 0px 0px 5px;" alt="@juego.Nombre" loading="lazy" />
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="juego-flexible-izquierda" style="overflow: hidden;">
-                                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 250, 116)" class="juego-imagen" style="filter: blur(10px); border-radius: 5px 0px 0px 5px;" alt="@juego.Nombre" loading="lazy" />
-                                </div>
-                            }
+                        if (difuminar == false)
+                        {
+                            <div class="juego-flexible-izquierda">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 250, 116)" class="juego-imagen" style="border-radius: 5px 0px 0px 5px;" alt="@juego.Nombre" loading="lazy" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="juego-flexible-izquierda" style="overflow: hidden;">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juego.Imagenes.Header_460x215, 250, 116)" class="juego-imagen" style="filter: blur(10px); border-radius: 5px 0px 0px 5px;" alt="@juego.Nombre" loading="lazy" />
+                            </div>
                         }
                     }
 
@@ -575,7 +581,7 @@
 
                                 foreach (DRM drm in JuegoDRM2.GenerarListado())
                                 {
-                                    if (VerificarMostrarDRM(idioma, drm.Id, juego) == true && drm.Id != JuegoDRM.NoEspecificado)
+                                    if (VerificarMostrarDRMOferta(drmsEnseñar, drm.Id) == true && drm.Id != JuegoDRM.NoEspecificado)
                                     {
                                         mostrarDRMs = true;
                                         break;
@@ -589,29 +595,26 @@
                                         {
                                             if (drm.Id != JuegoDRM.NoEspecificado)
                                             {
-                                                if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+                                                if (VerificarMostrarDRM(idioma, drm.Id, juego, drmsEnseñar) == true)
                                                 {
                                                     string fondoBotonDRM = fondoBoton;
 
                                                     if (string.IsNullOrEmpty(usuarioId) == false)
                                                     {
-                                                        if (usuarioTieneDesea != null)
+                                                        if (usuarioTieneDesea?.Count > 0)
                                                         {
-                                                            if (usuarioTieneDesea.Count > 0)
+                                                            foreach (var tieneDesea in usuarioTieneDesea)
                                                             {
-                                                                foreach (var tieneDesea in usuarioTieneDesea)
+                                                                if (drm.Id == tieneDesea.DRM && tieneDesea.Tiene == true)
                                                                 {
-                                                                    if (drm.Id == tieneDesea.DRM && tieneDesea.Tiene == true)
-                                                                    {
-                                                                        fondoBotonDRM = "background-color: var(--fondoBien);";
-                                                                        break;
-                                                                    }
+                                                                    fondoBotonDRM = "background-color: var(--fondoBien);";
+                                                                    break;
+                                                                }
 
-                                                                    if (drm.Id == tieneDesea.DRM && tieneDesea.Desea == true)
-                                                                    {
-                                                                        fondoBotonDRM = "background-color: var(--fondoAlerta);";
-                                                                        break;
-                                                                    }
+                                                                if (drm.Id == tieneDesea.DRM && tieneDesea.Desea == true)
+                                                                {
+                                                                    fondoBotonDRM = "background-color: var(--fondoAlerta);";
+                                                                    break;
                                                                 }
                                                             }
                                                         }                                                         
@@ -803,8 +806,19 @@
             {
                 if (drm.Id != JuegoDRM.NoEspecificado)
                 {
-                    if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+                    if (VerificarMostrarDRM(idioma, drm.Id, juego, drmsEnseñar) == true)
                     {
+                        string mensajeMinimoDRM = string.Empty;
+
+                        foreach (var drmEnseñar in drmsEnseñar)
+                        {
+                            if (drmEnseñar.DRM == drm.Id)
+                            {
+                                mensajeMinimoDRM = drmEnseñar.Mensaje;
+                                break;
+                            }
+                        }
+
                         bool usuarioTieneJuego = false;
                         int usuarioTieneJuegoTiempoJugado = 0;
                         int usuarioTieneJuegoUltimaVezJugado = 0;
@@ -813,44 +827,40 @@
                         bool usuarioTieneDeseadoImportado = false;
                         string usuarioTieneDeseadoMensaje = string.Empty;
 
-                        if (usuarioTieneDesea != null)
+                        if (usuarioTieneDesea?.Count > 0)
                         {
-                            if (usuarioTieneDesea.Count > 0)
+                            foreach (var tieneDesea in usuarioTieneDesea)
                             {
-                                foreach (var tieneDesea in usuarioTieneDesea)
+                                if (drm.Id == tieneDesea.DRM)
                                 {
-                                    if (drm.Id == tieneDesea.DRM)
+                                    usuarioTieneJuego = tieneDesea.Tiene;
+
+                                    if (usuarioTieneJuego == true)
                                     {
-                                        usuarioTieneJuego = tieneDesea.Tiene;
-
-                                        if (usuarioTieneJuego == true)
-                                        {
-                                            usuarioTieneJuegoTiempoJugado = tieneDesea.JugadoTiempo;
-                                            usuarioTieneJuegoUltimaVezJugado = tieneDesea.JugadoUltimaVez;
-                                        }
-
-                                        usuarioTieneDeseado = tieneDesea.Desea;
-                                        usuarioTieneDeseadoImportado = tieneDesea.ImportadoDesea;
-
-                                        if (tieneDesea.Desea == true && tieneDesea.ImportadoDesea == true && juego.Tipo == Juegos.JuegoTipo.Game && (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG))
-                                        {
-                                            usuarioTieneDeseadoMensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Game"), JuegoDRM2.DevolverDRM(drm.Id));
-                                        }
-
-                                        if (tieneDesea.Desea == true && tieneDesea.ImportadoDesea == true && juego.Tipo == Juegos.JuegoTipo.DLC && (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG))
-                                        {
-                                            usuarioTieneDeseadoMensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Game"), JuegoDRM2.DevolverDRM(drm.Id));
-                                        }
-
-                                        break;
+                                        usuarioTieneJuegoTiempoJugado = tieneDesea.JugadoTiempo;
+                                        usuarioTieneJuegoUltimaVezJugado = tieneDesea.JugadoUltimaVez;
                                     }
+
+                                    usuarioTieneDeseado = tieneDesea.Desea;
+                                    usuarioTieneDeseadoImportado = tieneDesea.ImportadoDesea;
+
+                                    if (tieneDesea.Desea == true && tieneDesea.ImportadoDesea == true && juego.Tipo == Juegos.JuegoTipo.Game && (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG))
+                                    {
+                                        usuarioTieneDeseadoMensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Game"), JuegoDRM2.DevolverDRM(drm.Id));
+                                    }
+
+                                    if (tieneDesea.Desea == true && tieneDesea.ImportadoDesea == true && juego.Tipo == Juegos.JuegoTipo.DLC && (drm.Id == JuegoDRM.Steam || drm.Id == JuegoDRM.GOG))
+                                    {
+                                        usuarioTieneDeseadoMensaje = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Game"), JuegoDRM2.DevolverDRM(drm.Id));
+                                    }
+
+                                    break;
                                 }
-                            }                            
-                        }
+                            }
+                        }  
 
                         List<JuegoPrecio> preciosActualesDRM = OrdenarPrecios(juego.PrecioActualesTiendas, drm.Id);
-                        string mensajeMinimoDRM = CogerMinimoDRM(idioma, drm.Id, juego.PrecioMinimosHistoricos, juego.PrecioActualesTiendas, juego.Historicos);
-
+                        
                         <div id="@drm.Id">
                             @if (string.IsNullOrEmpty(mensajeMinimoDRM) == false)
                             {
@@ -2324,159 +2334,8 @@
                 </div>
             }
 
-            @if (juego.Media != null)
-            {
-                if (juego.Media.Capturas2 != null)
-                {
-                    if (juego.Media.Capturas2.Count > 0)
-                    {
-                        bool difuminar = false;
-
-                        if (string.IsNullOrEmpty(usuarioId) == true)
-                        {
-                            if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                            {
-                                if (juego.MayorEdad.ToLower() == "true")
-                                {
-                                    difuminar = true;
-                                }
-                            }
-
-                            if (mediaMostrarPosicion < 99999)
-                            {
-                                if (juego.Media.Capturas2[mediaMostrarPosicion]?.MayorEdad == true)
-                                {
-                                    difuminar = true;
-                                }
-                            }
-                        }
-
-                        <div class="juego-galeria-contenedor">
-                            @if (mediaMostrarPosicion >= 99999 && difuminar == false)
-                            {
-                                if (mediaMostrarPosicion == 99999)
-                                {
-                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                        <source src="@mediaMostrar" type="video/mp4" />
-                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                    </video>
-                                }
-                                else if (mediaMostrarPosicion == 100000)
-                                {
-                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                        <source src="@mediaMostrar" type="video/mp4" />
-                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                    </video>
-                                }
-                                else if (mediaMostrarPosicion == 100001)
-                                {
-                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                        <source src="@mediaMostrar" type="video/mp4" />
-                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                    </video>
-                                }
-                                else if (mediaMostrarPosicion == 100002)
-                                {
-                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                        <source src="@mediaMostrar" type="video/mp4" />
-                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                    </video>
-                                }
-                                else if (mediaMostrarPosicion == 100003)
-                                {
-                                    <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px;" controls="controls" preload="metadata">
-                                        <source src="@mediaMostrar" type="video/mp4" />
-                                        <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                                    </video>
-                                }
-                            }
-                            else
-                            {
-                                <div style="overflow: hidden;">
-                                    <div class="juego-galeria-numero">@(mediaMostrarPosicion + 1) / @(juego.Media.Capturas2.Count)</div>
-                                    
-                                    @if (difuminar == false)
-                                    {
-                                        <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain;" alt="@juego.Nombre" loading="lazy">
-                                    }
-                                    else
-                                    {
-                                        <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain; filter: blur(10px);" alt="@juego.Nombre" loading="lazy">
-                                    } 
-                                </div>
-
-                                <a class="juego-galeria-atras" @onclick="@(e => CambiarMediaMostrar(e, mediaMostrarPosicion - 1))">&#10094;</a>
-                                <a class="juego-galeria-siguiente" @onclick="@(e => CambiarMediaMostrar(e, mediaMostrarPosicion + 1))">&#10095;</a>
-                            }
-
-                            <div class="juego-galeria-fila" style="scrollbar-color: var(--fondoCodigo) var(--fondoOscuro);">
-                                @{
-                                    if (juego.Media.Videos != null)
-                                    {
-                                        if (juego.Media.Videos.Count > 0)
-                                        {
-                                            for (int j = 99999; j < juego.Media.Videos.Count + 99999; j += 1)
-                                            {
-                                                int videoPosicion = j - 99999;
-                                                string capturaVideo = juego.Media.Videos[videoPosicion].CapturaPequeña;
-
-                                                <div class="juego-galeria-columna" @onclick="@(e => CambiarMediaMostrar(e, videoPosicion + 99999))" style="position: relative;">
-                                                    <img class="juego-galeria-capturas juego-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(capturaVideo, 232, 130)" style="width: 100%;" alt="@juego.Media.Videos[videoPosicion].Nombre" loading="lazy">
-
-                                                    <div style="max-width: 42px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                                        <svg class="svg-boton" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                            <path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM188.3 147.1c-7.6 4.2-12.3 12.3-12.3 20.9l0 176c0 8.7 4.7 16.7 12.3 20.9s16.8 4.1 24.3-.5l144-88c7.1-4.4 11.5-12.1 11.5-20.5s-4.4-16.1-11.5-20.5l-144-88c-7.4-4.5-16.7-4.7-24.3-.5z"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    }
-
-                                    int i = 0;
-                                    while (i < juego.Media.Capturas2.Count)
-                                    {
-                                        int nuevaPosicion = i;
-                                        string capturaMiniatura = juego.Media.Capturas2[i].Imagen.Replace(".jpg", ".600x338.jpg");
-                                        bool difuminarMiniatura = false;
-
-                                        if (string.IsNullOrEmpty(usuarioId) == true)
-                                        {
-                                            if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                                            {
-                                                if (juego.MayorEdad.ToLower() == "true")
-                                                {
-                                                    difuminarMiniatura = true;
-                                                }
-                                            }
-
-                                            if (juego.Media.Capturas2[i].MayorEdad == true)
-                                            {
-                                                difuminarMiniatura = true;
-                                            }
-                                        }
-
-                                        if (difuminarMiniatura == false)
-                                        {
-                                            <div class="juego-galeria-columna" @onclick="@(e => CambiarMediaMostrar(e, nuevaPosicion))">
-                                                <img class="juego-galeria-capturas juego-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(capturaMiniatura, 220, 124)" style="width: 100%;" alt="@juego.Nombre" loading="lazy">
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="juego-galeria-columna" @onclick="@(e => CambiarMediaMostrar(e, nuevaPosicion))" style="overflow: hidden;">
-                                                <img class="juego-galeria-capturas juego-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(capturaMiniatura, 220, 124)" style="width: 100%; filter: blur(10px);" alt="@juego.Nombre" loading="lazy">
-                                            </div>
-                                        }
-
-                                        i += 1;
-                                    }
-                                }
-                            </div>
-                        </div>
-                    }
-                }
-            }
+            
+            <JuegoMedia usuarioId="@usuarioId" mayorEdad="@juego.MayorEdad" nombre="@juego.Nombre" capturas="@juego.Media?.Capturas2" videos="@juego.Media?.Videos"/>
 
             <div class="descripcion-datos" style="display: grid; gap: 30px;">
                 @if (juego.Caracteristicas != null)
@@ -3955,6 +3814,8 @@
     private ApexChartOptions<PuntoGrafico> opcionesGrafico;
     private JuegoDRM drmGrafico = JuegoDRM.NoEspecificado;
 
+    [PersistentState] public List<DRMEnseñar> drmsEnseñar { get; set; }
+
     protected override void OnInitialized()
     {
         idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
@@ -3983,6 +3844,17 @@
 
         if (juego != null)
         {
+            if (drmsEnseñar == null)
+            {
+                drmsEnseñar = new List<DRMEnseñar>();
+            }
+
+            foreach (DRM drm in JuegoDRM2.GenerarListado())
+            {
+                string mensajeMinimoDRM = CogerMinimoDRM(idioma, drm.Id, juego.Id, juego.Nombre, juego.PrecioMinimosHistoricos, juego.PrecioActualesTiendas, juego.Historicos);
+                drmsEnseñar.Add(new DRMEnseñar { DRM = drm.Id, Mensaje = mensajeMinimoDRM });                 
+            }
+
             if (juego.Tipo == JuegoTipo.Game)
             {
                 drmsGeforceNOW ??= global::BaseDatos.Streaming.Buscar.DRMs("geforcenow", juego.Id);
@@ -4180,9 +4052,6 @@
 
             #endregion
         }
-
-        mediaMostrar = null;
-        mediaMostrarPosicion = 0;
     }
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
@@ -4355,52 +4224,6 @@
 
                     #endregion
                 }
-
-                if (juego.Media != null)
-                {
-                    if (juego.Media.Videos != null)
-                    {
-                        if (juego.Media.Videos.Count > 0)
-                        {
-                            bool cargar = true;
-
-                            if (string.IsNullOrEmpty(usuarioId) == true)
-                            {
-                                if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                                {
-                                    if (juego.MayorEdad.ToLower() == "true")
-                                    {
-                                        cargar = false;
-                                    }
-                                }
-
-                                if (juego.Media.Videos[0].MayorEdad == true)
-                                {
-                                    cargar = false;                                
-                                }
-                            }
-
-                            if (cargar == true)
-                            {
-                                mediaMostrar = juego.Media.Videos[0].Enlace;
-                                mediaMostrar = mediaMostrar.Replace("http://", "https://");
-                                mediaMostrarPosicion = 99999;
-                            }
-                        }
-                    }
-
-                    if (mediaMostrarPosicion == 0)
-                    {
-                        if (juego.Media.Capturas2 != null)
-                        {
-                            if (juego.Media.Capturas2.Count > 0)
-                            {
-                                mediaMostrar = juego.Media.Capturas2[0].Imagen;
-                                mediaMostrarPosicion = 1;
-                            }
-                        }
-                    }
-                }	
 
                 if (juego.IdGog > 0)
                 {
@@ -4632,7 +4455,7 @@
                     {
                         if (drm.Id != JuegoDRM.NoEspecificado)
                         {
-                            if (VerificarMostrarDRM(idioma, drm.Id, juego) == true)
+                            if (VerificarMostrarDRMOferta(drmsEnseñar, drm.Id) == true)
                             {
                                 bool usuarioTieneDRM = false;
 
@@ -4906,13 +4729,20 @@
         return enlace;
     }
 
-    public bool VerificarMostrarDRM(string idioma, JuegoDRM drm, global::Juegos.Juego juego)
+    public bool VerificarMostrarDRM(string idioma, JuegoDRM drm, global::Juegos.Juego juego, List<DRMEnseñar> drmsEnseñar)
     {
         bool mostrar = false;
 
-        if (CogerMinimoDRM(idioma, drm, juego.PrecioMinimosHistoricos, juego.PrecioActualesTiendas, juego.Historicos) != null)
+        if (drmsEnseñar?.Count > 0)
         {
-            mostrar = true;
+            foreach (var drmEnseñar in drmsEnseñar)
+            {
+                if (drmEnseñar.DRM == drm && string.IsNullOrEmpty(drmEnseñar.Mensaje) == false)
+                {
+                    mostrar = true;
+                    break;
+                }
+            }
         }
         else if (BundlesComprobar(juego.Bundles, drm) != null)
         {
@@ -4930,7 +4760,29 @@
         return mostrar;
     }
 
-    public static string CogerMinimoDRM(string idioma, JuegoDRM drm, List<JuegoPrecio> historicos, List<JuegoPrecio> actuales, List<JuegoHistorico> listaHistoricos)
+    public class DRMEnseñar
+    {
+        public JuegoDRM DRM;
+        public string Mensaje;
+    }
+
+    public static bool VerificarMostrarDRMOferta(List<DRMEnseñar> drmsEnseñar2, JuegoDRM drm)
+    {
+        if (drmsEnseñar2?.Count > 0)
+        {
+            foreach (var drm2 in drmsEnseñar2)
+            {
+                if (drm2.DRM == drm && string.IsNullOrEmpty(drm2.Mensaje) == false)
+                {
+                    return true;
+                }
+            }            
+        }
+
+        return false;        
+    }
+
+    public static string CogerMinimoDRM(string idioma, JuegoDRM drm, int juegoId, string juegoNombre, List<JuegoPrecio> historicos, List<JuegoPrecio> actuales, List<JuegoHistorico> listaHistoricos)
     {
         string drmPreparado = null;
 
@@ -4974,17 +4826,11 @@
                     if (tienda.Id == historicosDRM[0].Tienda)
                     {
                         tiendaFinal = tienda.Nombre;
+                        break;
                     }
                 }
 
-                TimeSpan tiempo = TimeSpan.FromHours(11);
-
-                if (historicosDRM[0].Tienda == APIs.Humble.Tienda.Generar().Id || historicosDRM[0].Tienda == APIs.Humble.Tienda.GenerarChoice().Id)
-                {
-                    tiempo = TimeSpan.FromHours(24);
-                }
-
-                if (historicosDRM[0].FechaActualizacion + tiempo > DateTime.Now && historicosDRM[0].Descuento > 0)
+                if (Herramientas.OfertaActiva.Verificar(historicosDRM[0]) == true && historicosDRM[0].Descuento > 0)
                 {
                     drmPreparado = drmPreparado + " " + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Game"), tiendaFinal);
                 }
@@ -5076,6 +4922,22 @@
                             {
                                 drmPreparado = drmPreparado + " (" + string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String86", "Game"), mismoPrecio.Count.ToString()) + ")";
                             }
+                        }
+                        else
+                        {
+                            //Codigo temporal para arreglar la cagada de las divisas
+
+                            foreach (var historico in historicos)
+                            {
+                                if (drm == historico.DRM && historico.Moneda != Herramientas.JuegoMoneda.Euro)
+                                {
+                                    historico.PrecioCambiado = historico.Precio;
+                                }                                
+                            }
+
+                            BaseDatos.Juegos.Actualizar.PreciosHistoricos(juegoId, historicos);
+
+                            //----------------------------------------------------------------------
                         }
                     }
                 }
@@ -5768,38 +5630,37 @@
     {
         List<JuegoSuscripcion> suscripcionesDisponibles = new List<JuegoSuscripcion>();
 
-        if (listaSuscripciones != null)
+        if (listaSuscripciones?.Count > 0)
         {
-            if (listaSuscripciones.Count > 0)
+            foreach (var suscripcion in listaSuscripciones)
             {
-                foreach (var suscripcion in listaSuscripciones)
+                DateTime fechaTermina = suscripcion.FechaTermina;
+
+                if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo) != null)
                 {
-                    DateTime fechaTermina = suscripcion.FechaTermina;
-
-                    if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo) != null)
+                    if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).ParaSiempre == false)
                     {
-                        if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).ParaSiempre == false)
-                        {
-                            fechaTermina = fechaTermina.AddDays(1);
-                        }
-                    }  
+                        fechaTermina = fechaTermina.AddDays(1);
+                    }
+                }  
 
-                    if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= fechaTermina)
+                if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= fechaTermina)
+                {
+                    if (drm != JuegoDRM.NoEspecificado)
                     {
-                        if (drm != JuegoDRM.NoEspecificado)
-                        {
-                            if (suscripcion.DRM == drm)
-                            {
-                                suscripcionesDisponibles.Add(suscripcion);
-                            }
-                        }
-                        else
+                        if (suscripcion.DRM == drm)
                         {
                             suscripcionesDisponibles.Add(suscripcion);
                         }
                     }
+                    else
+                    {
+                        suscripcionesDisponibles.Add(suscripcion);
+                    }
                 }
             }
+
+            suscripcionesDisponibles = suscripcionesDisponibles.OrderBy(x => Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(x.Tipo).Precio).ToList();
         }
 
         return suscripcionesDisponibles;
@@ -5849,55 +5710,6 @@
         }
 
         return suscripcionesAntiguas;
-    }
-
-    #endregion
-
-    #region Caracteristicas
-
-    private int mediaMostrarPosicion = 0;
-    private string mediaMostrar = string.Empty;
-
-    private void CambiarMediaMostrar(MouseEventArgs e, int nuevaCaptura)
-    {
-        if (nuevaCaptura == 99999)
-        {
-            mediaMostrar = juego.Media.Videos[0].Enlace;
-        }
-        else if (nuevaCaptura == 100000)
-        {
-            mediaMostrar = juego.Media.Videos[1].Enlace;
-        }
-        else if (nuevaCaptura == 100001)
-        {
-            mediaMostrar = juego.Media.Videos[2].Enlace;
-        }
-        else if (nuevaCaptura == 100002)
-        {
-            mediaMostrar = juego.Media.Videos[3].Enlace;
-        }
-        else if (nuevaCaptura == 100003)
-        {
-            mediaMostrar = juego.Media.Videos[4].Enlace;
-        }
-        else if (nuevaCaptura < 99999)
-        {
-            if (nuevaCaptura < 0)
-            {
-                nuevaCaptura = juego.Media.Capturas2.Count - 1;
-            }
-            else if (nuevaCaptura >= juego.Media.Capturas2.Count && nuevaCaptura < 99999)
-            {
-                nuevaCaptura = 0;
-            }
-
-            if (nuevaCaptura >= 0 && nuevaCaptura < juego.Media.Capturas2.Count)
-            {
-                mediaMostrar = juego.Media.Capturas2[nuevaCaptura].Imagen;
-            }
-        }
-
-        mediaMostrarPosicion = nuevaCaptura;
     }
 
     #endregion

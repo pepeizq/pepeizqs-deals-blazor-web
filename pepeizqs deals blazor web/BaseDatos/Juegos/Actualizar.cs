@@ -357,7 +357,40 @@ namespace BaseDatos.Juegos
 			}
 		}
 
-		public static void Bundles(Juego juego, SqlConnection conexion)
+        public static void PreciosHistoricos(int id, List<JuegoPrecio> historicos, SqlConnection conexion = null)
+        {
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            string sqlActualizar = "UPDATE juegos " +
+                    "SET precioMinimosHistoricos=@precioMinimosHistoricos WHERE id=@id";
+
+            using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
+            {
+                comando.Parameters.AddWithValue("@id", id);
+                comando.Parameters.AddWithValue("@precioMinimosHistoricos", JsonSerializer.Serialize(historicos));
+
+                try
+                {
+                    comando.ExecuteNonQuery();
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        public static void Bundles(Juego juego, SqlConnection conexion)
 		{
 			string sqlActualizar = "UPDATE juegos " +
 					"SET bundles=@bundles WHERE id=@id";

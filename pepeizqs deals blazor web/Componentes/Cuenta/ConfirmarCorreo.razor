@@ -50,7 +50,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+        Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+        idioma = datos.Idioma;
 
         if (UserId is null || Code is null)
         {

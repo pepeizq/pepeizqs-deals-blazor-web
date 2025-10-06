@@ -27,35 +27,35 @@
         {
             if (mediaMostrarPosicion == 99999)
             {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura');" controls="controls" preload="none">
+                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                     <source src="@mediaMostrar" type="video/mp4" />
                     <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
                 </video>
             }
             else if (mediaMostrarPosicion == 100000)
             {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura');" controls="controls" preload="none">
+                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                     <source src="@mediaMostrar" type="video/mp4" />
                     <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
                 </video>
             }
             else if (mediaMostrarPosicion == 100001)
             {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura');" controls="controls" preload="none">
+                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                     <source src="@mediaMostrar" type="video/mp4" />
                     <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
                 </video>
             }
             else if (mediaMostrarPosicion == 100002)
             {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura');" controls="controls" preload="none">
+                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                     <source src="@mediaMostrar" type="video/mp4" />
                     <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
                 </video>
             }
             else if (mediaMostrarPosicion == 100003)
             {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura');" controls="controls" preload="none">
+                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                     <source src="@mediaMostrar" type="video/mp4" />
                     <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
                 </video>
@@ -256,5 +256,10 @@
         mediaMostrar = mediaMostrar.Replace("http://", "https://");
         mediaMostrarCaptura = mediaMostrarCaptura.Replace("http://", "https://");
         mediaMostrarPosicion = nuevaCaptura;
+    }
+
+    private void EjecutarVideo()
+    {
+        mediaMostrarCaptura = null;
     }
 }

@@ -68,7 +68,8 @@
 
     protected override void OnInitialized()
     {
-        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
+        Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+        idioma = datos.Idioma;
     }
 
     private void CambiarCorreo(ChangeEventArgs texto)

@@ -172,8 +172,6 @@
 
 		if (string.IsNullOrEmpty(usuario.Id) == false)
 		{
-
-
 			Herramientas.NotificacionSuscripcion suscripcion = BaseDatos.Usuarios.Buscar.UnUsuarioNotificacionesPush(usuario.Id);
 
 			if (suscripcion != null)

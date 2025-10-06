@@ -11,125 +11,7 @@
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
-@{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter");
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Filter");
-	string enlace = "https://pepeizqdeals.com/filter/" + ids + "/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
-	string keywords = "filter";
-
-	if (string.IsNullOrEmpty(ids) == false)
-	{
-		string[] ids2 = ids.Split(',');
-
-		if (ids2.Length > 0)
-		{
-			foreach (string id in ids2)
-			{
-				if (string.IsNullOrEmpty(id) == false)
-				{
-					if (id.ToLower().Contains("t") == true)
-					{
-						string cadena = id.Replace("t", null);
-
-						if (titulo.Contains("•") == false)
-						{
-							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
-						}
-						else
-						{
-							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
-						}
-
-						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags").ToLower();
-					}
-
-					if (id.ToLower().Contains("c") == true)
-					{
-						string cadena = id.Replace("c", null);
-
-						if (titulo.Contains("•") == false)
-						{
-							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
-						}
-						else
-						{
-							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
-						}
-
-						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories").ToLower();
-					}
-
-					if (id.ToLower().Contains("s") == true)
-					{
-						string cadena = id.Replace("s", null);
-
-						if (titulo.Contains("•") == false)
-						{
-							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
-						}
-						else
-						{
-							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
-						}
-
-						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter").ToLower();
-					}
-
-					if (id.ToLower().Contains("i") == true)
-					{
-						string cadena = id.Replace("i", null);
-
-						if (titulo.Contains("•") == false)
-						{
-							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
-						}
-						else
-						{
-							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
-						}
-
-						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter").ToLower();
-					}
-
-					if (id.ToLower().Contains("d") == true)
-					{
-						string cadena = id.Replace("d", null);
-						
-						if (titulo.Contains("•") == false)
-						{
-							titulo = titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
-						}
-						else
-						{
-							titulo = titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
-						}
-
-						keywords = keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter").ToLower();
-					}
-				}
-			}
-		}
-	}
-
-	titulo = titulo + " • pepeizq's deals";
-
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
-
-		<meta name="og:title" Content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="@keywords" />
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
-}
+<Titulo tipo="@Titulo.Tipo.Filtro" idioma="@idioma" idsFiltro="@ids"/>
 
 <script>
 	window.ChangeUrl = function (url) {
@@ -720,9 +602,10 @@ else
 	{
 		cargado = false;
 
-		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+		idioma = datos.Idioma;
+		usuarioId = datos.UsuarioId;
+		userAgent = datos.UserAgent;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -894,7 +777,7 @@ else
 		}
 	}
 
-	private bool enseñarDeck = true;
+	private bool enseñarDeck = false;
 
 	private void AbrirDeck(MouseEventArgs e)
 	{
@@ -932,7 +815,7 @@ else
 		}
 	}
 
-	private bool enseñarTipos = true;
+	private bool enseñarTipos = false;
 
 	private void AbrirTipos(MouseEventArgs e)
 	{

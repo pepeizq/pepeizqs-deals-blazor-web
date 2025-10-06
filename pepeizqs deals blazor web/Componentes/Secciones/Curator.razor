@@ -297,9 +297,10 @@
 
 	protected override void OnInitialized()
 	{
-		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+		idioma = datos.Idioma;
+		usuarioId = datos.UsuarioId;
+		userAgent = datos.UserAgent;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

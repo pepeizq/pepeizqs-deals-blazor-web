@@ -25,293 +25,87 @@
 
 @if (juego != null)
 {
-    string titulo = juego.Nombre + " • pepeizq's deals";
-    string tituloDRMs = string.Empty;
+    bool gamePass = false;
 
-    foreach (var drm in drmsEnseñar)
-    {
-        if (string.IsNullOrEmpty(drm.Mensaje) == false)
-        {
-            if (drm.DRM == JuegoDRM.Steam || drm.DRM == JuegoDRM.GOG)
-            {
-                bool añadir = true;
-
-                if (string.IsNullOrEmpty(tituloDRMs) == false)
-                {
-                    if (tituloDRMs.Contains(JuegoDRM2.DevolverDRM(drm.DRM)) == true)
-                    {
-                        añadir = false;
-                    }
-                }
-
-                if (añadir == true)
-                {
-                    if (string.IsNullOrEmpty(tituloDRMs) == false)
-                    {
-                        tituloDRMs = tituloDRMs + ", ";
-                    }
-
-                    tituloDRMs = tituloDRMs + JuegoDRM2.DevolverDRM(drm.DRM);
-                } 
-            }
-        }
-    }
-
-    if (juego.Suscripciones?.Count > 0)
-    {
-        if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
-        {
-            foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
-            {
-                if (suscripcion2.Tipo == SuscripcionTipo.PCGamePass)
-                {
-                    if (string.IsNullOrEmpty(tituloDRMs) == false)
-                    {
-                        tituloDRMs = tituloDRMs + ", ";
-                    }
-
-                    tituloDRMs = tituloDRMs + "Game Pass";
-                }
-            }
-        }
-    }
-
-    if (string.IsNullOrEmpty(tituloDRMs) == false)
-    {
-        tituloDRMs = " (" + tituloDRMs + ")";
-        titulo = juego.Nombre + tituloDRMs + " • pepeizq's deals";
-    }
-
-	if (titulo.Length > 70)
+    if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
 	{
-		titulo = juego.Nombre.Substring(0, titulo.Length - tituloDRMs.Length - 4 - " • pepeizq's deals".Length) + "... " + tituloDRMs + " • pepeizq's deals";
+		foreach (var suscripcion2 in SuscripcionesDisponibles(juego.Suscripciones))
+		{
+			if (suscripcion2.Tipo == SuscripcionTipo.PCGamePass)
+			{
+				gamePass = true;
+                break;
+			}
+		}
 	}
 
-    string descripcion = string.Empty;
-    string enlace = "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
-    string imagen = string.Empty;
+    List<JuegoPrecio> preciosJson = OrdenarPrecios(juego.PrecioActualesTiendas);
 
-    if (juego.Caracteristicas != null)
+    if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
     {
-        if (string.IsNullOrEmpty(juego.Caracteristicas.Descripcion) == false)
+        if (juego.FreeToPlay.ToLower() == "true")
         {
-            descripcion = juego.Caracteristicas.Descripcion;
-
-            descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+            preciosJson = new List<JuegoPrecio>();
+            preciosJson.Add(new JuegoPrecio() { Precio = 0, PrecioCambiado = 0 });
         }
     }
 
-    if (string.IsNullOrEmpty(descripcion) == true)
+    string fechaJson = string.Empty;
+
+    if (juego.Caracteristicas?.FechaLanzamientoSteam.Year > 0001)
     {
-        descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String104", "Game");
+        fechaJson = juego.Caracteristicas.FechaLanzamientoSteam.ToString("yyyy-MM-dd");
     }
 
-    if (juego.Imagenes != null)
+    decimal estrellasJson = 1;
+    string cantidadJson = "10";
+
+    if (juego.Analisis != null)
     {
-        if (string.IsNullOrEmpty(juego.Imagenes.Header_460x215) == false)
+        if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false && string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
         {
-            imagen = juego.Imagenes.Header_460x215;
-        }
-    }
+            estrellasJson = decimal.Parse(juego.Analisis.Porcentaje) / 20;
 
-    string keywords = "deals";
-
-    if (string.IsNullOrEmpty(juego.Nombre) == false)
-    {
-        string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
-        List<string> keywordsLista = new List<string>();
-        keywordsLista.AddRange(keywordsEnBruto);
-
-        foreach (string keyword in keywordsLista)
-        {
-            if (keyword.Length > 3)
+            if (estrellasJson < 1)
             {
-                keywords = keywords + ", " + keyword;
+                estrellasJson = 1;
+            }
+
+            cantidadJson = juego.Analisis.Cantidad.Replace(",", null);
+
+            if (cantidadJson.Length == 1)
+            {
+                cantidadJson = "10";
             }
         }
     }
 
-    <HeadContent>
-        <PageTitle>@titulo</PageTitle>
+    string precioBajoJson = string.Empty;
+    string precioAltoJson = string.Empty;
 
-        <meta name="og:title" content="@titulo" />
+    if (preciosJson?.Count > 0 && string.IsNullOrEmpty(fechaJson) == false && estrellasJson > 0 && string.IsNullOrEmpty(cantidadJson) == false)
+    {
+        JuegoPrecio precioBajo = preciosJson.First();
+        precioBajoJson = precioBajo.Precio.ToString();
 
-        @if (string.IsNullOrEmpty(descripcion) == false)
+        if (precioBajo.PrecioCambiado > 0)
         {
-            string descripcionMeta = descripcion;
-
-            if (descripcionMeta.Length > 146)
-            {
-                descripcionMeta = descripcionMeta.Substring(0, 146) + " ...";
-            }
-
-            <meta name="description" content="@descripcionMeta" />
-            <meta name="og:description" content="@descripcionMeta" />
+            precioBajoJson = precioBajo.PrecioCambiado.ToString();
         }
 
-        <meta name="og:url" content="@enlace" />
-        <meta name="og:image" content="@imagen" />
-        <meta name="og:site_name" content="pepeizq's deals" />
-        <meta name="og:type" content="website" />
-        <meta name="robots" content="index, follow" />
-        <meta name="keywords" content="@keywords" />
+        JuegoPrecio precioAlto = preciosJson.Last();
+        precioAltoJson = precioAlto.Precio.ToString();
 
-        @if (juego.MayorEdad != null)
+        if (precioAlto.PrecioCambiado > 0)
         {
-            if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-            {
-                if (juego.MayorEdad.ToLower() == "true")
-                {
-                    <meta name="rating" content="adult">
-                }
-            }
+            precioAltoJson = precioAlto.PrecioCambiado.ToString();
         }
+    }
 
-        @{
-            #nullable disable
-
-            string nombreJson = juego.Nombre.Replace(Strings.ChrW(34).ToString(), null);
-            string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
-
-            List<JuegoPrecio> preciosJson = OrdenarPrecios(juego.PrecioActualesTiendas);
-
-            if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
-            {
-                if (juego.FreeToPlay.ToLower() == "true")
-                {
-                    preciosJson = new List<JuegoPrecio>();
-                    preciosJson.Add(new JuegoPrecio() { Precio = 0, PrecioCambiado = 0 });
-                }
-            }
-
-            string fechaJson = null;
-
-            if (juego.Caracteristicas?.FechaLanzamientoSteam.Year > 0001)
-            {
-                fechaJson = juego.Caracteristicas.FechaLanzamientoSteam.ToString("yyyy-MM-dd");
-            }
-
-            decimal estrellasJson = 1;
-            string cantidadJson = "10";
-
-            if (juego.Analisis != null)
-            {
-                if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false && string.IsNullOrEmpty(juego.Analisis.Cantidad) == false)
-                {
-                    estrellasJson = decimal.Parse(juego.Analisis.Porcentaje) / 20;
-
-                    if (estrellasJson < 1)
-                    {
-                        estrellasJson = 1;
-                    }
-
-                    cantidadJson = juego.Analisis.Cantidad.Replace(",", null);
-
-                    if (cantidadJson.Length == 1)
-                    {
-                        cantidadJson = "10";
-                    }
-                }
-            }
-
-            if (preciosJson?.Count > 0 && string.IsNullOrEmpty(imagen) == false && string.IsNullOrEmpty(fechaJson) == false && estrellasJson > 0 && string.IsNullOrEmpty(cantidadJson) == false)
-            {
-                JuegoPrecio precioBajo = preciosJson.First();
-                string precioBajoJson = precioBajo.Precio.ToString();
-
-                if (precioBajo.PrecioCambiado > 0)
-                {
-                    precioBajoJson = precioBajo.PrecioCambiado.ToString();
-                }
-
-                JuegoPrecio precioAlto = preciosJson.Last();
-                string precioAltoJson = precioAlto.Precio.ToString();
-
-                if (precioAlto.PrecioCambiado > 0)
-                {
-                    precioAltoJson = precioAlto.PrecioCambiado.ToString();
-                }
-
-                <script type="application/ld+json">
-                {
-                    "@@context": "https://schema.org/",
-                    "@@type": "Product",
-                    "name": "@nombreJson",
-                    "description": "@descripcionJson",
-                    "url": "@enlace",
-                    "sku": "@juego.Id.ToString()",
-                    "image": {
-                        "@@type": "ImageObject",
-                        "url": "@imagen",
-                        "contentUrl": "@imagen",
-                        "name": "@nombreJson",
-                        "caption": "@nombreJson"
-                    },   
-                    "productionDate": "@fechaJson",
-                    "offers": {
-                        "@@type": "AggregateOffer",
-                        "availability": "InStock",
-                        "priceCurrency": "EUR",
-                        "price": @precioBajoJson,
-                        "url": "@enlace",
-                        "offerCount": @preciosJson.Count,
-                        "lowPrice": @precioBajoJson,
-                        "highPrice": @precioAltoJson
-                    },
-                    "aggregateRating": {
-                        "@@type": "AggregateRating",
-                        "ratingValue": @estrellasJson.ToString(),
-                        "ratingCount": @cantidadJson
-                    }
-                }
-                </script>
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(imagen) == false && estrellasJson > 0 && string.IsNullOrEmpty(cantidadJson) == false)
-                {
-                    <script type="application/ld+json">
-                    {
-                        "@@context": "https://schema.org/",
-                        "@@type": "Product",
-                        "name": "@nombreJson",
-                        "description": "@descripcionJson",
-                        "url": "@enlace",
-                        "sku": "@juego.Id.ToString()",
-                        "image": {
-                            "@@type": "ImageObject",
-                            "url": "@imagen",
-                            "contentUrl": "@imagen",
-                            "name": "@nombreJson",
-                            "caption": "@nombreJson"
-                        },
-                        "aggregateRating": {
-                            "@@type": "AggregateRating",
-                            "ratingValue": @estrellasJson.ToString(),
-                            "ratingCount": @cantidadJson
-                        }
-                    }
-                    </script>
-                }
-                else
-                {
-                    <script type="application/ld+json">
-                    {
-                        "@@context": "https://schema.org/",
-                        "@@type": "Product",
-                        "name": "@nombreJson",
-                        "description": "@descripcionJson",
-                        "url": "@enlace",
-                        "sku": "@juego.Id.ToString()"
-                    }
-                    </script>
-                }
-            }
-        }
-
-        <link rel="canonical" href="@enlace" />
-        <link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-    </HeadContent>
+    <Titulo tipo="@Titulo.Tipo.Juego" idioma="@idioma" nombreJuego="@juego.Nombre" drmsEnseñarJuego="@drmsEnseñar" descripcionJuego="@juego.Caracteristicas?.Descripcion"
+            idJuego="@juego.Id" gamePassJuego="@gamePass" imagenJuego="@juego.Imagenes?.Header_460x215" categoriasJuego="@juego.Categorias"
+            estrellasJsonJuego="@estrellasJson" cantidadJsonJuego="@cantidadJson" precioBajoJsonJuego="@precioBajoJson"
+            precioAltoJsonJuego="@precioAltoJson" fechaJsonJuego="@fechaJson" preciosCantidadJsonJuego="@preciosJson?.Count"/>
 }
 
 <script>
@@ -1199,41 +993,38 @@
 
                                                                     if (juego.Tipo == JuegoTipo.Game)
                                                                     {
-                                                                        if (juego.Categorias != null)
+                                                                        if (juego.Categorias?.Count > 0)
                                                                         {
-                                                                            if (juego.Categorias.Count > 0)
+                                                                            bool añadirDiv2 = false;
+
+                                                                            foreach (var categoria in juego.Categorias)
                                                                             {
-                                                                                bool añadirDiv2 = false;
-
-                                                                                foreach (var categoria in juego.Categorias)
+                                                                                if (categoria == "22" || categoria == "23")
                                                                                 {
-                                                                                    if (categoria == "22" || categoria == "23")
+                                                                                    añadirDiv2 = true;
+                                                                                }
+                                                                            }
+
+                                                                            if (añadirDiv2 == true)
+                                                                            {
+                                                                                <div style="display: flex; align-items: center; gap: 8px; height: 18px;">
+                                                                                    @foreach (var categoria in juego.Categorias)
                                                                                     {
-                                                                                        añadirDiv2 = true;
-                                                                                    }
-                                                                                }
-
-                                                                                if (añadirDiv2 == true)
-                                                                                {
-                                                                                    <div style="display: flex; align-items: center; gap: 8px; height: 18px;">
-                                                                                        @foreach (var categoria in juego.Categorias)
+                                                                                        if (categoria == "22")
                                                                                         {
-                                                                                            if (categoria == "22")
-                                                                                            {
-                                                                                                <div title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String75", "Game"), "Steam")" style="width: 100%; height: 100%;">
-                                                                                                    <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 512 512" fill="var(--colorTexto)"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.4-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"></path></svg>
-                                                                                                </div>
-                                                                                            }
-
-                                                                                            if (categoria == "23")
-                                                                                            {
-                                                                                                <div title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String76", "Game"), "Steam")" style="width: 100%; height: 100%;">
-                                                                                                    <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 640 512" fill="var(--colorTexto)"><path d="M0 336c0 79.5 64.5 144 144 144l368 0c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z" /></svg>
-                                                                                                </div>
-                                                                                            }
+                                                                                            <div title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String75", "Game"), "Steam")" style="width: 100%; height: 100%;">
+                                                                                                <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 512 512" fill="var(--colorTexto)"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.4-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"></path></svg>
+                                                                                            </div>
                                                                                         }
-                                                                                    </div>
-                                                                                }
+
+                                                                                        if (categoria == "23")
+                                                                                        {
+                                                                                            <div title="@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String76", "Game"), "Steam")" style="width: 100%; height: 100%;">
+                                                                                                <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 640 512" fill="var(--colorTexto)"><path d="M0 336c0 79.5 64.5 144 144 144l368 0c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z" /></svg>
+                                                                                            </div>
+                                                                                        }
+                                                                                    }
+                                                                                </div>
                                                                             }
                                                                         }
                                                                     }
@@ -3818,9 +3609,10 @@
 
     protected override void OnInitialized()
     {
-        idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-        usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-        userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+        Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+        idioma = datos.Idioma;
+        usuarioId = datos.UsuarioId;
+        userAgent = datos.UserAgent;
 
         idiomaJuego = idioma;
 

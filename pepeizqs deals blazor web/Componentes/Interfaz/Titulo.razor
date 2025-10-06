@@ -1,0 +1,465 @@
+﻿@using Microsoft.VisualBasic
+
+<HeadContent>
+	<PageTitle>@titulo</PageTitle>
+
+	<meta name="og:title" Content="@titulo" />
+	<meta name="description" content="@descripcion" />
+	<meta name="og:description" content="@descripcion" />
+	<meta name="og:url" content="@enlace" />
+	<meta name="og:image" content="@imagen" />
+	<meta name="og:site_name" content="pepeizq's deals" />
+	<meta name="og:type" content="website" />
+	<meta name="robots" content="noimageindex" />
+	<meta name="keywords" content="@keywords2" />
+
+	@if (tipo == Tipo.Juego)
+	{
+		if (string.IsNullOrEmpty(mayorEdadJuego) == false)
+		{
+			if (mayorEdadJuego.ToLower() == "true")
+			{
+				<meta name="rating" content="adult">
+			}
+		}
+
+		string nombreJson = nombreJuego.Replace(Strings.ChrW(34).ToString(), null);
+		string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+
+		if (string.IsNullOrEmpty(imagen) == false && estrellasJsonJuego > 0 && string.IsNullOrEmpty(cantidadJsonJuego) == false)
+		{
+			if (string.IsNullOrEmpty(precioBajoJsonJuego) == false && string.IsNullOrEmpty(precioAltoJsonJuego) == false)
+			{
+				<script type="application/ld+json">
+					{
+						"@@context": "https://schema.org/",
+						"@@type": "Product",
+						"name": "@nombreJson",
+						"description": "@descripcionJson",
+						"url": "@enlace",
+						"sku": "@idJuego.ToString()",
+						"image": {
+							"@@type": "ImageObject",
+							"url": "@imagen",
+							"contentUrl": "@imagen",
+							"name": "@nombreJson",
+							"caption": "@nombreJson"
+						},
+						"productionDate": "@fechaJsonJuego",
+						"offers": {
+							"@@type": "AggregateOffer",
+							"availability": "InStock",
+							"priceCurrency": "EUR",
+							"price": @precioBajoJsonJuego,
+							"url": "@enlace",
+							"offerCount": @preciosCantidadJsonJuego,
+							"lowPrice": @precioBajoJsonJuego,
+							"highPrice": @precioAltoJsonJuego
+						},
+						"aggregateRating": {
+							"@@type": "AggregateRating",
+							"ratingValue": @estrellasJsonJuego.ToString(),
+							"ratingCount": @cantidadJsonJuego
+						}
+					}
+				</script>
+			}
+			else
+			{
+				<script type="application/ld+json">
+					{
+						"@@context": "https://schema.org/",
+						"@@type": "Product",
+						"name": "@nombreJson",
+						"description": "@descripcionJson",
+						"url": "@enlace",
+						"sku": "@idJuego.ToString()",
+						"image": {
+							"@@type": "ImageObject",
+							"url": "@imagen",
+							"contentUrl": "@imagen",
+							"name": "@nombreJson",
+							"caption": "@nombreJson"
+						},
+						"aggregateRating": {
+							"@@type": "AggregateRating",
+							"ratingValue": @estrellasJsonJuego.ToString(),
+							"ratingCount": @cantidadJsonJuego
+						}
+					}
+				</script>
+			}
+		}
+
+	}
+	else if (tipo == Tipo.UltimasNoticias)
+	{
+		<script type="application/ld+json">
+			{
+				"@@context": "https://schema.org",
+				"@@type": "BreadcrumbList",
+				"itemListElement": [
+				@((MarkupString)contenidoJsonUltimasNoticias)
+				]
+			}
+		</script>
+	}
+
+	<link rel="canonical" href="@enlace" />
+	<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
+
+	<meta name="twitter:site" content="@@pepeizqdeals" />
+	<meta name="twitter:domain" content="pepeizqdeals.com" />
+	<meta name="twitter:card" content="summary_large_image" />
+</HeadContent>
+
+@code {
+
+	#nullable disable
+
+	[Parameter]
+	public string idioma { get; set; }
+
+	[Parameter]
+	public Tipo tipo { get; set; }
+
+	[Parameter]
+	public string enlace { get; set; }
+
+	[Parameter]
+	public string keywords { get; set; }
+
+	#region Parametros Juego
+
+	[Parameter]
+	public int idJuego { get; set; }
+
+	[Parameter]
+	public string nombreJuego { get; set; }
+
+	[Parameter]
+	public string descripcionJuego { get; set; }
+
+	[Parameter]
+	public string imagenJuego { get; set; }
+
+	[Parameter]
+	public List<Secciones.Juego.DRMEnseñar> drmsEnseñarJuego { get; set; }
+
+	[Parameter]
+	public bool gamePassJuego { get; set; }
+
+	[Parameter]
+	public string mayorEdadJuego { get; set; }
+
+	[Parameter]
+	public List<string> categoriasJuego { get; set; }
+
+	[Parameter]
+	public decimal estrellasJsonJuego { get; set; }
+
+	[Parameter]
+	public string cantidadJsonJuego { get; set; }
+
+	[Parameter]
+	public string precioBajoJsonJuego { get; set; }
+
+	[Parameter]
+	public string precioAltoJsonJuego { get; set; }
+
+	[Parameter]
+	public int? preciosCantidadJsonJuego { get; set; } = 0;
+
+	[Parameter]
+	public string fechaJsonJuego { get; set; }
+
+	#endregion
+
+	#region Parametros Filtro
+
+	[Parameter]
+	public string idsFiltro { get; set; }
+
+	#endregion
+
+	#region Parametros Ultimas Noticias
+
+	[Parameter]
+	public string contenidoJsonUltimasNoticias { get; set; }
+
+	#endregion
+
+	[PersistentState] public string titulo { get; set; }
+	[PersistentState] public string descripcion { get; set; }
+	[PersistentState] public string imagen { get; set; }
+	[PersistentState] public string keywords2 { get; set; }
+	[PersistentState] public TituloKeywords tituloKeywords { get; set; }
+
+	public enum Tipo
+	{
+		Otros,
+		Juego,
+		Filtro,
+		UltimasNoticias,
+		UltimosAñadidos
+	}
+
+	protected override void OnInitialized()
+	{
+		if (tipo == Tipo.Juego)
+		{
+			titulo ??= JuegoTitulo(nombreJuego, drmsEnseñarJuego, gamePassJuego);
+			descripcion ??= descripcionJuego;
+			enlace ??= "https://pepeizqdeals.com/game/" + idJuego.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombreJuego) + "/";
+			imagen ??= imagenJuego;
+			keywords2 ??= JuegoKeywords(categoriasJuego);
+		}
+		else if (tipo == Tipo.Filtro)
+		{
+			tituloKeywords ??= FiltroTituloKeywords(idsFiltro);
+
+			titulo ??= tituloKeywords.Titulo;
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Filter");
+			enlace ??= "https://pepeizqdeals.com/filter/" + idsFiltro + "/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= tituloKeywords.Keywords;
+		}
+		else if (tipo == Tipo.UltimasNoticias)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews") ;
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String4", "LastNews");
+			enlace ??= "https://pepeizqdeals.com/last-news/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.UltimosAñadidos)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastAdded");
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded");
+			enlace ??= "https://pepeizqdeals.com/last-added/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
+		}
+
+		#region Encajar Titulo y Descripcion
+
+		titulo = titulo.Replace(Strings.ChrW(34).ToString(), null);
+		descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+
+		if (titulo.Length > 56)
+		{
+			titulo = titulo.Substring(0, 56) + " ...";
+		}
+		else
+		{
+			if (titulo.Length < 39)
+			{
+				if (titulo.Contains(" • pepeizq's deals") == false)
+				{
+					titulo = titulo + " • pepeizq's deals";
+				}
+			}
+		}
+
+		if (descripcion.Length > 146)
+		{
+			descripcion = descripcion.Substring(0, 146) + " ...";
+		}
+
+		#endregion
+	}
+
+	private string JuegoTitulo(string nombre, List<Secciones.Juego.DRMEnseñar> drmsEnseñar, bool gamePass)
+	{
+		string tituloJuego = nombre;
+		string tituloDRMs = string.Empty;
+
+		foreach (var drm in drmsEnseñar)
+		{
+			if (string.IsNullOrEmpty(drm.Mensaje) == false)
+			{
+				if (drm.DRM == Juegos.JuegoDRM.Steam || drm.DRM == Juegos.JuegoDRM.GOG)
+				{
+					bool añadir = true;
+
+					if (string.IsNullOrEmpty(tituloDRMs) == false)
+					{
+						if (tituloDRMs.Contains(Juegos.JuegoDRM2.DevolverDRM(drm.DRM)) == true)
+						{
+							añadir = false;
+						}
+					}
+
+					if (añadir == true)
+					{
+						if (string.IsNullOrEmpty(tituloDRMs) == false)
+						{
+							tituloDRMs = tituloDRMs + ", ";
+						}
+
+						tituloDRMs = tituloDRMs + Juegos.JuegoDRM2.DevolverDRM(drm.DRM);
+					}
+				}
+			}
+		}
+
+		if (gamePass == true)
+		{
+			if (string.IsNullOrEmpty(tituloDRMs) == false)
+			{
+				tituloDRMs = tituloDRMs + ", ";
+			}
+
+			tituloDRMs = tituloDRMs + "PC Game Pass";
+		}
+
+		if (string.IsNullOrEmpty(tituloDRMs) == false)
+		{
+			tituloDRMs = " (" + tituloDRMs + ")";
+			tituloJuego = tituloJuego + tituloDRMs;
+		}
+
+		return tituloJuego;
+	}
+
+	private string JuegoKeywords(List<string> categorias)
+	{
+		string keywords = null;
+
+		if (categorias?.Count > 0)
+		{
+			foreach (var categoria in categorias)
+			{
+				string cadenaCategoria = Herramientas.Idiomas.BuscarTexto("en", categoria, "Categories");
+
+				if (string.IsNullOrEmpty(keywords) == true)
+				{
+					keywords = cadenaCategoria;
+				}
+				else
+				{
+					keywords = keywords + ", " + cadenaCategoria;
+				}
+			}
+		}
+
+		if (string.IsNullOrEmpty(keywords) == false)
+		{
+			keywords = keywords + ", ";
+		}
+
+		keywords = keywords + "game deals, digital distribution, Steam, pc game, price tracker, price comparison, Epic Games, PC Game Pass";
+
+		return keywords;
+	}
+
+	public class TituloKeywords
+	{
+		public string Titulo { get; set; }
+		public string Keywords { get; set; }
+	}
+
+	private TituloKeywords FiltroTituloKeywords(string idsFiltro)
+	{
+		TituloKeywords tituloKeywords = new TituloKeywords();
+		tituloKeywords.Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Filter");
+		tituloKeywords.Keywords = "Filter";
+
+		if (string.IsNullOrEmpty(idsFiltro) == false)
+		{
+			string[] ids2 = idsFiltro.Split(',');
+
+			if (ids2.Length > 0)
+			{
+				foreach (string id in ids2)
+				{
+					if (string.IsNullOrEmpty(id) == false)
+					{
+						if (id.ToLower().Contains("t") == true)
+						{
+							string cadena = id.Replace("t", null);
+
+							if (tituloKeywords.Titulo.Contains("•") == false)
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+							}
+							else
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+							}
+
+							tituloKeywords.Keywords = tituloKeywords.Keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Tags");
+						}
+
+						if (id.ToLower().Contains("c") == true)
+						{
+							string cadena = id.Replace("c", null);
+
+							if (tituloKeywords.Titulo.Contains("•") == false)
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+							}
+							else
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+							}
+
+							tituloKeywords.Keywords = tituloKeywords.Keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, cadena, "Categories");
+						}
+
+						if (id.ToLower().Contains("s") == true)
+						{
+							string cadena = id.Replace("s", null);
+
+							if (tituloKeywords.Titulo.Contains("•") == false)
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+							}
+							else
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+							}
+
+							tituloKeywords.Keywords = tituloKeywords.Keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "System" + cadena, "Filter");
+						}
+
+						if (id.ToLower().Contains("i") == true)
+						{
+							string cadena = id.Replace("i", null);
+
+							if (tituloKeywords.Titulo.Contains("•") == false)
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+							}
+							else
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+							}
+
+							tituloKeywords.Keywords = tituloKeywords.Keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Type" + cadena, "Filter");
+						}
+
+						if (id.ToLower().Contains("d") == true)
+						{
+							string cadena = id.Replace("d", null);
+
+							if (tituloKeywords.Titulo.Contains("•") == false)
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + " • " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+							}
+							else
+							{
+								tituloKeywords.Titulo = tituloKeywords.Titulo + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+							}
+
+							tituloKeywords.Keywords = tituloKeywords.Keywords + ", " + Herramientas.Idiomas.BuscarTexto(idioma, "Deck" + cadena, "Filter");
+						}
+					}
+				}
+			}
+		}
+
+		return tituloKeywords;
+	}
+
+}

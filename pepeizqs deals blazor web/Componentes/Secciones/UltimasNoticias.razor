@@ -7,101 +7,52 @@
 @inject IHttpContextAccessor Contexto
 
 @{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews") + " • pepeizq's deals";
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "LastNews");
-	string enlace = "https://pepeizqdeals.com/last-news/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
 	string keywords = "news";
+	string jsonContenido = string.Empty;
 
-	if (noticiasMostrar != null)
+	if (noticiasMostrar?.Count > 0)
 	{
-		if (noticiasMostrar.Count > 0)
+		int i = 0;
+		foreach (var noticiaMostrar in noticiasMostrar)
 		{
-			int i = 0;
-			foreach (var noticiaMostrar in noticiasMostrar)
+			if (i < 3)
 			{
-				if (i < 3)
-				{
-					string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(noticiaMostrar.TituloEn, false).Split(' ');
-					List<string> keywordsLista = new List<string>();
-					keywordsLista.AddRange(keywordsEnBruto);
+				string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(noticiaMostrar.TituloEn, false).Split(' ');
+				List<string> keywordsLista = new List<string>();
+				keywordsLista.AddRange(keywordsEnBruto);
 
-					foreach (var keyword in keywordsLista)
+				foreach (var keyword in keywordsLista)
+				{
+					if (keywords.Contains(keyword) == false && keyword.Length > 3)
 					{
-						if (keywords.Contains(keyword) == false && keyword.Length > 3)
-						{
-							keywords = keywords + ", " + keyword;
-						}
+						keywords = keywords + ", " + keyword;
 					}
 				}
-				else
-				{
-					break;
-				}
-
-                i += 1;
 			}
+
+			string jsonAñadir = @"{
+				""@type"": ""ListItem"",
+				""position"": @posicion,
+				""name"": ""@titulo"",
+				""item"": ""@enlace""
+				}";
+
+			jsonAñadir = jsonAñadir.Replace("@posicion", i.ToString());
+			jsonAñadir = jsonAñadir.Replace("@titulo", noticiaMostrar.TituloEn);
+			jsonAñadir = jsonAñadir.Replace("@enlace", "https://pepeizqdeals.com/news/" + noticiaMostrar.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticiaMostrar.TituloEn + "/"));
+
+			if (i < noticiasMostrar.Count)
+			{
+				jsonAñadir = jsonAñadir + ",";
+			}
+
+			jsonContenido = jsonContenido + jsonAñadir;
+
+			i += 1;
 		}
 	}
 
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
-
-		<meta name="og:title" Content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="@keywords" />
-
-		@if (noticiasMostrar != null)
-		{
-			if (noticiasMostrar.Count > 0)
-			{
-				<script type="application/ld+json">
-					{
-						"@@context": "https://schema.org",
-						"@@type": "BreadcrumbList",
-						"itemListElement": [					
-					@{
-						string jsonContenido = string.Empty;
-
-						int i = 1;
-						foreach (var noticia in noticiasMostrar)
-						{
-							string jsonAñadir = @"{
-											""@type"": ""ListItem"",
-											""position"": @posicion,
-											""name"": ""@titulo"",
-											""item"": ""@enlace""
-											}";
-
-							jsonAñadir = jsonAñadir.Replace("@posicion", i.ToString());
-							jsonAñadir = jsonAñadir.Replace("@titulo", noticia.TituloEn);
-							jsonAñadir = jsonAñadir.Replace("@enlace", "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn + "/"));
-
-							if (i < noticiasMostrar.Count)
-							{
-								jsonAñadir = jsonAñadir + ",";
-							}
-
-							jsonContenido = jsonContenido + jsonAñadir;
-
-                            i += 1;
-						}
-					}
-					@((MarkupString)jsonContenido)
-						]
-					}
-				</script>
-			}
-		}
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
+	<Titulo tipo="@Titulo.Tipo.UltimasNoticias" idioma="@idioma" keywords="@keywords" contenidoJsonUltimasNoticias="@jsonContenido"/>
 }
 
 <style>
@@ -344,9 +295,10 @@
 
 	protected override void OnInitialized()
 	{
-		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+		idioma = datos.Idioma;
+		usuarioId = datos.UsuarioId;
+		userAgent = datos.UserAgent;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

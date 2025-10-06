@@ -13,10 +13,6 @@
 @inject IHttpContextAccessor Contexto
 
 @{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastAdded") + " • pepeizq's deals";
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded");
-	string enlace = "https://pepeizqdeals.com/last-added/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
 	string keywords = "last, added";
 
 	if (juegosMostrar.Count > 0)
@@ -38,26 +34,16 @@
 					}
 				}
 			}
+			else
+			{
+				break;
+			}
 
 			i += 1;
 		}
 	}
 
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
-
-		<meta name="og:title" content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="@keywords" />
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
+	<Titulo tipo="@Titulo.Tipo.UltimosAñadidos" idioma="@idioma" keywords="@keywords"/>
 }
 
 <div class="subcabecera">
@@ -94,9 +80,10 @@
 
 	protected override void OnInitialized()
 	{
-		idioma = Contexto.HttpContext.Request.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
-		usuarioId = Contexto.HttpContext.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-		userAgent = Contexto.HttpContext.Request.Headers.UserAgent.ToString();
+		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+		idioma = datos.Idioma;
+		usuarioId = datos.UsuarioId;
+		userAgent = datos.UserAgent;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

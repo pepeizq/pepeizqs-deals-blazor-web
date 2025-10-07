@@ -1,31 +1,38 @@
 ﻿@page "/rss/"
 
 @using Microsoft.AspNetCore.Components.Web
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
+@inject IJSRuntime JavaScript
 
-@{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS") + " • pepeizq's deals";
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "RSS");
-	string enlace = "https://pepeizqdeals.com/rss";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+<Titulo tipo="@Titulo.Tipo.RSS" idioma="@idioma"/>
 
-	<HeadContent>
-        <PageTitle>@titulo</PageTitle>
+<script>
+	window.clipboardCopy = {
+		copyText: function(text) {
+			navigator.clipboard.writeText(text);
+		}
+	};
+</script>
 
-		<meta name="og:title" Content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="deals, games, free, offers, bundles" />
+@if (enseñarAlerta == true)
+{
+	<div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Clipboard")
+			</div>
 
-		<link rel="canonical" href="@enlace" />
-		<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-	</HeadContent>
+			<button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+				<div style="width: 20px; height: 20px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+					</svg>
+				</div>
+			</button>
+		</div>
+	</div>
 }
 
 <style>
@@ -43,6 +50,12 @@
 		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
 			@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS")
 		</h1>
+
+		<div style="width: 24px;">
+			<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+				<path d="M96 128C96 110.3 110.3 96 128 96C357.8 96 544 282.2 544 512C544 529.7 529.7 544 512 544C494.3 544 480 529.7 480 512C480 317.6 322.4 160 128 160C110.3 160 96 145.7 96 128zM96 480C96 444.7 124.7 416 160 416C195.3 416 224 444.7 224 480C224 515.3 195.3 544 160 544C124.7 544 96 515.3 96 480zM128 224C287.1 224 416 352.9 416 512C416 529.7 401.7 544 384 544C366.3 544 352 529.7 352 512C352 388.3 251.7 288 128 288C110.3 288 96 273.7 96 256C96 238.3 110.3 224 128 224z" />
+			</svg>
+		</div>
 	</div>
 </div>
 
@@ -60,16 +73,36 @@
 	<div style="display: flex; flex-direction: column; gap: 5px;">
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "RSS")
 
-		<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
-			<label style="text-decoration: none;">https://pepeizqdeals.com/rss-en.xml</label>
+		<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño);">
+			<div style="padding: 10px 15px;">
+				<label style="text-decoration: none;">@enlaceNoticiasEn</label>
+			</div>
+
+			<button @onclick="(e => CopiarAlClipboard(e, enlaceNoticiasEn))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+				<div style="width: 24px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+					</svg>
+				</div>
+			</button>
 		</div>
 	</div>
 
 	<div style="display: flex; flex-direction: column; gap: 5px;">
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "RSS")
 
-		<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
-			<label style="text-decoration: none;">https://pepeizqdeals.com/rss-es.xml</label>
+		<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño);">
+			<div style="padding: 10px 15px;">
+				<label style="text-decoration: none;">@enlaceNoticiasEs</label>
+			</div>
+
+			<button @onclick="(e => CopiarAlClipboard(e, enlaceNoticiasEs))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+				<div style="width: 24px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+					</svg>
+				</div>
+			</button>
 		</div>
 	</div>
 </div>
@@ -85,16 +118,36 @@
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "RSS")
 	</div>
 
-	<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
-		<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam/1000</label>
+	<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño);">
+		<div style="padding: 10px 15px;">
+			<label style="text-decoration: none;">@enlaceOfertas1</label>
+		</div>
+
+		<button @onclick="(e => CopiarAlClipboard(e, enlaceOfertas1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+			<div style="width: 24px;">
+				<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+					<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+				</svg>
+			</div>
+		</button>
 	</div>
 
 	<div>
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "RSS")
 	</div>
 
-	<div style="padding: 10px 15px; background-color: var(--fondoSubcabecera);">
-		<label style="text-decoration: none;">https://pepeizqdeals.com/rss/steam,gog/1000</label>
+	<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño);">
+		<div style="padding: 10px 15px;">
+			<label style="text-decoration: none;">@enlaceOfertas2</label>
+		</div>
+
+		<button @onclick="(e => CopiarAlClipboard(e, enlaceOfertas2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+			<div style="width: 24px;">
+				<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+					<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+				</svg>
+			</div>
+		</button>
 	</div>
 
 	<div>
@@ -113,6 +166,12 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 
+	private string enlaceNoticiasEn = "https://pepeizqdeals.com/rss-en.xml";
+	private string enlaceNoticiasEs = "https://pepeizqdeals.com/rss-es.xml";
+
+	private string enlaceOfertas1 = "https://pepeizqdeals.com/rss/steam/1000";
+	private string enlaceOfertas2 = "https://pepeizqdeals.com/rss/steam,gog/1000";
+
 	protected override void OnInitialized()
 	{
 		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
@@ -124,4 +183,45 @@
 			idioma = BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
 		}
 	}
+
+	#region Portapapeles
+
+	bool enseñarAlerta = false;
+	private PeriodicTimer cronometro = null;
+	private int cronometroContador = 0;
+	private int cronometroLimite = 10;
+
+	private async void CopiarAlClipboard(MouseEventArgs e, string texto)
+	{
+		enseñarAlerta = true;
+		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
+
+		cronometroContador = 0;
+		cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometro.WaitForNextTickAsync())
+		{
+			cronometroContador += 1;
+
+			if (cronometroContador > cronometroLimite)
+			{
+				enseñarAlerta = false;
+				cronometro.Dispose();
+				await InvokeAsync(StateHasChanged);
+			}
+		}
+	}
+
+	private void CerrarAvisoClipboard()
+	{
+		enseñarAlerta = false;
+		cronometroContador = 0;
+
+		if (cronometro != null)
+		{
+			cronometro.Dispose();
+		}
+	}
+
+	#endregion
 }

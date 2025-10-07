@@ -125,16 +125,12 @@
                             </div>
                         }
                     }
-                    else
-                    {
-                        <div>
-                            ID 0
-                        </div>
-                    }
 
                     @if (string.IsNullOrEmpty(idTiendaPendiente) == false || string.IsNullOrEmpty(idStreamingPendiente) == false || string.IsNullOrEmpty(idPlataformaPendiente) == false)
                     {
-                        <button @onclick="@(e => ClickearDescartarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center; margin-left: auto;">Descartar</button>
+                        <button @onclick="@(e => ClickearDescartarPendientes(e, enlacePendiente))" class="boton-pequeño" style="width: 130px; text-align: center; margin-left: auto; background-color: var(--fondoPeligro);">
+                            Descartar
+                        </button>
                     }
                 </div>
 

@@ -41,7 +41,7 @@
 			jsonAñadir = jsonAñadir.Replace("@titulo", noticiaMostrar.TituloEn);
 			jsonAñadir = jsonAñadir.Replace("@enlace", "https://pepeizqdeals.com/news/" + noticiaMostrar.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticiaMostrar.TituloEn + "/"));
 
-			if (i < noticiasMostrar.Count)
+			if (i < noticiasMostrar.Count - 1)
 			{
 				jsonAñadir = jsonAñadir + ",";
 			}

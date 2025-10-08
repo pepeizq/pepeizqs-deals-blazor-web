@@ -600,6 +600,8 @@ namespace Herramientas.RedesSociales
                             }
                         }
                     }
+
+                    texto = texto + Environment.NewLine + Environment.NewLine;
                 }
             }
 

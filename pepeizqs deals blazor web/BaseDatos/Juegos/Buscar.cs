@@ -2052,5 +2052,67 @@ SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam
 
 			return lista;
 		}
-	}
+
+        public static List<Juego> Aleatorios(SqlConnection conexion = null)
+        {
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
+
+            List<Juego> juegos = new List<Juego>();
+
+            using (conexion)
+            {
+                string busqueda = @"SELECT TOP 400 id, nombre FROM juegos ORDER BY NEWID()";
+
+                using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+                {
+                    using (SqlDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+							Juego juego = new Juego
+							{
+								Id = 0,
+								Nombre = null
+							};
+
+							try
+                            {
+                                if (lector.IsDBNull(0) == false)
+                                {
+                                    juego.Id = lector.GetInt32(0);
+                                }
+                            }
+                            catch { }
+
+                            try
+                            {
+                                if (lector.IsDBNull(1) == false)
+                                {
+                                    if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+                                    {
+                                        juego.Nombre = lector.GetString(1);
+                                    }
+                                }
+                            }
+                            catch { }
+
+                            juegos.Add(juego);
+                        }
+                    }
+                }
+            }
+
+            return juegos;
+        }
+    }
 }

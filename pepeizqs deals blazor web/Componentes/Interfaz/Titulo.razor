@@ -92,6 +92,15 @@
 		}
 
 	}
+	else if (tipo == Tipo.Noticia)
+	{
+		if (string.IsNullOrEmpty(contenidoJsonNoticia) == false)
+		{
+			<script type="application/ld+json">
+				@((MarkupString)contenidoJsonNoticia)
+			</script>
+		}
+	}
 	else if (tipo == Tipo.Portada)
 	{
 		<script type="application/ld+json">
@@ -171,9 +180,17 @@
 		</script>
 	}
 
-	<link rel="canonical" href="@enlace" />
+	@if (tipo != Tipo.Noticia)
+	{
+		<link rel="canonical" href="@enlace" />
+	}
+	else
+	{
+		<link rel="canonical" href="@enlaceEnNoticia" hreflang="en" />
+		<link rel="alternate" href="@enlaceEsNoticia" hreflang="es" />
+	}
+	
 	<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-
 
 	<meta name="twitter:site" content="@@pepeizqdeals" />
 	<meta name="twitter:domain" content="pepeizqdeals.com" />
@@ -249,6 +266,28 @@
 
 	#endregion
 
+	#region Parametros Noticia
+
+	[Parameter]
+	public string tituloNoticia { get; set; }
+
+	[Parameter]
+	public string descripcionNoticia { get; set; }
+
+	[Parameter]
+	public string enlaceEnNoticia { get; set; }
+
+	[Parameter]
+	public string enlaceEsNoticia { get; set; }
+
+	[Parameter]
+	public string imagenNoticia { get; set; }
+
+	[Parameter]
+	public string contenidoJsonNoticia { get; set; }
+
+	#endregion
+
 	#region Parametros Portada
 
 	[Parameter]
@@ -289,6 +328,7 @@
 		Otros,
 		Juego,
 		Filtro,
+		Minimos,
 		Noticia,
 		Patreon,
 		Portada,
@@ -314,14 +354,44 @@
 		else if (tipo == Tipo.Juego)
 		{
 			titulo ??= JuegoTitulo(nombreJuego, drmsEnseñarJuego, gamePassJuego);
-			descripcion ??= descripcionJuego;
+
+			if (string.IsNullOrEmpty(descripcionJuego) == false)
+			{
+				descripcion ??= descripcionJuego;
+			}
+			else
+			{
+				descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String104", "Game");
+			}
+			
 			enlace ??= "https://pepeizqdeals.com/game/" + idJuego.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombreJuego) + "/";
 			imagen ??= imagenJuego;
 			keywords2 ??= JuegoKeywords(categoriasJuego);
 		}
+		else if (tipo == Tipo.Minimos)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "HistoricalLows") ;
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String22", "HistoricalLows");
+			enlace ??= "https://pepeizqdeals.com/historical-lows/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";	
+			keywords2 ??= keywordsVacias;
+		}
 		else if (tipo == Tipo.Noticia)
 		{
-			
+			titulo ??= tituloNoticia;
+			descripcion ??= descripcionNoticia;
+
+			if (idioma == "es")
+			{
+				enlace ??= enlaceEsNoticia;
+			}
+			else
+			{
+				enlace ??= enlaceEnNoticia;
+			}
+
+			imagen ??= imagenNoticia;
+			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Patreon)
 		{
@@ -399,8 +469,10 @@
 
 		#region Encajar Titulo y Descripcion
 
-		titulo = titulo.Replace(Strings.ChrW(34).ToString(), null);
-		descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+		if (string.IsNullOrEmpty(titulo) == false)
+		{
+			titulo = titulo.Replace(Strings.ChrW(34).ToString(), null);
+		}
 
 		if (titulo.Length > 56)
 		{
@@ -417,10 +489,17 @@
 			}
 		}
 
-		if (descripcion.Length > 146)
+		if (string.IsNullOrEmpty(descripcion) == false)
 		{
-			descripcion = descripcion.Substring(0, 146) + " ...";
+			descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+
+			if (descripcion.Length > 146)
+			{
+				descripcion = descripcion.Substring(0, 146) + " ...";
+			}
 		}
+
+		
 
 		#endregion
 	}

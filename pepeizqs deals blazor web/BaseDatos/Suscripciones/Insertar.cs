@@ -6,27 +6,21 @@ namespace BaseDatos.Suscripciones
 {
 	public static class Insertar
 	{
-		public static void Ejecutar(int juegoId, List<JuegoSuscripcion> listaVecesSuscripciones, JuegoSuscripcion actual, SqlConnection conexion)
+		public static void Ejecutar(int juegoId, List<JuegoSuscripcion> suscripciones, JuegoSuscripcion actual, SqlConnection conexion = null)
 		{
-			string sqlActualizarJuego = "UPDATE juegos " +
-								"SET suscripciones=@suscripciones WHERE id=@id";
+            if (conexion == null)
+            {
+                conexion = Herramientas.BaseDatos.Conectar();
+            }
+            else
+            {
+                if (conexion.State != System.Data.ConnectionState.Open)
+                {
+                    conexion = Herramientas.BaseDatos.Conectar();
+                }
+            }
 
-			using (SqlCommand comando = new SqlCommand(sqlActualizarJuego, conexion))
-			{
-				comando.Parameters.AddWithValue("@id", juegoId);
-				comando.Parameters.AddWithValue("@suscripciones", JsonSerializer.Serialize(listaVecesSuscripciones));
-
-				try
-				{
-					comando.ExecuteNonQuery();
-				}
-				catch
-				{
-
-				}
-			}
-
-			string sqlInsertar = "INSERT INTO suscripciones " +
+            string sqlInsertar = "INSERT INTO suscripciones " +
 				"(suscripcion, juegoId, nombre, imagen, drm, enlace, fechaEmpieza, fechaTermina, imagenNoticia) VALUES " +
 				"(@suscripcion, @juegoId, @nombre, @imagen, @drm, @enlace, @fechaEmpieza, @fechaTermina, @imagenNoticia) ";
 
@@ -51,7 +45,57 @@ namespace BaseDatos.Suscripciones
 
 				}
 			}
-		}
+
+            string sqlBuscar = "SELECT TOP(1) id FROM suscripciones ORDER BY id DESC";
+
+            using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        if (lector.IsDBNull(0) == false)
+                        {
+                            actual.Id = lector.GetInt32(0);
+                        }
+                    }
+                }
+            }
+
+			if (suscripciones == null)
+			{
+				suscripciones = new List<JuegoSuscripcion>();
+				suscripciones.Add(actual);
+			}
+			else
+			{
+				foreach (var suscripcion in suscripciones)
+				{
+					if (suscripcion.DRM == actual.DRM && suscripcion.Tipo == actual.Tipo && suscripcion.FechaEmpieza == actual.FechaEmpieza && suscripcion.FechaTermina == actual.FechaTermina)
+					{
+						suscripcion.Id = actual.Id;
+					}
+				}
+			}
+
+			string sqlActualizarJuego = "UPDATE juegos " +
+						"SET suscripciones=@suscripciones WHERE id=@id";
+
+            using (SqlCommand comando = new SqlCommand(sqlActualizarJuego, conexion))
+            {
+                comando.Parameters.AddWithValue("@id", juegoId);
+                comando.Parameters.AddWithValue("@suscripciones", JsonSerializer.Serialize(suscripciones));
+
+                try
+                {
+                    comando.ExecuteNonQuery();
+                }
+                catch
+                {
+
+                }
+            }
+        }
 
 		public static void Temporal(SqlConnection conexion, string nombreTabla, string enlace, string nombreJuego = "vacio", string imagen = "vacio")
 		{

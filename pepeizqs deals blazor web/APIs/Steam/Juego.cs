@@ -463,71 +463,71 @@ namespace APIs.Steam
 								}
 							}
 
-							#endregion
+                            #endregion
 
-							#region Videos
+                            #region Videos
 
-							if (datos2.Respuesta.Juegos[0].Trailers != null)
-							{
-								if (datos2.Respuesta.Juegos[0].Trailers.Videos != null)
-								{
-									if (datos2.Respuesta.Juegos[0].Trailers.Videos.Count > 0)
+                            if (datos2.Respuesta.Juegos[0].Trailers?.Videos?.Count > 0)
+                            {
+                                List<Juegos.JuegoMediaVideo> videos = new List<Juegos.JuegoMediaVideo>();
+
+                                foreach (var video in datos2.Respuesta.Juegos[0].Trailers.Videos)
+                                {
+                                    string videoEnlace = string.Empty;
+
+                                    if (string.IsNullOrEmpty(videoEnlace) == true && video.DatosMax != null)
 									{
-										List<Juegos.JuegoMediaVideo> videos = new List<Juegos.JuegoMediaVideo>();
+                                        foreach (var videoDatos in video.DatosMax)
+                                        {
+                                            if (videoDatos.Tipo.Contains("mp4") == true)
+                                            {
+                                                videoEnlace = videoDatos.Fichero;
+                                            }
+                                        }
+                                    }                                 
 
-										foreach (var video in datos2.Respuesta.Juegos[0].Trailers.Videos)
-										{
-											string videoEnlace = string.Empty;
+									if (string.IsNullOrEmpty(videoEnlace) == false)
+									{
+                                        string microEnlace = string.Empty;
 
-											foreach (var videoDatos in video.Datos)
-											{
-												if (videoDatos.Tipo.Contains("mp4") == true)
-												{
-													videoEnlace = videoDatos.Fichero;
-												}
-											}
+                                        foreach (var microDatos in video.DatosMicro)
+                                        {
+                                            if (microDatos.Tipo.Contains("mp4") == true)
+                                            {
+                                                microEnlace = microDatos.Fichero;
+                                            }
+                                        }
 
-											string microEnlace = string.Empty;
+                                        Juegos.JuegoMediaVideo nuevoVideo = new Juegos.JuegoMediaVideo
+                                        {
+                                            Nombre = video.Nombre,
+                                            Enlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace),
+                                            MayorEdad = !video.MayorEdad,
+                                            Captura = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.Captura),
+                                            CapturaPequeña = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.CapturaPequeña),
+                                            Micro = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", microEnlace)
+                                        };
 
-											foreach (var microDatos in video.DatosMicro)
-											{
-												if (microDatos.Tipo.Contains("mp4") == true)
-												{
-													microEnlace = microDatos.Fichero;
-												}
-											}
+                                        videos.Add(nuevoVideo);
 
-											Juegos.JuegoMediaVideo nuevoVideo = new Juegos.JuegoMediaVideo
-											{
-												Nombre = video.Nombre,
-												Enlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace),
-												MayorEdad = !video.MayorEdad,
-												Captura = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.Captura),
-												CapturaPequeña = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.CapturaPequeña),
-												Micro = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", microEnlace)
-											};
+                                        if (videos.Count > 4)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
 
-											videos.Add(nuevoVideo);
+                                if (videos.Count > 0)
+                                {
+                                    media.Videos = videos;
+                                }
+                            }
 
-											if (videos.Count > 4)
-											{
-												break;
-											}
-										}
+                            #endregion
 
-										if (videos.Count > 0)
-										{
-											media.Videos = videos;
-										}
-									}
-								}
-							}
+                            #region FreeToPlay
 
-							#endregion
-
-							#region FreeToPlay
-
-							if (datos2.Respuesta.Juegos[0].FreeToPlay == true)
+                            if (datos2.Respuesta.Juegos[0].FreeToPlay == true)
 							{
 								freeToPlay = true;
 							}
@@ -1255,8 +1255,11 @@ namespace APIs.Steam
 		[JsonPropertyName("trailer_url_format")]
 		public string EnlaceFormato { get; set; }
 
-		[JsonPropertyName("trailer_max")]
-		public List<SteamJuegoAPI2JuegoVideoDatos> Datos { get; set; }
+        [JsonPropertyName("adaptive_trailers")]
+        public List<SteamJuegoAPI2JuegoVideoDatos2> DatosAdaptivo { get; set; }
+
+        [JsonPropertyName("trailer_max")]
+		public List<SteamJuegoAPI2JuegoVideoDatos> DatosMax { get; set; }
 
 		[JsonPropertyName("microtrailer")]
 		public List<SteamJuegoAPI2JuegoVideoDatos> DatosMicro { get; set; }
@@ -1280,7 +1283,16 @@ namespace APIs.Steam
 		public string Tipo { get; set; }
 	}
 
-	public class SteamJuegoAPI2JuegoIdioma
+    public class SteamJuegoAPI2JuegoVideoDatos2
+    {
+        [JsonPropertyName("cdn_path")]
+        public string Enlace { get; set; }
+
+        [JsonPropertyName("encoding")]
+        public string Encodeo { get; set; }
+    }
+
+    public class SteamJuegoAPI2JuegoIdioma
 	{
 		[JsonPropertyName("elanguage")]
 		public int Id { get; set; }

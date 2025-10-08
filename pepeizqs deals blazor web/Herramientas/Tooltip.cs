@@ -7,7 +7,7 @@ namespace Herramientas
 {
     public static class Tooltip
     {
-        public static ToolTipDatos Generar(string idioma, CajaJuego.Tipo tipo, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0, int idGratisDescartar = 0)
+        public static ToolTipDatos Generar(string idioma, CajaJuego.Tipo tipo, Juego juego, JuegoDRM drm, bool usuarioConectado, bool usuarioTieneJuego, bool usuarioDeseaJuego, int idBundleDescartar = 0, int idGratisDescartar = 0, int idSuscripcionDescartar = 0)
         {
             ToolTipDatos datos = new ToolTipDatos
             {
@@ -236,41 +236,51 @@ namespace Herramientas
 
 				foreach (JuegoSuscripcion suscripcion in juego.Suscripciones)
 				{
-					if (suscripcion != null)
-					{
-                        if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
-                        {
-                            suscripcionesActuales += 1;
+                    bool contar = true;
 
-                            if (suscripcionesActuales == 1)
-                            {
-                                suscripcionExtraActual = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
-                            }
-                            else if (suscripcionesActuales > 1)
-                            {
-                                if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre != suscripcionExtraActual)
-                                {
-                                    suscripcionExtraActual = null;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            suscripcionesPasados += 1;
-
-                            if (suscripcionesPasados == 1)
-                            {
-                                suscripcionExtraPasada = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
-                            }
-                            else if (suscripcionesPasados > 1)
-                            {
-                                if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre != suscripcionExtraPasada)
-                                {
-                                    suscripcionExtraPasada = null;
-                                }
-                            }
-                        }
+                    if (idSuscripcionDescartar > 0 && suscripcion.Id == idSuscripcionDescartar)
+                    {
+                        contar = false;
                     }
+
+                    if (contar == true)
+					{
+                        if (suscripcion != null)
+                        {
+                            if (DateTime.Now >= suscripcion.FechaEmpieza && DateTime.Now <= suscripcion.FechaTermina)
+                            {
+                                suscripcionesActuales += 1;
+
+                                if (suscripcionesActuales == 1)
+                                {
+                                    suscripcionExtraActual = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
+                                }
+                                else if (suscripcionesActuales > 1)
+                                {
+                                    if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre != suscripcionExtraActual)
+                                    {
+                                        suscripcionExtraActual = null;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                suscripcionesPasados += 1;
+
+                                if (suscripcionesPasados == 1)
+                                {
+                                    suscripcionExtraPasada = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre;
+                                }
+                                else if (suscripcionesPasados > 1)
+                                {
+                                    if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre != suscripcionExtraPasada)
+                                    {
+                                        suscripcionExtraPasada = null;
+                                    }
+                                }
+                            }
+                        }
+                    }                       
 				}
 
 				if (suscripcionesActuales == 1)

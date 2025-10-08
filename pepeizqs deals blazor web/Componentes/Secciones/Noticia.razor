@@ -14,104 +14,73 @@
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
-@{
-	string tituloSeo = titulo + " • pepeizq's deals";
+@if (noticia != null)
+{
+	string texto2 = Herramientas.Idiomas.ElegirTexto(idioma, noticia.ContenidoEn, noticia.ContenidoEs);
 
-	if (tituloSeo.Length > 67)
+	if (string.IsNullOrEmpty(texto2) == false)
 	{
-		tituloSeo = tituloSeo.Substring(0, 67) + " ...";
-	}
-
-	if (noticia != null)
-	{
-		string texto2 = Herramientas.Idiomas.ElegirTexto(idioma, noticia.ContenidoEn, noticia.ContenidoEs);
-
-		if (string.IsNullOrEmpty(texto2) == false)
+		if (texto2.Contains("</div>") == true)
 		{
-			if (texto2.Contains("</div>") == true)
+			int int1 = texto2.IndexOf("</div>");
+			texto2 = texto2.Remove(int1, texto2.Length - int1);
+
+			if (texto2.Contains("<div") == true)
 			{
-				int int1 = texto2.IndexOf("</div>");
+				int int2 = texto2.IndexOf(">");
+				texto2 = texto2.Remove(0, int2 + 1);
+			}
+		}
+		else
+		{
+			if (texto2.Contains("<") == true)
+			{
+				int int1 = texto2.IndexOf("<");
 				texto2 = texto2.Remove(int1, texto2.Length - int1);
-
-				if (texto2.Contains("<div") == true)
-				{
-					int int2 = texto2.IndexOf(">");
-					texto2 = texto2.Remove(0, int2 + 1);
-				}
-			}
-			else
-			{
-				if (texto2.Contains("<") == true)
-				{
-					int int1 = texto2.IndexOf("<");
-					texto2 = texto2.Remove(int1, texto2.Length - int1);
-				}
 			}
 		}
-
-		string descripcion = texto2;
-
-		if (descripcion.Length > 147)
-		{
-			descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
-
-            descripcion = descripcion.Substring(0, 147) + " ...";
-        }
-
-		string keywords = "news";
-
-		if (string.IsNullOrEmpty(titulo) == false)
-		{
-			string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(titulo, false).Split(' ');
-			List<string> keywordsLista = new List<string>();
-			keywordsLista.AddRange(keywordsEnBruto);
-
-			foreach (string keyword in keywordsLista)
-			{
-				if (keyword.Length > 3)
-				{
-					keywords = keywords + ", " + keyword;
-				}
-			}
-		}
-
-		<HeadContent>
-            <PageTitle>@tituloSeo</PageTitle>
-
-			<meta name="og:title" Content="@tituloSeo" />
-			<meta name="description" content="@descripcion" />
-			<meta name="og:description" content="@descripcion" />
-			<meta name="og:url" content="@enlaceIngles" />
-			<meta name="og:image" content="@fondo" />
-			<meta name="og:video" content="@video" />
-			<meta name="og:site_name" content="pepeizq's deals" />
-			<meta name="og:type" content="website" />
-			<meta name="robots" content="index, follow" />
-			<meta name="keywords" content="@keywords" />
-
-			<script type="application/ld+json">
-				@{
-					string seoJson = "{" + Environment.NewLine +
-						Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "NewsArticle" + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "headline" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + noticia.TituloEn + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + noticia.Imagen + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "datePublished" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + noticia.FechaEmpieza.ToString("yyyy-MM-ddTHH:mm:ss") + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "description" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + descripcion + Strings.ChrW(34) + "," + Environment.NewLine +
-						Strings.ChrW(34) + "author" + Strings.ChrW(34) + ": {" + Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Person" + Strings.ChrW(34) + "," + Environment.NewLine + 
-						Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "pepeizq" + Strings.ChrW(34) + "," + Environment.NewLine + 
-						Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://pepeizqapps.com/" + Strings.ChrW(34) + Environment.NewLine + "} ," + Environment.NewLine +
-						Strings.ChrW(34) + "isAccessibleForFree" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "true" + Strings.ChrW(34) + "}";
-				}
-
-				@((MarkupString)seoJson)
-			</script>
-
-			<link rel="canonical" href="@enlaceIngles" hreflang="en"/>
-			<link rel="alternate" href="@enlaceEspañol" hreflang="es"/>
-			<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-		</HeadContent>
 	}
+
+	string descripcion = texto2;
+
+	string keywords = "news";
+
+	if (string.IsNullOrEmpty(titulo) == false)
+	{
+		string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(titulo, false).Split(' ');
+		List<string> keywordsLista = new List<string>();
+		keywordsLista.AddRange(keywordsEnBruto);
+
+		foreach (string keyword in keywordsLista)
+		{
+			if (keyword.Length > 3)
+			{
+				keywords = keywords + ", " + keyword;
+			}
+		}
+	}
+
+	string contenidoJson = @"{
+        ""@context"": ""https://schema.org"",
+		""@type"": ""NewsArticle"",
+		""headline"": ""@tituloEn"",
+		""image"": ""@imagen"",
+        ""datePublished"": ""@fecha"",
+        ""description"": ""@descripcion"",
+		""author"": {
+			""@type"": ""Person"",
+			""name"": ""pepeizq"",
+			""url"": ""https://pepeizqapps.com/"" },
+		""isAccessibleForFree"": ""true""
+	}";
+
+	contenidoJson = contenidoJson.Replace("@tituloEn", noticia.TituloEn);
+	contenidoJson = contenidoJson.Replace("@imagen", noticia.Imagen);
+	contenidoJson = contenidoJson.Replace("@fecha", noticia.FechaEmpieza.ToString("yyyy-MM-ddTHH:mm:ss"));
+	contenidoJson = contenidoJson.Replace("@descripcion", descripcion);
+
+	<Titulo tipo="@Titulo.Tipo.Noticia" idioma="@idioma" tituloNoticia="@titulo" descripcionNoticia="@descripcion" 
+			enlaceEnNoticia="@enlaceIngles" enlaceEsNoticia="@enlaceEspañol" keywords="@keywords" contenidoJsonNoticia="@contenidoJson"/>
 }
 
 <script>
@@ -528,14 +497,11 @@
 
 				if (juegos != null)
 				{
-					if (juegos.Count == 1)
+					if (juegos?.Count == 1)
 					{
-						if (juegos[0].Media?.Videos != null)
+						if (juegos[0].Media?.Videos?.Count > 0)
 						{
-							if (juegos[0].Media?.Videos.Count > 0)
-							{
-								video = juegos[0].Media?.Videos[0].Enlace;
-							}
+							video = juegos[0].Media?.Videos[0].Enlace;
 						}
 					}
 

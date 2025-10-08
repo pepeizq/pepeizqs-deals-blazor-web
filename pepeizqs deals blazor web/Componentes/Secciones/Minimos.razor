@@ -16,28 +16,7 @@
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
-@{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "HistoricalLows") + " • pepeizq's deals";
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String22", "HistoricalLows");
-	string enlace = "https://pepeizqdeals.com/historical-lows/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
-
-	<HeadContent>
-        <PageTitle>@titulo</PageTitle>
-
-		<meta name="og:title" content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="deals, games, offers, historical, lows" />
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
-}
+<Titulo tipo="@Titulo.Tipo.Minimos" idioma="@idioma"/>
 
 <script>
 	window.ChangeUrl = function (url) {

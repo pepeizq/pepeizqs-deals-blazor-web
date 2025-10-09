@@ -13,7 +13,25 @@
 	<meta name="robots" content="noimageindex" />
 	<meta name="keywords" content="@keywords2" />
 
-	@if (tipo == Tipo.Juego)
+	@if (tipo == Tipo.Curator)
+	{
+		if (string.IsNullOrEmpty(contenidoJsonCurator) == false)
+		{
+			<script type="application/ld+json">
+				@((MarkupString)contenidoJsonCurator)
+			</script>
+		}
+	}
+	else if (tipo == Tipo.Gratis)
+	{
+		if (string.IsNullOrEmpty(contenidoJsonGratis) == false)
+		{
+			<script type="application/ld+json">
+				@((MarkupString)contenidoJsonGratis)
+			</script>
+		}
+	}
+	else if (tipo == Tipo.Juego)
 	{
 		if (string.IsNullOrEmpty(mayorEdadJuego) == false)
 		{
@@ -213,6 +231,25 @@
 	[Parameter]
 	public string keywords { get; set; }
 
+	#region Parametros Curator
+
+	[Parameter]
+	public string tituloCurator { get; set; }
+
+	[Parameter]
+	public string descripcionCurator { get; set; }
+
+	[Parameter]
+	public string enlaceCurator { get; set; }
+
+	[Parameter]
+	public string imagenCurator { get; set; }
+
+	[Parameter]
+	public string contenidoJsonCurator { get; set; }
+
+	#endregion
+
 	#region Parametros Juego
 
 	[Parameter]
@@ -263,6 +300,16 @@
 
 	[Parameter]
 	public string idsFiltro { get; set; }
+
+	#endregion
+
+	#region Parametros Gratis
+
+	[Parameter]
+	public string tituloGratis { get; set; }
+
+	[Parameter]
+	public string contenidoJsonGratis { get; set; }
 
 	#endregion
 
@@ -326,8 +373,11 @@
 	public enum Tipo
 	{
 		Otros,
-		Juego,
+		Curator,
+		Deseados,
 		Filtro,
+		Gratis,
+		Juego,
 		Minimos,
 		Noticia,
 		Patreon,
@@ -341,7 +391,23 @@
 
 	protected override void OnInitialized()
 	{
-		if (tipo == Tipo.Filtro)
+		if (tipo == Tipo.Curator)
+		{
+			titulo ??= tituloCurator;
+			descripcion ??= descripcionCurator;
+			enlace ??= enlaceCurator;
+			imagen ??= imagenCurator;
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.Deseados)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Wishlist");
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Wishlist");
+			enlace ??= "https://pepeizqdeals.com/wishlist/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywordsVacias;
+		}
+		else if (tipo == Tipo.Filtro)
 		{
 			tituloKeywords ??= FiltroTituloKeywords(idsFiltro);
 
@@ -350,6 +416,14 @@
 			enlace ??= "https://pepeizqdeals.com/filter/" + idsFiltro + "/";
 			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
 			keywords2 ??= tituloKeywords.Keywords;
+		}
+		else if (tipo == Tipo.Gratis)
+		{
+			titulo ??= tituloGratis;
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Free");
+			enlace ??= "https://pepeizqdeals.com/free/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Juego)
 		{

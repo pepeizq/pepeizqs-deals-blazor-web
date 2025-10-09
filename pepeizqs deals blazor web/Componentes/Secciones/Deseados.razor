@@ -8,6 +8,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.JSInterop
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 @using pepeizqs_deals_web.Data
 @using System.Text.Json
 @using System.Text
@@ -18,25 +19,7 @@
 
 @if (string.IsNullOrEmpty(perfilUsuarioId) == true)
 {
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Wishlist") + " • pepeizq's deals";
-	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Wishlist");
-	string enlace = "https://pepeizqdeals.com/wishlist/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
-
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
-		<meta name="og:title" Content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="deals, games, free, offers, bundles" />
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
+	<Titulo tipo="@Titulo.Tipo.Deseados" idioma="@idioma"/>
 }
 
 <script>

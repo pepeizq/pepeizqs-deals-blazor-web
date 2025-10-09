@@ -21,7 +21,7 @@
 
 @if (curator != null)
 {
-	string titulo = curator.Nombre + " (Curator) • pepeizq's deals";
+	string titulo = curator.Nombre + " (Curator)";
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Curators");
 	string enlace = "https://pepeizqdeals.com/curator/" + slug + "/";
 	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
@@ -56,61 +56,35 @@
 		}
 	}
 
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
+	string contenidoJson = @"{
+        ""@context"": ""https://schema.org"",
+		""@type"": ""ProfilePage"",
+		""mainEntity"": {
+			""@type"": ""Organization"",
+			""name"": ""@nombreCurator"",
+			""description"": ""@descripcion"",
+			""image"": ""@imagen""
+	";
 
-		<meta name="og:title" content="@titulo" />
+	contenidoJson = contenidoJson.Replace("@nombreCurator", curator.Nombre);
+	contenidoJson = contenidoJson.Replace("@descripcion", descripcion);
+	contenidoJson = contenidoJson.Replace("@imagen", imagen);
 
-		@if (string.IsNullOrEmpty(descripcion) == false)
+	if (curator.Web != null)
+	{
+		if (string.IsNullOrEmpty(curator.Web.Enlace) == false)
 		{
-			descripcion = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+			contenidoJson = contenidoJson + @",
+				""sameAs"": [ ""@enlace"" ]";
 
-			string descripcionMeta = descripcion;
-
-			if (descripcionMeta.Length > 146)
-			{
-				descripcionMeta = descripcionMeta.Substring(0, 146) + " ...";
-			}
-
-			<meta name="description" content="@descripcionMeta" />
-			<meta name="og:description" content="@descripcionMeta" />
+			contenidoJson = contenidoJson.Replace("@enlace", curator.Web.Enlace);
 		}
+	}
 
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="@keywords" />
-	
-		<script type="application/ld+json">
-			@{
-				string seoJson = "{" + Environment.NewLine +
-					Strings.ChrW(34) + "@context" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://schema.org" + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ProfilePage" + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "mainEntity" + Strings.ChrW(34) + ": {" + Environment.NewLine +
-					Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "Organization" + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + curator.Nombre + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "description" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + descripcion + Strings.ChrW(34) + "," + Environment.NewLine +
-					Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + imagen + Strings.ChrW(34);
+	contenidoJson = contenidoJson + "}" + Environment.NewLine + "}";
 
-				if (curator.Web != null)
-				{
-					if (string.IsNullOrEmpty(curator.Web.Enlace) == false)
-					{
-						seoJson = seoJson + "," + Environment.NewLine + Strings.ChrW(34) + "sameAs" + Strings.ChrW(34) + ": [ " + Strings.ChrW(34) + curator.Web.Enlace + Strings.ChrW(34) + " ]";
-					}
-				}
-
-				seoJson = seoJson + "}" + Environment.NewLine + "}";
-            }
-
-            @((MarkupString)seoJson)
-        </script>
-
-		<link rel="canonical" href="@enlace" />
-		<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-	</HeadContent>
+	<Titulo tipo="@Titulo.Tipo.Curator" idioma="@idioma" tituloCurator="@titulo" descripcionCurator="@descripcion" enlaceCurator="@enlace"
+			imagenCurator="@imagen" keywords="@keywords" contenidoJsonCurator="@contenidoJson"/>
 
 	<div class="subcabecera">
 		<div class="cuerpo-ancho sub-subcabecera" style="flex-wrap: nowrap;">

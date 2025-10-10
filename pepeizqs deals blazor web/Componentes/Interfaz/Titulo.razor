@@ -13,7 +13,16 @@
 	<meta name="robots" content="noimageindex" />
 	<meta name="keywords" content="@keywords2" />
 
-	@if (tipo == Tipo.Curator)
+	@if (tipo == Tipo.Bundles)
+	{
+		if (string.IsNullOrEmpty(contenidoJsonBundles) == false)
+		{
+			<script type="application/ld+json">
+				@((MarkupString)contenidoJsonBundles)
+			</script>
+		}
+	}
+	else if (tipo == Tipo.Curator)
 	{
 		if (string.IsNullOrEmpty(contenidoJsonCurator) == false)
 		{
@@ -231,6 +240,42 @@
 	[Parameter]
 	public string keywords { get; set; }
 
+	#region Parametros Bundle
+
+	[Parameter]
+	public string tituloBundle { get; set; }
+
+	[Parameter]
+	public string descripcionBundle { get; set; }
+
+	[Parameter]
+	public string enlaceBundle { get; set; }
+
+	[Parameter]
+	public string imagenBundle { get; set; }
+
+	[Parameter]
+	public string contenidoJsonBundle { get; set; }
+
+	#endregion
+
+	#region Parametros Bundles
+
+	[Parameter]
+	public string tituloBundles { get; set; }
+
+	[Parameter]
+	public string contenidoJsonBundles { get; set; }
+
+	#endregion
+
+	#region Parametros Coste
+
+	[Parameter]
+	public string descripcionCoste { get; set; }
+
+	#endregion
+
 	#region Parametros Curator
 
 	[Parameter]
@@ -373,6 +418,12 @@
 	public enum Tipo
 	{
 		Otros,
+		Api,
+		Bundle,
+		Bundles,
+		Comparador,
+		Contacto,
+		Coste,
 		Curator,
 		Deseados,
 		Filtro,
@@ -391,7 +442,55 @@
 
 	protected override void OnInitialized()
 	{
-		if (tipo == Tipo.Curator)
+		if (tipo == Tipo.Api)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Api");
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Api");
+			enlace ??= "https://pepeizqdeals.com/api";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywordsVacias;
+		}
+		else if (tipo == Tipo.Bundle)
+		{
+			titulo ??= tituloBundle;
+			descripcion ??= descripcionBundle;
+			enlace ??= enlaceBundle;
+			imagen ??= imagenBundle;
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.Bundles)
+		{
+			titulo ??= tituloBundles;
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Bundle");
+			enlace ??= "https://pepeizqdeals.com/bundles/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.Comparador)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Compare");
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Compare");
+			enlace ??= "https://pepeizqdeals.com/compare/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.Contacto)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Contact");
+			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Contact");
+			enlace ??= "https://pepeizqdeals.com/contact/";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywordsVacias;
+		}
+		else if (tipo == Tipo.Coste)
+		{
+			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "CostWeb");
+			descripcion ??= descripcionCoste;
+			enlace ??= "https://pepeizqdeals.com/cost-web";
+			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			keywords2 ??= keywords;
+		}
+		else if (tipo == Tipo.Curator)
 		{
 			titulo ??= tituloCurator;
 			descripcion ??= descripcionCurator;

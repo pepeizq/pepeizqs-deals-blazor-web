@@ -1,14 +1,12 @@
 ﻿@page "/cost-web"
 
 @using Microsoft.AspNetCore.Components.Web
+@using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
 
 @{
-	string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Title", "CostWeb") + " • pepeizq's deals";
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "CostWeb");
-	string enlace = "https://pepeizqdeals.com/cost-web";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
 
 	string[] keywordsEnBruto = Herramientas.Buscador.LimpiarNombre(descripcion, false).Split(' ');
 	List<string> keywordsLista = new List<string>();
@@ -24,21 +22,7 @@
 		}
 	}
 
-	<HeadContent>
-		<PageTitle>@titulo</PageTitle>
-
-		<meta name="og:title" Content="@titulo" />
-		<meta name="description" content="@descripcion" />
-		<meta name="og:description" content="@descripcion" />
-		<meta name="og:url" content="@enlace" />
-		<meta name="og:image" content="@imagen" />
-		<meta name="og:site_name" content="pepeizq's deals" />
-		<meta name="og:type" content="website" />
-		<meta name="robots" content="index, follow" />
-		<meta name="keywords" content="@keywords" />
-
-		<link rel="canonical" href="@enlace" />
-	</HeadContent>
+	<Titulo tipo="@Titulo.Tipo.Coste" idioma="@idioma" keywords="@keywords" descripcionCoste="@descripcion"/>
 }
 
 <style>

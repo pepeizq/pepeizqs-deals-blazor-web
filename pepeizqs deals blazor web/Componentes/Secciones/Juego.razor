@@ -4589,16 +4589,13 @@
 
         List<JuegoPrecio> historicosDRM = new List<JuegoPrecio>();
 
-        if (historicos != null)
+        if (historicos?.Count > 0)
         {
-            if (historicos.Count > 0)
+            foreach (JuegoPrecio historico in historicos)
             {
-                foreach (JuegoPrecio historico in historicos)
+                if (historico.DRM == drm)
                 {
-                    if (historico.DRM == drm)
-                    {
-                        historicosDRM.Add(historico);
-                    }
+                    historicosDRM.Add(historico);
                 }
             }
         }
@@ -4732,7 +4729,10 @@
                             {
                                 if (drm == historico.DRM && historico.Moneda != Herramientas.JuegoMoneda.Euro)
                                 {
-                                    historico.PrecioCambiado = historico.Precio;
+                                    if (historico.PrecioCambiado == 0)
+                                    {
+                                        historico.PrecioCambiado = historico.Precio;
+                                    }
                                 }                                
                             }
 

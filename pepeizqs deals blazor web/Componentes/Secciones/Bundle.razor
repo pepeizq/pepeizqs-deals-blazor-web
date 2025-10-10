@@ -15,13 +15,7 @@
 {
 	if (tipo == Tipo.Bundle)
 	{
-		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda + " • pepeizq's deals";
-
-		if (titulo.Length > 66)
-		{
-			titulo = titulo.Substring(0, 66) + " ...";
-		}
-
+		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda;
 		string descripcion = string.Empty;
 		string enlace = "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/";
 		string imagen = string.Empty;
@@ -41,11 +35,6 @@
 				descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "String23", "Bundle") + " " + precio;
 			}
 		}
-
-		if (descripcion.Length > 147)
-        {
-            descripcion = descripcion.Substring(0, 147) + " ...";
-        }
 
 		if (string.IsNullOrEmpty(bundle.ImagenNoticia) == false)
 		{
@@ -69,142 +58,132 @@
 			}
 		}
 
-		if (bundle.Juegos != null)
+		if (bundle.Juegos?.Count > 0)
 		{
-			if (bundle.Juegos.Count > 0)
+			foreach (var juego in bundle.Juegos)
 			{
-				foreach (var juego in bundle.Juegos)
+				if (juego != null)
 				{
-					if (juego != null)
+					if (string.IsNullOrEmpty(juego.Nombre) == false)
 					{
-						if (string.IsNullOrEmpty(juego.Nombre) == false)
-						{
-							string[] keywordsEnBrutoJuego = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
-							List<string> keywordsListaJuego = new List<string>();
-							keywordsListaJuego.AddRange(keywordsEnBrutoJuego);
+						string[] keywordsEnBrutoJuego = Herramientas.Buscador.LimpiarNombre(juego.Nombre, false).Split(' ');
+						List<string> keywordsListaJuego = new List<string>();
+						keywordsListaJuego.AddRange(keywordsEnBrutoJuego);
 
-							foreach (string keyword in keywordsListaJuego)
+						foreach (string keyword in keywordsListaJuego)
+						{
+							if (keywords.Contains(keyword) == false && keyword.Length > 3)
 							{
-								if (keywords.Contains(keyword) == false && keyword.Length > 3)
-								{
-									keywords = keywords + ", " + keyword;
-								}
+								keywords = keywords + ", " + keyword;
 							}
 						}
 					}
 				}
 			}
 		}
-		
-		<HeadContent>
-            <PageTitle>@titulo</PageTitle>
 
-			<meta name="og:title" Content="@titulo" />
-			<meta name="description" content="@descripcion" />
-			<meta name="og:description" content="@descripcion" />
-			<meta name="og:url" content="@enlace" />
-			<meta name="og:image" content="@imagen" />
-			<meta name="og:site_name" content="pepeizq's deals" />
-			<meta name="og:type" content="website" />
-			<meta name="robots" content="index, follow" />
-			<meta name="keywords" content="@keywords" />
+		string nombreJson = bundle.NombreBundle.Replace(Strings.ChrW(34).ToString(), null) + " " + bundle.NombreTienda.Replace(Strings.ChrW(34).ToString(), null);
+		string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
+		string fechaJson = bundle.FechaEmpieza.ToString("yyyy-MM-dd");
+		string estadoJson = "https://schema.org/InStock";
 
-			@{
-				#nullable disable
+		if (DateTime.Now > bundle.FechaTermina)
+		{
+			estadoJson = "https://schema.org/Discontinued";
+		}
 
-				string nombreJson = bundle.NombreBundle.Replace(Strings.ChrW(34).ToString(), null) + " " + bundle.NombreTienda.Replace(Strings.ChrW(34).ToString(), null);
-				string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
-				string fechaJson = bundle.FechaEmpieza.ToString("yyyy-MM-dd");
-				string estadoJson = "https://schema.org/InStock"; 
+		bundle?.Tiers?.Sort(delegate (Bundles2.BundleTier t1, Bundles2.BundleTier t2)
+		{
+			return t1.Posicion.CompareTo(t2.Posicion);
+		});
 
-				if (DateTime.Now > bundle.FechaTermina)
+		string precioBajoJson = bundle?.Tiers?.First()?.Precio?.ToString();
+		string precioAltoJson = bundle.Tiers.Last().Precio.ToString();
+		int cantidadTiersJson = 0;
+
+		if (bundle.Tiers != null)
+		{
+			cantidadTiersJson = bundle.Tiers.Count;
+		}
+
+		decimal reseñasMediaJson = 1;
+		int reseñasCantidadJson = 10;
+
+		if (bundle.Juegos?.Count > 0)
+		{
+			foreach (var juego in bundle.Juegos)
+			{
+				if (juego.Juego == null)
 				{
-					estadoJson = "https://schema.org/Discontinued";
+					juego.Juego = BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
 				}
 
-				bundle.Tiers.Sort(delegate (Bundles2.BundleTier t1, Bundles2.BundleTier t2)
+				if (juego.Juego != null)
 				{
-					return t1.Posicion.CompareTo(t2.Posicion);
-				});
+					reseñasMediaJson = (reseñasMediaJson + decimal.Parse(juego.Juego.Analisis.Porcentaje) / 20) / 2;
 
-				string precioBajoJson = bundle.Tiers.First().Precio.ToString();
-				string precioAltoJson = bundle.Tiers.Last().Precio.ToString();
-				int cantidadTiersJson = 0;
-
-				if (bundle.Tiers != null)
-				{
-					cantidadTiersJson = bundle.Tiers.Count;
-				}
-
-				decimal reseñasMediaJson = 1;
-				int reseñasCantidadJson = 10;
-
-				if (bundle.Juegos?.Count > 0)
-				{
-					foreach (var juego in bundle.Juegos)
+					if (reseñasMediaJson < 1)
 					{
-						if (juego.Juego == null)
-						{
-							juego.Juego = BaseDatos.Juegos.Buscar.UnJuego(juego.JuegoId);
-						}
+						reseñasMediaJson = 1;
+					}
 
-						if (juego.Juego != null)
-						{
-							reseñasMediaJson = (reseñasMediaJson + decimal.Parse(juego.Juego.Analisis.Porcentaje) / 20) / 2;
+					reseñasCantidadJson = reseñasCantidadJson + int.Parse(juego.Juego.Analisis.Cantidad.Replace(",", null));
 
-							if (reseñasMediaJson < 1)
-							{
-								reseñasMediaJson = 1;
-							}
-
-							reseñasCantidadJson = reseñasCantidadJson + int.Parse(juego.Juego.Analisis.Cantidad.Replace(",", null));
-
-							if (reseñasCantidadJson < 10)
-							{
-								reseñasCantidadJson = 10;
-							}
-						}
+					if (reseñasCantidadJson < 10)
+					{
+						reseñasCantidadJson = 10;
 					}
 				}
 			}
+		}
 
-			<script type="application/ld+json">
-			{
-				"@@context": "https://schema.org/",
-				"@@type": "Product",
-				"name": "@nombreJson",
-				"description": "@descripcionJson",
-				"url": "@enlace",
-				"sku": "@bundle.Id.ToString()",
-				"image": {
-					"@@type": "ImageObject",
-					"url": "@imagen",
-					"contentUrl": "@imagen",
-					"name": "@nombreJson",
-					"caption": "@nombreJson"
-				},
-				"productionDate": "@fechaJson",
-				"offers": {
-					"@@type": "AggregateOffer",
-					"availability": "@estadoJson",
-					"priceCurrency": "EUR",
-					"price": @precioBajoJson,
-					"url": "@enlace",
-					"offerCount": @cantidadTiersJson,
-					"lowPrice": @precioBajoJson,
-					"highPrice": @precioAltoJson
-				},
-				"aggregateRating": {
-					"@@type": "AggregateRating",
-					"ratingValue": @reseñasMediaJson.ToString(),
-					"ratingCount": @reseñasCantidadJson
-				}
+		string contenidoJson = @"{
+			""@context"": ""https://schema.org/"",
+			""@type"": ""Product"",
+			""name"": ""@nombreJson"",
+			""description"": ""@descripcionJson"",
+			""url"": ""@enlace"",
+			""sku"": ""@bundleId"",
+			""image"": {
+				""@type"": ""ImageObject"",
+				""url"": ""@imagen"",
+				""contentUrl"": ""@imagen"",
+				""name"": ""@nombreJson"",
+				""caption"": ""@nombreJson""
+			},
+			""productionDate"": ""@fechaJson"",
+			""offers"": {
+				""@type"": ""AggregateOffer"",
+				""availability"": ""@estadoJson"",
+				""priceCurrency"": ""EUR"",
+				""price"": @precioBajoJson,
+				""url"": ""@enlace"",
+				""offerCount"": @cantidadTiersJson,
+				""lowPrice"": @precioBajoJson,
+				""highPrice"": @precioAltoJson
+			},
+			""aggregateRating"": {
+				""@type"": ""AggregateRating"",
+				""ratingValue"": @reseñasMediaJson,
+				""ratingCount"": @reseñasCantidadJson
 			}
-			</script>
+		";
 
-			<link rel="canonical" href="@enlace" />
-			<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
-		</HeadContent>
+		contenidoJson = contenidoJson.Replace("@nombreJson", nombreJson);
+		contenidoJson = contenidoJson.Replace("@descripcionJson", descripcionJson);
+		contenidoJson = contenidoJson.Replace("@enlace", enlace);
+		contenidoJson = contenidoJson.Replace("@bundleId", bundle.Id.ToString());
+		contenidoJson = contenidoJson.Replace("@imagen", imagen);
+		contenidoJson = contenidoJson.Replace("@fechaJson", fechaJson);
+		contenidoJson = contenidoJson.Replace("@estadoJson", estadoJson);
+		contenidoJson = contenidoJson.Replace("@precioBajoJson", precioBajoJson);
+		contenidoJson = contenidoJson.Replace("@precioAltoJson", precioAltoJson);
+		contenidoJson = contenidoJson.Replace("@cantidadTiersJson", cantidadTiersJson.ToString());
+		contenidoJson = contenidoJson.Replace("@reseñasMediaJson", reseñasMediaJson.ToString());
+		contenidoJson = contenidoJson.Replace("@reseñasCantidadJson", reseñasCantidadJson.ToString());
+
+		<Titulo tipo="@Titulo.Tipo.Bundle" idioma="@idioma" tituloBundle="@titulo" descripcionBundle="@descripcion" enlaceBundle="@enlace"
+				imagenBundle="@imagen" keywords="@keywords" contenidoJsonBundle="@contenidoJson"/>
 	}
 }
 

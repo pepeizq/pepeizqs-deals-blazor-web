@@ -9,19 +9,11 @@
         </div>
 
         <div>
-            @{
-                string enlaceBots = dealsCloudflare + "ai/bots";
-            }
-
-            <a class="boton-pequeño" href="@enlaceBots" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Bots)</a>
+            <a class="boton-pequeño" href="@dealsCloudflareBots" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Bots)</a>
         </div>
 
         <div>
-            @{
-                string enlaceVisitas = dealsCloudflare + "analytics/web/overview/visits?excludeBots=Yes&time-window=10080";
-            }
-
-            <a class="boton-pequeño" href="@enlaceVisitas" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Visitas)</a>
+            <a class="boton-pequeño" href="@dealsCloudflareVisitas" style="text-decoration: none; text-align: center; padding: 8px 16px;" target="_blank">Cloudflare (Visitas)</a>
         </div>
 
         <div>
@@ -127,7 +119,8 @@
     #nullable disable
 
     private string dealsGoogleSearch = string.Empty;
-    private string dealsCloudflare = string.Empty;
+    private string dealsCloudflareVisitas = string.Empty;
+    private string dealsCloudflareBots = string.Empty;
     private string dealsBing = string.Empty;
 
     private string appsGoogleSearch = string.Empty;
@@ -143,7 +136,8 @@
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
         dealsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterDeals:GoogleSearch");
-        dealsCloudflare = builder.Configuration.GetValue<string>("WebmasterDeals:Cloudflare");
+        dealsCloudflareVisitas = builder.Configuration.GetValue<string>("WebmasterDeals:CloudflareVisitas");
+        dealsCloudflareBots = builder.Configuration.GetValue<string>("WebmasterDeals:CloudflareBots");
         dealsBing = builder.Configuration.GetValue<string>("WebmasterDeals:Bing");
 
         appsGoogleSearch = builder.Configuration.GetValue<string>("WebmasterApps:GoogleSearch");

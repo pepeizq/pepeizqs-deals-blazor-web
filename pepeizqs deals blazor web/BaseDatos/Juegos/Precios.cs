@@ -251,52 +251,49 @@ namespace BaseDatos.Juegos
 
                             if (notificar == true)
                             {
-                                if (usuariosInteresados != null)
-                                {
-                                    if (usuariosInteresados.Count > 0)
-                                    {
-                                        foreach (var usuarioInteresado in usuariosInteresados)
-                                        {
-                                            if (usuarioInteresado.DRM == minimo.DRM)
-                                            {
-                                                if (Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado.UsuarioId, id, usuarioInteresado.DRM, conexion) == false)
-                                                {
-                                                    if (Usuarios.Buscar.UsuarioTieneDeseado(usuarioInteresado.UsuarioId, id.ToString(), usuarioInteresado.DRM, conexion) == true)
-                                                    {
-                                                        string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado.UsuarioId, conexion);
+								if (usuariosInteresados?.Count > 0)
+								{
+									foreach (var usuarioInteresado in usuariosInteresados)
+									{
+										if (usuarioInteresado.DRM == minimo.DRM)
+										{
+											if (Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado.UsuarioId, id, usuarioInteresado.DRM, conexion) == false)
+											{
+												if (Usuarios.Buscar.UsuarioTieneDeseado(usuarioInteresado.UsuarioId, id.ToString(), usuarioInteresado.DRM, conexion) == true)
+												{
+													string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado.UsuarioId, conexion);
 
-                                                        if (string.IsNullOrEmpty(correo) == false)
-                                                        {
-                                                            try
-                                                            {
-                                                                Herramientas.Correos.EnviarNuevoMinimo(usuarioInteresado.UsuarioId, id, minimo, correo);
-                                                            }
-                                                            catch (Exception ex)
-                                                            {
-                                                                BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Minimo", ex);
-                                                            }
-                                                        }
+													if (string.IsNullOrEmpty(correo) == false)
+													{
+														try
+														{
+															Herramientas.Correos.EnviarNuevoMinimo(usuarioInteresado.UsuarioId, id, minimo, correo);
+														}
+														catch (Exception ex)
+														{
+															BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Minimo", ex);
+														}
+													}
 
-                                                        bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado.UsuarioId);
+													bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado.UsuarioId);
 
-                                                        if (enviarPush == true)
-                                                        {
-                                                            try
-                                                            {
-                                                                Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado.UsuarioId, id, minimo, usuarioInteresado.DRM);
-                                                            }
-                                                            catch (Exception ex)
-                                                            {
-                                                                BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+													if (enviarPush == true)
+													{
+														try
+														{
+															Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado.UsuarioId, id, minimo, usuarioInteresado.DRM);
+														}
+														catch (Exception ex)
+														{
+															BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
                         }
                         else
                         {

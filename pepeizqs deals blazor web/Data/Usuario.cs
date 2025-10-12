@@ -320,4 +320,8 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "nvarchar(1024)")]
 	public string? ProfileNickname2 { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "nvarchar(512)")]
+	public string? WishlistData { get; set; }
 }

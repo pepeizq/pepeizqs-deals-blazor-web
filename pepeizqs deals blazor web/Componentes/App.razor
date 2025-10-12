@@ -37,7 +37,7 @@
     <header style="background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px; display: flex; width: 100%; border-bottom: 1px solid var(--fondoBotonPequeño);">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" style="padding: 0px; width: 100%;">
             <div class="cabecera-poner">
-                <Cabecera idioma="@idioma" usuarioId="@usuarioId" userAgent="@userAgent"/>
+                <Cabecera idioma="@idioma" usuarioId="@usuarioId" userAgent="@userAgent" usuarioAdmin="@usuarioAdmin"/>
             </div>
         </nav>
     </header>
@@ -115,19 +115,6 @@
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
     </script>
-
-@*     <script>
-        window.clipboardCopy = {
-            copyText: function(text) {
-                navigator.clipboard.writeText(text).then(function () {
-                    alert("Copied to clipboard");
-                })
-                .catch(function (error) {
-                    alert(error);
-                });
-            }
-        };
-    </script> *@
 
     @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false)
     {

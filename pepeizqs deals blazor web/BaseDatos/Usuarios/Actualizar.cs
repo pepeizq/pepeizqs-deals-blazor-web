@@ -267,4 +267,11 @@ namespace BaseDatos.Usuarios
         public string JuegoId;
         public string Codigo;
     }
+
+	public class DeseadosDatos
+	{
+		public int Cantidad { get; set; }
+		public DateTime? UltimaVisita { get; set; }
+		public DateTime? UltimoJuego { get; set; }
+	}
 }

@@ -4,6 +4,7 @@ using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using pepeizqs_deals_web.Data;
+using System.Text.Json;
 
 namespace BaseDatos.Usuarios
 {
@@ -245,7 +246,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT SteamWishlist, Wishlist, GogWishlist FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT SteamWishlist, Wishlist, GogWishlist, WishlistData FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -268,6 +269,11 @@ namespace BaseDatos.Usuarios
 							if (lector.IsDBNull(2) == false)
 							{
 								deseados.GogWishlist = lector.GetString(2);
+							}
+
+							if (lector.IsDBNull(3) == false)
+							{
+								deseados.WishlistData = lector.GetString(3);
 							}
 						}
 					}
@@ -416,7 +422,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT WishlistSort, WishlistOption3, WishlistOption4, WishlistPosition FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT WishlistSort, WishlistOption3, WishlistOption4, WishlistPosition, WishlistData FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -444,6 +450,11 @@ namespace BaseDatos.Usuarios
 							if (lector.IsDBNull(3) == false)
 							{
 								opciones.WishlistPosition = lector.GetInt32(3);
+							}
+
+							if (lector.IsDBNull(4) == false)
+							{
+								opciones.WishlistData = lector.GetString(4);
 							}
 						}
 					}
@@ -1573,6 +1584,45 @@ namespace BaseDatos.Usuarios
 			}
 
 			return cuantos;
+		}
+
+		public static string Opcion(string usuarioId, string valor, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false && string.IsNullOrEmpty(valor) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT @Valor FROM AspNetUsers WHERE Id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+					comando.Parameters.AddWithValue("@Valor", valor);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetString(0);
+							}
+						}
+					}
+				}
+			}
+
+			return null;
 		}
 	}
 }

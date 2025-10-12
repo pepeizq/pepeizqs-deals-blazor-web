@@ -163,6 +163,7 @@ builder.Services.AddSingleton<Tareas.Tiendas.Playsum>();
 //builder.Services.AddSingleton<Tareas.Tiendas.Allyouplay>();
 builder.Services.AddSingleton<Tareas.Tiendas.PlanetPlay>();
 builder.Services.AddSingleton<Tareas.Tiendas.Nexus>();
+builder.Services.AddSingleton<Tareas.Tiendas.Muvegames>();
 
 builder.Services.AddSingleton<Tareas.Suscripciones.XboxGamePass>();
 builder.Services.AddSingleton<Tareas.Suscripciones.UbisoftPlusClassics>();
@@ -212,6 +213,7 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas
 //builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Allyouplay>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.PlanetPlay>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Nexus>());
+builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Tiendas.Muvegames>());
 
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.XboxGamePass>());
 builder.Services.AddHostedService(provider => provider.GetRequiredService<Tareas.Suscripciones.UbisoftPlusClassics>());

@@ -1,7 +1,9 @@
 ﻿#nullable disable
 
+using BaseDatos.Usuarios;
 using Juegos;
 using Microsoft.Data.SqlClient;
+using System.Text.Json;
 
 namespace BaseDatos.Juegos
 {
@@ -261,7 +263,25 @@ namespace BaseDatos.Juegos
 											{
 												if (Usuarios.Buscar.UsuarioTieneDeseado(usuarioInteresado.UsuarioId, id.ToString(), usuarioInteresado.DRM, conexion) == true)
 												{
-													string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado.UsuarioId, conexion);
+                                                    DeseadosDatos datosDeseados = null;
+
+                                                    string datosDeseadosTexto = BaseDatos.Usuarios.Buscar.Opcion(usuarioInteresado.UsuarioId, "WishlistData");
+
+                                                    if (string.IsNullOrEmpty(datosDeseadosTexto) == true)
+                                                    {
+                                                        datosDeseados = new DeseadosDatos();
+                                                    }
+                                                    else
+                                                    {
+                                                        datosDeseados = JsonSerializer.Deserialize<DeseadosDatos>(datosDeseadosTexto);
+
+                                                        datosDeseados.Cantidad += 1;
+                                                        datosDeseados.UltimoJuego = DateTime.Now;
+                                                    }
+
+                                                    BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado.UsuarioId);
+
+                                                    string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado.UsuarioId, conexion);
 
 													if (string.IsNullOrEmpty(correo) == false)
 													{

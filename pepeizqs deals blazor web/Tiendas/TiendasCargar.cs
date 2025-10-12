@@ -37,7 +37,8 @@ namespace Tiendas2
 				APIs.PlanetPlay.Tienda.Generar(),
 				APIs.EA.Tienda.Generar(),
 				APIs.Nexus.Tienda.Generar(),
-				APIs._2Game.Tienda.Generar()
+				APIs._2Game.Tienda.Generar(),
+				APIs.Muvegames.Tienda.Generar()
 			};
 
 			return tiendas;
@@ -153,6 +154,10 @@ namespace Tiendas2
 				{
 					await APIs.Nexus.Tienda.BuscarOfertas(conexion, decompilador);
 				}
+				else if (id == APIs.Muvegames.Tienda.Generar().Id)
+				{
+					await APIs.Muvegames.Tienda.BuscarOfertas(conexion);
+				}
 			}
         }
 
@@ -261,6 +266,10 @@ namespace Tiendas2
 			else if (id == APIs.Nexus.Tienda.Generar().Id)
 			{
 				await APIs.Nexus.Tienda.BuscarOfertas(conexion, decompilador);
+			}
+			else if (id == APIs.Muvegames.Tienda.Generar().Id)
+			{
+				await APIs.Muvegames.Tienda.BuscarOfertas(conexion);
 			}
 		}
 

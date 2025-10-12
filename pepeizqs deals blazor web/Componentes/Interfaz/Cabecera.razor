@@ -1,10 +1,12 @@
 ﻿@rendermode InteractiveServer
 
+@using BaseDatos.Usuarios
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
+@using System.Text.Json
 @using pepeizqs_deals_blazor_web.Componentes.Account
 @using pepeizqs_deals_web.Data
 
@@ -113,45 +115,11 @@
         <Authorized>
             @if (string.IsNullOrEmpty(usuarioId) == false)
             {
-                if (BaseDatos.Usuarios.Buscar.RolDios(usuarioId) == true)
+                if (usuarioAdmin == true)
                 {
-                    if (conexion == null)
-                    {
-                        conexion = Herramientas.BaseDatos.Conectar();
-                    }
-                    else
-                    {
-                        if (conexion.State != System.Data.ConnectionState.Open)
-                        {
-                            conexion = Herramientas.BaseDatos.Conectar();
-                        }
-                    }
-
-                    bool añadirCorreo = false;
-
-                    using (conexion)
-                    {
-                        int nuevosCorreosDeals = BaseDatos.Admin.Buscar.Dato("correos", conexion);
-                        int nuevosCorreosApps = BaseDatos.Admin.Buscar.Dato("correos2", conexion);
-
-                        if (nuevosCorreosDeals > 0 || nuevosCorreosApps > 0)
-                        {
-                            añadirCorreo = true;
-                        }
-                    }
-
                     <a class="boton-superior" href="/admin" style="font-size: 15px;">
                         <div style="@GenerarEstilo("/admin") display: flex; align-items: center; gap: 15px;">
-                            <div>
-                                Admin
-                            </div>
-
-                            @if (añadirCorreo == true)
-                            {
-                                <div style="width: 20px; height: 20px;">
-                                    <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z" /></svg>
-                                </div>
-                            }
+                            Admin
                         </div>
                     </a>
                 }
@@ -199,9 +167,24 @@
         @if (string.IsNullOrEmpty(usuarioId) == false)
         {
             <a class="boton-superior" href="/wishlist" style="font-size: 15px;">
-                <div style="@GenerarEstilo("/wishlist")">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
-                </div>
+                @if (cantidadDeseados > 0)
+                {
+                    <div style="@GenerarEstilo("/wishlist") display: flex; align-items: center; gap: 10px; background-color: var(--fondoAlerta); padding: 5px 15px;">
+                        <div>
+                            (@cantidadDeseados)
+                        </div>
+
+                        <div>
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="@GenerarEstilo("/wishlist")">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                    </div>
+                }
             </a>
         }
 
@@ -488,6 +471,9 @@
     [Parameter]
     public string userAgent { get; set; }
 
+    [Parameter]
+    public bool usuarioAdmin { get; set; }
+
     [SupplyParameterFromQuery]
     private string Search { get; set; }
 
@@ -498,6 +484,8 @@
 
     private SqlConnection conexion = new SqlConnection();
 
+    private int cantidadDeseados = 0;
+
     protected override void OnInitialized()
     {
         if (string.IsNullOrEmpty(usuarioId) == false)
@@ -506,6 +494,21 @@
             deseadosUsuario ??= BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
             usuarioPatreon = Herramientas.Patreon.VerificarActivo(BaseDatos.Usuarios.Buscar.FechaPatreon(usuarioId));
             opcionesCabecera ??= BaseDatos.Usuarios.Buscar.OpcionesCabecera(usuarioId);
+
+            if (string.IsNullOrEmpty(deseadosUsuario?.WishlistData) == false)
+            {
+                DeseadosDatos datos = JsonSerializer.Deserialize<DeseadosDatos>(deseadosUsuario?.WishlistData);
+
+                if (datos != null)
+                {
+                    if (datos.UltimaVisita != null && datos.UltimoJuego != null)
+                    {
+                        BaseDatos.Errores.Insertar.Mensaje("Deseados Fecha", datos.UltimaVisita?.ToShortDateString() + " " + datos.UltimoJuego?.ToShortDateString() + " " + datos.UltimaVisita?.Subtract((DateTime)datos.UltimoJuego).TotalDays.ToString());
+                    }
+
+                    cantidadDeseados = datos.Cantidad;
+                }
+            }
         }
     }
 

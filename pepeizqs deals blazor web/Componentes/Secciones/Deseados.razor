@@ -3,6 +3,7 @@
 @attribute [StreamRendering]
 
 @using APIs.Steam
+@using BaseDatos.Usuarios
 @using Juegos
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
@@ -353,31 +354,36 @@
 												<img src="@imagen" style="height: 100%; width: 100%;" />
 											</div>
 
-											<div style="width: 100%; padding: 5px 20px;">
-												<div style="margin-top: 5px;">@juego.Nombre</div>
+											<div style="width: 100%; padding: 0px 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+												<div>@juego.Nombre</div>
 
-												<div style="display: flex; align-items: center; margin-top: 5px;">
-													<div style="width: 20px; height: 20px;">
+												<div style="display: flex; align-items: center; gap: 10px;">
+													<div style="width: 20px; height: 20px; display: flex;">
 														<img src="@Juegos.JuegoDRM2.SacarImagen(juego.DRM)" style="width: 100%; height: 100%;" />
 													</div>
 
-													@{
-														if (juego.Precio.Precio > 0)
+													@if (juego.Precio.Precio > 0)
+													{
+														List<Tiendas2.Tienda> tiendas = TiendasCargar.GenerarListado();
+
+														foreach (var tienda in tiendas)
 														{
-															List<Tiendas2.Tienda> tiendas = TiendasCargar.GenerarListado();
-
-															foreach (var tienda in tiendas)
+															if (tienda.Id == juego.Precio.Tienda)
 															{
-																if (tienda.Id == juego.Precio.Tienda)
-																{
-																	<div style="width: 20px; height: 20px; margin-left: 10px;">
-																		<img src="@tienda.ImagenIcono" style="width: 100%; height: 100%;" />
-																	</div>
+																<div style="width: 20px; height: 20px; display: flex;">
+																	<img src="@tienda.ImagenIcono" style="width: 100%; height: 100%;" />
+																</div>
 
-																	break;
-																}
+																break;
 															}
 														}
+													}
+
+													@if (ultimaVisita < DateTime.Now && ultimaVisita > juego.Precio.FechaDetectado && juego.Historico == true)
+													{
+														<div style="text-align: center; font-size: 14px; padding: 5px 15px; background-color: var(--fondoAlerta);">
+															@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Wishlist")
+														</div>
 													}
 												</div>
 											</div>
@@ -625,6 +631,7 @@
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
 	[PersistentState] public Usuario opcionesDeseados { get; set; }
+	[PersistentState] public DateTime ultimaVisita { get; set; }
 
 	[Parameter]
 	public string perfilUsuarioId { get; set; }
@@ -675,6 +682,28 @@
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
 				opcionesDeseados ??= BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
+
+				if (string.IsNullOrEmpty(opcionesDeseados?.WishlistData) == false)
+				{
+					DeseadosDatos datos = JsonSerializer.Deserialize<DeseadosDatos>(opcionesDeseados?.WishlistData);
+
+					if (datos != null)
+					{
+						if (datos.UltimaVisita != null)
+						{
+							ultimaVisita = (DateTime)datos.UltimaVisita;
+						}
+						else
+						{
+							ultimaVisita = DateTime.Now;
+						}
+
+						datos.Cantidad = 0;
+						datos.UltimaVisita = DateTime.Now;
+
+						BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datos), usuarioId);
+					}
+				}
 
 				if (opcionesDeseados.WishlistPosition != null)
 				{

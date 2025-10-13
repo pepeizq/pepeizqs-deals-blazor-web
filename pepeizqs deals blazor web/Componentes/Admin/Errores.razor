@@ -2,6 +2,18 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Data.SqlClient
 
+@inject IJSRuntime JavaScript
+
+<script>
+    function moverScroll(id) {
+        const yOffset = -185;
+        const element = document.getElementById(id);
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+</script>
+
 <div class="caja-diseño" style="padding: 30px;">
     <button @onclick="@(e => LimpiarErrores(e))" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px;">Limpiar Todo</button>
 

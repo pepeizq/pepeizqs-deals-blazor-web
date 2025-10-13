@@ -47,6 +47,14 @@
 	}
 </style>
 
+<style>
+	.minimo-minicaja {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 80%, var(--fondoSubsubcabecera) 20%);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 20px;
+	}
+</style>
+
 @if (cargado == false)
 {
 	<div style="min-height: 200px; display: flex; align-items: center; justify-content: space-around;">
@@ -452,7 +460,7 @@ else
 
 				@if (enseñarOcultar == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
+					<div class="minimo-minicaja" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%;">
 						<div style="display: flex; align-items: center; gap: 20px;">
 							<div class="checkbox-caja">
 								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
@@ -477,7 +485,7 @@ else
 
 				@if (enseñarDescuentoMinimo == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: flex; align-items: center; gap: 30px;">
 							<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
 
@@ -488,7 +496,7 @@ else
 
 				@if (enseñarPrecioMaximo == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: flex; align-items: center; gap: 30px;">
 							<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
 
@@ -499,7 +507,7 @@ else
 
 				@if (enseñarDRMs == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
 							@foreach (var drm in drmsListado)
 							{
@@ -540,7 +548,7 @@ else
 
 				@if (enseñarTiendas == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
 							@foreach (var tienda in tiendas)
 							{
@@ -572,7 +580,7 @@ else
 
 				@if (enseñarMinimoReseñas == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: flex; align-items: center; gap: 30px;">
 							<input type="range" min="0" max="10000" value="@minimoReseñas" step="1" @onchange="@(e => CambiarMinimoReseñas(e))" class="deslizador">
 
@@ -583,7 +591,7 @@ else
 
 				@if (enseñarCategorias == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
 							@foreach (var categoria in categorias)
 							{
@@ -622,7 +630,7 @@ else
 
 				@if (enseñarSteamDeck == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
 							@foreach (var steamdeck in deckListado)
 							{
@@ -661,7 +669,7 @@ else
 
 				@if (enseñarLanzamiento == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
 							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")">
 								<div class="checkbox-caja">
@@ -708,7 +716,7 @@ else
 
 				@if (enseñarInteligenciaArtificial == true)
 				{
-					<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
 							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")">
 								<div class="checkbox-caja">

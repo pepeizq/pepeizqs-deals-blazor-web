@@ -47,6 +47,12 @@
 			display: none;
 		}
 	}
+
+	.deseado-minicaja {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 80%, var(--fondoSubsubcabecera) 20%);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 20px;
+	}
 </style>
 
 <style>
@@ -274,7 +280,7 @@
 
 								@if (enseñarDescuentoMinimo == true)
 								{
-									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+									<div class="deseado-minicaja" style="margin-top: 20px;">
 										<div style="display: flex; align-items: center; gap: 30px;">
 											<input type="range" min="1" max="91" value="@minimoDescuento" step="5" @onchange="@(e => CambiarMinimoDescuento(e))" class="deslizador">
 
@@ -285,7 +291,7 @@
 
 								@if (enseñarPrecioMaximo == true)
 								{
-									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+									<div class="deseado-minicaja" style="margin-top: 20px;">
 										<div style="display: flex; align-items: center; gap: 30px;">
 											<input type="range" min="5" max="90" value="@maximoPrecio" step="1" @onchange="@(e => CambiarMaximoPrecio(e))" class="deslizador">
 
@@ -296,7 +302,7 @@
 
 								@if (enseñarExportar == true)
 								{
-									<div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); border-radius: 5px; padding: 20px; margin-top: 20px;">
+									<div class="deseado-minicaja" style="margin-top: 20px;">
 										<div style="font-size: 15px;">
 											<div style="margin-bottom: 15px;">
 												@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Wishlist")
@@ -379,11 +385,14 @@
 														}
 													}
 
-													@if (ultimaVisita < DateTime.Now && ultimaVisita > juego.Precio.FechaDetectado && juego.Historico == true)
+													@if (string.IsNullOrEmpty(perfilUsuarioId) == true)
 													{
-														<div style="text-align: center; font-size: 14px; padding: 5px 15px; background-color: var(--fondoAlerta);">
-															@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Wishlist")
-														</div>
+														if (ultimaVisita < DateTime.Now && ultimaVisita > juego.Precio.FechaDetectado && juego.Historico == true)
+														{
+															<div style="text-align: center; font-size: 14px; padding: 5px 15px; background-color: var(--fondoAlerta);">
+																@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Wishlist")
+															</div>
+														}
 													}
 												</div>
 											</div>
@@ -445,8 +454,10 @@
 
 										if (bundle != null)
 										{
+											string enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon, false);
+
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon)" target="_blank">
+												<button @onclick="(e => AbrirOferta(e, enlaceBundle))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{
@@ -522,7 +533,7 @@
 															</div>
 														</div>
 													</div>
-												</a>
+												</button>
 
 												<AuthorizeView>
 													<Authorized>
@@ -557,8 +568,10 @@
 
 										if (suscripcion != null)
 										{
+											string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon, false);
+
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<a class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;" href="@Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon)" target="_blank">
+												<button @onclick="(e => AbrirOferta(e, enlaceSuscripcion))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{
@@ -594,7 +607,7 @@
 															</div>
 														</div>
 													</div>
-												</a>
+												</button>
 
 												<AuthorizeView>
 													<Authorized>
@@ -683,25 +696,28 @@
 			{
 				opcionesDeseados ??= BaseDatos.Usuarios.Buscar.OpcionesDeseados(usuarioId);
 
-				if (string.IsNullOrEmpty(opcionesDeseados?.WishlistData) == false)
+				if (string.IsNullOrEmpty(perfilUsuarioId) == true)
 				{
-					DeseadosDatos datos = JsonSerializer.Deserialize<DeseadosDatos>(opcionesDeseados?.WishlistData);
-
-					if (datos != null)
+					if (string.IsNullOrEmpty(opcionesDeseados?.WishlistData) == false)
 					{
-						if (datos.UltimaVisita != null)
-						{
-							ultimaVisita = (DateTime)datos.UltimaVisita;
-						}
-						else
-						{
-							ultimaVisita = DateTime.Now;
-						}
+						DeseadosDatos datos = JsonSerializer.Deserialize<DeseadosDatos>(opcionesDeseados?.WishlistData);
 
-						datos.Cantidad = 0;
-						datos.UltimaVisita = DateTime.Now;
+						if (datos != null)
+						{
+							if (datos.UltimaVisita != null)
+							{
+								ultimaVisita = (DateTime)datos.UltimaVisita;
+							}
+							else
+							{
+								ultimaVisita = DateTime.Now;
+							}
 
-						BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datos), usuarioId);
+							datos.Cantidad = 0;
+							datos.UltimaVisita = DateTime.Now;
+
+							BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datos), usuarioId);
+						}
 					}
 				}
 
@@ -1322,35 +1338,32 @@
 
 	private async Task DescargarJson()
 	{
-		if (deseadosGestor != null)
+		if (deseadosGestor?.Count > 0)
 		{
-			if (deseadosGestor.Count > 0)
+			List<JuegoDeseadoExportar> deseadosExportar = new List<JuegoDeseadoExportar>();
+
+			foreach (var deseadoGestor in deseadosGestor)
 			{
-				List<JuegoDeseadoExportar> deseadosExportar = new List<JuegoDeseadoExportar>();
+				JuegoDeseadoExportar nuevoDeseadoExportar = new JuegoDeseadoExportar();
+				nuevoDeseadoExportar.Nombre = deseadoGestor.Nombre;
+				nuevoDeseadoExportar.Id = deseadoGestor.Id;
+				nuevoDeseadoExportar.IdSteam = deseadoGestor.IdSteam;
+				nuevoDeseadoExportar.IdGog = deseadoGestor.IdGog;
+				nuevoDeseadoExportar.SlugEpic = deseadoGestor.SlugEpic;
+				nuevoDeseadoExportar.DRM = deseadoGestor.DRM;
 
-				foreach (var deseadoGestor in deseadosGestor)
-				{
-					JuegoDeseadoExportar nuevoDeseadoExportar = new JuegoDeseadoExportar();
-					nuevoDeseadoExportar.Nombre = deseadoGestor.Nombre;
-					nuevoDeseadoExportar.Id = deseadoGestor.Id;
-					nuevoDeseadoExportar.IdSteam = deseadoGestor.IdSteam;
-					nuevoDeseadoExportar.IdGog = deseadoGestor.IdGog;
-					nuevoDeseadoExportar.SlugEpic = deseadoGestor.SlugEpic;
-					nuevoDeseadoExportar.DRM = deseadoGestor.DRM;
-
-					deseadosExportar.Add(nuevoDeseadoExportar);
-				}
-
-				string contenido = JsonSerializer.Serialize(deseadosExportar);
-
-				MemoryStream ficheroStream = new MemoryStream(Encoding.UTF8.GetBytes(contenido));
-
-				string ficheroNombre = "wishlist.json";
-
-				using var streamRef = new DotNetStreamReference(stream: ficheroStream);
-
-				await JavaScript.InvokeVoidAsync("downloadFileFromStream", ficheroNombre, streamRef);
+				deseadosExportar.Add(nuevoDeseadoExportar);
 			}
+
+			string contenido = JsonSerializer.Serialize(deseadosExportar);
+
+			MemoryStream ficheroStream = new MemoryStream(Encoding.UTF8.GetBytes(contenido));
+
+			string ficheroNombre = "wishlist.json";
+
+			using var streamRef = new DotNetStreamReference(stream: ficheroStream);
+
+			await JavaScript.InvokeVoidAsync("downloadFileFromStream", ficheroNombre, streamRef);
 		}
 	}
 

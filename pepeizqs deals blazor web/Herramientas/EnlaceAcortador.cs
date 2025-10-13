@@ -222,7 +222,7 @@ namespace Herramientas
 			}
 		}
 
-		public static string Generar(string enlace, SuscripcionTipo tipo, bool usuarioPatreon = false)
+		public static string Generar(string enlace, SuscripcionTipo tipo, bool usuarioPatreon = false, bool acortar = true)
 		{
 			bool usarReferido = true;
 
@@ -241,7 +241,14 @@ namespace Herramientas
 
 			//----------------------------------------
 
-			return dominio + "/link/" + AcortarEnlace(enlace) + "/";
+			if (acortar == true)
+			{
+				return dominio + "/link/" + AcortarEnlace(enlace) + "/";
+			}
+			else
+			{
+				return enlace;
+			}
 		}
 	}
 }

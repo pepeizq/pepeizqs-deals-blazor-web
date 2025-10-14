@@ -125,7 +125,7 @@ namespace APIs.Fanatical
 										Bundles2.BundleTier tier1 = new Bundles2.BundleTier
 										{
 											Posicion = 1,
-											Precio = juego.PrecioRebajado.EUR
+											Precio = juego.PrecioRebajado.EUR?.ToString()
 										};
 
 										bundle.Tiers.Add(tier1);
@@ -148,45 +148,48 @@ namespace APIs.Fanatical
 		{
 			if (tier != null)
 			{
-				if (tier.Juegos != null)
+				if (tier.Juegos?.Count > 0)
 				{
-					if (tier.Juegos.Count > 0)
+					foreach (var juegob in tier.Juegos)
 					{
-						foreach (var juegob in tier.Juegos)
+						if (juegob.SteamId != null)
 						{
-							Juegos.Juego juegoc = BaseDatos.Juegos.Buscar.UnJuego(null, juegob.SteamId);
-
-							if (juegoc != null)
+							if (juegob.SteamId > 0)
 							{
-								if (bundle.Juegos == null)
+								Juegos.Juego juegoc = BaseDatos.Juegos.Buscar.UnJuego(null, juegob.SteamId?.ToString());
+
+								if (juegoc != null)
 								{
-									bundle.Juegos = new List<Bundles2.BundleJuego>();
-								}
-
-								Bundles2.BundleJuego juegod = new Bundles2.BundleJuego();
-
-								juegod.JuegoId = juegoc.Id.ToString();
-								juegod.Nombre = juegoc.Nombre;
-								juegod.Imagen = juegoc.Imagenes.Capsule_231x87;
-								juegod.DRM = Juegos.JuegoDRM.Steam;
-								juegod.Tier = bundle.Tiers[0];
-
-								bool añadir = true;
-
-								if (bundle.Juegos.Count > 0)
-								{
-									foreach (var juegoe in bundle.Juegos)
+									if (bundle.Juegos == null)
 									{
-										if (juegoe.JuegoId == juegod.JuegoId)
+										bundle.Juegos = new List<Bundles2.BundleJuego>();
+									}
+
+									Bundles2.BundleJuego juegod = new Bundles2.BundleJuego();
+
+									juegod.JuegoId = juegoc.Id.ToString();
+									juegod.Nombre = juegoc.Nombre;
+									juegod.Imagen = juegoc.Imagenes.Capsule_231x87;
+									juegod.DRM = Juegos.JuegoDRM.Steam;
+									juegod.Tier = bundle.Tiers[0];
+
+									bool añadir = true;
+
+									if (bundle.Juegos.Count > 0)
+									{
+										foreach (var juegoe in bundle.Juegos)
 										{
-											añadir = false;
+											if (juegoe.JuegoId == juegod.JuegoId)
+											{
+												añadir = false;
+											}
 										}
 									}
-								}
 
-								if (añadir == true)
-								{
-									bundle.Juegos.Add(juegod);
+									if (añadir == true)
+									{
+										bundle.Juegos.Add(juegod);
+									}
 								}
 							}
 						}

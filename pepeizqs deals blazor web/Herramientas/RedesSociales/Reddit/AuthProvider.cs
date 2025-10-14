@@ -1,7 +1,8 @@
-﻿using RedditSharp;
+﻿#nullable disable
+
+using RedditSharp;
 using System.Security.Authentication;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Herramientas.RedesSociales.Reddit2
 {

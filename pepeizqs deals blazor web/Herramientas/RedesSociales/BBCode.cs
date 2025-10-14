@@ -30,24 +30,21 @@ namespace Herramientas.RedesSociales
                     {
                         List<Bundles2.BundleJuego> juegosTier = new List<Bundles2.BundleJuego>();
 
-                        if (bundle.Juegos != null)
-                        {
-                            if (bundle.Juegos.Count > 0)
-                            {
-                                foreach (var juego in bundle.Juegos)
-                                {
-                                    if (juego.Tier != null)
-                                    {
-                                        if (juego.Tier.Posicion == tier.Posicion)
-                                        {
-                                            juegosTier.Add(juego);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+						if (bundle.Juegos?.Count > 0)
+						{
+							foreach (var juego in bundle.Juegos)
+							{
+								if (juego.Tier != null)
+								{
+									if (juego.Tier.Posicion == tier.Posicion)
+									{
+										juegosTier.Add(juego);
+									}
+								}
+							}
+						}
 
-                        if (juegosTier.Count > 0)
+						if (juegosTier.Count > 0)
                         {
                             juegosTier = juegosTier.OrderBy(x => x.Nombre).ToList();
                         }
@@ -326,7 +323,26 @@ namespace Herramientas.RedesSociales
                                         }
                                     }
 
-                                    if (juego.Juego.Bundles.Count == 1)
+									bool añadirNuevo = false;
+
+									if (juego.Juego.Bundles?.Count == 1)
+									{
+										añadirNuevo = true;
+									}
+
+									if (juego.Juego.Suscripciones?.Count > 0)
+									{
+										foreach (var suscripcion in juego.Juego.Suscripciones)
+										{
+											if (suscripcion.DRM == juego.DRM)
+											{
+												añadirNuevo = false;
+												break;
+											}
+										}
+									}
+
+									if (añadirNuevo == true)
                                     {
                                         texto = texto + " • [b]" + Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Bundle") + "[/b]";
                                     }

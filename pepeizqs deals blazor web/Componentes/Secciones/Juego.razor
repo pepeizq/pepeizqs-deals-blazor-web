@@ -4727,9 +4727,9 @@
 
                             foreach (var historico in historicos)
                             {
-                                if (drm == historico.DRM && historico.Moneda != Herramientas.JuegoMoneda.Euro)
+                                if (drm == historico.DRM && historico.Moneda != Herramientas.JuegoMoneda.Euro && historico.Precio > 0)
                                 {
-                                    if (historico.PrecioCambiado == 0)
+                                    if (historico.PrecioCambiado != historico.Precio)
                                     {
                                         historico.PrecioCambiado = historico.Precio;
                                     }
@@ -4739,6 +4739,8 @@
                             BaseDatos.Juegos.Actualizar.PreciosHistoricos(juegoId, historicos);
 
                             //----------------------------------------------------------------------
+
+                            BaseDatos.Errores.Insertar.Mensaje(juegoNombre, "Historico Mal", "/game/" + juegoId.ToString());
                         }
                     }
                 }

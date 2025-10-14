@@ -42,6 +42,7 @@
 	}
 
 	string descripcion = texto2;
+	string descripcionJson = descripcion.Replace(Strings.ChrW(34).ToString(), null);
 
 	string keywords = "news";
 
@@ -77,7 +78,7 @@
 	contenidoJson = contenidoJson.Replace("@tituloEn", noticia.TituloEn);
 	contenidoJson = contenidoJson.Replace("@imagen", noticia.Imagen);
 	contenidoJson = contenidoJson.Replace("@fecha", noticia.FechaEmpieza.ToString("yyyy-MM-ddTHH:mm:ss"));
-	contenidoJson = contenidoJson.Replace("@descripcion", descripcion);
+	contenidoJson = contenidoJson.Replace("@descripcion", descripcionJson);
 
 	<Titulo tipo="@Titulo.Tipo.Noticia" idioma="@idioma" tituloNoticia="@titulo" descripcionNoticia="@descripcion" 
 			enlaceEnNoticia="@enlaceIngles" enlaceEsNoticia="@enlaceEspañol" keywords="@keywords" contenidoJsonNoticia="@contenidoJson"/>

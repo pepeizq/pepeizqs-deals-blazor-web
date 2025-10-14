@@ -6,7 +6,7 @@
 
 <script>
     function moverScroll(id) {
-        const yOffset = -185;
+        const yOffset = 0;
         const element = document.getElementById(id);
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
@@ -39,44 +39,45 @@
     }
 </div>
 
-@if (errorSeleccionado != null)
-{
-    <div class="caja-diseño" style="padding: 30px; margin-top: 40px;">
-        <div style="width: 100%;">
-            @if (string.IsNullOrEmpty(errorSeleccionado.Mensaje) == false)
-            {
-                if (errorSeleccionado.Mensaje != "nada")
+<div id="errorSeleccionado">
+    @if (errorSeleccionado != null)
+    {
+        <div class="caja-diseño" style="padding: 30px; margin-top: 40px;">
+            <div style="width: 100%;">
+                @if (string.IsNullOrEmpty(errorSeleccionado.Mensaje) == false)
                 {
-                    <div>
-                        @errorSeleccionado.Mensaje
-                    </div>
-                    <hr />
+                    if (errorSeleccionado.Mensaje != "nada")
+                    {
+                        <div>
+                            @errorSeleccionado.Mensaje
+                        </div>
+                        <hr />
+                    }
                 }
-            }
 
-            <div>
-                @errorSeleccionado.Stacktrace
+                <div>
+                    @errorSeleccionado.Stacktrace
+                </div>
+
+                @if (string.IsNullOrEmpty(errorSeleccionado.Enlace) == false)
+                {
+                    <hr />
+                    <div>
+                        <a href="@errorSeleccionado.Enlace" target="_blank">@errorSeleccionado.Enlace</a>
+                    </div>
+                }
+
+                @if (string.IsNullOrEmpty(errorSeleccionado.SentenciaSQL) == false)
+                {
+                    <hr />
+                    <div>
+                        @errorSeleccionado.SentenciaSQL
+                    </div>
+                }
             </div>
-
-            @if (string.IsNullOrEmpty(errorSeleccionado.Enlace) == false)
-            {
-                <hr />
-                <div>
-                    <a href="@errorSeleccionado.Enlace" target="_blank">@errorSeleccionado.Enlace</a>
-                </div>
-            }
-
-            @if (string.IsNullOrEmpty(errorSeleccionado.SentenciaSQL) == false)
-            {
-                <hr />
-                <div>
-                    @errorSeleccionado.SentenciaSQL
-                </div>
-            }
         </div>
-    </div>
-}
-
+    }
+</div>
 
 @code {
 
@@ -113,8 +114,10 @@
         }
     }
 
-    private void AmpliarError(MouseEventArgs e, BaseDatos.Errores.Error error)
+    private async void AmpliarError(MouseEventArgs e, BaseDatos.Errores.Error error)
     {
         errorSeleccionado = error;
+
+        await JavaScript.InvokeVoidAsync("moverScroll", "errorSeleccionado");
     }
 }

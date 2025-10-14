@@ -578,25 +578,19 @@
 					@{
 						bool añadirNuevo = false;
 
-						if (juego.Bundles != null)
+						if (juego.Bundles?.Count == 1)
 						{
-							if (juego.Bundles.Count == 1)
-							{
-								añadirNuevo = true;
-							}
+							añadirNuevo = true;
 						}
 
-						if (juego.Suscripciones != null)
+						if (juego.Suscripciones?.Count > 0)
 						{
-							if (juego.Suscripciones.Count > 0)
+							foreach (var suscripcion in juego.Suscripciones)
 							{
-								foreach (var suscripcion in juego.Suscripciones)
+								if (suscripcion.DRM == drmBundle)
 								{
-									if (suscripcion.DRM == drmBundle)
-									{
-										añadirNuevo = false;
-										break;
-									}
+									añadirNuevo = false;
+									break;
 								}
 							}
 						}

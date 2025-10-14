@@ -169,7 +169,7 @@
             <a class="boton-superior" href="/wishlist" style="font-size: 15px;">
                 @if (cantidadDeseados > 0)
                 {
-                    <div style="@GenerarEstilo("/wishlist") display: flex; align-items: center; gap: 10px; background-color: var(--fondoAlerta); padding: 5px 15px;">
+                    <div style="@GenerarEstilo("/wishlist") display: flex; align-items: center; gap: 10px; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 5px 15px;">
                         <div>
                             (@cantidadDeseados)
                         </div>
@@ -501,12 +501,22 @@
 
                 if (datos != null)
                 {
+                    cantidadDeseados = datos.Cantidad;
+
                     if (datos.UltimaVisita != null && datos.UltimoJuego != null)
                     {
-                        BaseDatos.Errores.Insertar.Mensaje("Deseados Fecha", datos.UltimaVisita?.ToShortDateString() + " " + datos.UltimoJuego?.ToShortDateString() + " " + datos.UltimaVisita?.Subtract((DateTime)datos.UltimoJuego).TotalDays.ToString());
+                        if (datos.UltimaVisita?.Subtract((DateTime)datos.UltimoJuego).TotalDays > 7)
+                        {
+                            cantidadDeseados = 0;       
+                        }
                     }
-
-                    cantidadDeseados = datos.Cantidad;
+                    else if (datos.UltimaVisita == null && datos.UltimoJuego != null)
+                    {
+                        if (DateTime.Now.Subtract((DateTime)datos.UltimoJuego).TotalDays > 7)
+                        {
+                            cantidadDeseados = 0;
+                        }
+                    }
                 }
             }
         }

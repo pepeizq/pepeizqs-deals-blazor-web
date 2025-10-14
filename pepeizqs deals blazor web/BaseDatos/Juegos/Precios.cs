@@ -273,7 +273,14 @@ namespace BaseDatos.Juegos
                                                     }
                                                     else
                                                     {
-                                                        datosDeseados = JsonSerializer.Deserialize<DeseadosDatos>(datosDeseadosTexto);
+                                                        try
+                                                        {
+                                                            datosDeseados = JsonSerializer.Deserialize<DeseadosDatos>(datosDeseadosTexto);
+                                                        }
+                                                        catch
+                                                        {
+                                                            datosDeseados = new DeseadosDatos();
+                                                        }
 
                                                         datosDeseados.Cantidad += 1;
                                                         datosDeseados.UltimoJuego = DateTime.Now;

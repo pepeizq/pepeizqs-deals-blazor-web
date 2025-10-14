@@ -11,6 +11,8 @@ namespace Herramientas
 	{
 		public static async Task<List<JuegoDeseadoMostrar>> LeerJuegos(string usuarioId)
 		{
+			await Task.Yield();
+
 			Usuario deseadosUsuario = global::BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 
 			List<JuegoDeseadoMostrar> deseadosGestor = new List<JuegoDeseadoMostrar>();

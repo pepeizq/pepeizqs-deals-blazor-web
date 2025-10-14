@@ -1,4 +1,6 @@
-﻿using Juegos;
+﻿#nullable disable
+
+using Juegos;
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
 

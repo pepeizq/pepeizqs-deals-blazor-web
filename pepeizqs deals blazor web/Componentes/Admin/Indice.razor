@@ -1,4 +1,5 @@
 ﻿@page "/admin/"
+@page "/admin/{subpagina}/"
 
 @rendermode InteractiveServer
 
@@ -28,6 +29,12 @@
         transform: scale(1.01);
     }
 </style>
+
+<script>
+    window.ChangeUrl = function (url) {
+        history.pushState(null, '', url);
+    }
+</script>
 
 @if (usuarioAdmin == true)
 {
@@ -166,13 +173,16 @@
 
     private bool usuarioAdmin = false;
 
+    [Parameter]
+    public string subpagina { get; set; }
+
     protected override void OnInitialized()
     {
         if (Contexto == null || Contexto.HttpContext == null || Contexto.HttpContext.User == null || Contexto.HttpContext.User.Identity == null || Contexto.HttpContext.User.Identity.IsAuthenticated == false)
         {
             NavManager.NavigateTo("/");
             return;
-		}
+        }
 
         Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
         idioma = datos.Idioma;
@@ -185,49 +195,38 @@
 
         if (usuarioAdmin == true)
         {
-            bool pestañaAbierta = false;
-
             SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 
             using (conexion)
             {
                 nuevosErroresCantidad = BaseDatos.Admin.Buscar.CantidadErrores(conexion);
 
-                if (nuevosErroresCantidad > 0 && pestañaAbierta == false)
+                if (nuevosErroresCantidad > 0)
                 {
-                    MostrarErrores();
-                    pestañaAbierta = true;
+                    subpagina = subpaginaErrores;
                 }
 
                 nuevosDuplicadosCantidad = BaseDatos.Admin.Buscar.Dato("duplicados", conexion);
 
-                if (nuevosDuplicadosCantidad > 0 && pestañaAbierta == false)
+                if (nuevosDuplicadosCantidad > 0)
                 {
-                    MostrarDuplicados();
-                    pestañaAbierta = true;
+                    subpagina = subpaginaDuplicados;
                 }
 
                 nuevosPendientesCantidad = BaseDatos.Pendientes.Buscar.TiendasCantidad() + BaseDatos.Pendientes.Buscar.SuscripcionCantidad() + BaseDatos.Pendientes.Buscar.StreamingCantidad() + BaseDatos.Pendientes.Buscar.PlataformaCantidad();
 
-                if (nuevosPendientesCantidad > 0 && pestañaAbierta == false)
+                if (nuevosPendientesCantidad > 0)
                 {
-                    MostrarPendientes();
-                    pestañaAbierta = true;
+                    subpagina = subpaginaPendientes;
                 }
 
                 nuevosDLCsCantidad = BaseDatos.Juegos.Buscar.DLCsCantidad(conexion);
 
-                if (nuevosDLCsCantidad > 0 && pestañaAbierta == false)
+                if (nuevosDLCsCantidad > 0)
                 {
-                    MostrarDLCs();
-                    pestañaAbierta = true;
+                    subpagina = subpaginaDLCs;
                 }
-            }
-
-            if (pestañaAbierta == false)
-            {
-                MostrarEnlaces();
-            }
+            }       
         }
         else
         {
@@ -240,6 +239,72 @@
         if (primerRender == true)
         {
             await JavaScript.InvokeVoidAsync("moverScroll", "cuerpazo");
+
+            if (string.IsNullOrEmpty(subpagina) == true)
+            {
+                MostrarEnlaces();
+            }
+            else
+            {
+                if (subpagina == subpaginaEnlaces)
+                {
+                    MostrarEnlaces();
+                }
+                else if (subpagina == subpaginaDuplicados)
+                {
+                    MostrarDuplicados();
+                }
+                else if (subpagina == subpaginaErrores)
+                {
+                    MostrarErrores();
+                }
+                else if (subpagina == subpaginaTareas)
+                {
+                    MostrarTareas();
+                }
+                else if (subpagina == subpaginaDivisas)
+                {
+                    MostrarDivisas();
+                }
+                else if (subpagina == subpaginaDLCs)
+                {
+                    MostrarDLCs();
+                }
+                else if (subpagina == subpaginaPendientes)
+                {
+                    MostrarPendientes();
+                }
+                else if (subpagina == subpaginaJuegos)
+                {
+                    MostrarJuegos();
+                }
+                else if (subpagina == subpaginaNoticias)
+                {
+                    MostrarNoticias();
+                }
+                else if (subpagina == subpaginaBundles)
+                {
+                    MostrarBundles();
+                }
+                else if (subpagina == subpaginaGratis)
+                {
+                    MostrarGratis();
+                }
+                else if (subpagina == subpaginaSuscripciones)
+                {
+                    MostrarSuscripciones();
+                }
+                else if (subpagina == subpaginaRecompensas)
+                {
+                    MostrarRecompensas();
+                }
+                else if (subpagina == subpaginaCupones)
+                {
+                    MostrarCupones();
+                }
+            }
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -282,12 +347,15 @@
 
     private bool mostrarEnlaces = false;
     private string estiloEnlaces = null;
+    private string subpaginaEnlaces = "enlaces";
 
-    private void MostrarEnlaces()
+    private async void MostrarEnlaces()
     {
         CerrarPestañas();
         mostrarEnlaces = true;
         estiloEnlaces = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaEnlaces + "/");
     }
 
     #endregion
@@ -296,14 +364,16 @@
 
     private bool mostrarDuplicados = false;
     private string estiloDuplicados = null;
-
+    private string subpaginaDuplicados = "duplicados";
     private int nuevosDuplicadosCantidad = 0;
 
-    private void MostrarDuplicados()
+    private async void MostrarDuplicados()
     {
         CerrarPestañas();
         mostrarDuplicados = true;
         estiloDuplicados = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaDuplicados + "/");
     }
 
     #endregion
@@ -312,16 +382,17 @@
 
     private bool mostrarErrores = false;
     private string estiloErrores = null;
-
+    private string subpaginaErrores = "errores";
     private int nuevosErroresCantidad = 0;
 
-    private void MostrarErrores()
+    private async void MostrarErrores()
     {
         CerrarPestañas();
         mostrarErrores = true;
         estiloErrores = fondo;
 
         nuevosErroresCantidad = BaseDatos.Admin.Buscar.CantidadErrores();
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaErrores + "/");
     }
 
     #endregion
@@ -330,12 +401,15 @@
 
     private bool mostrarTareas = false;
     private string estiloTareas = null;
+    private string subpaginaTareas = "tareas";
 
-    private void MostrarTareas()
+    private async void MostrarTareas()
     {
         CerrarPestañas();
         mostrarTareas = true;
         estiloTareas = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaTareas + "/");
     }
 
     #endregion
@@ -344,12 +418,15 @@
 
     private bool mostrarDivisas = false;
     private string estiloDivisas = null;
+    private string subpaginaDivisas = "divisas";
 
-    private void MostrarDivisas()
+    private async void MostrarDivisas()
     {
         CerrarPestañas();
         mostrarDivisas = true;
         estiloDivisas = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaDivisas + "/");
     }
 
     #endregion
@@ -358,16 +435,17 @@
 
     private bool mostrarDLCs = false;
     private string estiloDLCs = null;
-
+    private string subpaginaDLCs = "dlcs";
     private int nuevosDLCsCantidad = 0;
 
-    private void MostrarDLCs()
+    private async void MostrarDLCs()
     {
         CerrarPestañas();
         mostrarDLCs = true;
         estiloDLCs = fondo;
 
         nuevosDLCsCantidad = BaseDatos.Juegos.Buscar.DLCsCantidad();
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaDLCs + "/");
     }
 
     #endregion
@@ -376,16 +454,17 @@
 
     private bool mostrarPendientes = false;
     private string estiloPendientes = null;
-
+    private string subpaginaPendientes = "pendientes";
     private int nuevosPendientesCantidad = 0;
 
-    private void MostrarPendientes()
+    private async void MostrarPendientes()
     {
         CerrarPestañas();
         mostrarPendientes = true;
         estiloPendientes = fondo;
 
         nuevosPendientesCantidad = BaseDatos.Pendientes.Buscar.TiendasCantidad() + BaseDatos.Pendientes.Buscar.SuscripcionCantidad() + BaseDatos.Pendientes.Buscar.StreamingCantidad() + BaseDatos.Pendientes.Buscar.PlataformaCantidad();
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaPendientes + "/");
     }
 
     #endregion
@@ -394,12 +473,15 @@
 
     private bool mostrarJuegos = false;
     private string estiloJuegos = null;
+    private string subpaginaJuegos = "juegos";
 
-    private void MostrarJuegos()
+    private async void MostrarJuegos()
     {
         CerrarPestañas();
         mostrarJuegos = true;
         estiloJuegos = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaJuegos + "/");
     }
 
     #endregion
@@ -408,12 +490,15 @@
 
     private bool mostrarNoticias = false;
     private string estiloNoticias = null;
+    private string subpaginaNoticias = "noticias";
 
-    private void MostrarNoticias()
+    private async void MostrarNoticias()
     {
         CerrarPestañas();
         mostrarNoticias = true;
         estiloNoticias = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaNoticias + "/");
     }
 
     #endregion
@@ -422,12 +507,15 @@
 
     private bool mostrarBundles = false;
     private string estiloBundles = null;
+    private string subpaginaBundles = "bundles";
 
-    private void MostrarBundles()
+    private async void MostrarBundles()
     {
         CerrarPestañas();
         mostrarBundles = true;
         estiloBundles = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaBundles + "/");
     }
 
     #endregion
@@ -436,12 +524,15 @@
 
     private bool mostrarGratis = false;
     private string estiloGratis = null;
+    private string subpaginaGratis = "gratis";
 
-    private void MostrarGratis()
+    private async void MostrarGratis()
     {
         CerrarPestañas();
         mostrarGratis = true;
         estiloGratis = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaGratis + "/");
     }
 
     #endregion
@@ -450,12 +541,15 @@
 
     private bool mostrarSuscripciones = false;
     private string estiloSuscripciones = null;
+    private string subpaginaSuscripciones = "suscripciones";
 
-    private void MostrarSuscripciones()
+    private async void MostrarSuscripciones()
     {
         CerrarPestañas();
         mostrarSuscripciones = true;
         estiloSuscripciones = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaSuscripciones + "/");
     }
 
     #endregion
@@ -464,12 +558,15 @@
 
     private bool mostrarRecompensas = false;
     private string estiloRecompensas = null;
+    private string subpaginaRecompensas = "recompensas";
 
-    private void MostrarRecompensas()
+    private async void MostrarRecompensas()
     {
         CerrarPestañas();
         mostrarRecompensas = true;
         estiloRecompensas = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaRecompensas + "/");
     }
 
     #endregion
@@ -478,12 +575,15 @@
 
     private bool mostrarCupones = false;
     private string estiloCupones = null;
+    private string subpaginaCupones = "cupones";
 
-    private void MostrarCupones()
+    private async void MostrarCupones()
     {
         CerrarPestañas();
         mostrarCupones = true;
         estiloCupones = fondo;
+
+        await JavaScript.InvokeVoidAsync("ChangeUrl", "/admin/" + subpaginaCupones + "/");
     }
 
     #endregion

@@ -10,7 +10,7 @@ namespace BaseDatos.Juegos
 	public static class Precios
 	{
 		public static void Actualizar(int id, int idSteam, List<JuegoPrecio> ofertasActuales, List<JuegoPrecio> ofertasHistoricas, List<JuegoHistorico> historicos, JuegoPrecio nuevaOferta, SqlConnection conexion, 
-			string slugGOG = null, string idGOG = null, string slugEpic = null, List<JuegoUsuariosInteresados> usuariosInteresados = null, JuegoAnalisis reseñas = null)
+			string slugGOG = null, string idGOG = null, string slugEpic = null, JuegoAnalisis reseñas = null)
 		{
 			bool cambioPrecio = true;
 			bool ultimaModificacion = false;
@@ -253,68 +253,64 @@ namespace BaseDatos.Juegos
 
                             if (notificar == true)
                             {
+                                List<string> usuariosInteresados = BaseDatos.Usuarios.Buscar.ListaUsuariosTienenDeseado(id, nuevaOferta.DRM);
+
 								if (usuariosInteresados?.Count > 0)
 								{
 									foreach (var usuarioInteresado in usuariosInteresados)
 									{
-										if (usuarioInteresado.DRM == minimo.DRM)
+										if (Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado, id, nuevaOferta.DRM) == false)
 										{
-											if (Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado.UsuarioId, id, usuarioInteresado.DRM, conexion) == false)
+											DeseadosDatos datosDeseados = null;
+
+											string datosDeseadosTexto = BaseDatos.Usuarios.Buscar.Opcion(usuarioInteresado, "WishlistData");
+
+											if (string.IsNullOrEmpty(datosDeseadosTexto) == true)
 											{
-												if (Usuarios.Buscar.UsuarioTieneDeseado(usuarioInteresado.UsuarioId, id.ToString(), usuarioInteresado.DRM, conexion) == true)
+												datosDeseados = new DeseadosDatos();
+											}
+											else
+											{
+												try
 												{
-                                                    DeseadosDatos datosDeseados = null;
+													datosDeseados = JsonSerializer.Deserialize<DeseadosDatos>(datosDeseadosTexto);
+												}
+												catch
+												{
+													datosDeseados = new DeseadosDatos();
+												}
 
-                                                    string datosDeseadosTexto = BaseDatos.Usuarios.Buscar.Opcion(usuarioInteresado.UsuarioId, "WishlistData");
+												datosDeseados.Cantidad += 1;
+												datosDeseados.UltimoJuego = DateTime.Now;
+											}
 
-                                                    if (string.IsNullOrEmpty(datosDeseadosTexto) == true)
-                                                    {
-                                                        datosDeseados = new DeseadosDatos();
-                                                    }
-                                                    else
-                                                    {
-                                                        try
-                                                        {
-                                                            datosDeseados = JsonSerializer.Deserialize<DeseadosDatos>(datosDeseadosTexto);
-                                                        }
-                                                        catch
-                                                        {
-                                                            datosDeseados = new DeseadosDatos();
-                                                        }
+											BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado);
 
-                                                        datosDeseados.Cantidad += 1;
-                                                        datosDeseados.UltimoJuego = DateTime.Now;
-                                                    }
+											string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado, conexion);
 
-                                                    BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado.UsuarioId);
+											if (string.IsNullOrEmpty(correo) == false)
+											{
+												try
+												{
+													Herramientas.Correos.EnviarNuevoMinimo(usuarioInteresado, id, minimo, correo);
+												}
+												catch (Exception ex)
+												{
+													BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Minimo", ex);
+												}
+											}
 
-                                                    string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado.UsuarioId, conexion);
+											bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado);
 
-													if (string.IsNullOrEmpty(correo) == false)
-													{
-														try
-														{
-															Herramientas.Correos.EnviarNuevoMinimo(usuarioInteresado.UsuarioId, id, minimo, correo);
-														}
-														catch (Exception ex)
-														{
-															BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Minimo", ex);
-														}
-													}
-
-													bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado.UsuarioId);
-
-													if (enviarPush == true)
-													{
-														try
-														{
-															Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado.UsuarioId, id, minimo, usuarioInteresado.DRM);
-														}
-														catch (Exception ex)
-														{
-															BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
-														}
-													}
+											if (enviarPush == true)
+											{
+												try
+												{
+													Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado, id, minimo, nuevaOferta.DRM);
+												}
+												catch (Exception ex)
+												{
+													BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
 												}
 											}
 										}

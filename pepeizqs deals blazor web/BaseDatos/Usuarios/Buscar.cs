@@ -4,7 +4,6 @@ using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using pepeizqs_deals_web.Data;
-using System.Text.Json;
 
 namespace BaseDatos.Usuarios
 {
@@ -1584,6 +1583,98 @@ namespace BaseDatos.Usuarios
 			}
 
 			return cuantos;
+		}
+
+		public static List<string> ListaUsuariosTienenDeseado(int juegoId, JuegoDRM drm, SqlConnection conexion = null)
+		{
+			List<string> usuarios = new List<string>();
+
+			string busqueda = string.Empty;
+
+			if (drm == JuegoDRM.Steam)
+			{
+				busqueda = @"DECLARE @idSteam nvarchar(256);
+SET @idSteam = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":0}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idSteam, Wishlist) > 0
+UNION
+SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(SteamWishlist, ',') WHERE VALUE IN (SELECT idSteam FROM juegos WHERE id=@juegoId))";
+			}
+
+			if (drm == JuegoDRM.GOG)
+			{
+				busqueda = @"DECLARE @idGOG nvarchar(256);
+SET @idGOG = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":8}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idGOG, Wishlist) > 0
+UNION
+SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(GogWishlist, ',') WHERE VALUE IN (SELECT idGOG FROM juegos WHERE id=@juegoId))";
+			}
+
+			if (drm == JuegoDRM.Amazon)
+			{
+				busqueda = @"DECLARE @idAmazon nvarchar(256);
+SET @idAmazon = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":9}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idAmazon, Wishlist) > 0";
+			}
+
+			if (drm == JuegoDRM.Epic)
+			{
+				busqueda = @"DECLARE @idEpic nvarchar(256);
+SET @idEpic = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":6}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEpic, Wishlist) > 0";
+			}
+
+			if (drm == JuegoDRM.Ubisoft)
+			{
+				busqueda = @"DECLARE @idUbisoft nvarchar(256);
+SET @idUbisoft = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":2}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idUbisoft, Wishlist) > 0";
+			}
+
+			if (drm == JuegoDRM.EA)
+			{
+				busqueda = @"DECLARE @idEA nvarchar(256);
+SET @idEA = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":3}');
+
+SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0";
+			}
+
+			if (string.IsNullOrEmpty(busqueda) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@juegoId", juegoId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								usuarios.Add(lector.GetString(0));
+							}
+						}
+					}
+				}
+			}
+
+			return usuarios;
 		}
 
 		public static string Opcion(string usuarioId, string valor, SqlConnection conexion = null)

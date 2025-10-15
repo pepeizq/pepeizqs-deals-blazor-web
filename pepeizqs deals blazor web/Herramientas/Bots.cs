@@ -99,7 +99,7 @@ namespace Herramientas
 			if (piscinaApp == piscinaUsada)
 			{
 				sb.Append(@"Sitemap: https://pepeizqdeals.com/sitemap.xml");
-				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*\\r\nDisallow: /es/*");
+				sb.Append($"\r\n\r\nUser-agent: *\r\nDisallow: /account/\r\nDisallow: /link/*\r\nDisallow: /publisher/*\r\nDisallow: /es/*");
 			}
             else
             {

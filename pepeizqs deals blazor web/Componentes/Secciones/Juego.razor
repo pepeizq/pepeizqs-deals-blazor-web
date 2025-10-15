@@ -844,7 +844,7 @@
                                                                             {
                                                                                 precioMinimoValor = historico.Precio;
                                                                             }
-                                                                            else if (historico.Moneda == Herramientas.JuegoMoneda.Euro && historico.Precio > 0 && historico.Precio < precioMinimoValor)
+                                                                            else if (historico.Moneda == Herramientas.JuegoMoneda.Euro && historico.Precio >= 0 && historico.Precio < precioMinimoValor)
                                                                             {
                                                                                 precioMinimoValor = historico.Precio;
                                                                             }
@@ -1988,7 +1988,7 @@
                             <hr/>
                             <div style="display: flex; align-items: center; gap: 30px; font-size: 16px; padding: 15px 5px; flex-wrap: wrap;">
                                 <div style="display: flex; align-items: center; gap: 15px;">
-                                    <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="width: 22px; height: 22px;" alt="@GratisCargar.DevolverGratis(gratis2.Tipo).Nombre">
+                                    <img src="@GratisCargar.DevolverGratis(gratis2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="@GratisCargar.DevolverGratis(gratis2.Tipo).Nombre">
                                     
                                     @if (gratis2.DRM == JuegoDRM.DRMFree)
                                     {
@@ -1996,7 +1996,7 @@
                                     }
                                     else
                                     {
-                                        <img src="@JuegoDRM2.SacarImagen(gratis2.DRM)" style="width: 22px; height: 22px;" alt="@JuegoDRM2.DevolverDRM(gratis2.DRM)"/>
+                                        <img src="@JuegoDRM2.SacarImagen(gratis2.DRM)" style="max-width: 22px; max-height: 22px;" alt="@JuegoDRM2.DevolverDRM(gratis2.DRM)"/>
                                     }
                                 </div>
 
@@ -2105,8 +2105,8 @@
                                 <hr />
                                 <div style="display: flex; align-items: center; gap: 30px; font-size: 16px; padding: 15px 5px; flex-wrap: wrap;">
                                     <div style="display: flex; align-items: center; gap: 15px;">
-                                        <img src="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).ImagenIcono" style="width: 22px; height: 22px;" alt="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).Nombre">
-                                        <img src="@JuegoDRM2.SacarImagen(suscripcion2.DRM)" style="width: 22px; height: 22px;" alt="@JuegoDRM2.DevolverDRM(suscripcion2.DRM)" />
+                                        <img src="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).ImagenIcono" style="max-width: 22px; max-height: 22px;" alt="@SuscripcionesCargar.DevolverSuscripcion(suscripcion2.Tipo).Nombre">
+                                        <img src="@JuegoDRM2.SacarImagen(suscripcion2.DRM)" style="max-width: 22px; max-height: 22px;" alt="@JuegoDRM2.DevolverDRM(suscripcion2.DRM)" />
                                     </div>
 
                                     <div style="min-width: 150px;">
@@ -3887,19 +3887,19 @@
 
                     if (juego.Caracteristicas?.FechaLanzamientoSteam != null)
                     {
-                        if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(7) > DateTime.Now)
+                        if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(7) < DateTime.Now)
                         {
                             tiempoComprobar = TimeSpan.FromDays(1);
                         }
-                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(14) > DateTime.Now)
+                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(14) < DateTime.Now)
                         {
                             tiempoComprobar = TimeSpan.FromDays(3);
                         }
-                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(30) > DateTime.Now)
+                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(30) < DateTime.Now)
                         {
                             tiempoComprobar = TimeSpan.FromDays(5);
                         }
-                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(120) > DateTime.Now)
+                        else if (juego.Caracteristicas.FechaLanzamientoSteam.AddDays(120) < DateTime.Now)
                         {
                             tiempoComprobar = TimeSpan.FromDays(30);
                         }
@@ -3920,13 +3920,10 @@
                         }
                     }
 
-                    if (juego.Media != null)
+                    if (juego.Media?.Capturas2 == null)
                     {
-                        if (juego.Media.Capturas2 == null)
-                        {
-                            actualizarDatosAPI = true;
-                        }                        
-                    }
+                        actualizarDatosAPI = true;
+                    } 
 
                     if (actualizarDatosAPI == true)
                     {
@@ -4264,27 +4261,24 @@
                                 {
                                     List<SteamUsuarioJuego> juegosSteam = juegosUsuario.Steam;
 
-                                    if (juegosSteam != null)
+                                    if (juegosSteam?.Count > 0)
                                     {
-                                        if (juegosSteam.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Steam)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Steam)
+                                            foreach (var juegoUsuario in juegosSteam)
                                             {
-                                                foreach (var juegoUsuario in juegosSteam)
+                                                if (juegoUsuario.Id == juego.IdSteam)
                                                 {
-                                                    if (juegoUsuario.Id == juego.IdSteam)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Steam;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
-                                                        nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Steam;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
+                                                    nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
 
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4295,27 +4289,24 @@
                                 {
                                     List<GOGUsuarioJuego> juegosGog = juegosUsuario.Gog;
 
-                                    if (juegosGog != null)
+                                    if (juegosGog?.Count > 0)
                                     {
-                                        if (juegosGog.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.GOG)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.GOG)
+                                            foreach (var juegoUsuario in juegosGog)
                                             {
-                                                foreach (var juegoUsuario in juegosGog)
+                                                if (juegoUsuario.Id == juego.IdGog)
                                                 {
-                                                    if (juegoUsuario.Id == juego.IdGog)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.GOG;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
-                                                        nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.GOG;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    nuevoJuegoUsuario.JugadoTiempo = juegoUsuario.TiempoJugadoEnMinutos;
+                                                    nuevoJuegoUsuario.JugadoUltimaVez = juegoUsuario.TiempoJugadoUltimaVez;
 
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4326,24 +4317,21 @@
                                 {
                                     List<string> juegosAmazon = juegosUsuario.Amazon;
 
-                                    if (juegosAmazon != null)
+                                    if (juegosAmazon?.Count > 0)
                                     {
-                                        if (juegosAmazon.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Amazon)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Amazon)
+                                            foreach (var juegoUsuario in juegosAmazon)
                                             {
-                                                foreach (var juegoUsuario in juegosAmazon)
+                                                if (juegoUsuario == juego.IdAmazon.ToString())
                                                 {
-                                                    if (juegoUsuario == juego.IdAmazon.ToString())
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Amazon;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Amazon;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4354,24 +4342,21 @@
                                 {
                                     List<string> juegosEpic = juegosUsuario.Epic;
 
-                                    if (juegosEpic != null)
+                                    if (juegosEpic?.Count > 0)
                                     {
-                                        if (juegosEpic.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Epic)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Epic)
+                                            foreach (var juegoUsuario in juegosEpic)
                                             {
-                                                foreach (var juegoUsuario in juegosEpic)
+                                                if (juegoUsuario == juego.ExeEpic)
                                                 {
-                                                    if (juegoUsuario == juego.ExeEpic)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Epic;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Epic;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4382,24 +4367,21 @@
                                 {
                                     List<string> juegosUbisoft = juegosUsuario.Ubisoft;
 
-                                    if (juegosUbisoft != null)
+                                    if (juegosUbisoft?.Count > 0)
                                     {
-                                        if (juegosUbisoft.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Ubisoft)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.Ubisoft)
+                                            foreach (var juegoUsuario in juegosUbisoft)
                                             {
-                                                foreach (var juegoUsuario in juegosUbisoft)
+                                                if (juegoUsuario == juego.ExeUbisoft)
                                                 {
-                                                    if (juegoUsuario == juego.ExeUbisoft)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.Ubisoft;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.Ubisoft;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4410,24 +4392,21 @@
                                 {
                                     List<string> juegosEa = juegosUsuario.Ea;
 
-                                    if (juegosEa != null)
+                                    if (juegosEa?.Count > 0)
                                     {
-                                        if (juegosEa.Count > 0)
+                                        if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.EA)
                                         {
-                                            if (juego.Tipo == JuegoTipo.Game && drm.Id == JuegoDRM.EA)
+                                            foreach (var juegoUsuario in juegosEa)
                                             {
-                                                foreach (var juegoUsuario in juegosEa)
+                                                if (juegoUsuario == juego.ExeEA)
                                                 {
-                                                    if (juegoUsuario == juego.ExeEA)
-                                                    {
-                                                        JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
-                                                        nuevoJuegoUsuario.DRM = JuegoDRM.EA;
-                                                        nuevoJuegoUsuario.Tiene = true;
-                                                        usuarioTieneDesea.Add(nuevoJuegoUsuario);
-                                                        usuarioTieneDRM = true;
+                                                    JuegoRazorUsuario nuevoJuegoUsuario = new JuegoRazorUsuario();
+                                                    nuevoJuegoUsuario.DRM = JuegoDRM.EA;
+                                                    nuevoJuegoUsuario.Tiene = true;
+                                                    usuarioTieneDesea.Add(nuevoJuegoUsuario);
+                                                    usuarioTieneDRM = true;
 
-                                                        break;
-                                                    }
+                                                    break;
                                                 }
                                             }
                                         }
@@ -4687,7 +4666,7 @@
 
                         foreach (var historico in listaHistoricos)
                         {
-                            if (historico.DRM == drm && historico.Precio == historicosDRM[0].Precio && historicosDRM[0].Precio > 0 && historicosDRM[0].Moneda == Herramientas.JuegoMoneda.Euro ||
+                            if (historico.DRM == drm && historico.Precio == historicosDRM[0].Precio && historicosDRM[0].Moneda == Herramientas.JuegoMoneda.Euro ||
                                 historico.DRM == drm && historico.Precio == historicosDRM[0].PrecioCambiado && historicosDRM[0].PrecioCambiado > 0 && historicosDRM[0].Moneda != Herramientas.JuegoMoneda.Euro)
                             {
                                 bool sePuedeAñadir = true;

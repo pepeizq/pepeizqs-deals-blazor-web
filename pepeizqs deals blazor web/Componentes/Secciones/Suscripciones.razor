@@ -27,12 +27,12 @@
                 tituloSuscripcion = componente.Tipo.Nombre;
 
                 contenidoJson = @"{
-                ""@context"": ""https://schema.org"",
-				""@type"": ""ItemList"",
-				""name"": ""@titulo"",
-				""numberOfItems"": ""@cantidad"",
-                ""itemListOrder"": ""Descending"",
-                ""itemListElement"": [";
+                    ""@context"": ""https://schema.org"",
+				    ""@type"": ""ItemList"",
+				    ""name"": ""@titulo"",
+				    ""numberOfItems"": ""@cantidad"",
+                    ""itemListOrder"": ""Descending"",
+                    ""itemListElement"": [";
 
                 contenidoJson = contenidoJson.Replace("@titulo", tituloSuscripcion);
                 contenidoJson = contenidoJson.Replace("@cantidad", componente.Juegos.Count.ToString());

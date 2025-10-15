@@ -56,7 +56,7 @@ namespace BaseDatos.Tiendas
 						}
 					}
 
-					string buscarJuego = "SELECT id, precioMinimosHistoricos, precioActualesTiendas, usuariosInteresados, idSteam, historicos, fechaSteamAPIComprobacion FROM juegos WHERE idSteam=@idSteam";
+					string buscarJuego = "SELECT id, precioMinimosHistoricos, precioActualesTiendas, idSteam, historicos, fechaSteamAPIComprobacion FROM juegos WHERE idSteam=@idSteam";
 
 					using (SqlCommand comando = new SqlCommand(buscarJuego, conexion))
 					{
@@ -129,32 +129,23 @@ namespace BaseDatos.Tiendas
 											ofertasActuales.Add(oferta);
 										}
 
-										List<JuegoUsuariosInteresados> usuariosInteresados = new List<JuegoUsuariosInteresados>();
 										if (lector.IsDBNull(3) == false)
 										{
-											if (string.IsNullOrEmpty(lector.GetString(3)) == false)
-											{
-												usuariosInteresados = JsonSerializer.Deserialize<List<JuegoUsuariosInteresados>>(lector.GetString(3));
-											}
-										}
-
-										if (lector.IsDBNull(4) == false)
-										{
-											idSteam = lector.GetInt32(4);
+											idSteam = lector.GetInt32(3);
 										}
 
 										List<JuegoHistorico> historicos = new List<JuegoHistorico>();
-										if (lector.IsDBNull(5) == false)
+										if (lector.IsDBNull(4) == false)
 										{
-											if (string.IsNullOrEmpty(lector.GetString(5)) == false)
+											if (string.IsNullOrEmpty(lector.GetString(4)) == false)
 											{
-												historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(5));
+												historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(4));
 											}
 										}
 
 										if (id > 0)
 										{
-											Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, null, null, null, usuariosInteresados, juego.Analisis);
+											Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, null, null, null, juego.Analisis);
 										}
 									}
 								}
@@ -237,7 +228,7 @@ namespace BaseDatos.Tiendas
 					SELECT @pos = @nextpos;
 				END
 
-				SELECT id, precioMinimosHistoricos, precioActualesTiendas, usuariosInteresados, idSteam, historicos, analisis FROM juegos WHERE id IN (SELECT numero FROM @tabla);
+				SELECT id, precioMinimosHistoricos, precioActualesTiendas, idSteam, historicos, analisis FROM juegos WHERE id IN (SELECT numero FROM @tabla);
 				END;
 				END;";
 
@@ -299,45 +290,36 @@ namespace BaseDatos.Tiendas
 							ofertasActuales.Add(oferta);
 						}
 
-						List<JuegoUsuariosInteresados> usuariosInteresados = new List<JuegoUsuariosInteresados>();
+						int idSteam = 0;
 						if (lector.IsDBNull(3) == false)
 						{
-							if (string.IsNullOrEmpty(lector.GetString(3)) == false)
-							{
-								usuariosInteresados = JsonSerializer.Deserialize<List<JuegoUsuariosInteresados>>(lector.GetString(3));
-							}
-						}
-
-						int idSteam = 0;
-						if (lector.IsDBNull(4) == false)
-						{
-							idSteam = lector.GetInt32(4);
+							idSteam = lector.GetInt32(3);
 						}
 
 						List<JuegoHistorico> historicos = new List<JuegoHistorico>();
-						if (lector.IsDBNull(5) == false)
+						if (lector.IsDBNull(4) == false)
 						{
-							if (string.IsNullOrEmpty(lector.GetString(5)) == false)
+							if (string.IsNullOrEmpty(lector.GetString(4)) == false)
 							{
-								historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(5));
+								historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(4));
 							}
 						}
 
 						JuegoAnalisis reseñas = null;
-						if (lector.IsDBNull(6) == false)
+						if (lector.IsDBNull(5) == false)
 						{
-							if (string.IsNullOrEmpty(lector.GetString(6)) == false)
+							if (string.IsNullOrEmpty(lector.GetString(5)) == false)
 							{
-								if (lector.GetString(6) != "null")
+								if (lector.GetString(5) != "null")
 								{
-									reseñas = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(6));
+									reseñas = JsonSerializer.Deserialize<JuegoAnalisis>(lector.GetString(5));
 								}
 							}
 						}
 
 						if (id > 0)
 						{
-							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic, usuariosInteresados, reseñas);
+							Juegos.Precios.Actualizar(id, idSteam, ofertasActuales, ofertasHistoricas, historicos, oferta, conexion, slugGOG, idGog, slugEpic,  reseñas);
 						}
 					}
 				}

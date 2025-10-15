@@ -1,11 +1,20 @@
-﻿@using Microsoft.AspNetCore.Components.Web;
-@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.Data.SqlClient
 @using System.Text.Json
 @using global::Juegos
-@using pepeizqs_deals_web.Data;
+@using pepeizqs_deals_web.Data
 
-<div style="padding: 20px; background: var(--fondoCuerpo); border: 1px solid var(--fondoBotonPequeño); margin-bottom: 50px;">
+<style>
+	.caja-admin-juego {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 20px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
+<div class="caja-admin-juego" style="margin-bottom: 50px;">
 	<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
 		<div>
 			Admin Editar • @juego.Nombre
@@ -37,7 +46,7 @@
 
 			@if (pestañaMostrar == 1)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -49,7 +58,7 @@
 
 			@if (pestañaMostrar == 2)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -61,7 +70,7 @@
 
 			@if (pestañaMostrar == 3)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -73,7 +82,7 @@
 
 			@if (pestañaMostrar == 4)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -85,7 +94,7 @@
 
 			@if (pestañaMostrar == 5)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -97,7 +106,7 @@
 
 			@if (pestañaMostrar == 6)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -109,7 +118,7 @@
 
 			@if (pestañaMostrar == 7)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -121,7 +130,7 @@
 
 			@if (pestañaMostrar == 8)
 			{
-				<div style="margin-top: 10px; background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 1px;">
+				<div style="background: color-mix(in srgb, var(--colorTexto) 50%, transparent); padding: 2px;">
 				</div>
 			}
 		</div>
@@ -129,59 +138,115 @@
 
 	@if (pestañaMostrar > 0)
 	{
-		<hr />
+		<hr/>
 
 		if (pestañaMostrar == 1)
 		{
-			<div style="display: flex; align-items: start; gap: 40px;">
-				<div style="width: 20%;">
-					<button @onclick="(e => MostrarPestañaImagenes(e, 1))" class="boton-pequeño" style="padding: 10px 15px;">
-						Capsule_231x87
-					</button>
+			<div style="display: flex; align-items: start; gap: 30px;">
+				<div style="display: flex; flex-direction: column; gap: 10px; width: 20%;">
+					@{
+						string borde1 = string.Empty;
 
-					<button @onclick="(e => MostrarPestañaImagenes(e, 2))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
-						Header_460x215
-					</button>
+						if (pestañaMostrarImagenes == 1)
+						{
+							borde1 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+						}
 
-					<button @onclick="(e => MostrarPestañaImagenes(e, 3))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
-						Library_600x900
-					</button>
+						<button @onclick="(e => MostrarPestañaImagenes(e, 1))" class="boton-pequeño" style="padding: 10px 15px; @borde1">
+							Capsule_231x87
+						</button>
 
-					<button @onclick="(e => MostrarPestañaImagenes(e, 4))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
-						Library_1920x620
-					</button>
+						string borde2 = string.Empty;
 
-					<button @onclick="(e => MostrarPestañaImagenes(e, 5))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
-						Logo
-					</button>
+						if (pestañaMostrarImagenes == 2)
+						{
+							borde2 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+						}
 
-					<div style="margin-top: 20px; margin-left: 10px;">
-						<a target="_blank" href="https://www.steamgriddb.com/search/grids?term=@juego.Nombre">
-							Abrir SteamGridDB
-						</a>
-					</div>
+						<button @onclick="(e => MostrarPestañaImagenes(e, 2))" class="boton-pequeño" style="padding: 10px 15px; @borde2">
+							Header_460x215
+						</button>
 
+						if (juego.Tipo == JuegoTipo.Game)
+						{
+							string borde3 = string.Empty;
+
+							if (pestañaMostrarImagenes == 3)
+							{
+								borde3 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+							}
+
+							<button @onclick="(e => MostrarPestañaImagenes(e, 3))" class="boton-pequeño" style="padding: 10px 15px; @borde3">
+								Library_600x900
+							</button>
+
+							string borde4 = string.Empty;
+
+							if (pestañaMostrarImagenes == 4)
+							{
+								borde4 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+							}
+
+							<button @onclick="(e => MostrarPestañaImagenes(e, 4))" class="boton-pequeño" style="padding: 10px 15px; @borde4">
+								Library_1920x620
+							</button>
+
+							string borde5 = string.Empty;
+
+							if (pestañaMostrarImagenes == 5)
+							{
+								borde5 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+							}
+
+							<button @onclick="(e => MostrarPestañaImagenes(e, 5))" class="boton-pequeño" style="padding: 10px 15px; @borde5">
+								Logo
+							</button>
+						}
+
+						<div style="padding: 10px 15px;">
+							<a target="_blank" href="https://www.steamgriddb.com/search/grids?term=@juego.Nombre">
+								Abrir SteamGridDB
+							</a>
+						</div>
+					}
 				</div>
 
-				<div style="width: 80%;">
+				<div style="width: 80%; background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); padding: 20px;">
 					<label style="margin-bottom: 10px;">Imagen Origen:</label>
 
 					<input type="text" @oninput="TextoCambiaImagenOrigen" class="entrada-texto" style="margin-bottom: 20px;" value="@imagenOrigen" />
 					<img src="@imagenOrigen" style="max-width: 300px; max-height: 300px;" />
 				</div>
 			</div>
+			
 		}
 		else if (pestañaMostrar == 2)
 		{
-			<div style="display: flex; align-items: start; gap: 40px;">
-				<div style="width: 20%;">
-					<button @onclick="(e => MostrarPestañaPrecios(e, 1))" class="boton-pequeño" style="padding: 10px 15px;">
-						Actuales
-					</button>
+			<div style="display: flex; align-items: start; gap: 30px;">
+				<div style="display: flex; flex-direction: column; gap: 10px; width: 20%;">
+					@{
+						string borde1 = string.Empty;
 
-					<button @onclick="(e => MostrarPestañaPrecios(e, 2))" class="boton-pequeño" style="padding: 10px 15px; margin-top: 10px;">
-						Historicos
-					</button>
+						if (pestañaMostrarPrecios == 1)
+						{
+							borde1 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+						}
+
+						<button @onclick="(e => MostrarPestañaPrecios(e, 1))" class="boton-pequeño" style="padding: 10px 15px; @borde1">
+							Actuales
+						</button>
+
+						string borde2 = string.Empty;
+
+						if (pestañaMostrarPrecios == 2)
+						{
+							borde2 = "border-right: 5px solid color-mix(in srgb, var(--colorTexto) 50%, transparent);";
+						}
+
+						<button @onclick="(e => MostrarPestañaPrecios(e, 2))" class="boton-pequeño" style="padding: 10px 15px; @borde2">
+							Historicos
+						</button>
+					}
 				</div>
 
 				<div style="width: 80%;">
@@ -228,7 +293,7 @@
 					</div>
 				}
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; justify-items: left; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; justify-items: left; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 20px;">
 						<div>
 							FreeToPlay
@@ -338,7 +403,7 @@
 					</div>
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@APIs.Steam.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
@@ -379,7 +444,7 @@
 					}
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@APIs.GOG.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
@@ -423,7 +488,7 @@
 					}
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@APIs.EpicGames.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
@@ -467,7 +532,7 @@
 					}
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@APIs.Xbox.Suscripcion.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
@@ -502,7 +567,7 @@
 					}
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@Plataformas2.PlataformasCargar.GenerarListado()[0].ImagenIcono" style="width: 24px; height: 24px;" />
@@ -523,7 +588,7 @@
 					</div>
 				</div>
 
-				<div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
+				<div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); display: flex; flex-direction: column; gap: 20px; padding: 20px 40px;">
 					<div style="display: flex; align-items: center; gap: 30px;">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<img src="@APIs.Ubisoft.Tienda.Generar().ImagenIcono" style="width: 24px; height: 24px;" />
@@ -716,6 +781,21 @@
 		{
 			pestañaMostrar = nuevaPestaña;
 		}
+
+		if (pestañaMostrar == 1)
+		{
+			pestañaMostrarImagenes = 1;
+			CargarImagenOrigen();
+		}
+		else if (pestañaMostrar == 2)
+		{
+			pestañaMostrarPrecios = 1;
+
+			if (juego.PrecioActualesTiendas != null)
+			{
+				textoPrecios = JsonSerializer.Serialize(juego.PrecioActualesTiendas);
+			}			
+		}
 	}
 
 	#region Imagenes
@@ -727,6 +807,11 @@
 	{
 		pestañaMostrarImagenes = pestañaImagenes;
 
+		CargarImagenOrigen();
+	}
+
+	private void CargarImagenOrigen()
+	{
 		if (pestañaMostrarImagenes == 1)
 		{
 			imagenOrigen = juego.Imagenes.Capsule_231x87;

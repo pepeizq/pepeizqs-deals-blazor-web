@@ -32,7 +32,6 @@ namespace Juegos
 		public List<JuegoSuscripcion> Suscripciones { get; set; }
 		public string NombreCodigo { get; set; }
 		public int IdMaestra { get; set; }
-		public List<JuegoUsuariosInteresados> UsuariosInteresados {  get; set; }
 		public string SlugGOG { get; set; }
 		public string Maestro { get; set; }
 		public string FreeToPlay { get; set; }
@@ -348,7 +347,7 @@ namespace Juegos
 
 	//-------------------------------------------------------
 
-	public class JuegoRazorUsuario
+	public class JuegoTieneDesea
 	{
 		public JuegoDRM DRM { get; set; }
 		public bool Tiene { get; set; }

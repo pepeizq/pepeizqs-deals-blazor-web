@@ -2,9 +2,18 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Data.SqlClient
 
+<style>
+	.caja-admin-recompensas {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 30px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 @if (string.IsNullOrEmpty(idSeleccionada) == false)
 {
-	<div class="caja-diseño" style="padding: 40px;">
+	<div class="caja-admin-recompensas">
 		<div style="display: flex; align-items: center; gap: 15px;">
 			<label>@juegoSeleccionado (@idSeleccionada)</label>
 		</div>
@@ -48,13 +57,13 @@
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="padding: 40px; margin-top: 20px;">
-		<button @onclick="@(e => AñadirRecompensa(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">Añadir Recompensa</button>
+	<div class="caja-admin-recompensas" style="margin-top: 20px;">
+		<button @onclick="@(e => AñadirRecompensa(e))" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px; font-size: 20px;">Añadir Recompensa</button>
 	</div>
 }
 else
 {
-	<div class="caja-diseño" style="padding: 30px;">
+	<div class="caja-admin-recompensas">
 		<div style="margin-bottom: 10px; text-align: left;">
 			<label>Buscar Juego</label>
 		</div>
@@ -63,80 +72,74 @@ else
 
 			@if (string.IsNullOrEmpty(textoBuscador) == false)
 			{
-				if (juegosBuscador != null)
+				if (juegosBuscador?.Count > 0)
 				{
-					if (juegosBuscador.Count > 0)
-					{
-						<div style="margin-top: 20px;">
-							@foreach (var juego in juegosBuscador)
-							{
-								<hr />
+					<div style="margin-top: 20px;">
+						@foreach (var juego in juegosBuscador)
+						{
+							<hr />
 
-								<div class="perfil-flexible-centrado" style="flex-wrap: wrap;">
-									<div style="width: 150px; min-width: 150px;">
-										<button @onclick="@(e => ClickearId(e, juego.Id.ToString(), @juego.Nombre))" class="boton-pequeño" style="text-align: center;">
-											Seleccionar
+							<div class="perfil-flexible-centrado" style="flex-wrap: wrap;">
+								<div style="width: 150px; min-width: 150px;">
+									<button @onclick="@(e => ClickearId(e, juego.Id.ToString(), @juego.Nombre))" class="boton-pequeño" style="text-align: center;">
+										Seleccionar
 
-											<div style="font-size: 13px;">
-												@juego.Id
-											</div>
-										</button>
-									</div>
-
-									<div style="padding-left: 15px;">
-										<a href="/game/@juego.Id.ToString()" target="_blank">
-											<img src="@juego.Imagenes.Header_460x215" style="width: 230px; height: 112px;" />
-										</a>
-									</div>
-
-									<div style="width: 100%; padding: 5px 10px; flex: 1;">
-										@juego.Nombre
-									</div>
+										<div style="font-size: 13px;">
+											@juego.Id
+										</div>
+									</button>
 								</div>
-							}
-						</div>
-					}
+
+								<div style="padding-left: 15px;">
+									<a href="/game/@juego.Id.ToString()" target="_blank">
+										<img src="@juego.Imagenes.Header_460x215" style="width: 230px; height: 112px;" />
+									</a>
+								</div>
+
+								<div style="width: 100%; padding: 5px 10px; flex: 1;">
+									@juego.Nombre
+								</div>
+							</div>
+						}
+					</div>
 				}
 			}
 		</div>
 	</div>
 
-	<div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
-		@if (entradas != null)
+	<div class="caja-admin-recompensas" style="margin-top: 20px;">
+		@if (entradas?.Count > 0)
 		{
-			if (entradas.Count > 0)
+			<hr />
+			@foreach (var entrada in entradas)
 			{
-				<hr />
-				@foreach (var entrada in entradas)
-				{
-					<div style="display: flex; align-items: center; gap: 20px;">
-						<div>
-							@if (entrada.Coins >= 0)
-							{
-								<label>+@entrada.Coins</label>
-							}
-							else
-							{
-								<label>@entrada.Coins</label>
-							}
+				<div style="display: flex; align-items: center; gap: 20px;">
+					<div>
+						@if (entrada.Coins >= 0)
+						{
+							<label>+@entrada.Coins</label>
+						}
+						else
+						{
+							<label>@entrada.Coins</label>
+						}
 
-						</div>
-
-						<div>
-							@entrada.Fecha.Day/@entrada.Fecha.Month/@entrada.Fecha.Year
-						</div>
-
-						<div>
-							@entrada.UsuarioId
-						</div>
-
-						<div>
-							@entrada.Razon
-						</div>
 					</div>
 
-					<hr />
-				}
+					<div>
+						@entrada.Fecha.Day/@entrada.Fecha.Month/@entrada.Fecha.Year
+					</div>
+
+					<div>
+						@entrada.UsuarioId
+					</div>
+
+					<div>
+						@entrada.Razon
+					</div>
+				</div>
+
+				<hr />
 			}
 		}
 	</div>

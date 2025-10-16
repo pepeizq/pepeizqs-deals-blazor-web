@@ -3,147 +3,172 @@
 @using Microsoft.Data.SqlClient
 @using Tiendas2
 
-<div class="caja-diseño" style="padding: 30px;">
-    <label>@TareasUso()</label>
-    <hr />
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        @foreach (Tienda tienda in TiendasCargar.GenerarListado())
+<style>
+    .caja-admin-tareas {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
+<div style="display: flex; flex-direction: column; gap: 30px;">
+    @{
+        string tareaEnUso = TareasUso();
+
+        if (string.IsNullOrEmpty(tareaEnUso) == false)
         {
-            if (tienda.AdminEnseñar == true)
+            <div class="caja-admin-tareas">
+                @tareaEnUso
+            </div>
+        }
+    }
+
+    <div class="caja-admin-tareas">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            @foreach (Tienda tienda in TiendasCargar.GenerarListado())
             {
-                AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(tienda.Id);
-
-                if (tarea != null)
+                if (tienda.AdminEnseñar == true)
                 {
-                    string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+                    AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(tienda.Id);
 
-                    <button @onclick="(e => ClickearTienda(e, tienda.Id))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
-                        <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="@tienda.ImagenIcono" style="height: 22px;" />
-                                    <div>@tienda.Nombre</div>
+                    if (tarea != null)
+                    {
+                        string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+
+                        <button @onclick="(e => ClickearTienda(e, tienda.Id))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
+                            <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="@tienda.ImagenIcono" style="height: 22px;" />
+                                        <div>@tienda.Nombre</div>
+                                    </div>
+
+                                    <div>@tiempo</div>
                                 </div>
 
-                                <div>@tiempo</div>
-                            </div>
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="text-align: right;">@tarea.Cantidad</div>
 
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <div style="text-align: right;">@tarea.Cantidad</div>
-
-                                @if (tarea.Valor1 > 0)
-                                {
-                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
-                                        @if (tarea.Valor1 > 0)
-                                        {
-                                            <div style="font-size: 14px;">@tarea.Valor1</div>
-                                        }
-
-                                        @if (tarea.Valor2 > 0)
-                                        {
-                                            <div style="font-size: 14px;">@tarea.Valor2</div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </button>
-                }
-            }
-        }
-    </div>
-    <hr/>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        @foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
-        {
-            if (suscripcion.AdminInteractuar == true)
-            {
-                AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(suscripcion.Id.ToString());
-
-                if (tarea != null)
-                {
-                    string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
-
-                    <button @onclick="(e => ClickearSuscripcionStreaming(e, suscripcion.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
-                        <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="@suscripcion.ImagenIcono" style="height: 22px;" />
-                                    <div>@suscripcion.Nombre</div>
-                                </div>
-
-                                <div>@tiempo</div>
-                            </div>
-
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <div style="text-align: right;">@tarea.Cantidad</div>
-
-                                @if (tarea.Valor1 > 0)
-                                {
-                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
-                                        @if (tarea.Valor1 > 0)
-                                        {
-                                            <div style="font-size: 14px;">@tarea.Valor1</div>
-                                        }
-
-                                        @if (tarea.Valor2 > 0)
-                                        {
-                                            <div style="font-size: 14px;">@tarea.Valor2</div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </button>
-                }
-            }
-        }
-    </div>
-    <hr/>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        @foreach (var streaming in Streaming2.StreamingCargar.GenerarListado())
-        {
-            AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(streaming.Id.ToString());
-
-            if (tarea != null)
-            {
-                string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
-
-                <button @onclick="(e => ClickearSuscripcionStreaming(e, streaming.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
-                    <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="@streaming.ImagenIcono" style="height: 22px;" />
-                                <div>@streaming.Nombre</div>
-                            </div>
-
-                            <div>@tiempo</div>
-                        </div>
-
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="text-align: right;">@tarea.Cantidad</div>
-
-                            @if (tarea.Valor1 > 0)
-                            {
-                                <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
                                     @if (tarea.Valor1 > 0)
                                     {
-                                        <div style="font-size: 14px;">@tarea.Valor1</div>
-                                    }
+                                        <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
+                                            @if (tarea.Valor1 > 0)
+                                            {
+                                                <div style="font-size: 14px;">@tarea.Valor1</div>
+                                            }
 
-                                    @if (tarea.Valor2 > 0)
-                                    {
-                                        <div style="font-size: 14px;">@tarea.Valor2</div>
+                                            @if (tarea.Valor2 > 0)
+                                            {
+                                                <div style="font-size: 14px;">@tarea.Valor2</div>
+                                            }
+                                        </div>
                                     }
                                 </div>
-                            }
-                        </div>
-                    </div>
-                </button>
+                            </div>
+                        </button>
+                    }
+                }
             }
-        }
+        </div>
+    </div>
+
+    <div class="caja-admin-tareas">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            @foreach (var suscripcion in Suscripciones2.SuscripcionesCargar.GenerarListado())
+            {
+                if (suscripcion.AdminInteractuar == true)
+                {
+                    AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(suscripcion.Id.ToString());
+
+                    if (tarea != null)
+                    {
+                        string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+
+                        <button @onclick="(e => ClickearSuscripcionStreaming(e, suscripcion.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
+                            <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="@suscripcion.ImagenIcono" style="height: 22px;" />
+                                        <div>@suscripcion.Nombre</div>
+                                    </div>
+
+                                    <div>@tiempo</div>
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="text-align: right;">@tarea.Cantidad</div>
+
+                                    @if (tarea.Valor1 > 0)
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
+                                            @if (tarea.Valor1 > 0)
+                                            {
+                                                <div style="font-size: 14px;">@tarea.Valor1</div>
+                                            }
+
+                                            @if (tarea.Valor2 > 0)
+                                            {
+                                                <div style="font-size: 14px;">@tarea.Valor2</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </button>
+                    }
+                }
+            }
+        </div>
+    </div>
+
+    <div class="caja-admin-tareas">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            @foreach (var streaming in Streaming2.StreamingCargar.GenerarListado())
+            {
+                AdminTarea tarea = BaseDatos.Admin.Buscar.Tarea(streaming.Id.ToString());
+
+                if (tarea != null)
+                {
+                    string tiempo = Herramientas.Calculadora.DiferenciaTiempo(tarea.Fecha, "es-ES");
+
+                    <button @onclick="(e => ClickearSuscripcionStreaming(e, streaming.Id.ToString()))" class="boton-pequeño" style="height: fit-content; padding: 15px;">
+                        <div style="display: flex; align-items: center; gap: 20px; justify-content: space-between;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="@streaming.ImagenIcono" style="height: 22px;" />
+                                    <div>@streaming.Nombre</div>
+                                </div>
+
+                                <div>@tiempo</div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="text-align: right;">@tarea.Cantidad</div>
+
+                                @if (tarea.Valor1 > 0)
+                                {
+                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: right;">
+                                        @if (tarea.Valor1 > 0)
+                                        {
+                                            <div style="font-size: 14px;">@tarea.Valor1</div>
+                                        }
+
+                                        @if (tarea.Valor2 > 0)
+                                        {
+                                            <div style="font-size: 14px;">@tarea.Valor2</div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </button>
+                }
+            }
+        </div>
     </div>
 </div>
+
 
 @code {
 
@@ -154,21 +179,14 @@
 
     private SqlConnection conexion = new SqlConnection();
 
-    private PeriodicTimer cronometro = null;
+    private Timer cronometro = null;
 
     protected override void OnInitialized()
     {
-        Cronometro();
-    }
-
-    private async void Cronometro()
-    {
-        cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
-
-        while (await cronometro.WaitForNextTickAsync())
+        cronometro = new Timer(t =>
         {
-            await InvokeAsync(StateHasChanged);
-        }
+            InvokeAsync(StateHasChanged);
+        }, null, 0, 1000);
     }
 
     private async void ClickearTienda(MouseEventArgs e, string id)

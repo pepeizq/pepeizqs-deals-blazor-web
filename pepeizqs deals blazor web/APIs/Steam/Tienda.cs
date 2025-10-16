@@ -63,7 +63,7 @@ namespace APIs.Steam
 
 		public static async Task BuscarOfertas(SqlConnection conexion, IDecompiladores decompilador, bool mirarOfertas)
 		{
-			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0, conexion);
+			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, 0);
 
 			string añadirBundles = string.Empty;
 
@@ -75,8 +75,8 @@ namespace APIs.Steam
 			int juegos = 0;
 
 			bool rapido = false;
-			int arranque = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional", conexion);
-			int tope = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional2", conexion);
+			int arranque = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional");
+			int tope = BaseDatos.Admin.Buscar.TiendasValorAdicional(Generar().Id, "valorAdicional2");
 
 			if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 10)
 			{
@@ -100,7 +100,7 @@ namespace APIs.Steam
 
 				if (mirarOfertas == true)
 				{
-					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&specials=1&ndl=1&infinite=1&ignore_preferences=1&l=english&category1=998%2C21%2C990%2C994" + añadirBundles);
+					string html2 = await Decompiladores.GZipFormato("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&specials=1&ndl=1&infinite=1&ignore_preferences=1&l=english&category1=998%2C21%2C990%2C994" + añadirBundles);
 
 					try
 					{
@@ -150,7 +150,7 @@ namespace APIs.Steam
 				}
 				else
 				{
-					string html2 = await Decompiladores.Estandar("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&ndl=1&infinite=1&l=english");
+					string html2 = await Decompiladores.GZipFormato("https://store.steampowered.com/search/results/?query&start=" + i.ToString() + "&count=50&dynamic_data=&force_infinite=1&supportedlang=english&ndl=1&infinite=1&l=english");
 
 					try
 					{
@@ -169,295 +169,288 @@ namespace APIs.Steam
 					}
 				}
 
-				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id, "valorAdicional2", tope, conexion);
+				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id, "valorAdicional2", tope);
 
 				if (string.IsNullOrEmpty(html) == false)
 				{
-					try
+					if (html.Contains("<!-- List Items -->") == true)
 					{
-						if (html.Contains("<!-- List Items -->") == true)
+						int int1 = html.IndexOf("<!-- List Items -->");
+						html = html.Remove(0, int1);
+
+						int int2 = html.IndexOf("<!-- End List Items -->");
+						html = html.Remove(int2, html.Length - int2);
+
+						int j = 0;
+						while (j < 50)
 						{
-							int int1 = html.IndexOf("<!-- List Items -->");
-							html = html.Remove(0, int1);
-
-							int int2 = html.IndexOf("<!-- End List Items -->");
-							html = html.Remove(int2, html.Length - int2);
-
-							int j = 0;
-							while (j < 50)
+							if (html.Contains("<a href=" + Strings.ChrW(34) + "https://store.steampowered.com/") == true)
 							{
-								if (html.Contains("<a href=" + Strings.ChrW(34) + "https://store.steampowered.com/") == true)
+								int int3 = html.IndexOf("<a href=" + Strings.ChrW(34) + "https://store.steampowered.com/");
+								string temp3 = html.Remove(0, int3 + 5);
+
+								html = temp3;
+
+								int int4 = temp3.IndexOf("</a>");
+								string temp4 = temp3.Remove(int4, temp3.Length - int4);
+
+								int int5 = temp4.IndexOf("<span class=" + Strings.ChrW(34) + "title" + Strings.ChrW(34) + ">");
+								string temp5 = temp4.Remove(0, int5);
+
+								int int6 = temp5.IndexOf("</span>");
+								string temp6 = temp5.Remove(int6, temp5.Length - int6);
+
+								int5 = temp6.IndexOf(">");
+								temp6 = temp6.Remove(0, int5 + 1);
+
+								string titulo = temp6.Trim();
+								titulo = WebUtility.HtmlDecode(titulo);
+
+								int int7 = temp4.IndexOf("https://");
+								string temp7 = temp4.Remove(0, int7);
+
+								int int8 = temp7.IndexOf("?");
+								string temp8 = temp7.Remove(int8, temp7.Length - int8);
+
+								string enlace = temp8.Trim();
+
+								if (enlace.Contains("https://store.steampowered.com/app/") == true)
 								{
-									int int3 = html.IndexOf("<a href=" + Strings.ChrW(34) + "https://store.steampowered.com/");
-									string temp3 = html.Remove(0, int3 + 5);
+									enlace = "https://store.steampowered.com/app/" + Juego.LimpiarID(enlace);
+								}
+								else if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
+								{
+									enlace = "https://store.steampowered.com/bundle/" + Juego.LimpiarID(enlace);
+								}
+								
+								int int9 = temp4.IndexOf("<img src=");
+								string temp9 = temp4.Remove(0, int9 + 10);
 
-									html = temp3;
+								int int10 = temp9.IndexOf("?");
+								string temp10 = temp9.Remove(int10, temp9.Length - int10);
 
-									int int4 = temp3.IndexOf("</a>");
-									string temp4 = temp3.Remove(int4, temp3.Length - int4);
+								string imagen = temp10.Trim();
 
-									int int5 = temp4.IndexOf("<span class=" + Strings.ChrW(34) + "title" + Strings.ChrW(34) + ">");
-									string temp5 = temp4.Remove(0, int5);
+								JuegoAnalisis reseñas = new JuegoAnalisis
+								{
+									Cantidad = "0",
+									Porcentaje = "0"
+								};
 
-									int int6 = temp5.IndexOf("</span>");
-									string temp6 = temp5.Remove(int6, temp5.Length - int6);
+								if (enlace.Contains("https://store.steampowered.com/app/") == true || enlace.Contains("https://store.steampowered.com/bundle/") == true)
+								{
+									int int11 = temp4.IndexOf("data-tooltip-html=");
 
-									int5 = temp6.IndexOf(">");
-									temp6 = temp6.Remove(0, int5 + 1);
-
-									string titulo = temp6.Trim();
-									titulo = WebUtility.HtmlDecode(titulo);
-
-									int int7 = temp4.IndexOf("https://");
-									string temp7 = temp4.Remove(0, int7);
-
-									int int8 = temp7.IndexOf("?");
-									string temp8 = temp7.Remove(int8, temp7.Length - int8);
-
-									string enlace = temp8.Trim();
-
-									if (enlace.Contains("https://store.steampowered.com/app/") == true)
+									if (int11 != -1)
 									{
-										enlace = "https://store.steampowered.com/app/" + Juego.LimpiarID(enlace);
-									}
-									else if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
-									{
-										enlace = "https://store.steampowered.com/bundle/" + Juego.LimpiarID(enlace);
-									}
+										string temp11 = temp4.Remove(0, int11);
 
-									int int9 = temp4.IndexOf("<img src=");
-									string temp9 = temp4.Remove(0, int9 + 10);
+										int int12 = temp11.IndexOf("%");
+										string temp12 = temp11.Remove(int12, temp11.Length - int12);
 
-									int int10 = temp9.IndexOf("?");
-									string temp10 = temp9.Remove(int10, temp9.Length - int10);
+										temp12 = temp12.Remove(0, temp12.Length - 2);
+										temp12 = temp12.Trim();
 
-									string imagen = temp10.Trim();
-
-									JuegoAnalisis reseñas = new JuegoAnalisis
-									{
-										Cantidad = "0",
-										Porcentaje = "0"
-									};
-
-									if (enlace.Contains("https://store.steampowered.com/app/") == true || enlace.Contains("https://store.steampowered.com/bundle/") == true)
-									{
-										int int11 = temp4.IndexOf("data-tooltip-html=");
-
-										if (int11 != -1)
+										if (temp12.Contains(";") == true)
 										{
-											string temp11 = temp4.Remove(0, int11);
+											temp12 = temp12.Replace(";", "0");
+										}
 
-											int int12 = temp11.IndexOf("%");
-											string temp12 = temp11.Remove(int12, temp11.Length - int12);
+										if (temp12 == "00")
+										{
+											temp12 = "100";
+										}
 
-											temp12 = temp12.Remove(0, temp12.Length - 2);
-											temp12 = temp12.Trim();
+										string porcentaje = temp12;
 
-											if (temp12.Contains(";") == true)
-											{
-												temp12 = temp12.Replace(";", "0");
-											}
+										int int13 = temp4.IndexOf("data-tooltip-html=");
+										string temp13 = temp4.Remove(0, int13);
 
-											if (temp12 == "00")
-											{
-												temp12 = "100";
-											}
+										int int14 = temp13.IndexOf("user reviews");
+										string temp14 = temp13.Remove(int14, temp13.Length - int14);
 
-											string porcentaje = temp12;
+										int14 = temp14.IndexOf("of the");
+										temp14 = temp14.Remove(0, int14 + 6);
 
-											int int13 = temp4.IndexOf("data-tooltip-html=");
+										string cantidad = temp14.Trim();
+
+										if (cantidad.Length > 1)
+										{
+											reseñas.Cantidad = cantidad;
+											reseñas.Porcentaje = porcentaje;
+										}
+									}
+								}
+
+								bool suficientesReseñas = false;
+
+								if (enlace.Contains("https://store.steampowered.com/app/") == true)
+								{
+									if (reseñas.Cantidad.Length > 1)
+									{
+										suficientesReseñas = true;
+									}
+								}
+								else if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
+								{
+									if (reseñas.Cantidad.Length > 3)
+									{
+										suficientesReseñas = true;
+									}
+								}
+
+								if (suficientesReseñas == true)
+								{
+									int int11 = temp4.IndexOf("data-discount=" + Strings.ChrW(34));
+
+									if (int11 != -1)
+									{
+										string temp11 = temp4.Remove(0, int11);
+
+										int11 = temp11.IndexOf(Strings.ChrW(34));
+										temp11 = temp11.Remove(0, int11 + 1);
+
+										int int12 = temp11.IndexOf(Strings.ChrW(34));
+										string temp12 = temp11.Remove(int12, temp11.Length - int12);
+
+										int descuento = 0;
+
+										if (int12 != -1)
+										{
+											temp12 = temp12.Replace("-", null);
+											temp12 = temp12.Replace("%", null);
+
+											descuento = int.Parse(temp12.Trim());
+										}
+
+										if (descuento > 0)
+										{
+											int int13 = temp4.IndexOf(Strings.ChrW(34) + "discount_final_price" + Strings.ChrW(34));
 											string temp13 = temp4.Remove(0, int13);
 
-											int int14 = temp13.IndexOf("user reviews");
+											int13 = temp13.IndexOf(Strings.ChrW(34) + ">");
+											temp13 = temp13.Remove(0, int13 + 2);
+
+											int int14 = temp13.IndexOf("</div>");
 											string temp14 = temp13.Remove(int14, temp13.Length - int14);
 
-											int14 = temp14.IndexOf("of the");
-											temp14 = temp14.Remove(0, int14 + 6);
-
-											string cantidad = temp14.Trim();
-
-											if (cantidad.Length > 1)
+											if (temp14 != null)
 											{
-												reseñas.Cantidad = cantidad;
-												reseñas.Porcentaje = porcentaje;
-											}
-										}
-									}
-
-									bool suficientesReseñas = false;
-
-									if (enlace.Contains("https://store.steampowered.com/app/") == true)
-									{
-										if (reseñas.Cantidad.Length > 1)
-										{
-											suficientesReseñas = true;
-										}
-									}
-									else if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
-									{
-										if (reseñas.Cantidad.Length > 3)
-										{
-											suficientesReseñas = true;
-										}
-									}
-
-									if (suficientesReseñas == true)
-									{
-										int int11 = temp4.IndexOf("data-discount=" + Strings.ChrW(34));
-
-										if (int11 != -1)
-										{
-											string temp11 = temp4.Remove(0, int11);
-
-											int11 = temp11.IndexOf(Strings.ChrW(34));
-											temp11 = temp11.Remove(0, int11 + 1);
-
-											int int12 = temp11.IndexOf(Strings.ChrW(34));
-											string temp12 = temp11.Remove(int12, temp11.Length - int12);
-
-											int descuento = 0;
-
-											if (int12 != -1)
-											{
-												temp12 = temp12.Replace("-", null);
-												temp12 = temp12.Replace("%", null);
-
-												descuento = int.Parse(temp12.Trim());
+												temp14 = temp14.Replace("--", "00");
+												temp14 = temp14.Replace(",", ".");
+												temp14 = temp14.Replace("€", null);
+												temp14 = temp14.Replace(" ", null);
 											}
 
-											if (descuento > 0)
+											bool precioFormato = true;
+
+											if (temp14.Contains("Free") == true)
 											{
-												int int13 = temp4.IndexOf(Strings.ChrW(34) + "discount_final_price" + Strings.ChrW(34));
-												string temp13 = temp4.Remove(0, int13);
+												precioFormato = false;
+											}
+											else if (temp14.Length == 0)
+											{
+												precioFormato = false;
+											}
 
-												int13 = temp13.IndexOf(Strings.ChrW(34) + ">");
-												temp13 = temp13.Remove(0, int13 + 2);
+											if (precioFormato == true)
+											{
+												decimal precio = decimal.Parse(temp14.Trim());
 
-												int int14 = temp13.IndexOf("</div>");
-												string temp14 = temp13.Remove(int14, temp13.Length - int14);
-
-												if (temp14 != null)
+												JuegoPrecio oferta = new JuegoPrecio
 												{
-													temp14 = temp14.Replace("--", "00");
-													temp14 = temp14.Replace(",", ".");
-													temp14 = temp14.Replace("€", null);
-													temp14 = temp14.Replace(" ", null);
-												}
+													Nombre = titulo,
+													Imagen = imagen,
+													Tienda = Generar().Id,
+													DRM = JuegoDRM.Steam,
+													Descuento = descuento,
+													Precio = precio,
+													Moneda = JuegoMoneda.Euro,
+													Enlace = enlace,
+													FechaDetectado = DateTime.Now,
+													FechaActualizacion = DateTime.Now
+												};
 
-												bool precioFormato = true;
-
-												if (temp14.Contains("Free") == true)
+												if (enlace.Contains("https://store.steampowered.com/app/") == true)
 												{
-													precioFormato = false;
-												}
-												else if (temp14.Length == 0)
-												{
-													precioFormato = false;
-												}
-
-												if (precioFormato == true)
-												{
-													decimal precio = decimal.Parse(temp14.Trim());
-
-													JuegoPrecio oferta = new JuegoPrecio
-													{
-														Nombre = titulo,
-														Imagen = imagen,
-														Tienda = Generar().Id,
-														DRM = JuegoDRM.Steam,
-														Descuento = descuento,
-														Precio = precio,
-														Moneda = JuegoMoneda.Euro,
-														Enlace = enlace,
-														FechaDetectado = DateTime.Now,
-														FechaActualizacion = DateTime.Now
-													};
-
-													if (enlace.Contains("https://store.steampowered.com/app/") == true)
-													{
-														try
-														{
-															BaseDatos.Tiendas.Comprobar.Steam(oferta, reseñas, rapido, conexion);
-														}
-														catch (Exception ex)
-														{
-															BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
-														}
-													}
-													
-													if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
-													{
-														oferta.Tienda = GenerarBundles().Id;
-
-														if (string.IsNullOrEmpty(temp4) == false)
-														{
-															JuegoSteamBundle bundle = new JuegoSteamBundle();
-
-															if (temp4.Contains("m_bMustPurchaseAsSet&quot;:1") == true)
-															{
-																bundle.Junto = false;
-															}
-															else
-															{
-																bundle.Junto = true;
-															}
-
-															if (temp4.Contains("data-bundlediscount=") == true)
-															{
-																int int15 = temp4.IndexOf("data-bundlediscount=");
-																string temp15 = temp4.Remove(0, int15 + 21);
-
-																int int16 = temp15.IndexOf(Strings.ChrW(34));
-																string temp16 = temp15.Remove(int16, temp15.Length - int16);
-
-																bundle.Descuento = int.Parse(temp16);
-															}
-															else
-															{
-																bundle.Descuento = 0;
-															}
-
-															oferta.BundleSteam = bundle;
-														}
-
-														try
-														{
-															BaseDatos.Tiendas.Comprobar.Resto(oferta, conexion);
-														}
-														catch (Exception ex)
-														{
-															BaseDatos.Errores.Insertar.Mensaje(GenerarBundles().Id, ex, conexion);
-														}
-													}
-
-													juegos += 1;
-
 													try
 													{
-														BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos, conexion);
+														BaseDatos.Tiendas.Comprobar.Steam(oferta, reseñas, rapido);
 													}
 													catch (Exception ex)
 													{
-														BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex, conexion);
+														BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex);
 													}
+												}
+
+												if (enlace.Contains("https://store.steampowered.com/bundle/") == true)
+												{
+													oferta.Tienda = GenerarBundles().Id;
+
+													if (string.IsNullOrEmpty(temp4) == false)
+													{
+														JuegoSteamBundle bundle = new JuegoSteamBundle();
+
+														if (temp4.Contains("m_bMustPurchaseAsSet&quot;:1") == true)
+														{
+															bundle.Junto = false;
+														}
+														else
+														{
+															bundle.Junto = true;
+														}
+
+														if (temp4.Contains("data-bundlediscount=") == true)
+														{
+															int int15 = temp4.IndexOf("data-bundlediscount=");
+															string temp15 = temp4.Remove(0, int15 + 21);
+
+															int int16 = temp15.IndexOf(Strings.ChrW(34));
+															string temp16 = temp15.Remove(int16, temp15.Length - int16);
+
+															bundle.Descuento = int.Parse(temp16);
+														}
+														else
+														{
+															bundle.Descuento = 0;
+														}
+
+														oferta.BundleSteam = bundle;
+													}
+
+													try
+													{
+														BaseDatos.Tiendas.Comprobar.Resto(oferta);
+													}
+													catch (Exception ex)
+													{
+														BaseDatos.Errores.Insertar.Mensaje(GenerarBundles().Id, ex);
+													}
+												}
+
+												juegos += 1;
+
+												try
+												{
+													BaseDatos.Admin.Actualizar.Tiendas(Generar().Id, DateTime.Now, juegos);
+												}
+												catch (Exception ex)
+												{
+													BaseDatos.Errores.Insertar.Mensaje(Generar().Id, ex);
 												}
 											}
 										}
 									}
 								}
-
-								j += 1;
 							}
+
+							j += 1;
 						}
-					}
-					catch (Exception ex)
-					{
-						BaseDatos.Errores.Insertar.Mensaje("Steam Ofertas", ex);
 					}
 				}
 
 				i += 50;
-				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id, "valorAdicional", i, conexion);
+				BaseDatos.Admin.Actualizar.TiendasValorAdicional(Generar().Id, "valorAdicional", i);
 			}
 		}
 

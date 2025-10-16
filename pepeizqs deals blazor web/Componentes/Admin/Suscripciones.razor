@@ -2,42 +2,48 @@
 @using Microsoft.Data.SqlClient
 @using Suscripciones2
 
+<style>
+    .caja-admin-suscripciones {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
 @if (idSeleccionadaSuscripciones == null)
 {
-    <div class="caja-diseño" style="padding: 30px;">
+    <div class="caja-admin-suscripciones">
         <label style="margin-bottom: 10px;">Buscador:</label>
         <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" />
 
-        @if (juegosBuscadorSuscripciones != null)
+        @if (juegosBuscadorSuscripciones?.Count > 0)
         {
-            @if (juegosBuscadorSuscripciones.Count > 0)
-            {
-                <div>
-                    @foreach (var juego in juegosBuscadorSuscripciones)
-                    {
-                        <div class="perfil-flexible-centrado perfil-espacio-top">
-                            <button @onclick="@(e => SeleccionarJuegoSuscripciones(e, juego.Id.ToString(), juego.Imagenes.Library_600x900, juego.Nombre, juego.Imagenes.Header_460x215))" class="boton-pequeño">
-                                <div class="perfil-flexible-centrado">
-                                    <div style="width: 12%;">
-                                        <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />
-                                    </div>
-
-                                    <div style="width: 88%; padding-left: 15px; padding-right: 15px; text-align: left;">
-                                        @juego.Nombre<br />
-                                        <span style="font-size: 13px;">@juego.Id.ToString()</span>
-                                    </div>
+            <div>
+                @foreach (var juego in juegosBuscadorSuscripciones)
+                {
+                    <div class="perfil-flexible-centrado perfil-espacio-top">
+                        <button @onclick="@(e => SeleccionarJuegoSuscripciones(e, juego.Id.ToString(), juego.Imagenes.Library_600x900, juego.Nombre, juego.Imagenes.Header_460x215))" class="boton-pequeño">
+                            <div class="perfil-flexible-centrado">
+                                <div style="width: 12%;">
+                                    <img src="@juego.Imagenes.Capsule_231x87" style="max-height:100%; max-width:100%;" />
                                 </div>
-                            </button>
-                        </div>
-                    }
-                </div>
-            }
+
+                                <div style="width: 88%; padding-left: 15px; padding-right: 15px; text-align: left;">
+                                    @juego.Nombre<br />
+                                    <span style="font-size: 13px;">@juego.Id.ToString()</span>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                }
+            </div>
         }
     </div>
 }
 else
 {
-    <div class="caja-diseño" style="padding: 30px;">
+    <div class="caja-admin-suscripciones">
         <div style="display: flex;">
             <div style="width: 15%;">
                 <img src="@imagenSeleccionadaSuscripciones" style="max-height: 100%; max-width: 100%;" />
@@ -91,14 +97,14 @@ else
         </div>
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-suscripciones" style="margin-top: 20px;">
         <label style="margin-bottom: 10px;">Imagen Noticia:</label>
         <input @onchange="@(e => CambiarImagenNoticiaSuscripciones(e))" class="entrada-texto" value="@imagenNoticiaSuscripciones">
         <img src="@imagenNoticiaSuscripciones" style="max-width: 300px; max-height: 300px; margin-top: 10px;" />
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
-        <button @onclick="@(e => AñadirJuegoSuscripciones(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">Añadir Suscripción</button>
+    <div class="caja-admin-suscripciones" style="margin-top: 20px;">
+        <button @onclick="@(e => AñadirJuegoSuscripciones(e))" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px; font-size: 20px;">Añadir Suscripción</button>
     </div>
 }
 

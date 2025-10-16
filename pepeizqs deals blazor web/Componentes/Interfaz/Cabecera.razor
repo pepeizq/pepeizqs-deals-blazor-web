@@ -323,8 +323,15 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
                         @if (string.IsNullOrEmpty(usuarioId) == false)
                         {
+                            string textoDeseados = Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header");
+
+                            if (cantidadDeseados > 0)
+                            {
+                                textoBuscador = "(" + cantidadDeseados.ToString() + ") " + textoDeseados;
+                            }
+
                             <a class="texto-cabecera boton-superior" href="/wishlist" style="font-size: 15px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "Wishlist", "Header")
+                                @textoDeseados
                             </a>
                         }
 

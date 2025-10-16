@@ -206,7 +206,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(17)) == false)
 					{
-						juego.UsuariosInteresados = JsonSerializer.Deserialize<List<JuegoUsuariosInteresados>>(lector.GetString(17));
+						juego.SlugGOG = lector.GetString(17);
 					}
 				}
 			}
@@ -218,7 +218,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(18)) == false)
 					{
-						juego.SlugGOG = lector.GetString(18);
+						juego.Maestro = lector.GetString(18);
 					}
 				}
 			}
@@ -230,7 +230,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(19)) == false)
 					{
-						juego.Maestro = lector.GetString(19);
+						juego.FreeToPlay = lector.GetString(19);
 					}
 				}
 			}
@@ -242,7 +242,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(20)) == false)
 					{
-						juego.FreeToPlay = lector.GetString(20);
+						juego.MayorEdad = lector.GetString(20);
 					}
 				}
 			}
@@ -252,10 +252,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(21) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(21)) == false)
-					{
-						juego.MayorEdad = lector.GetString(21);
-					}
+					juego.UltimaModificacion = lector.GetDateTime(21);
 				}
 			}
 			catch { }
@@ -264,7 +261,10 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(22) == false)
 				{
-					juego.UltimaModificacion = lector.GetDateTime(22);
+					if (string.IsNullOrEmpty(lector.GetString(22)) == false)
+					{
+						juego.SlugEpic = lector.GetString(22);
+					}
 				}
 			}
 			catch { }
@@ -275,7 +275,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(23)) == false)
 					{
-						juego.SlugEpic = lector.GetString(23);
+						juego.Categorias = JsonSerializer.Deserialize<List<string>>(lector.GetString(23));
 					}
 				}
 			}
@@ -287,7 +287,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(24)) == false)
 					{
-						juego.Categorias = JsonSerializer.Deserialize<List<string>>(lector.GetString(24));
+						juego.Etiquetas = JsonSerializer.Deserialize<List<string>>(lector.GetString(24));
 					}
 				}
 			}
@@ -297,10 +297,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(25) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(25)) == false)
-					{
-						juego.Etiquetas = JsonSerializer.Deserialize<List<string>>(lector.GetString(25));
-					}
+					juego.Deck = Enum.Parse<JuegoDeck>(lector.GetInt32(25).ToString());
 				}
 			}
 			catch { }
@@ -309,7 +306,10 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(26) == false)
 				{
-					juego.Deck = Enum.Parse<JuegoDeck>(lector.GetInt32(26).ToString());
+					if (string.IsNullOrEmpty(lector.GetString(26)) == false)
+					{
+						juego.DeckTokens = JsonSerializer.Deserialize<List<JuegoDeckToken>>(lector.GetString(26));
+					}
 				}
 			}
 			catch { }
@@ -318,10 +318,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(27) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(27)) == false)
-					{
-						juego.DeckTokens = JsonSerializer.Deserialize<List<JuegoDeckToken>>(lector.GetString(27));
-					}
+					juego.DeckComprobacion = lector.GetDateTime(27);
 				}
 			}
 			catch { }
@@ -330,7 +327,10 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(28) == false)
 				{
-					juego.DeckComprobacion = lector.GetDateTime(28);
+					if (string.IsNullOrEmpty(lector.GetString(28)) == false)
+					{
+						juego.Historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(28));
+					}
 				}
 			}
 			catch { }
@@ -341,7 +341,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(29)) == false)
 					{
-						juego.Historicos = JsonSerializer.Deserialize<List<JuegoHistorico>>(lector.GetString(29));
+						juego.GalaxyGOG = JsonSerializer.Deserialize<JuegoGalaxyGOG>(lector.GetString(29));
 					}
 				}
 			}
@@ -353,7 +353,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(30)) == false)
 					{
-						juego.GalaxyGOG = JsonSerializer.Deserialize<JuegoGalaxyGOG>(lector.GetString(30));
+						juego.CantidadJugadores = JsonSerializer.Deserialize<JuegoCantidadJugadoresSteam>(lector.GetString(30));
 					}
 				}
 			}
@@ -365,7 +365,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(31)) == false)
 					{
-						juego.CantidadJugadores = JsonSerializer.Deserialize<JuegoCantidadJugadoresSteam>(lector.GetString(31));
+						juego.Idiomas = JsonSerializer.Deserialize<List<JuegoIdioma>>(lector.GetString(31));
 					}
 				}
 			}
@@ -377,7 +377,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(32)) == false)
 					{
-						juego.Idiomas = JsonSerializer.Deserialize<List<JuegoIdioma>>(lector.GetString(32));
+						juego.EpicGames = JsonSerializer.Deserialize<JuegoEpicGames>(lector.GetString(32));
 					}
 				}
 			}
@@ -389,7 +389,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(33)) == false)
 					{
-						juego.EpicGames = JsonSerializer.Deserialize<JuegoEpicGames>(lector.GetString(33));
+						juego.IdXbox = lector.GetString(33);
 					}
 				}
 			}
@@ -399,9 +399,9 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(34) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(34)) == false)
+					if (string.IsNullOrEmpty(lector.GetString(35)) == false)
 					{
-						juego.IdXbox = lector.GetString(34);
+						juego.Xbox = JsonSerializer.Deserialize<JuegoXbox>(lector.GetString(34));
 					}
 				}
 			}
@@ -413,7 +413,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(35)) == false)
 					{
-						juego.Xbox = JsonSerializer.Deserialize<JuegoXbox>(lector.GetString(35));
+						juego.IdAmazon = lector.GetString(35);
 					}
 				}
 			}
@@ -425,7 +425,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(36)) == false)
 					{
-						juego.IdAmazon = lector.GetString(36);
+						juego.ExeEpic = lector.GetString(36);
 					}
 				}
 			}
@@ -437,7 +437,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(37)) == false)
 					{
-						juego.ExeEpic = lector.GetString(37);
+						juego.ExeUbisoft = lector.GetString(37);
 					}
 				}
 			}
@@ -449,7 +449,7 @@ namespace BaseDatos.Juegos
 				{
 					if (string.IsNullOrEmpty(lector.GetString(38)) == false)
 					{
-						juego.ExeUbisoft = lector.GetString(38);
+						juego.ExeEA = lector.GetString(38);
 					}
 				}
 			}
@@ -459,10 +459,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(39) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(39)) == false)
-					{
-						juego.ExeEA = lector.GetString(39);
-					}
+					juego.OcultarPortada = lector.GetBoolean(39);
 				}
 			}
 			catch { }
@@ -471,7 +468,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(40) == false)
 				{
-					juego.OcultarPortada = lector.GetBoolean(40);
+					juego.SteamOS = Enum.Parse<JuegoSteamOS>(lector.GetInt32(40).ToString());
 				}
 			}
 			catch { }
@@ -480,7 +477,10 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(41) == false)
 				{
-					juego.SteamOS = Enum.Parse<JuegoSteamOS>(lector.GetInt32(41).ToString());
+					if (string.IsNullOrEmpty(lector.GetString(41)) == false)
+					{
+						juego.SteamOSTokens = JsonSerializer.Deserialize<List<JuegoDeckToken>>(lector.GetString(41));
+					}
 				}
 			}
 			catch { }
@@ -489,10 +489,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(42) == false)
 				{
-					if (string.IsNullOrEmpty(lector.GetString(42)) == false)
-					{
-						juego.SteamOSTokens = JsonSerializer.Deserialize<List<JuegoDeckToken>>(lector.GetString(42));
-					}
+					juego.UltimaActualizacionSteam = lector.GetDateTime(42);
 				}
 			}
 			catch { }
@@ -501,7 +498,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(43) == false)
 				{
-					juego.UltimaActualizacionSteam = lector.GetDateTime(43);
+					juego.UltimaActualizacionGOG = lector.GetDateTime(43);
 				}
 			}
 			catch { }
@@ -510,7 +507,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(44) == false)
 				{
-					juego.UltimaActualizacionGOG = lector.GetDateTime(44);
+					juego.UltimaActualizacion = lector.GetDateTime(44);
 				}
 			}
 			catch { }
@@ -519,16 +516,7 @@ namespace BaseDatos.Juegos
 			{
 				if (lector.IsDBNull(45) == false)
 				{
-					juego.UltimaActualizacion = lector.GetDateTime(45);
-				}
-			}
-			catch { }
-
-			try
-			{
-				if (lector.IsDBNull(46) == false)
-				{
-					juego.InteligenciaArtificial = lector.GetBoolean(46);
+					juego.InteligenciaArtificial = lector.GetBoolean(45);
 				}
 			}
 			catch { }

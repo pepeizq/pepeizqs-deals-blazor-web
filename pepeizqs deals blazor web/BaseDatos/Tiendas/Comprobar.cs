@@ -2,7 +2,6 @@
 
 using Juegos;
 using Microsoft.Data.SqlClient;
-using System.Globalization;
 using System.Text.Json;
 
 namespace BaseDatos.Tiendas
@@ -68,18 +67,18 @@ namespace BaseDatos.Tiendas
 							{
 								juego.IdSteam = idSteam;
 
-								if (string.IsNullOrEmpty(lector.GetString(6)) == false)
+								if (string.IsNullOrEmpty(lector.GetString(5)) == false)
 								{
 									bool actualizarAPI = false;
 
-									DateTime fechaComprobacion = DateTime.Parse(lector.GetString(6), CultureInfo.InvariantCulture);
+									DateTime fechaComprobacion = DateTime.Parse(lector.GetString(5));
 
 									if (DateTime.Now.Subtract(fechaComprobacion) > TimeSpan.FromDays(91))
 									{
 										actualizarAPI = true;
 									}
 
-                                    if (actualizarAPI == true)
+									if (actualizarAPI == true)
 									{
                                         BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, juego.IdSteam, "SteamAPI");
                                     }

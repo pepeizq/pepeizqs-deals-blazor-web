@@ -617,21 +617,16 @@ namespace Herramientas
 			return false;
 		}
 
-		public static List<JuegoRazorUsuario> CambiarEstado(List<JuegoRazorUsuario> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
+		public static List<JuegoTieneDesea> CambiarEstado(List<JuegoTieneDesea> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
 		{
 			List<JuegoDeseado> deseados = new List<JuegoDeseado>();
 
 			Usuario deseadosCargar = global::BaseDatos.Usuarios.Buscar.DeseadosTiene(usuarioId);
 
-			if (deseadosCargar != null)
+			if (string.IsNullOrEmpty(deseadosCargar?.Wishlist) == false)
 			{
-				if (string.IsNullOrEmpty(deseadosCargar.Wishlist) == false)
-				{
-					deseados = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosCargar.Wishlist);
-				}
+				deseados = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosCargar.Wishlist);
 			}
-
-			ActualizarJuegoConUsuarios(juego.Id, juego.UsuariosInteresados, drm, usuarioId, estado);
 
 			if (estado == true)
 			{
@@ -656,9 +651,21 @@ namespace Herramientas
 
 					deseados.Add(deseado);
 
-					if (usuarioTieneDesea != null)
+					if (usuarioTieneDesea?.Count > 0)
 					{
-						JuegoRazorUsuario deseado2 = new JuegoRazorUsuario();
+						foreach (var desea in usuarioTieneDesea)
+						{
+							if (desea.DRM == drm)
+							{
+								desea.Desea = true;
+							}
+						}
+					}
+					else
+					{
+						usuarioTieneDesea = new List<JuegoTieneDesea>();
+
+						JuegoTieneDesea deseado2 = new JuegoTieneDesea();
 						deseado2.DRM = drm;
 						deseado2.Desea = true;
 						usuarioTieneDesea.Add(deseado2);

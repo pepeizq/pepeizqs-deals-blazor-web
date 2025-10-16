@@ -2,7 +2,16 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Data.SqlClient
 
-<div class="caja-diseño" style="padding: 30px; display: flex; justify-content: space-between; flex-direction: row; gap: 40px;">
+<style>
+    .caja-admin-pendientes {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
+<div class="caja-admin-pendientes" style="display: flex; justify-content: space-between; flex-direction: row; gap: 40px;">
     <div style="min-width: 300px; margin: -10px 0px;">
         @foreach (var pendiente in pendientesTiendas)
         {
@@ -201,7 +210,7 @@
     }  
 </div>
 
-<div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+<div class="caja-admin-pendientes" style="margin-top: 30px;">
     <div style="margin-bottom: 10px;">
         Buscador:
     </div>

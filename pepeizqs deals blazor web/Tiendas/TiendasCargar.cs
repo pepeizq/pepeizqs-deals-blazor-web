@@ -44,9 +44,19 @@ namespace Tiendas2
 			return tiendas;
 		}
 
-        public static async Task AdminTiendas(string id, IDecompiladores decompilador)
+        public static async Task AdminTiendas(string id, IDecompiladores decompilador, SqlConnection conexion = null)
         {
-			SqlConnection conexion = Herramientas.BaseDatos.Conectar();
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
 
 			using (conexion)
 			{

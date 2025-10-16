@@ -21,12 +21,19 @@
         width: 100%;
         transition: transform .2s;
         font-size: 17px;
-        padding: 10px;
+        padding: 10px 30px;
     }
 
     .boton-pestañas:hover {
         color: var(--colorTextoHover);
         transform: scale(1.01);
+    }
+</style>
+
+<style>
+    .caja-admin-indice {
+        background-color: var(--fondoSubsubcabecera);
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
     }
 </style>
 
@@ -44,8 +51,8 @@
 
     <div style="margin: 40px 0px;">
         <div style="display: flex; align-items: start; width: 100%; font-size: 17px; gap: 40px;">
-            <div style="width: 15%;">
-                <div>
+            <div style="width: 15%; display: flex; flex-direction: column; gap: 30px;">
+                <div class="caja-admin-indice">
                     @if (nuevosDuplicadosCantidad > 0)
                     {
                         <button class="boton-pestañas" @onclick="MostrarDuplicados" style="@estiloDuplicados">Duplicados (@nuevosDuplicadosCantidad)</button>
@@ -71,9 +78,7 @@
                     <button class="boton-pestañas" @onclick="MostrarDivisas" style="@estiloDivisas">Divisas</button>          
                 </div>
 
-                <hr/>
-
-                <div>
+                <div class="caja-admin-indice">
                     <button class="boton-pestañas" @onclick="MostrarJuegos" style="@estiloJuegos">Juegos</button>
                     <button class="boton-pestañas" @onclick="MostrarNoticias" style="@estiloNoticias">Noticias</button>
                     <button class="boton-pestañas" @onclick="MostrarBundles" style="@estiloBundles">Bundles</button>
@@ -81,9 +86,7 @@
                     <button class="boton-pestañas" @onclick="MostrarSuscripciones" style="@estiloSuscripciones">Suscripciones</button>
                 </div>
 
-                <hr/>
-
-                <div>
+                <div class="caja-admin-indice">
                     <button class="boton-pestañas" @onclick="MostrarRecompensas" style="@estiloRecompensas;">Recompensas</button>
                     <button class="boton-pestañas" @onclick="MostrarCupones" style="@estiloCupones;">Cupones</button>
                 </div>
@@ -302,13 +305,24 @@
                 {
                     MostrarCupones();
                 }
+
+                if (nuevosErroresCantidad == 0 && nuevosDuplicadosCantidad == 0 && nuevosPendientesCantidad == 0 && nuevosDLCsCantidad == 0)
+                {
+                    if (subpagina == subpaginaErrores || subpagina == subpaginaDuplicados || subpagina == subpaginaPendientes || subpagina == subpaginaDLCs)
+                    {
+                        MostrarEnlaces();
+                    }
+                }
             }
 
             await InvokeAsync(StateHasChanged);
         }
     }
 
-    private string fondo = "background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño)";
+    private string fondo = "background-color: var(--fondoBotonPequeño)";
+    private string fondoAlerta = "background-color: var(--fondoAlerta)";
+    private string fondoPeligro = "background-color: var(--fondoPeligro)";
+    private string fondoDLCs = "background-color: var(--fondoDlcs)";
 
     private void CerrarPestañas()
     {
@@ -328,12 +342,12 @@
         mostrarCupones = false;
 
         estiloEnlaces = null;
-        estiloDuplicados = null;
-        estiloErrores = null;
+        estiloDuplicados = fondoAlerta;
+        estiloErrores = fondoPeligro;
         estiloTareas = null;
         estiloDivisas = null;
-        estiloDLCs = null;
-        estiloPendientes = null;
+        estiloDLCs = fondoDLCs;
+        estiloPendientes = fondoAlerta;
         estiloJuegos = null;
         estiloNoticias = null;
         estiloBundles = null;

@@ -12,7 +12,16 @@
 
 @inject IBlazorNotificationService ServicioNotificaciones
 
-<div class="caja-diseño" style="padding: 30px;">
+<style>
+    .caja-admin-noticias {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
+
+<div class="caja-admin-noticias">
     <div class="opciones-combobox" style="width: 33%;">
         <select @onchange="@(e => CambiarNoticiaTipo(e))">
             @foreach (NoticiaMostrar mostrar in NoticiasCargar.CargarNoticiasMostrar())
@@ -28,7 +37,7 @@
 
 @if (noticiaTipoSeleccionada == NoticiaTipo.Bundles)
 {
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px;">
         <div class="opciones-combobox" style="width: 33%;">
             <select>
                 @foreach (Bundles2.Bundle bundle in BundlesCargar.GenerarListado())
@@ -58,7 +67,7 @@
 
     @if (plantillaCargada == true)
     {
-        <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+        <div class="caja-admin-noticias" style="margin-top: 20px;">
             <div>
                 <label style="margin-bottom: 10px;">Bundle Id:</label>
                 <input type="text" class="entrada-texto" @bind-value="@noticia.BundleId" />
@@ -73,7 +82,7 @@
 }
 else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
 {
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px;">
         <div class="opciones-combobox" style="width: 33%;">
             <select @onchange="@(e => CambiarGratisNoticias(e))">
                 @foreach (Gratis2.Gratis gratis in GratisCargar.GenerarListado())
@@ -115,7 +124,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
 
     @if (plantillaCargada == true)
     {
-        <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+        <div class="caja-admin-noticias" style="margin-top: 20px;">
             <div>
                 <label style="margin-bottom: 10px;">Gratis Ids:</label>
                 <input type="text" class="entrada-texto" @bind-value="@noticia.GratisIds" />
@@ -130,7 +139,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Gratis)
 }
 else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones)
 {
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px;">
         <div class="opciones-combobox" style="width: 33%;">
             <select @onchange="@(e => CambiarSuscripcion(e))">
                 @foreach (Suscripcion suscripcion in SuscripcionesCargar.GenerarListado())
@@ -175,7 +184,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones)
 
     @if (plantillaCargada == true)
     {
-        <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+        <div class="caja-admin-noticias" style="margin-top: 20px;">
             <div>
                 <label style="margin-left: 10px; margin-bottom: 10px;">Suscripciones Ids:</label>
                 <input type="text" class="entrada-texto" value="@noticia.SuscripcionesIds" />
@@ -190,7 +199,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Suscripciones)
 }
 else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 {
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
         <div>
             <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                 @if (fechaDespedidas.Day == DateTime.Now.Day && fechaDespedidas.Month == DateTime.Now.Month && fechaDespedidas.Year == DateTime.Now.Year)
@@ -257,7 +266,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
 @if (plantillaCargada == true || noticiaTipoSeleccionada == NoticiaTipo.Web || noticiaTipoSeleccionada == NoticiaTipo.Patreon)
 {
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px;">
         <div>
             <label style="margin-bottom: 10px;">Imagen Noticia:</label>
             <input class="entrada-texto" @bind-value="@noticia.Imagen">
@@ -298,7 +307,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         }
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px;">
         <div>
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
                 <img src="/imagenes/banderas/english.svg" style="max-width: 24px; max-height: 24px;" />
@@ -324,7 +333,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         </div>
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div class="caja-admin-noticias" style=" margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
         <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
                 <img src="/imagenes/banderas/english.svg" style="max-width: 24px; max-height: 24px;" />
@@ -365,7 +374,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         }
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
         <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
                 <img src="/imagenes/banderas/spanish.svg" style="max-width: 24px; max-height: 24px;" />
@@ -406,10 +415,10 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         }
     </div>
 
-    <div class="caja-diseño" style="padding: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 30px;">
+    <div class="caja-admin-noticias" style="margin-top: 20px; display: flex; flex-direction: column; gap: 30px;">
         @if (enviandoNoticia == false)
         {
-            <button @onclick="@(e => AñadirNoticia(e))" class="boton" style="text-align: center; width: fit-content; padding: 10px 40px;">
+            <button @onclick="@(e => AñadirNoticia(e))" class="boton-pequeño" style="text-align: center; width: fit-content; padding: 10px 40px; font-size: 20px;">
                 Añadir Noticia
             </button>
         }

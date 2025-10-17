@@ -230,5 +230,67 @@ namespace BaseDatos.Bundles
 
 			return bundles;
         }
-    }
+
+		public static List<Bundle> Aleatorios(SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			List<Bundle> bundles = new List<Bundle>();
+
+			using (conexion)
+			{
+				string busqueda = @"SELECT TOP 50 id, nombre FROM bundles ORDER BY NEWID()";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						while (lector.Read())
+						{
+							Bundle bundle = new Bundle
+							{
+								Id = 0,
+								NombreBundle = null
+							};
+
+							try
+							{
+								if (lector.IsDBNull(0) == false)
+								{
+									bundle.Id = lector.GetInt32(0);
+								}
+							}
+							catch { }
+
+							try
+							{
+								if (lector.IsDBNull(1) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+									{
+										bundle.NombreBundle = lector.GetString(1);
+									}
+								}
+							}
+							catch { }
+
+							bundles.Add(bundle);
+						}
+					}
+				}
+			}
+
+			return bundles;
+		}
+	}
 }

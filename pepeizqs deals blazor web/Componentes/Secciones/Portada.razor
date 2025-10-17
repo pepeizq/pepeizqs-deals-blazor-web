@@ -142,6 +142,11 @@
 	.destacado-icono {
 		width: 40px;
 		height: 40px;
+		filter: drop-shadow(0 0 8px rgba(0,0,0,.5));
+	}
+
+	.destacado-sombra {
+		filter: drop-shadow(0 0 8px rgba(0,0,0,.5));
 	}
 
 	@@media (max-width: 1000px) {
@@ -188,7 +193,7 @@
 	}
 </style>
 	
-@if (juegosDestacadosMostrar.Count > 0)
+@if (juegosDestacadosMostrar?.Count > 0)
 {
 	<div class="portada-espacio">
 		@if (juegoSeleccionado != null)
@@ -252,24 +257,26 @@
 
 								<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda, 40, 40)" style="margin-right: 40px;" alt="Store" />
 
-								<div class="destacado-precio-descuento" style="background-color: darkgreen;">
-									@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
-								</div>
-								<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
-									@{
-										string precioMostrar = string.Empty;
+								<div class="destacado-sombra" style="display: flex; align-items: center;">
+									<div class="destacado-precio-descuento" style="background-color: darkgreen;">
+										@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
+									</div>
+									<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
+										@{
+											string precioMostrar = string.Empty;
 
-										if (juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado > 0)
-										{
-											precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado);
+											if (juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado > 0)
+											{
+												precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado);
+											}
+											else
+											{
+												precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].Precio);
+											}
 										}
-										else
-										{
-											precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].Precio);
-										}
-									}
 
-									@precioMostrar
+										@precioMostrar
+									</div>
 								</div>
 							</div>
 						</div>

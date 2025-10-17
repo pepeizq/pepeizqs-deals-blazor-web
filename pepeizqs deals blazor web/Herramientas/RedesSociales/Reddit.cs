@@ -450,7 +450,7 @@ namespace Herramientas.RedesSociales
                         {
                             if (juego.Analisis != null)
                             {
-                                texto = texto + "* It has an " + juego.Analisis.Porcentaje + "% rating on Steam with " + juego.Analisis.Cantidad + " reviews.";
+                                texto = texto + "* It has an " + juego.Analisis.Porcentaje + "% rating on Steam with " + juego.Analisis.Cantidad + " reviews." + Environment.NewLine;
                             }
 
                             List<int> bundlesActivos = new List<int>();
@@ -512,7 +512,9 @@ namespace Herramientas.RedesSociales
                                 }
                             }
                         }
-                    }
+
+						texto = texto + Environment.NewLine + Environment.NewLine;
+					}
                 }
             }
 

@@ -320,5 +320,67 @@ namespace BaseDatos.Noticias
 
 			return noticias;
 		}
+
+		public static List<Noticia> Aleatorias(SqlConnection conexion = null)
+		{
+			if (conexion == null)
+			{
+				conexion = Herramientas.BaseDatos.Conectar();
+			}
+			else
+			{
+				if (conexion.State != System.Data.ConnectionState.Open)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+			}
+
+			List<Noticia> noticias = new List<Noticia>();
+
+			using (conexion)
+			{
+				string busqueda = @"SELECT TOP 50 id, tituloEn FROM noticias ORDER BY NEWID()";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						while (lector.Read())
+						{
+							Noticia noticia = new Noticia
+							{
+								Id = 0,
+								TituloEn = string.Empty
+							};
+
+							try
+							{
+								if (lector.IsDBNull(0) == false)
+								{
+									noticia.Id = lector.GetInt32(0);
+								}
+							}
+							catch { }
+
+							try
+							{
+								if (lector.IsDBNull(1) == false)
+								{
+									if (string.IsNullOrEmpty(lector.GetString(1)) == false)
+									{
+										noticia.TituloEn = lector.GetString(1);
+									}
+								}
+							}
+							catch { }
+
+							noticias.Add(noticia);
+						}
+					}
+				}
+			}
+
+			return noticias;
+		}
 	}
 }

@@ -1,9 +1,11 @@
 ﻿#nullable disable
 
+using Bundles2;
 using Herramientas;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
+using Noticias;
 using System.Text;
 
 namespace Tareas
@@ -53,8 +55,10 @@ namespace Tareas
                                 BaseDatos.Admin.Actualizar.TareaUso("indexNow", DateTime.Now, conexion);
 
                                 List<Juego> juegos = BaseDatos.Juegos.Buscar.Aleatorios();
+								List<Bundle> bundles = BaseDatos.Bundles.Buscar.Aleatorios();
+                                List<Noticia> noticias = BaseDatos.Noticias.Buscar.Aleatorias();
 
-                                var handler = new HttpClientHandler()
+								var handler = new HttpClientHandler()
                                 {
                                     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                                 };
@@ -85,15 +89,59 @@ namespace Tareas
                                             }
                                         }
 
-                                        if (string.IsNullOrEmpty(peticionJuegos) == false)
+                                        string peticionBundles = null;
+
+                                        if (bundles?.Count > 0)
+                                        {
+                                            int i = 0;
+                                            foreach (var bundle in bundles)
+                                            {
+                                                if (bundle.Id > 0 && string.IsNullOrEmpty(bundle.NombreBundle) == false)
+                                                {
+                                                    peticionBundles = peticionBundles + Strings.ChrW(34) + "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/" + Strings.ChrW(34);
+                                                }
+
+                                                i += 1;
+
+                                                if (i < bundles.Count && bundle.Id > 0 && string.IsNullOrEmpty(bundle.NombreBundle) == false)
+                                                {
+                                                    peticionBundles = peticionBundles + "," + Environment.NewLine + Environment.NewLine;
+                                                }
+                                            }
+										}
+
+                                        string peticionNoticias = null;
+
+                                        if (noticias?.Count > 0)
+                                        {
+                                            int i = 0;
+                                            foreach (var noticia in noticias)
+                                            {
+                                                if (noticia.Id > 0 && string.IsNullOrEmpty(noticia.TituloEn) == false)
+                                                {
+                                                    peticionNoticias = peticionNoticias + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/" + Strings.ChrW(34);
+                                                }
+
+                                                i += 1;
+
+                                                if (i < noticias.Count && noticia.Id > 0 && string.IsNullOrEmpty(noticia.TituloEn) == false)
+                                                {
+                                                    peticionNoticias = peticionNoticias + "," + Environment.NewLine + Environment.NewLine;
+                                                }
+                                            }
+										}
+
+										if (string.IsNullOrEmpty(peticionJuegos) == false)
                                         {
                                             string peticionBing = @"{
                       ""host"": ""pepeizqdeals.com"",
                       ""key"": ""64d34e14606542e7b66ae9e2bc080d32"",
                       ""keyLocation"": ""https://pepeizqdeals.com/64d34e14606542e7b66ae9e2bc080d32.txt"",
                       ""urlList"": [";
-                                            peticionBing = peticionBing + peticionJuegos;
-                                            peticionBing = peticionBing + "]\r\n                    }";
+                                            peticionBing = peticionBing + peticionJuegos + ", ";
+											peticionBing = peticionBing + peticionBundles + ", ";
+											peticionBing = peticionBing + peticionNoticias;
+											peticionBing = peticionBing + "]\r\n                    }";
 
                                             StringContent contenido = new StringContent(peticionBing, Encoding.UTF8, "application/json");
                                             await cliente.PostAsync("https://www.bing.com/indexnow", contenido);

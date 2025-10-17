@@ -1,10 +1,8 @@
 ﻿#nullable disable
 
-using Herramientas.Redireccionador;
 using Juegos;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
 using static pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Juegos;
@@ -2059,7 +2057,7 @@ SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam
 
             using (conexion)
             {
-                string busqueda = @"SELECT TOP 400 id, nombre FROM juegos ORDER BY NEWID()";
+                string busqueda = @"SELECT TOP 300 id, nombre FROM juegos ORDER BY NEWID()";
 
                 using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {

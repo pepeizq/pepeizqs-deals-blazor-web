@@ -324,4 +324,8 @@ public class Usuario : IdentityUser
 	[PersonalData]
 	[Column(TypeName = "nvarchar(512)")]
 	public string? WishlistData { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "int(4)")]
+	public int? BundlesSort { get; set; }
 }

@@ -129,8 +129,8 @@
 
     @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
-        <div style="background-color: var(--fondoEntrada); padding-right: 10px; display: flex; align-items: center; gap: 10px;">
-            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
+        <div style="@fondoBuscador padding-right: 10px; display: flex; align-items: center; gap: 10px;">
+            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onclick="ClickBuscador" @onfocusout="PerderBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px; border: 0px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
 
             @if (resultadosMostrar == null || resultadosMostrar?.Count == 0)
             {
@@ -466,26 +466,26 @@
 
     #nullable disable
 
-    [Parameter]
-    public string idioma { get; set; }
+        [Parameter]
+        public string idioma { get; set; }
 
-    [Parameter]
-    public string usuarioId { get; set; }
+        [Parameter]
+        public string usuarioId { get; set; }
 
-    [Parameter]
-    public string enlace { get; set; }
+        [Parameter]
+        public string enlace { get; set; }
 
-    [Parameter]
-    public string userAgent { get; set; }
+        [Parameter]
+        public string userAgent { get; set; }
 
-    [Parameter]
-    public bool usuarioAdmin { get; set; }
+        [Parameter]
+        public bool usuarioAdmin { get; set; }
 
-    [SupplyParameterFromQuery]
-    private string Search { get; set; }
+        [SupplyParameterFromQuery]
+        private string Search { get; set; }
 
-    [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
-    [PersistentState] public Usuario deseadosUsuario { get; set; }
+        [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+        [PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
     [PersistentState] public Usuario opcionesCabecera { get; set; }
 
@@ -565,12 +565,27 @@
 
     [PersistentState] public List<Juegos.Juego> resultadosMostrar { get; set; }
     public string textoBuscador { get; set; } = string.Empty;
+    private string fondoBuscador = "background-color: var(--fondoEntrada);";
+
+    private void ClickBuscador()
+    {
+        fondoBuscador = "background-color: var(--fondoBotonPequeñoHover); border-bottom: 1px solid var(--fondoBoton); margin-bottom: -1px;";
+    }
+
+    private void PerderBuscador()
+    {
+        if (string.IsNullOrEmpty(textoBuscador) == true)
+        {
+            fondoBuscador = "background-color: var(--fondoEntrada);";
+        }
+    }
 
     private void TextoCambiaBuscador()
     {
         textoBuscador = textoBuscador.Replace("'", null);
+        fondoBuscador = "background-color: var(--fondoBotonPequeñoHover); border-bottom: 1px solid var(--fondoBoton); margin-bottom: -1px;";
 
-        if (textoBuscador.Trim().Length > 3)
+        if (textoBuscador?.Trim().Length > 3)
         {
             if (resultadosMostrar == null)
             {
@@ -642,6 +657,11 @@
         else
         {
             resultadosMostrar?.Clear();
+
+            if (string.IsNullOrEmpty(textoBuscador) == true)
+            {
+                fondoBuscador = "background-color: var(--fondoEntrada);";
+            }
         }
     }
 
@@ -649,6 +669,7 @@
     {
         textoBuscador = string.Empty;
         resultadosMostrar?.Clear();
+        fondoBuscador = "background-color: var(--fondoEntrada);";
     }
 
     #endregion

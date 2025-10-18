@@ -339,7 +339,7 @@
 				</h1>
 			</button>
 
-			@if (tiposActualesNoticias.Count > 1)
+			@if (tiposActualesNoticias?.Count > 1)
 			{
 				tiposActualesNoticias = tiposActualesNoticias.OrderBy(x => Noticias.NoticiasCargar.Traduccion(x, idioma)).ToList();
 
@@ -394,7 +394,7 @@
 	</div>
 </div>
 
-@if (juegosMinimosMostrar.Count > 0)
+@if (juegosMinimosMostrar?.Count > 0)
 {
 	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
 		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">

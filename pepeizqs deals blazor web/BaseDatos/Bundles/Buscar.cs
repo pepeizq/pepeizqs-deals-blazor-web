@@ -3,31 +3,30 @@
 using Bundles2;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
-using System.Globalization;
 
 namespace BaseDatos.Bundles
 {
 	public static class Buscar
 	{
-		public static Bundles2.Bundle Cargar(SqlDataReader lector)
+		public static Bundle Cargar(SqlDataReader lector)
 		{
-            Bundles2.Bundle bundle = new Bundles2.Bundle
+            Bundle bundle = new Bundle
             {
                 Id = lector.GetInt32(0),
-                Tipo = Bundles2.BundlesCargar.DevolverBundle(int.Parse(lector.GetString(1))).Tipo,
+                Tipo = BundlesCargar.DevolverBundle(int.Parse(lector.GetString(1))).Tipo,
                 NombreBundle = lector.GetString(2),
                 NombreTienda = lector.GetString(3),
                 ImagenBundle = lector.GetString(4),
                 Enlace = lector.GetString(5),
-                FechaEmpieza = Convert.ToDateTime(lector.GetString(6), CultureInfo.InvariantCulture),
-                FechaTermina = Convert.ToDateTime(lector.GetString(7), CultureInfo.InvariantCulture)
+                FechaEmpieza = Convert.ToDateTime(lector.GetString(6)),
+                FechaTermina = Convert.ToDateTime(lector.GetString(7))
             };
 
 			if (lector.IsDBNull(8) == false)
 			{
 				if (string.IsNullOrEmpty(lector.GetString(8)) == false)
 				{
-					bundle.Juegos = JsonConvert.DeserializeObject<List<Bundles2.BundleJuego>>(lector.GetString(8));
+					bundle.Juegos = JsonConvert.DeserializeObject<List<BundleJuego>>(lector.GetString(8));
 				}
 			}
 
@@ -35,7 +34,7 @@ namespace BaseDatos.Bundles
 			{
 				if (string.IsNullOrEmpty(lector.GetString(9)) == false)
 				{
-					bundle.Tiers = JsonConvert.DeserializeObject<List<Bundles2.BundleTier>>(lector.GetString(9));
+					bundle.Tiers = JsonConvert.DeserializeObject<List<BundleTier>>(lector.GetString(9));
 				}
 			}
 
@@ -58,9 +57,9 @@ namespace BaseDatos.Bundles
 			return bundle;
         }
 
-		public static List<Bundles2.Bundle> Actuales(Bundles2.BundleTipo tipo = Bundles2.BundleTipo.Desconocido, SqlConnection conexion = null)
+		public static List<Bundle> Actuales(int ordenamiento = 0, BundleTipo tipo = BundleTipo.Desconocido, SqlConnection conexion = null)
 		{
-			List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
+			List<Bundle> bundles = new List<Bundle>();
 
 			if (conexion == null)
 			{
@@ -78,12 +77,27 @@ namespace BaseDatos.Bundles
 			{
 				string busqueda = "SELECT * FROM bundles WHERE (GETDATE() BETWEEN fechaEmpieza AND fechaTermina)";
 
-				if (tipo != Bundles2.BundleTipo.Desconocido)
+				if (tipo != BundleTipo.Desconocido)
 				{
 					busqueda = busqueda + " AND (bundleTipo=" + (int)tipo + ")";
 				}
 
-				busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
+				if (ordenamiento == 0)
+				{
+					busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaTermina), DATEPART(DAY,fechaTermina)";
+				}
+				else if (ordenamiento == 1)
+				{
+					busqueda = busqueda + " ORDER BY DATEPART(MONTH,fechaEmpieza) DESC, DATEPART(DAY,fechaEmpieza) DESC";
+				}
+				else if (ordenamiento == 2)
+				{
+					busqueda = busqueda + " ORDER BY nombre";
+				}
+				else if (ordenamiento == 3)
+				{
+					busqueda = busqueda + " ORDER BY nombre DESC";
+				}
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -100,9 +114,9 @@ namespace BaseDatos.Bundles
 			return bundles;
 		}
 
-		public static List<Bundles2.Bundle> Año(string año, SqlConnection conexion = null)
+		public static List<Bundle> Año(string año, SqlConnection conexion = null)
 		{
-			List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
+			List<Bundle> bundles = new List<Bundle>();
 
 			if (conexion == null)
 			{
@@ -135,9 +149,9 @@ namespace BaseDatos.Bundles
 			return bundles;
 		}
 
-		public static List<Bundles2.Bundle> UnTipo(BundleTipo tipo, SqlConnection conexion = null)
+		public static List<Bundle> UnTipo(BundleTipo tipo, SqlConnection conexion = null)
 		{
-			List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
+			List<Bundle> bundles = new List<Bundle>();
 
             if (conexion == null)
             {
@@ -172,7 +186,7 @@ namespace BaseDatos.Bundles
 			return bundles;
 		}
 
-		public static Bundles2.Bundle UnBundle(int bundleId, SqlConnection conexion = null)
+		public static Bundle UnBundle(int bundleId, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -186,7 +200,7 @@ namespace BaseDatos.Bundles
 				}
 			}
 
-			Bundles2.Bundle bundle = null;
+			Bundle bundle = null;
 
 			string busqueda = "SELECT * FROM bundles WHERE id=@id";
 
@@ -206,9 +220,9 @@ namespace BaseDatos.Bundles
 			return bundle;
 		}
 
-        public static List<Bundles2.Bundle> Ultimos(int cantidad)
+        public static List<Bundle> Ultimos(int cantidad)
         {
-            List<Bundles2.Bundle> bundles = new List<Bundles2.Bundle>();
+            List<Bundle> bundles = new List<Bundle>();
 
             SqlConnection conexion = Herramientas.BaseDatos.Conectar();
 

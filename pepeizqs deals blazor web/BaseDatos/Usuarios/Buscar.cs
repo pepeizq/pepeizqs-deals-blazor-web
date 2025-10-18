@@ -1693,7 +1693,7 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0";
 					}
 				}
 
-				string busqueda = "SELECT @Valor FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT @Valor FROM AspNetUsers WHERE id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{
@@ -1714,6 +1714,44 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0";
 			}
 
 			return null;
+		}
+
+		public static int BundlesOrden(string usuarioId, SqlConnection conexion = null)
+		{
+			if (string.IsNullOrEmpty(usuarioId) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				string busqueda = "SELECT BundlesSort FROM AspNetUsers WHERE id=@Id";
+
+				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
+				{
+					comando.Parameters.AddWithValue("@Id", usuarioId);
+
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						if (lector.Read() == true)
+						{
+							if (lector.IsDBNull(0) == false)
+							{
+								return lector.GetInt32(0);
+							}
+						}
+					}
+				}
+			}
+
+			return 0;
 		}
 	}
 }

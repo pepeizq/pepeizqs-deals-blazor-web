@@ -2,6 +2,7 @@
 
 using BlazorNotification;
 using Juegos;
+using Microsoft.VisualBasic;
 
 namespace Herramientas
 {
@@ -26,8 +27,8 @@ namespace Herramientas
 			NotificationOptions opciones = new NotificationOptions
 			{
 				Icon = "https://pepeizqdeals.com/logo/logo6.png",
-				Data = enlace,
-				Image = noticia.Imagen
+				Image = noticia.Imagen,
+				Data = "{" + Environment.NewLine + "url: " + Strings.ChrW(34) + noticia.Enlace + Strings.ChrW(34) + ", " + Environment.NewLine + "status: " + Strings.ChrW(34) + "open" + Strings.ChrW(34) + "}"
 			};
 
 			try

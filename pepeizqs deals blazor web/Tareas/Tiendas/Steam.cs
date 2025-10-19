@@ -53,7 +53,7 @@ namespace Tareas.Tiendas
 
 						if (DateTime.Now.Hour == 19)
 						{
-							if (DateTime.Now.Minute < 30)
+							if (DateTime.Now.Minute > 3 && DateTime.Now.Minute < 30)
 							{
 								siguienteComprobacion = TimeSpan.FromSeconds(10);
 							}

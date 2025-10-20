@@ -13,10 +13,6 @@
 	}
 </style>
 
-@{
-	string titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-}
-
 <div style="margin-top: 30px;">
 	<a href="/news/@noticia.Id/@Herramientas.EnlaceAdaptador.Nombre(titulo)/" style="cursor: pointer; text-decoration: none; color: var(--colorTexto);">
 		<div class="cnoticia-expandir" style="background-color: var(--fondoBotonPequeño); display: flex; align-items: center;" title="@titulo">
@@ -79,7 +75,7 @@
 					}
 
 					<div style="font-size: 14px;">
-						@Herramientas.Calculadora.DiferenciaTiempo(noticia.FechaEmpieza, idioma)
+						@mensajeTiempo
 					</div>
 				</div>
 			</div>
@@ -102,8 +98,17 @@
 
 	public enum Tipo
 	{
-        Desconocido,
+		Desconocido,
 		Portada,
 		UltimasNoticias
+	}
+
+	private string titulo = string.Empty;
+	private string mensajeTiempo = string.Empty;
+
+	protected override async Task OnAfterRenderAsync(bool primerRender)
+	{
+		titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
+		mensajeTiempo = Herramientas.Calculadora.DiferenciaTiempo(noticia.FechaEmpieza, idioma);
 	}
 }

@@ -1663,7 +1663,7 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0";
 
 					using (SqlDataReader lector = comando.ExecuteReader())
 					{
-						if (lector.Read() == true)
+						while (lector.Read() == true)
 						{
 							if (lector.IsDBNull(0) == false)
 							{

@@ -131,7 +131,7 @@ namespace Tareas
                                             }
 										}
 
-										if (string.IsNullOrEmpty(peticionJuegos) == false)
+										if (string.IsNullOrEmpty(peticionJuegos) == false && string.IsNullOrEmpty(peticionBundles) == false && string.IsNullOrEmpty(peticionNoticias) == false)
                                         {
                                             string peticionBing = @"{
                       ""host"": ""pepeizqdeals.com"",
@@ -143,9 +143,22 @@ namespace Tareas
 											peticionBing = peticionBing + peticionNoticias;
 											peticionBing = peticionBing + "]\r\n                    }";
 
-                                            StringContent contenido = new StringContent(peticionBing, Encoding.UTF8, "application/json");
-                                            await cliente.PostAsync("https://www.bing.com/indexnow", contenido);
-                                        }
+                                            StringContent contenidoBing = new StringContent(peticionBing, Encoding.UTF8, "application/json");
+                                            await cliente.PostAsync("https://www.bing.com/indexnow", contenidoBing);
+
+											string peticionSeznam = @"{
+                      ""host"": ""pepeizqdeals.com"",
+                      ""key"": ""d84fd3c5c7b0ea7c0cf394e8d5d6aebf9cd829"",
+                      ""keyLocation"": ""https://pepeizqdeals.com/d84fd3c5c7b0ea7c0cf394e8d5d6aebf9cd829.txt"",
+                      ""urlList"": [";
+											peticionSeznam = peticionSeznam + peticionJuegos + ", ";
+											peticionSeznam = peticionSeznam + peticionBundles + ", ";
+											peticionSeznam = peticionSeznam + peticionNoticias;
+											peticionSeznam = peticionSeznam + "]\r\n                    }";
+
+											StringContent contenidoSeznam = new StringContent(peticionSeznam, Encoding.UTF8, "application/json");
+											await cliente.PostAsync("https://search.seznam.cz/indexnow", contenidoSeznam);
+										}
                                     }
                                 }
                             }

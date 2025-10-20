@@ -474,11 +474,15 @@
 
 							@if (tipo == Tipo.PortadaNuevos)
 							{
-								<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(fechaDetectado, idioma)</div>
+								<div class="cjuego-fecha">
+									<MensajeTiempo idioma="@idioma" fechaDetectado="@fechaDetectado" />
+								</div>
 							}
 							else if (tipo == Tipo.PortadaLanzamientos)
 							{
-								<div class="cjuego-fecha">@Herramientas.Calculadora.DiferenciaTiempo(juego.Caracteristicas.FechaLanzamientoSteam, idioma)</div>
+								<div class="cjuego-fecha">
+									<MensajeTiempo idioma="@idioma" fechaDetectado="@juego.Caracteristicas.FechaLanzamientoSteam" />
+								</div>
 							}
 						</div>
 					</div>

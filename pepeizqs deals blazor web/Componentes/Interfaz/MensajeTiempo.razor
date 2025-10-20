@@ -1,0 +1,27 @@
+﻿@mensaje
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    [Parameter]
+    public DateTime? fechaDetectado { get; set; }
+
+    [Parameter]
+    public int modo { get; set; } = 0;
+
+    public string mensaje = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (fechaDetectado != null)
+        {
+            mensaje = Herramientas.Calculadora.DiferenciaTiempo(fechaDetectado, idioma, modo);
+        }
+        
+        await InvokeAsync(StateHasChanged);
+    }
+}

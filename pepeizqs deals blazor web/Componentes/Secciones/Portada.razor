@@ -548,7 +548,7 @@
 									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
 								</div>
 
-								<div style="padding-bottom: 5px;">
+								<div>
 									@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption1", "Index")
 								</div>
 							</div>
@@ -558,7 +558,7 @@
 									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
 								</div>
 
-								<div style="padding-bottom: 5px;">
+								<div>
 									@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption4", "Index")
 								</div>
 							</div>
@@ -593,13 +593,13 @@
 
 								@if (drm.DRMId != JuegoDRM.DRMFree)
 								{
-									<div style="margin-left: 20px; padding-bottom: 10px;">
+									<div style="margin-left: 20px;">
 										<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoDRM)" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" loading="lazy" />
 									</div>
 								}
 								else
 								{
-									<div style="margin-left: 20px; padding-bottom: 5px;">
+									<div style="margin-left: 20px;">
 										<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
 									</div>
 								}
@@ -640,7 +640,7 @@
 									<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div style="margin-left: 15px;">
 									<label style="font-size: 14px;">@nombreCategoria</label>
 								</div>
 							</div>

@@ -4,7 +4,12 @@ namespace Herramientas
 {
     public static class Precios
     {
-        public static string Euro(decimal? precio)
+		public static string Euro(double precio)
+		{
+			return Euro((decimal)precio);
+		}
+
+		public static string Euro(decimal? precio)
         {
             if (precio != null)
             {

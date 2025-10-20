@@ -82,25 +82,19 @@ namespace BaseDatos.Juegos
 			string añadirEtiquetas1 = null;
 			string añadirEtiquetas2 = null;
 
-			if (juego.Etiquetas != null)
+			if (juego.Etiquetas?.Count > 0)
 			{
-				if (juego.Etiquetas.Count > 0)
-				{
-					añadirEtiquetas1 = ", etiquetas";
-					añadirEtiquetas2 = ", @etiquetas";
-				}
+				añadirEtiquetas1 = ", etiquetas";
+				añadirEtiquetas2 = ", @etiquetas";
 			}
 
 			string añadirIdiomas1 = null;
 			string añadirIdiomas2 = null;
 
-			if (juego.Idiomas != null)
+			if (juego.Idiomas?.Count > 0)
 			{
-				if (juego.Idiomas.Count > 0)
-				{
-					añadirIdiomas1 = ", idiomas";
-					añadirIdiomas2 = ", @idiomas";
-				}
+				añadirIdiomas1 = ", idiomas";
+				añadirIdiomas2 = ", @idiomas";
 			}
 
 			string añadirDeck1 = null;
@@ -154,7 +148,7 @@ namespace BaseDatos.Juegos
 
 			if (noExiste == true)
 			{
-				sqlAñadir = "IF EXISTS (SELECT 1 FROM " + tabla + " WHERE JSON_VALUE(precioMinimosHistoricos, '$[0].Enlace') != '" + juego.PrecioMinimosHistoricos[0].Enlace + "' AND idMaestra=" + juego.IdMaestra + " AND JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + (int)juego.PrecioMinimosHistoricos[0].DRM + ") BEGIN DELETE FROM seccionMinimos WHERE (idMaestra=" + juego.IdMaestra + " AND JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + (int)juego.PrecioMinimosHistoricos[0].DRM + ") END IF NOT EXISTS (SELECT 1 FROM " + tabla + " WHERE JSON_VALUE(precioMinimosHistoricos, '$[0].Enlace') = '" + juego.PrecioMinimosHistoricos[0].Enlace + "' AND idMaestra=" + juego.IdMaestra + ") BEGIN " + sqlAñadir + " END"; 
+				sqlAñadir = "IF EXISTS (SELECT 1 FROM " + tabla + " WHERE idMaestra=" + juego.IdMaestra + " AND JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + (int)juego.PrecioMinimosHistoricos[0].DRM + ") BEGIN DELETE FROM seccionMinimos WHERE (idMaestra=" + juego.IdMaestra + " AND JSON_VALUE(precioMinimosHistoricos, '$[0].DRM') = " + (int)juego.PrecioMinimosHistoricos[0].DRM + ") END IF NOT EXISTS (SELECT 1 FROM " + tabla + " WHERE JSON_VALUE(precioMinimosHistoricos, '$[0].Enlace') = '" + juego.PrecioMinimosHistoricos[0].Enlace + "' AND idMaestra=" + juego.IdMaestra + ") BEGIN " + sqlAñadir + " END"; 
 			}
 
 			using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
@@ -206,20 +200,14 @@ namespace BaseDatos.Juegos
 					comando.Parameters.AddWithValue("@mayorEdad", juego.MayorEdad);
 				}
 
-				if (juego.Etiquetas != null)
+				if (juego.Etiquetas?.Count > 0)
 				{
-					if (juego.Etiquetas.Count > 0)
-					{
-						comando.Parameters.AddWithValue("@etiquetas", JsonSerializer.Serialize(juego.Etiquetas));
-					}
+					comando.Parameters.AddWithValue("@etiquetas", JsonSerializer.Serialize(juego.Etiquetas));
 				}
 
-				if (juego.Idiomas != null)
+				if (juego.Idiomas?.Count > 0)
 				{
-					if (juego.Idiomas.Count > 0)
-					{
-						comando.Parameters.AddWithValue("@idiomas", JsonSerializer.Serialize(juego.Idiomas));
-					}
+					comando.Parameters.AddWithValue("@idiomas", JsonSerializer.Serialize(juego.Idiomas));
 				}
 
 				if (juego.Deck != JuegoDeck.Desconocido)

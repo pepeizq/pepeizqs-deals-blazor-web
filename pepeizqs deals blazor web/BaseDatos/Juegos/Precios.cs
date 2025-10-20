@@ -300,19 +300,19 @@ namespace BaseDatos.Juegos
 												}
 											}
 
-											bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado);
+											//bool enviarPush = Usuarios.Buscar.UsuarioQuiereNotificacionesPushMinimos(usuarioInteresado);
 
-											if (enviarPush == true)
-											{
-												try
-												{
-													Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado, id, minimo, nuevaOferta.DRM);
-												}
-												catch (Exception ex)
-												{
-													BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
-												}
-											}
+											//if (enviarPush == true)
+											//{
+											//	try
+											//	{
+											//		Herramientas.NotificacionesPush.EnviarMinimo(usuarioInteresado, id, minimo, nuevaOferta.DRM);
+											//	}
+											//	catch (Exception ex)
+											//	{
+											//		BaseDatos.Errores.Insertar.Mensaje("Enviar Push Minimo", ex);
+											//	}
+											//}
 										}
 									}
 								}

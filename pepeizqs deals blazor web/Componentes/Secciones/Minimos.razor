@@ -466,7 +466,7 @@ else
 								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
 							</div>
 
-							<div style="padding-bottom: 5px;">
+							<div>
 								Steam
 							</div>
 						</div>
@@ -476,7 +476,7 @@ else
 								<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioGog" @onchange="OcultarJuegosUsuarioGog">
 							</div>
 
-							<div style="padding-bottom: 5px;">
+							<div>
 								GOG
 							</div>
 						</div>
@@ -530,13 +530,13 @@ else
 
 									@if (drm.DRMId != JuegoDRM.DRMFree)
 									{
-										<div style="margin-left: 20px; padding-bottom: 10px;">
+										<div style="margin-left: 20px;">
 											<img src="@iconoDRM" style="max-width: 24px; max-height: 24px;" title="@nombreDRM" />
 										</div>
 									}
 									else
 									{
-										<div style="margin-left: 20px; padding-bottom: 5px;">
+										<div style="margin-left: 20px;">
 											<label style="font-size: 10px; max-width: 24px; text-align: center;">@nombreDRM</label>
 										</div>
 									}
@@ -569,7 +569,7 @@ else
 										<input type="checkbox" class="checkbox-interior" checked="@tienda.Checkbox" @onchange="@(e => EnseñarJuegosTienda(e, tienda.TiendaId))">
 									</div>
 
-									<div style="padding-bottom: 10px;">
+									<div>
 										<img src="@iconoTienda" style="width: 24px; height: 24px;" title="@nombreTienda" />
 									</div>
 								</div>
@@ -614,12 +614,12 @@ else
 									nombreCategoria = Herramientas.Idiomas.BuscarTexto(idioma, "String21", "HistoricalLows");
 								}
 
-								<div style="display: flex; align-items: center;" title="@nombreCategoria">
+								<div style="display: flex; align-items: center; gap: 15px;" title="@nombreCategoria">
 									<div class="checkbox-caja">
 										<input type="checkbox" class="checkbox-interior" checked="@categoria.Checkbox" @onchange="@(e => EnseñarJuegosCategoria(e, categoria.Categoria))">
 									</div>
 
-									<div style="margin-left: 15px; padding-bottom: 8px;">
+									<div>
 										<label style="font-size: 14px;">@nombreCategoria</label>
 									</div>
 								</div>
@@ -653,12 +653,12 @@ else
 									nombreTipo = Herramientas.Idiomas.BuscarTexto(idioma, "String28", "HistoricalLows");
 								}
 
-								<div style="display: flex; align-items: center;" title="@nombreTipo">
+								<div style="display: flex; align-items: center; gap: 15px;" title="@nombreTipo">
 									<div class="checkbox-caja">
 										<input type="checkbox" class="checkbox-interior" checked="@steamdeck.Checkbox" @onchange="@(e => EnseñarJuegosSteamDeck(e, steamdeck.Tipo))">
 									</div>
 
-									<div style="margin-left: 15px; padding-bottom: 8px;">
+									<div>
 										<label style="font-size: 14px;">@nombreTipo</label>
 									</div>
 								</div>
@@ -671,42 +671,42 @@ else
 				{
 					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked0" @onchange="@(e => CambiarLanzamiento(e, 0))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String30", "HistoricalLows")</label>
 								</div>
 							</div>
 
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked1" @onchange="@(e => CambiarLanzamiento(e, 1))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String31", "HistoricalLows")</label>
 								</div>
 							</div>
 
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked2" @onchange="@(e => CambiarLanzamiento(e, 2))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String32", "HistoricalLows")</label>
 								</div>
 							</div>
 
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@lanzamientoChecked3" @onchange="@(e => CambiarLanzamiento(e, 3))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String33", "HistoricalLows")</label>
 								</div>
 							</div>
@@ -718,32 +718,32 @@ else
 				{
 					<div class="minimo-minicaja" style="margin-top: 20px;">
 						<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked0" @onchange="@(e => CambiarInteligenciaArtificial(e, 0))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String37", "HistoricalLows")</label>
 								</div>
 							</div>
 
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked1" @onchange="@(e => CambiarInteligenciaArtificial(e, 1))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String38", "HistoricalLows")</label>
 								</div>
 							</div>
 
-							<div style="display: flex; align-items: center;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows")">
+							<div style="display: flex; align-items: center; gap: 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows")">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@inteligenciaArtificialChecked2" @onchange="@(e => CambiarInteligenciaArtificial(e, 2))">
 								</div>
 
-								<div style="margin-left: 15px; padding-bottom: 8px;">
+								<div>
 									<label style="font-size: 14px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String39", "HistoricalLows")</label>
 								</div>
 							</div>

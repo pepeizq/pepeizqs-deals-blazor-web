@@ -2,6 +2,7 @@
 
 using APIs.Steam;
 using Herramientas;
+using Juegos;
 using Microsoft.Data.SqlClient;
 
 namespace Tareas
@@ -49,9 +50,64 @@ namespace Tareas
 							{
 								BaseDatos.Admin.Actualizar.TareaUso("fichasActualizar", DateTime.Now, conexion);
 
+								#region Buscar 
+
+								List<Juegos.Juego> juegosAleatorios = BaseDatos.Juegos.Buscar.Aleatorios(true);
+
+								if (juegosAleatorios?.Count > 0)
+								{
+									foreach (var juego in juegosAleatorios)
+									{
+										bool actualizarDatosAPI = false;
+										TimeSpan tiempoComprobar = TimeSpan.FromDays(60);
+
+										if (juego.Caracteristicas?.FechaLanzamientoSteam != null)
+										{
+											if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 1)
+											{
+												tiempoComprobar = TimeSpan.FromHours(6);
+											}
+											else if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 3)
+											{
+												tiempoComprobar = TimeSpan.FromHours(12);
+											}
+											else if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 7)
+											{
+												tiempoComprobar = TimeSpan.FromDays(1);
+											}
+											else if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 14)
+											{
+												tiempoComprobar = TimeSpan.FromDays(3);
+											}
+											else if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 30)
+											{
+												tiempoComprobar = TimeSpan.FromDays(5);
+											}
+											else if (DateTime.Now.Subtract(juego.Caracteristicas.FechaLanzamientoSteam).TotalDays < 120)
+											{
+												tiempoComprobar = TimeSpan.FromDays(30);
+											}
+										}
+
+										if (juego.FechaSteamAPIComprobacion.Add(tiempoComprobar) < DateTime.Now)
+										{
+											actualizarDatosAPI = true;
+										}
+
+										if (actualizarDatosAPI == true)
+										{
+											BaseDatos.JuegosActualizar.Insertar.Ejecutar(juego.Id, juego.IdSteam, "SteamAPI");
+										}
+									}
+								}
+
+								#endregion
+
+								#region Actualizar
+
 								List<BaseDatos.JuegosActualizar.JuegoActualizar> fichas = BaseDatos.JuegosActualizar.Buscar.Todos(conexion);
 
-								if (fichas.Count > 0)
+								if (fichas?.Count > 0)
 								{
 									foreach (var ficha in fichas)
 									{
@@ -160,6 +216,8 @@ namespace Tareas
 										}
 									}
 								}
+
+								#endregion
 							}
 						}
 						catch (Exception ex)

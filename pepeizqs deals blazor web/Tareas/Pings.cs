@@ -19,7 +19,7 @@ namespace Tareas
 
         protected override async Task ExecuteAsync(CancellationToken tokenParar)
         {
-            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(120));
+            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(60));
 
             while (await timer.WaitForNextTickAsync(tokenParar))
             {
@@ -31,10 +31,10 @@ namespace Tareas
                 {
                     try
                     {
-						HttpClientHandler manjeador = new HttpClientHandler();
-						manjeador.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+						HttpClientHandler manejador = new HttpClientHandler();
+						manejador.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-						HttpClient cliente = new HttpClient(manjeador);
+						HttpClient cliente = new HttpClient(manejador);
 						HttpRequestMessage mensaje = new HttpRequestMessage();
 						mensaje.RequestUri = new Uri("http://pepeizq-001-site4.ntempurl.com");
 						mensaje.Headers.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");

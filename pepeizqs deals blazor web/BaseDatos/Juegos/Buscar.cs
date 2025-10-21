@@ -2039,7 +2039,7 @@ SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam
 			return lista;
 		}
 
-        public static List<Juego> Aleatorios(SqlConnection conexion = null)
+        public static List<Juego> Aleatorios(bool fechaAPISteam = false, SqlConnection conexion = null)
         {
             if (conexion == null)
             {
@@ -2058,6 +2058,11 @@ SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam
             using (conexion)
             {
                 string busqueda = @"SELECT TOP 300 id, nombre FROM juegos ORDER BY NEWID()";
+
+				if (fechaAPISteam == true)
+				{
+					busqueda = @"SELECT TOP 300 id, nombre, idSteam, fechaSteamAPIComprobacion, JSON_VALUE(caracteristicas, '$.FechaLanzamientoSteam') FROM juegos WHERE idSteam > 0 ORDER BY NEWID()";
+				}
 
                 using (SqlCommand comando = new SqlCommand(busqueda, conexion))
                 {
@@ -2091,6 +2096,43 @@ SET @ids = (SELECT idjuegos FROM tiendasteambundles WHERE enlace = '@enlaceSteam
                                 }
                             }
                             catch { }
+
+							if (fechaAPISteam == true)
+							{
+								try
+								{
+									if (lector.IsDBNull(2) == false)
+									{
+										juego.IdSteam = lector.GetInt32(2);
+									}
+								}
+								catch { }
+
+								try
+								{
+									if (lector.IsDBNull(3) == false)
+									{
+										if (string.IsNullOrEmpty(lector.GetString(3)) == false)
+										{
+											juego.FechaSteamAPIComprobacion = DateTime.Parse(lector.GetString(3));
+										}
+									}
+								}
+								catch { }
+
+								try
+								{
+									if (lector.IsDBNull(4) == false)
+									{
+										if (string.IsNullOrEmpty(lector.GetString(4)) == false)
+										{
+											juego.Caracteristicas = new JuegoCaracteristicas();
+											juego.Caracteristicas.FechaLanzamientoSteam = DateTime.Parse(lector.GetString(4));
+										}
+									}
+								}
+								catch { }
+							}
 
                             juegos.Add(juego);
                         }

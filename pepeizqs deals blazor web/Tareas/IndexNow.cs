@@ -34,7 +34,7 @@ namespace Tareas
                 string piscinaWeb = builder.Configuration.GetValue<string>("PoolWeb:Contenido");
                 string piscinaUsada = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
 
-                if (piscinaWeb == piscinaUsada)
+                if (piscinaWeb != piscinaUsada)
                 {
                     SqlConnection conexion = new SqlConnection();
 

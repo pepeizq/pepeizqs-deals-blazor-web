@@ -48,7 +48,7 @@
         top: 0;
         overflow-x: auto;
         position: fixed;
-        z-index: 1000;
+        z-index: 1005;
         margin-top: var(--alturaCabecera);
         padding: 10px;
         background-color: var(--fondoOscuroTransparente);
@@ -129,7 +129,7 @@
 
     @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
-        <div style="@fondoBuscador padding-right: 10px; display: flex; align-items: center; gap: 10px;">
+        <div style="@fondoBuscador padding-right: 10px; display: flex; align-items: center; gap: 10px; transition: background-color 1000ms linear;">
             <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onclick="ClickBuscador" @onfocusout="PerderBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px; border: 0px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
 
             @if (resultadosMostrar == null || resultadosMostrar?.Count == 0)
@@ -401,7 +401,7 @@
 
     @if (resultadosMostrar?.Count > 0)
     {
-        <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); display: flex; align-items: start; flex-direction: column; backdrop-filter: blur(5px); background: color-mix(in srgb, var(--fondoCuerpo) 90%, transparent);">
+        <div style="height: calc(100% - var(--alturaCabecera)); width: 100%; top: 0; left: 0; overflow-x: auto; position: fixed; z-index: 1000; margin-top: var(--alturaCabecera); display: flex; align-items: start; flex-direction: column; background: color-mix(in srgb, var(--fondoCuerpo) 95%, transparent);">
             <div style="margin-left: auto; margin-right: auto; margin-bottom: 30px; max-width: var(--anchoCuerpo); width: 100%;">               
                 @foreach (var juego in resultadosMostrar)
                 {
@@ -592,7 +592,7 @@
                 resultadosMostrar = new List<Juegos.Juego>();
             }
 
-            resultadosMostrar.RemoveAll(j => Herramientas.Buscador.LimpiarNombre(j.Nombre) != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+            resultadosMostrar.RemoveAll(j => j.NombreCodigo != Herramientas.Buscador.LimpiarNombre(textoBuscador));
 
             if (conexion == null)
             {
@@ -651,6 +651,8 @@
                     }
 
                     resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
+                
+                    StateHasChanged();
                 }
             }
         }

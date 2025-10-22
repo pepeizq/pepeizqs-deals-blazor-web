@@ -55,5 +55,12 @@ namespace BaseDatos.CorreosEnviar
 		public string Titulo;
 		public string CorreoDesde;
 		public string CorreoHacia;
+		public CorreoPendienteTipo Tipo;
+	}
+
+	public enum CorreoPendienteTipo
+	{
+		Desconocido,
+		Minimo
 	}
 }

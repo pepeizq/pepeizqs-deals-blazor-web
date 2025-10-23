@@ -36,8 +36,14 @@ namespace BaseDatos.CorreosEnviar
 							Html = lector.GetString(1),
 							Titulo = lector.GetString(2),
 							CorreoDesde = lector.GetString(3),
-							CorreoHacia = lector.GetString(4)
+							CorreoHacia = lector.GetString(4),
+							Tipo = (CorreoPendienteTipo)lector.GetInt32(5)
 						};
+
+						if (lector.IsDBNull(6) == false)
+						{
+							correo.Json = lector.GetString(6);
+						}
 
 						lista.Add(correo);
 					}
@@ -56,11 +62,18 @@ namespace BaseDatos.CorreosEnviar
 		public string CorreoDesde;
 		public string CorreoHacia;
 		public CorreoPendienteTipo Tipo;
+		public string Json;
 	}
 
 	public enum CorreoPendienteTipo
 	{
 		Desconocido,
-		Minimo
+		Minimo,
+		Noticia,
+		ContraseñaReseteada,
+		ContraseñaOlvidada,
+		ContraseñaCambio,
+		CorreoCambio,
+		CorreoConfirmacion
 	}
 }

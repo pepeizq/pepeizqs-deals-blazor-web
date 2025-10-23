@@ -6,7 +6,7 @@ namespace BaseDatos.CorreosEnviar
 {
 	public static class Insertar
 	{
-		public static void Ejecutar(string html, string titulo, string correoDesde, string correoHacia, SqlConnection conexion = null)
+		public static void Ejecutar(string html, string titulo, string correoDesde, string correoHacia, CorreoPendienteTipo tipo, string json = null, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -20,9 +20,18 @@ namespace BaseDatos.CorreosEnviar
 				}
 			}
 
+			string añadirJson1 = string.Empty;
+			string añadirJson2 = string.Empty;
+
+			if (string.IsNullOrEmpty(json) == false)
+			{
+				añadirJson1 = ", json";
+				añadirJson2 = ", @json";
+			}
+
 			string sqlAñadir = "INSERT INTO correosEnviar " +
-					 "(html, titulo, correoDesde, correoHacia) VALUES " +
-					 "(@html, @titulo, @correoDesde, @correoHacia) ";
+					 "(html, titulo, correoDesde, correoHacia, tipo" + añadirJson1 + ") VALUES " +
+					 "(@html, @titulo, @correoDesde, @correoHacia, @tipo" + añadirJson2 + ") ";
 
 			using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
 			{
@@ -30,14 +39,20 @@ namespace BaseDatos.CorreosEnviar
 				comando.Parameters.AddWithValue("@titulo", titulo);
 				comando.Parameters.AddWithValue("@correoDesde", correoDesde);
 				comando.Parameters.AddWithValue("@correoHacia", correoHacia);
+				comando.Parameters.AddWithValue("@tipo", tipo);
+
+				if (string.IsNullOrEmpty(json) == false)
+				{
+					comando.Parameters.AddWithValue("@json", json);
+				}
 
 				try
 				{
 					comando.ExecuteNonQuery();
 				}
-				catch
+				catch (Exception ex)
 				{
-
+					BaseDatos.Errores.Insertar.Mensaje("Insertar Correo Enviar", ex, conexion, false, comando);
 				}
 			}
 		}

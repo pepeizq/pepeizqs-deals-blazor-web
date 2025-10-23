@@ -93,7 +93,7 @@ namespace Herramientas
 					html = html.Replace("<ul>", @"<ul style=""line-height: 22px;"">");
 				}
 
-				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia);
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Noticia);
 
 				return true;
             }
@@ -142,7 +142,7 @@ namespace Herramientas
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Reset1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaReseteada);
         }
 
         public static void EnviarContraseñaOlvidada(string idioma, string codigo, string correoHacia)
@@ -184,7 +184,7 @@ namespace Herramientas
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Reset2", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaOlvidada);
         }
 
         public static void EnviarCambioContraseña(string idioma, string correoHacia)
@@ -224,7 +224,7 @@ namespace Herramientas
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Change1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaCambio);
         }
 
         public static void EnviarCambioCorreo(string idioma, string codigo, string correoHacia)
@@ -266,7 +266,7 @@ namespace Herramientas
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Mail1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoCambio);
         }
 
         public static void EnviarConfirmacionCorreo(string idioma, string codigo, string correoHacia)
@@ -308,7 +308,7 @@ namespace Herramientas
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Confirm1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoConfirmacion);
 		}
 
 		public static void EnviarNuevoMinimo(string usuarioId, int idJuego, JuegoPrecio precio, string correoHacia)
@@ -426,7 +426,7 @@ namespace Herramientas
 			html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 			html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
 		}
 
         public static bool EnviarCorreo(string html, string titulo, string correoDesde, string correoHacia)

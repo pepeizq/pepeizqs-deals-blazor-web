@@ -8,22 +8,22 @@ namespace APIs.AmazonLuna
 {
 	public static class Suscripcion
 	{
-		public static Suscripciones2.Suscripcion Generar()
+		public static Suscripciones2.Suscripcion GenerarPremium()
 		{
 			Suscripciones2.Suscripcion amazon = new Suscripciones2.Suscripcion
 			{
-				Id = Suscripciones2.SuscripcionTipo.AmazonLunaPlus,
-				Nombre = "Amazon Luna +",
-				ImagenLogo = "/imagenes/suscripciones/amazonluna.webp",
+				Id = Suscripciones2.SuscripcionTipo.LunaPremium,
+				Nombre = "Luna Premium",
+				ImagenLogo = "/imagenes/suscripciones/lunapremium_logo.webp",
 				ImagenIcono = "/imagenes/streaming/amazonluna_icono.webp",
-				Enlace = "https://luna.amazon.es/subscription/luna-plus/B085TRCCT6",
+				Enlace = "https://luna.amazon.es/subscription/luna-premium/B085TRCCT6",
 				DRMDefecto = JuegoDRM.AmazonLuna,
 				AdminInteractuar = true,
 				UsuarioEnlacesEspecificos = false,
 				ParaSiempre = false,
 				Precio = 9.99,
 				AdminPendientes = true,
-				TablaPendientes = "suscripcionamazonlunaplus"
+				TablaPendientes = "suscripcionlunapremium"
 			};
 
 			return amazon;
@@ -33,7 +33,7 @@ namespace APIs.AmazonLuna
 		{
 			await Task.Yield();
 
-			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
+			BaseDatos.Admin.Actualizar.Tiendas(GenerarPremium().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
 
 			List<int> idsBorrar = new List<int>();
 
@@ -76,7 +76,7 @@ namespace APIs.AmazonLuna
 			}
 			catch (Exception ex)
 			{
-				BaseDatos.Errores.Insertar.Mensaje("Amazon Luna + Suscripcion 1", ex);
+				BaseDatos.Errores.Insertar.Mensaje("Luna Premium Suscripcion 1", ex);
 			}
 
 			if (juegos != null)
@@ -99,7 +99,7 @@ namespace APIs.AmazonLuna
 							}
 						}
 
-						string sqlBuscar = "SELECT idJuegos FROM " + Generar().TablaPendientes + " WHERE enlace=@enlace";
+						string sqlBuscar = "SELECT idJuegos FROM " + GenerarPremium().TablaPendientes + " WHERE enlace=@enlace";
 
 						using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
 						{
@@ -110,7 +110,7 @@ namespace APIs.AmazonLuna
 								if (lector.Read() == true)
 								{
 									cantidad += 1;
-									BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+									BaseDatos.Admin.Actualizar.Tiendas(GenerarPremium().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
 
 									if (lector.IsDBNull(0) == false)
 									{
@@ -142,7 +142,7 @@ namespace APIs.AmazonLuna
 
 																	foreach (var suscripcion in juegobd.Suscripciones)
 																	{
-																		if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.AmazonLunaPlus)
+																		if (suscripcion.Tipo == Suscripciones2.SuscripcionTipo.LunaPremium)
 																		{
 																			añadirSuscripcion = false;
 																			actualizar = true;
@@ -187,7 +187,7 @@ namespace APIs.AmazonLuna
 																	ImagenNoticia = juegobd.Imagenes.Header_460x215,
 																	JuegoId = juegobd.Id,
 																	Enlace = juego.Id,
-																	Tipo = Suscripciones2.SuscripcionTipo.AmazonLunaPlus
+																	Tipo = Suscripciones2.SuscripcionTipo.LunaPremium
 																};
 
 																if (juegobd.Suscripciones == null)
@@ -211,7 +211,7 @@ namespace APIs.AmazonLuna
 
 						if (encontrado == false)
 						{
-							BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), juego.Id, juego.Nombre);
+							BaseDatos.Suscripciones.Insertar.Temporal(conexion, GenerarPremium().Id.ToString().ToLower(), juego.Id, juego.Nombre);
 						}
 					}
 				}
@@ -238,7 +238,7 @@ namespace APIs.AmazonLuna
 					}
 					catch (Exception ex)
 					{
-						BaseDatos.Errores.Insertar.Mensaje(Generar().Id.ToString().ToLower(), ex, conexion);
+						BaseDatos.Errores.Insertar.Mensaje(GenerarPremium().Id.ToString().ToLower(), ex, conexion);
 					}
 				}
 			}

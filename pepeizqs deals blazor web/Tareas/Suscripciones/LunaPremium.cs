@@ -5,15 +5,15 @@ using Microsoft.Data.SqlClient;
 
 namespace Tareas.Suscripciones
 {
-	public class AmazonLunaPlus : BackgroundService
+	public class LunaPremium : BackgroundService
 	{
-		private string id = "amazonlunaplus";
+		private string id = APIs.AmazonLuna.Suscripcion.GenerarPremium().Id.ToString();
 
-		private readonly ILogger<AmazonLunaPlus> _logger;
+		private readonly ILogger<LunaPremium> _logger;
 		private readonly IServiceScopeFactory _factoria;
 		private readonly IDecompiladores _decompilador;
 
-		public AmazonLunaPlus(ILogger<AmazonLunaPlus> logger, IServiceScopeFactory factory, IDecompiladores decompilador)
+		public LunaPremium(ILogger<LunaPremium> logger, IServiceScopeFactory factory, IDecompiladores decompilador)
 		{
 			_logger = logger;
 			_factoria = factory;

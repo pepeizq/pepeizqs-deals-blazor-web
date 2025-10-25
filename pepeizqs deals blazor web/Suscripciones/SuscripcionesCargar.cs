@@ -33,6 +33,7 @@ namespace Suscripciones2
 				APIs.Xbox.Suscripcion.Generar(),
 				APIs.Ubisoft.Suscripcion.Generar(),
 				APIs.Ubisoft.Suscripcion.GenerarPremium(),
+				APIs.AmazonLuna.Suscripcion.Generar(),
 				APIs.AmazonLuna.Suscripcion.GenerarPremium()
 			};
 

@@ -245,10 +245,10 @@ namespace BaseDatos.Juegos
 
 					if (string.IsNullOrEmpty(juego.Nombre) == true)
 					{
-						añadido = juego.IdSteam.ToString();
+						añadido = juego.IdSteam.ToString() + " (Id Steam)";
 					}
 
-					Errores.Insertar.Mensaje("Añadir Juego en " + tabla + " - Id Steam: " + añadido, ex);
+					Errores.Insertar.Mensaje("Añadir Juego en " + tabla + " - " + añadido, ex);
 				}
 			}
 		}

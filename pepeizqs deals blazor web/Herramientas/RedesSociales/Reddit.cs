@@ -785,8 +785,10 @@ namespace Herramientas.RedesSociales
                         {
                             try
                             {
-                                await subreddit.SubmitTextPostAsync(titulo, texto);
-                            }
+                                var post = await subreddit.SubmitPostAsync(titulo, enlace);
+
+                                await post.EditTextAsync(texto);
+							}
                             catch (Exception ex)
                             {
                                 global::BaseDatos.Errores.Insertar.Mensaje("Reddit Postear Noticia", ex);

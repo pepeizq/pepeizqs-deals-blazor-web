@@ -1,13 +1,16 @@
 ﻿#nullable disable
 
+using ApexCharts;
 using Juegos;
+using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
-using MailKit;
 using Microsoft.Data.SqlClient;
 using MimeKit;
 using Noticias;
+using pepeizqs_deals_web.Data;
+using System.Text.Json;
 
 namespace Herramientas
 {
@@ -399,7 +402,7 @@ namespace Herramientas
 			string descripcion = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "Lows2", "Mails"), juego.Nombre, tiendaFinal);
 			string imagen = juego.Imagenes.Header_460x215;
 			string descuento = precio.Descuento.ToString() + "%";
-			string enlace = "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
+			string enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, false, false);
 	
 			string mensajeAbrir = string.Empty;
 
@@ -426,10 +429,92 @@ namespace Herramientas
 			html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 			html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
+			CorreoMinimoJson json = new CorreoMinimoJson();
+			json.Precio = precio2;
+			json.TiendaNombre = tiendaFinal;
+			json.TiendaIcono = imagenTienda;
+			json.Nombre = juego.Nombre;
+			json.Imagen = imagen;
+			json.Enlace = enlace;
+			json.Descuento = descuento;
+			json.Idioma = idioma;
+
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo, JsonSerializer.Serialize(json));
 		}
 
-        public static bool EnviarCorreo(string html, string titulo, string correoDesde, string correoHacia)
+		public static void EnviarNuevosMinimos(List<CorreoMinimoJson> jsons, string correoHacia)
+		{
+			if (jsons?.Count > 0)
+			{
+				string idioma = jsons[0].Idioma;
+
+				if (string.IsNullOrEmpty(idioma) == true)
+				{
+					idioma = "en";
+				}
+
+				string titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "Lows6", "Mails"), jsons.Count);
+
+				string html = @"<!DOCTYPE html>
+							<html>
+							<head>
+								<meta charset=""utf-8"" />
+								<title></title>
+							</head>
+							<body>
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								";
+
+				foreach (var json in jsons)
+				{
+					string htmlJson = @"<div style=""margin-bottom: 30px; display: flex; flex-direction: column; gap: 40px; color: #f5f5f5; background-color: #0d1621; padding: 20px;"">
+											<a href=""{{enlace}}"" style=""color: #f5f5f5; user-select: none; width: 100%; text-align: left; font-size: 16px; text-decoration: none;"" target=""_blank"">
+												<div>
+													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px;"">
+														<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 300px; margin-top: 10px;"" />
+													</div>
+													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; margin-top: 10px;"">
+														<img src=""{{imagenTienda}}"" style=""width: 120px; margin-right: 10px;"" />
+														<div class=""juego-descuento"" style=""margin: 10px; padding: 10px; background-color: darkgreen;"">
+															{{descuento}}
+														</div>
+														<div style=""padding: 5px 10px;"">
+															{{precio}}
+														</div>
+													</div>
+												</div>
+											</a>
+										</div>";
+
+					htmlJson = htmlJson.Replace("{{enlace}}", json.Enlace);
+					htmlJson = htmlJson.Replace("{{imagen}}", json.Imagen);
+					htmlJson = htmlJson.Replace("{{imagenTienda}}", json.TiendaIcono);
+					htmlJson = htmlJson.Replace("{{descuento}}", json.Descuento);
+					htmlJson = htmlJson.Replace("{{precio}}", json.Precio);
+
+					html = html + htmlJson;
+				}
+
+				html = html + @"<div style=""margin-top: 40px;"">
+									<div>
+										&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+									</div>
+									<div style=""margin-top: 20px; font-size: 14px;"">
+										{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+									</div>
+								</div>
+							</div>
+						</body>
+						</html>";
+
+				html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
+				html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
+
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos);
+			}
+		}
+
+		public static bool EnviarCorreo(string html, string titulo, string correoDesde, string correoHacia)
 		{
 			if (string.IsNullOrEmpty(html) == false &&
 				string.IsNullOrEmpty(titulo) == false &&
@@ -494,7 +579,57 @@ namespace Herramientas
 
 						global::BaseDatos.Admin.Actualizar.TareaUso("correosEnviar", nuevaFecha);
 
+						List<global::BaseDatos.CorreosEnviar.CorreoPendienteEnviar> pendientes = global::BaseDatos.CorreosEnviar.Buscar.PendientesEnviar();
+
+						if (pendientes?.Count > 0)
+						{
+							foreach (var pendiente in pendientes.ToList())
+							{
+								if (pendiente.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
+								{
+									List<CorreoMinimoJson> jsons = new List<CorreoMinimoJson>();
+
+									foreach (var pendiente2 in pendientes)
+									{
+										if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
+										{
+											jsons.Add(JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente2.Json));
+										}
+									}
+
+									if (jsons?.Count == 1)
+									{
+										bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+										if (enviado == true)
+										{
+											global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id);
+										}
+										else
+										{
+											break;
+										}
+									}
+									else if (jsons?.Count > 1)
+									{
+										Herramientas.Correos.EnviarNuevosMinimos(jsons, pendiente.CorreoHacia);
+
+										foreach (var pendiente2 in pendientes.ToList())
+										{
+											if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo)
+											{
+												global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id);
+											}
+										}
+
+										pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
+									}
+								}
+							}
+						}
+
 						global::BaseDatos.Errores.Insertar.Mensaje("Correo Enviar", ex);
+
 						return false;
 					}
 				}
@@ -572,5 +707,17 @@ namespace Herramientas
 	{
 		public MimeMessage Correo;
 		public UniqueId Id;
+	}
+
+	public class CorreoMinimoJson
+	{
+		public string Precio { get; set; }
+		public string TiendaNombre { get; set; }
+		public string TiendaIcono { get; set; }
+		public string Nombre { get; set; }
+		public string Imagen { get; set; }
+		public string Enlace { get; set; }
+		public string Descuento { get; set; }
+		public string Idioma { get; set; }
 	}
 }

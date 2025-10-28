@@ -2,6 +2,7 @@
 
 using Herramientas;
 using Microsoft.Data.SqlClient;
+using System.Text.Json;
 
 namespace Tareas
 {
@@ -50,19 +51,62 @@ namespace Tareas
 
 								List<BaseDatos.CorreosEnviar.CorreoPendienteEnviar> pendientes = BaseDatos.CorreosEnviar.Buscar.PendientesEnviar(conexion);
 
-								if (pendientes.Count > 0)
+								if (pendientes?.Count > 0)
 								{
-									foreach (var pendiente in pendientes)
+									foreach (var pendiente in pendientes.ToList())
 									{
-										bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
-
-										if (enviado == true)
+										if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
 										{
-											BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+											List<CorreoMinimoJson> jsons = new List<CorreoMinimoJson>();
+
+											foreach (var pendiente2 in pendientes)
+											{
+												if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
+												{
+													jsons.Add(JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente2.Json));
+												}
+											}
+
+											if (jsons?.Count == 1)
+											{
+												bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+												if (enviado == true)
+												{
+													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+												}
+												else
+												{
+													break;
+												}
+											}
+											else if (jsons?.Count > 1)
+											{
+												Herramientas.Correos.EnviarNuevosMinimos(jsons, pendiente.CorreoHacia);
+
+												foreach (var pendiente2 in pendientes.ToList())
+												{
+													if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo)
+													{
+														BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
+													}
+												}
+
+												pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
+											}
 										}
 										else
 										{
-											break;
+											bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+											if (enviado == true)
+											{
+												BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+											}
+											else
+											{
+												break;
+											}
 										}
 									}
 								}

@@ -45,6 +45,11 @@ namespace BaseDatos.CorreosEnviar
 							correo.Json = lector.GetString(6);
 						}
 
+						if (lector.IsDBNull(7) == false)
+						{
+							correo.Fecha = lector.GetDateTime(7);
+						}
+
 						lista.Add(correo);
 					}
 				}
@@ -63,12 +68,14 @@ namespace BaseDatos.CorreosEnviar
 		public string CorreoHacia;
 		public CorreoPendienteTipo Tipo;
 		public string Json;
+		public DateTime Fecha;
 	}
 
 	public enum CorreoPendienteTipo
 	{
 		Desconocido,
 		Minimo,
+		Minimos,
 		Noticia,
 		ContraseñaReseteada,
 		ContraseñaOlvidada,

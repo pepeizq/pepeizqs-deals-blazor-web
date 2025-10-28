@@ -30,8 +30,8 @@ namespace BaseDatos.CorreosEnviar
 			}
 
 			string sqlAñadir = "INSERT INTO correosEnviar " +
-					 "(html, titulo, correoDesde, correoHacia, tipo" + añadirJson1 + ") VALUES " +
-					 "(@html, @titulo, @correoDesde, @correoHacia, @tipo" + añadirJson2 + ") ";
+					 "(html, titulo, correoDesde, correoHacia, tipo, fecha" + añadirJson1 + ") VALUES " +
+					 "(@html, @titulo, @correoDesde, @correoHacia, @tipo, @fecha" + añadirJson2 + ") ";
 
 			using (SqlCommand comando = new SqlCommand(sqlAñadir, conexion))
 			{
@@ -40,6 +40,7 @@ namespace BaseDatos.CorreosEnviar
 				comando.Parameters.AddWithValue("@correoDesde", correoDesde);
 				comando.Parameters.AddWithValue("@correoHacia", correoHacia);
 				comando.Parameters.AddWithValue("@tipo", tipo);
+				comando.Parameters.AddWithValue("@fecha", DateTime.Now);
 
 				if (string.IsNullOrEmpty(json) == false)
 				{

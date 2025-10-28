@@ -1594,7 +1594,7 @@ namespace BaseDatos.Usuarios
 			if (drm == JuegoDRM.Steam)
 			{
 				busqueda = @"DECLARE @idSteam nvarchar(256);
-SET @idSteam = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":0}');
+SET @idSteam = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":0}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idSteam, Wishlist) > 0
 UNION
@@ -1604,7 +1604,7 @@ SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(SteamWishlist
 			if (drm == JuegoDRM.GOG)
 			{
 				busqueda = @"DECLARE @idGOG nvarchar(256);
-SET @idGOG = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":8}');
+SET @idGOG = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":8}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idGOG, Wishlist) > 0
 UNION
@@ -1614,7 +1614,7 @@ SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(GogWishlist, 
 			if (drm == JuegoDRM.Amazon)
 			{
 				busqueda = @"DECLARE @idAmazon nvarchar(256);
-SET @idAmazon = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":9}');
+SET @idAmazon = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":9}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idAmazon, Wishlist) > 0";
 			}
@@ -1622,7 +1622,7 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idAmazon, Wishlist) > 0";
 			if (drm == JuegoDRM.Epic)
 			{
 				busqueda = @"DECLARE @idEpic nvarchar(256);
-SET @idEpic = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":6}');
+SET @idEpic = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":6}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEpic, Wishlist) > 0";
 			}
@@ -1630,7 +1630,7 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEpic, Wishlist) > 0";
 			if (drm == JuegoDRM.Ubisoft)
 			{
 				busqueda = @"DECLARE @idUbisoft nvarchar(256);
-SET @idUbisoft = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":2}');
+SET @idUbisoft = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":2}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idUbisoft, Wishlist) > 0";
 			}
@@ -1638,7 +1638,7 @@ SELECT id FROM AspNetUsers WHERE CHARINDEX(@idUbisoft, Wishlist) > 0";
 			if (drm == JuegoDRM.EA)
 			{
 				busqueda = @"DECLARE @idEA nvarchar(256);
-SET @idEA = CONCAT('\""IdBaseDatos\"":\""',@juegoId,'\"",\""DRM\"":3}');
+SET @idEA = CONCAT('""IdBaseDatos"":""',@juegoId,'"",""DRM"":3}');
 
 SELECT id FROM AspNetUsers WHERE CHARINDEX(@idEA, Wishlist) > 0";
 			}

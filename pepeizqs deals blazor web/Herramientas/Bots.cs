@@ -105,6 +105,7 @@ Disallow: /account/
 Disallow: /link/*
 Disallow: /publisher/*
 Disallow: /es/*
+Disallow: /category/*
 Disallow: /1*
 Disallow: /2*
 Disallow: /3*

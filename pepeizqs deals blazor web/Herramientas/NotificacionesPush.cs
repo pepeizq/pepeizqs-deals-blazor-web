@@ -28,7 +28,7 @@ namespace Herramientas
 			{
 				Icon = "https://pepeizqdeals.com/logo/logo6.png",
 				Image = noticia.Imagen,
-				Data = "{" + Environment.NewLine + "url: " + Strings.ChrW(34) + noticia.Enlace + Strings.ChrW(34) + ", " + Environment.NewLine + "status: " + Strings.ChrW(34) + "open" + Strings.ChrW(34) + "}"
+				Data = "url: " + Strings.ChrW(34) + noticia.Enlace + Strings.ChrW(34) + ", " + Environment.NewLine + "status: " + Strings.ChrW(34) + "open"
 			};
 
 			try

@@ -391,9 +391,9 @@
 					</div>
 				</div>
 
-                <div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); padding: 20px 40px;">
+                <div style="background-color: var(--fondoSubcabecera); border: 1px solid var(--fondoBotonPequeño); padding: 20px 40px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
                     <button @onclick="(e => ComprobarEnvioNotificaciones(e, juego.Id, juego.PrecioMinimosHistoricos, JuegoDRM.Steam))" class="boton-pequeño" style="padding: 10px 15px; width: fit-content;">
-                        Comprobar Envio Notificaciones Steam
+                        Comprobar Envio Notificaciones Minimo (Steam)
                     </button>
                 </div>
 
@@ -1452,30 +1452,30 @@
             {
                 if (BaseDatos.Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado, id, drm) == false)
                 {
-                    BaseDatos.Usuarios.DeseadosDatos datosDeseados = null;
+                    // BaseDatos.Usuarios.DeseadosDatos datosDeseados = null;
 
-					string datosDeseadosTexto = BaseDatos.Usuarios.Buscar.Opcion(usuarioInteresado, "WishlistData");
+                    // string datosDeseadosTexto = BaseDatos.Usuarios.Buscar.Opcion(usuarioInteresado, "WishlistData");
 
-					if (string.IsNullOrEmpty(datosDeseadosTexto) == true)
-					{
-						datosDeseados = new BaseDatos.Usuarios.DeseadosDatos();
-					}
-					else
-					{
-						try
-						{
-							datosDeseados = JsonSerializer.Deserialize<BaseDatos.Usuarios.DeseadosDatos>(datosDeseadosTexto);
-						}
-						catch
-						{
-							datosDeseados = new BaseDatos.Usuarios.DeseadosDatos();
-						}
+                    // if (string.IsNullOrEmpty(datosDeseadosTexto) == true)
+                    // {
+                    //     datosDeseados = new BaseDatos.Usuarios.DeseadosDatos();
+                    // }
+                    // else
+                    // {
+                    //     try
+                    //     {
+                    //         datosDeseados = JsonSerializer.Deserialize<BaseDatos.Usuarios.DeseadosDatos>(datosDeseadosTexto);
+                    //     }
+                    //     catch
+                    //     {
+                    //         datosDeseados = new BaseDatos.Usuarios.DeseadosDatos();
+                    //     }
 
-						datosDeseados.Cantidad += 1;
-						datosDeseados.UltimoJuego = DateTime.Now;
-					}
+                    //     datosDeseados.Cantidad += 1;
+                    //     datosDeseados.UltimoJuego = DateTime.Now;
+                    // }
 
-					BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado);
+                    // BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado);
 
 					string correo = BaseDatos.Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado);
 

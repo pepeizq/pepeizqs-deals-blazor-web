@@ -785,9 +785,7 @@ namespace Herramientas.RedesSociales
                         {
                             try
                             {
-                                var post = await subreddit.SubmitPostAsync(titulo, enlace);
-
-                                await post.EditTextAsync(texto);
+                                await subreddit.SubmitTextPostAsync(titulo, texto);
 							}
                             catch (Exception ex)
                             {

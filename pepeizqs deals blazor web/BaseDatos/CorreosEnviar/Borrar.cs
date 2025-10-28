@@ -6,7 +6,7 @@ namespace BaseDatos.CorreosEnviar
 {
 	public static class Borrar
 	{
-		public static void Ejecutar(int id, SqlConnection conexion)
+		public static void Ejecutar(int id, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{

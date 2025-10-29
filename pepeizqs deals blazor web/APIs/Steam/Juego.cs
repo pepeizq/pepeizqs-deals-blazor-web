@@ -15,6 +15,7 @@ namespace APIs.Steam
 		public static string dominioImagenes = "https://cdn.cloudflare.steamstatic.com";
 		public static string dominioImagenes2 = "https://shared.cloudflare.steamstatic.com";
 		public static string dominioVideos = "https://video.cloudflare.steamstatic.com/store_trailers/";
+		public static string dominioVideos2 = "https://video.akamai.steamstatic.com/store_trailers/";
 
 		public static async Task<Juegos.Juego> CargarDatosJuego(string enlace)
 		{
@@ -482,13 +483,26 @@ namespace APIs.Steam
                                             if (videoDatos.Tipo.Contains("mp4") == true)
                                             {
                                                 videoEnlace = videoDatos.Fichero;
+												videoEnlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace);
                                             }
                                         }
-                                    }                                 
+                                    }
+
+									if (string.IsNullOrEmpty(videoEnlace) == true && video.DatosAdaptivo != null)
+									{
+										foreach (var videoDatos in video.DatosAdaptivo)
+										{
+											if (videoDatos.Encodeo.Contains("dash") == true || videoDatos.Encodeo.Contains("h264") == true)
+											{
+												videoEnlace = videoDatos.Enlace;
+												videoEnlace = dominioVideos2 + videoEnlace;
+											}
+										}
+									}
 
 									if (string.IsNullOrEmpty(videoEnlace) == false)
 									{
-                                        string microEnlace = string.Empty;
+										string microEnlace = string.Empty;
 
                                         foreach (var microDatos in video.DatosMicro)
                                         {
@@ -501,7 +515,7 @@ namespace APIs.Steam
                                         Juegos.JuegoMediaVideo nuevoVideo = new Juegos.JuegoMediaVideo
                                         {
                                             Nombre = video.Nombre,
-                                            Enlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace),
+                                            Enlace = videoEnlace,
                                             MayorEdad = !video.MayorEdad,
                                             Captura = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.Captura),
                                             CapturaPequeña = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.CapturaPequeña),

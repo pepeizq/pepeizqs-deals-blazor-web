@@ -24,43 +24,11 @@
     }
 
     <div class="juego-galeria-contenedor">
-        @if (mediaMostrarPosicion >= 99999 && difuminar == false)
+        @if ((mediaMostrarPosicion >= 99999 && mediaMostrarPosicion <= 100003) && difuminar == false)
         {
-            if (mediaMostrarPosicion == 99999)
-            {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
-                    <source src="@mediaMostrar" type="video/mp4" />
-                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                </video>
-            }
-            else if (mediaMostrarPosicion == 100000)
-            {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
-                    <source src="@mediaMostrar" type="video/mp4" />
-                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                </video>
-            }
-            else if (mediaMostrarPosicion == 100001)
-            {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
-                    <source src="@mediaMostrar" type="video/mp4" />
-                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                </video>
-            }
-            else if (mediaMostrarPosicion == 100002)
-            {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
-                    <source src="@mediaMostrar" type="video/mp4" />
-                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                </video>
-            }
-            else if (mediaMostrarPosicion == 100003)
-            {
-                <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
-                    <source src="@mediaMostrar" type="video/mp4" />
-                    <source src="@mediaMostrar.Replace(".mp4", ".webm")" type="video/webm" />
-                </video>
-            }
+            <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
+                <source src="@mediaMostrar" type="@mediaMostrarTipo" />
+            </video>
         }
         else
         {
@@ -193,6 +161,22 @@
                 mediaMostrar = mediaMostrar.Replace("http://", "https://");
                 mediaMostrarCaptura = mediaMostrarCaptura.Replace("http://", "https://");
                 mediaMostrarPosicion = 99999;
+
+                if (string.IsNullOrEmpty(mediaMostrar) == false)
+                {
+                    if (mediaMostrar.EndsWith(".mp4") == true)
+                    {
+                        mediaMostrarTipo = "video/mp4";
+                    }
+                    else if (mediaMostrar.EndsWith(".webm") == true)
+                    {
+                        mediaMostrarTipo = "video/webm";
+                    }
+                    else if (mediaMostrar.EndsWith(".m3u8") == true)
+                    {
+                        mediaMostrarTipo = "application/x-mpegURL";
+                    }
+                }
             }
         }
 
@@ -208,6 +192,7 @@
 
     private int mediaMostrarPosicion = 0;
     private string mediaMostrar = string.Empty;
+    private string mediaMostrarTipo = string.Empty;
     private string mediaMostrarCaptura = string.Empty;
 
     private void CambiarMediaMostrar(MouseEventArgs e, int nuevaCaptura)
@@ -257,6 +242,22 @@
         mediaMostrar = mediaMostrar?.Replace("http://", "https://");
         mediaMostrarCaptura = mediaMostrarCaptura?.Replace("http://", "https://");
         mediaMostrarPosicion = nuevaCaptura;
+
+        if (string.IsNullOrEmpty(mediaMostrar) == false)
+        {
+            if (mediaMostrar.EndsWith(".mp4") == true)
+            {
+                mediaMostrarTipo = "video/mp4";
+            }
+            else if (mediaMostrar.EndsWith(".webm") == true)
+            {
+                mediaMostrarTipo = "video/webm";
+            }
+            else if (mediaMostrar.EndsWith(".m3u8") == true)
+            {
+                mediaMostrarTipo = "application/x-mpegURL";
+            }
+        }
     }
 
     private void EjecutarVideo()

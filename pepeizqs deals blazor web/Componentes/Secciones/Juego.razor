@@ -3908,7 +3908,7 @@
 						}
                     }
 
-                    if (juego.FechaSteamAPIComprobacion.Add(tiempoComprobar) > DateTime.Now)
+                    if (juego.FechaSteamAPIComprobacion.Add(tiempoComprobar) < DateTime.Now)
                     {
                         actualizarDatosAPI = true;
                     }

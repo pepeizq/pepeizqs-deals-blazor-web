@@ -7,6 +7,15 @@
 
 <Titulo tipo="@Titulo.Tipo.Contacto" idioma="@idioma"/>
 
+<style>
+	.caja-contacto-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		border: 2px solid var(--fondoSubcabecera);
+		padding: 20px;
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 <div class="subcabecera">
 	<div class="cuerpo-ancho sub-subcabecera">
 		<h1 style="font-size: 18px; margin: 0px; width: fit-content; padding: 9px 0px;">
@@ -29,43 +38,41 @@
 </div>
 
 <div style="max-width: 1000px; margin: 40px auto;">
-	<div style="display: flex; flex-direction: column; gap: 40px;">
-		<div class="caja-diseño" style="padding: 20px;">
-			<div style="margin-left: 8px; margin-bottom: 8px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Contact")
-			</div>
-			<input class="entrada-texto" value="@formularioCorreo" @oninput="TextoCambiaCorreo" />
-
-			<div style="margin-left: 8px; margin-bottom: 8px; margin-top: 20px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Contact")
-			</div>
-			<input class="entrada-texto" value="@formularioTitulo" @oninput="TextoCambiaTitulo" />
-
-			<div style="margin-left: 8px; margin-bottom: 8px; margin-top: 20px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Contact")
-			</div>
-			<textarea class="entrada-texto" value="@formularioContenido" @oninput="TextoCambiaContenido" rows="10" />
-
-			@if (correoValido == true && tituloValido == true && contenidoValido == true)
-			{
-				<button class="boton-pequeño" @onclick="EnviarmeCorreo" style="margin-top: 20px; text-align: center; padding: 15px 20px; font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Contact")
-				</button>
-			}
-			else
-			{
-				<div class="boton-pequeño" style="opacity: 0.5; margin-top: 20px; text-align: center; padding: 15px 20px; font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Contact")
-				</div>
-			}
-
-			@if (formularioEnviado == true)
-			{
-				<div style="background-color: var(--fondoBien); padding: 10px 15px; margin-top: 30px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Contact")
-				</div>
-			}
+	<div class="caja-contacto-contenido" style="display: flex; flex-direction: column;">
+		<div style="margin-left: 8px; margin-bottom: 8px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Contact")
 		</div>
+		<input class="entrada-texto" value="@formularioCorreo" @oninput="TextoCambiaCorreo" />
+
+		<div style="margin-left: 8px; margin-bottom: 8px; margin-top: 20px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Contact")
+		</div>
+		<input class="entrada-texto" value="@formularioTitulo" @oninput="TextoCambiaTitulo" />
+
+		<div style="margin-left: 8px; margin-bottom: 8px; margin-top: 20px;">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Contact")
+		</div>
+		<textarea class="entrada-texto" value="@formularioContenido" @oninput="TextoCambiaContenido" rows="10" />
+
+		@if (correoValido == true && tituloValido == true && contenidoValido == true)
+		{
+			<button class="boton-pequeño" @onclick="EnviarmeCorreo" style="margin-top: 20px; text-align: center; padding: 15px 20px; font-size: 18px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Contact")
+			</button>
+		}
+		else
+		{
+			<div class="boton-pequeño" style="opacity: 0.5; margin-top: 20px; text-align: center; padding: 15px 20px; font-size: 18px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Contact")
+			</div>
+		}
+
+		@if (formularioEnviado == true)
+		{
+			<div style="background-color: var(--fondoBien); padding: 10px 15px; margin-top: 30px;">
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Contact")
+			</div>
+		}
 	</div>
 </div>
 

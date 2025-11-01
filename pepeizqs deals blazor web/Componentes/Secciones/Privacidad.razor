@@ -9,9 +9,13 @@
 <style>
 	.caja-privacidad-contenido {
 		background-color: var(--fondoSubsubcabecera);
-		border: 2px solid var(--fondoSubcabecera);
-		padding: 30px;
 		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+
+	.caja-privacidad-titulo {
+		background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoSubcabecera));
+		font-size: 18px;
+		padding: 20px 30px;
 	}
 </style>
 
@@ -23,14 +27,12 @@
 	</div>
 </div>
 
-<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
+<div class="caja-privacidad-contenido" style="margin: 40px auto;">
+	<div class="caja-privacidad-titulo">
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Privacy")
 	</div>
-</div>
 
-<div class="caja-privacidad-contenido" style="margin: 40px auto;">
-	<div>
+	<div style="padding: 30px;">
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Privacy")
 
 		<ul>
@@ -44,19 +46,19 @@
 	</div>
 </div>
 
-<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
-	<div class="cuerpo-ancho sub-subcabecera" style="padding: 20px 0px;">
+<div class="caja-privacidad-contenido" style="margin: 40px auto;">
+	<div class="caja-privacidad-titulo">
 		@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Privacy")
 	</div>
-</div>
 
-<div class="caja-privacidad-contenido" style="margin: 40px auto; display: flex; flex-direction: column; gap: 20px;">
-	<div>
-		@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Privacy")
-	</div>
+	<div style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Privacy")
+		</div>
 
-	<div>
-		@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Privacy")
+		<div>
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Privacy")
+		</div>
 	</div>
 </div>
 

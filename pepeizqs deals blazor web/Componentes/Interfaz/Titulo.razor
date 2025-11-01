@@ -209,11 +209,11 @@
 
 	@if (tipo != Tipo.Noticia)
 	{
-		<link rel="canonical" href="@enlace" />
+		<link rel="canonical" href="@enlace" hreflang="x-default" />
 	}
 	else
 	{
-		<link rel="canonical" href="@enlaceEnNoticia" hreflang="en" />
+		<link rel="canonical" href="@enlaceEnNoticia" hreflang="x-default" />
 		<link rel="alternate" href="@enlaceEsNoticia" hreflang="es" />
 	}
 	

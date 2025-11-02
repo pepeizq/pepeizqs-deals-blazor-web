@@ -8,161 +8,166 @@
 <style>
     .caja-cuenta-contenido {
         background-color: var(--fondoSubsubcabecera);
-        border: 2px solid var(--fondoSubcabecera);
-        padding: 30px;
         box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+
+    .caja-cuenta-titulo {
+        background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+        font-size: 18px;
+        padding: 20px 30px;
+        border: 1px solid var(--fondoSubsubcabecera);
     }
 </style>
 
 @if (usuario != null)
 {
     <div style="display: flex; flex-direction: column; gap: 40px;">
-        <div class="caja-cuenta-contenido" style="display: flex; flex-direction: column;">
-            <div style="font-size: 18px;">
+        <div class="caja-cuenta-contenido">
+            <div class="caja-cuenta-titulo">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountLanguage")
             </div>
 
-            <hr/>
-
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div>
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountLanguage")
-                </div>
-
-                <div>
-                    @idiomaWeb
-                </div>
-            </div>
-
-            @if (Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.Language) == "en" || Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageOverride) == "en")
-            {
-                <div style="font-size: 14px; margin-top: 15px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountLanguage")
-                </div>
-            }
-
-            <div style="margin-top: 15px;">
-                @Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountLanguage")
-            </div>
-
-            <div class="menu-dropdown" style="width: fit-content; margin-top: 15px;">
-                <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
-                    <img src="@banderaSobreescrita" style="display: block; max-width: 20px; max-height: 20px;" />
-
-                    <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
-                        @idiomaSobreescrito
+            <div style="padding: 30px; display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div>
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountLanguage")
                     </div>
 
-                    <div style="max-width: 9px; min-width: 9px;">
-                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                        </svg>
+                    <div>
+                        @idiomaWeb
                     </div>
-                </button>
+                </div>
 
-                <div>
-                    <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
-                        @{
-                            List<Herramientas.IdiomaClase> listadoIdiomas = new List<Herramientas.IdiomaClase>();
+                @if (Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.Language) == "en" || Herramientas.Idiomas.SacarIdiomaUsuarioWeb(usuario.LanguageOverride) == "en")
+                {
+                    <div style="font-size: 14px; margin-top: 15px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountLanguage")
+                    </div>
+                }
 
-                            foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
-                            {
-                                if (idioma2.WebOfrece == true)
+                <div style="margin-top: 15px;">
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountLanguage")
+                </div>
+
+                <div class="menu-dropdown" style="width: fit-content; margin-top: 15px;">
+                    <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+                        <img src="@banderaSobreescrita" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                        <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
+                            @idiomaSobreescrito
+                        </div>
+
+                        <div style="max-width: 9px; min-width: 9px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    <div>
+                        <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+                            @{
+                                List<Herramientas.IdiomaClase> listadoIdiomas = new List<Herramientas.IdiomaClase>();
+
+                                foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
                                 {
-                                    idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
-                                    listadoIdiomas.Add(idioma2);
+                                    if (idioma2.WebOfrece == true)
+                                    {
+                                        idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                        listadoIdiomas.Add(idioma2);
+                                    }
+                                }
+
+                                if (listadoIdiomas.Count > 0)
+                                {
+                                    listadoIdiomas = listadoIdiomas.OrderBy(x => x.Traduccion).ToList();
+                                }
+
+                                foreach (var idioma2 in listadoIdiomas)
+                                {
+                                    <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaWeb(e, idioma2.Id))">
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            @{
+                                                string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
+                                            }
+
+                                            <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                                            @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
+                                        </div>
+                                    </button>
                                 }
                             }
-
-                            if (listadoIdiomas.Count > 0)
-                            {
-                                listadoIdiomas = listadoIdiomas.OrderBy(x => x.Traduccion).ToList();
-                            }
-
-                            foreach (var idioma2 in listadoIdiomas)
-                            {
-                                <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaWeb(e, idioma2.Id))">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        @{
-                                            string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
-                                        }
-
-                                        <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
-
-                                        @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
-                                    </div>
-                                </button>
-                            }
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            @if (avisoSobreescrito == true)
-            {
-                <div style="background-color: var(--fondoAlerta); border: 1px solid var(--fondoBotonPequeño); padding: 20px 25px;">
-                    @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "AccountLanguage")
-                </div>
-            }
+                @if (avisoSobreescrito == true)
+                {
+                    <div style="background-color: var(--fondoAlerta); border: 1px solid var(--fondoBotonPequeño); padding: 20px 25px;">
+                        @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "AccountLanguage")
+                    </div>
+                }
+            </div>
         </div>
 
-        <div class="caja-cuenta-contenido" style="display: flex; flex-direction: column;">
-            <div style="font-size: 18px;">
+        <div class="caja-cuenta-contenido">
+            <div class="caja-cuenta-titulo">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountLanguage")
             </div>
 
-            <hr/>
-
-            <div>
-                @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountLanguage")
-            </div>
-
-            <div class="menu-dropdown" style="width: fit-content; margin-top: 15px;">
-                <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
-                    <img src="@banderaJuegos" style="display: block; max-width: 20px; max-height: 20px;" />
-
-                    <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
-                        @idiomaJuegos
-                    </div>
-
-                    <div style="max-width: 9px; min-width: 9px;">
-                        <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-                        </svg>
-                    </div>
-                </button>
-
+            <div style="padding: 30px; display: flex; flex-direction: column;">
                 <div>
-                    <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
-                        @{
-                            List<Herramientas.IdiomaClase> listadoIdiomas2 = new List<Herramientas.IdiomaClase>();
+                    @Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountLanguage")
+                </div>
 
-                            foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
-                            {
-                                idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
-                                listadoIdiomas2.Add(idioma2);
+                <div class="menu-dropdown" style="width: fit-content; margin-top: 15px;">
+                    <button class="boton-pequeño" style="display: flex; align-items: center; gap: 10px; justify-content: center; padding: 10px 25px; margin: 0; border: 0px; color: var(--colorTextoVisitado);">
+                        <img src="@banderaJuegos" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                        <div style="font-size: 14px; color: var(--colorEnlace); margin-right: 5px;">
+                            @idiomaJuegos
+                        </div>
+
+                        <div style="max-width: 9px; min-width: 9px;">
+                            <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    <div>
+                        <div class="menu-dropdown-contenido" style="left: 0; width: 100%; background-color: var(--fondoBotonPequeño);">
+                            @{
+                                List<Herramientas.IdiomaClase> listadoIdiomas2 = new List<Herramientas.IdiomaClase>();
+
+                                foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
+                                {
+                                    idioma2.Traduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                    listadoIdiomas2.Add(idioma2);
+                                }
+
+                                if (listadoIdiomas2.Count > 0)
+                                {
+                                    listadoIdiomas2 = listadoIdiomas2.OrderBy(x => x.Traduccion).ToList();
+                                }
+
+                                foreach (var idioma2 in listadoIdiomas2)
+                                {
+                                    <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaJuegos(e, idioma2.Id))">
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            @{
+                                                string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
+                                            }
+
+                                            <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
+
+                                            @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
+                                        </div>
+                                    </button>
+                                }
                             }
-
-                            if (listadoIdiomas2.Count > 0)
-                            {
-                                listadoIdiomas2 = listadoIdiomas2.OrderBy(x => x.Traduccion).ToList();
-                            }
-
-                            foreach (var idioma2 in listadoIdiomas2)
-                            {
-                                <button class="texto-cabecera menu-dropdown-item" style="font-size: 14px; text-align: left; width: 100%; border: 0px;" @onclick="(e => CambiarIdiomaJuegos(e, idioma2.Id))">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        @{
-                                            string imagenBandera = "/imagenes/banderas/" + Herramientas.Idiomas.EncontrarIdiomaImagen(idioma2.Id) + ".svg";
-                                        }
-
-                                        <img src="@imagenBandera" style="display: block; max-width: 20px; max-height: 20px;" />
-
-                                        @Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages")
-                                    </div>
-                                </button>
-                            }
-                        }
+                        </div>
                     </div>
                 </div>
             </div>

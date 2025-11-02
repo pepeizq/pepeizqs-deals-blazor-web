@@ -466,26 +466,26 @@
 
     #nullable disable
 
-        [Parameter]
-        public string idioma { get; set; }
+    [Parameter]
+    public string idioma { get; set; }
 
-        [Parameter]
-        public string usuarioId { get; set; }
+    [Parameter]
+    public string usuarioId { get; set; }
 
-        [Parameter]
-        public string enlace { get; set; }
+    [Parameter]
+    public string enlace { get; set; }
 
-        [Parameter]
-        public string userAgent { get; set; }
+    [Parameter]
+    public string userAgent { get; set; }
 
-        [Parameter]
-        public bool usuarioAdmin { get; set; }
+    [Parameter]
+    public bool usuarioAdmin { get; set; }
 
-        [SupplyParameterFromQuery]
-        private string Search { get; set; }
+    [SupplyParameterFromQuery]
+    private string Search { get; set; }
 
-        [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
-        [PersistentState] public Usuario deseadosUsuario { get; set; }
+    [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+    [PersistentState] public Usuario deseadosUsuario { get; set; }
     private bool usuarioPatreon = false;
     [PersistentState] public Usuario opcionesCabecera { get; set; }
 

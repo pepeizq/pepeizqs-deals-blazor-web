@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div class="caja-cuenta-indice-contenido" style="margin: 40px auto;">
+    <div class="caja-cuenta-indice-contenido cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px;">
         <div class="caja-cuenta-indice-titulo">
             @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Account")
 	    </div>
@@ -257,7 +257,7 @@
             monedas = opcionesCuenta.PatreonCoins;
         }
 
-        <div class="caja-cuenta-indice-contenido" style="margin: 40px auto;">
+        <div class="caja-cuenta-indice-contenido cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="caja-cuenta-indice-titulo">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Account") (@monedas)
             </div>
@@ -325,7 +325,7 @@
             </div>
         </div>
 
-        <div class="caja-cuenta-indice-contenido" style="margin: 40px auto;">
+        <div class="caja-cuenta-indice-contenido cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="caja-cuenta-indice-titulo">
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String18", "Account")
             </div>
@@ -472,7 +472,7 @@ else
         </div>
     </div>
 
-    <div style="width: 100%; @añadirMargin">
+    <div class="cuerpo-ancho" style="width: 100%; @añadirMargin">
         @if (mostrarCorreo == true)
         {
             <pepeizqs_deals_blazor_web.Componentes.Cuenta.Cuenta.Correo idioma="@idioma" />

@@ -195,7 +195,7 @@
 	
 @if (juegosDestacadosMostrar?.Count > 0)
 {
-	<div class="portada-espacio">
+	<div class="portada-espacio cuerpo-ancho">
 		@if (juegoSeleccionado != null)
 		{
 			string colorSeleccionado = "var(--fondoOscuro)";
@@ -329,7 +329,7 @@
 	</div>
 }
 
-<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+<div style="background-color: var(--fondoSubsubcabecera);">
 	<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
 		@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 		{
@@ -367,7 +367,7 @@
 	</div>
 </div>
 
-<div class="subcabecera" style="background-color: var(--fondoPortadaNoticias);">
+<div style="background-color: var(--fondoPortadaNoticias);">
     <div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; flex-direction: column; gap: 40px;">
 		@{
 			string marginAbajo = string.Empty;
@@ -396,7 +396,7 @@
 
 @if (juegosMinimosMostrar?.Count > 0)
 {
-	<div class="subcabecera" style="background-color: var(--fondoSubsubcabecera);">
+	<div style="background-color: var(--fondoSubsubcabecera);">
 		<div class="cuerpo-ancho portada-sub-subcabecera" style="font-size: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
 			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{

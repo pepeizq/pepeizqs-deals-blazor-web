@@ -158,9 +158,13 @@
 <style>
     .caja-archivo-contenido {
         background-color: var(--fondoSubsubcabecera);
-        border: 2px solid var(--fondoSubcabecera);
-        padding: 40px;
         box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+
+    .caja-archivo-titulo {
+        background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+        padding: 20px 30px;
+        border: 1px solid var(--fondoSubsubcabecera);
     }
 </style>
 
@@ -206,7 +210,7 @@
 
 @if (mostrarArchivo == false)
 {
-    <div class="caja-archivo-contenido" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; gap: 30px; padding: 30px; margin: 40px 0px;">
+    <div class="caja-archivo-contenido cuerpo-ancho" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; gap: 30px; padding: 30px; margin-top: 40px; margin-bottom: 40px;">
         @foreach (var juego in juegosActuales)
         {
             string enlaceGratis = juego.Enlace;
@@ -222,41 +226,58 @@
 }
 else
 {
-    <div style="display: flex; align-items: start; gap: 15px; margin: 40px 0px 20px 0px; flex-wrap: wrap;">
-        @foreach (var año in años)
+    <div class="caja-archivo-contenido cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px; padding: 20px;">
+        <div style="display: flex; align-items: start; gap: 15px; flex-wrap: wrap;">
+            @foreach (var año in años)
+            {
+                <div>
+                    <button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: fit-content;">
+                        @año
+                    </button>
+
+                    @if (añoSeleccionado == año)
+                    {
+                        <div style="background: var(--colorTexto); padding: 2px;" />
+                    }
+                </div>
+            }
+        </div>
+        
+        @if (string.IsNullOrEmpty(añoSeleccionado) == false)
         {
-            <div>
-                <button @onclick="@(e => CambiarAño(e, año))" class="boton-pequeño" style="padding: 6px 10px; width: auto;">
-                    @año
-                </button>
+            <hr/>
 
-                @if (añoSeleccionado == año)
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <div style="padding: 6px 10px;">
+                    @añoSeleccionado:
+                </div>
+
+                @foreach (var gratisPasado in gratisPasados)
                 {
-                    <div style="margin-top: 10px; background: var(--colorTexto); padding: 1px;" />
+                    List<Juegos.JuegoGratis> gratisAño = new List<Juegos.JuegoGratis>();
 
-                    <div style="position: absolute; margin-top: 15px; display: flex; align-items: center;">
-                        @foreach (var gratisPasado in gratisPasados)
+                    foreach (var juego in gratisPasado.Juegos)
+                    {
+                        if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
                         {
-                            List<Juegos.JuegoGratis> gratisAño = new List<Juegos.JuegoGratis>();
-
-                            foreach (var juego in gratisPasado.Juegos)
-                            {
-                                if (juego.FechaEmpieza.Year.ToString() == añoSeleccionado)
-                                {
-                                    gratisAño.Add(juego);
-                                }
-                            }
-
-                            if (gratisAño.Count > 0)
-                            {
-                                <div style="margin-right: 15px; font-size: 14px;">
-                                    <a onclick="moverScroll('pasado-@gratisPasado.Tipo.Nombre')" style="color: var(--colorTexto); text-decoration: none; cursor: pointer;">
-                                        <img src="@gratisPasado.Tipo.ImagenIcono" style="width: 22px; height: 22px;" alt="Store" /> (@gratisAño.Count.ToString())
-                                    </a>
-                                </div>
-                            }
+                            gratisAño.Add(juego);
                         }
-                    </div>
+                    }
+
+                    if (gratisAño.Count > 0)
+                    {
+                        <div>
+                            <a onclick="moverScroll('pasado-@gratisPasado.Tipo.Nombre')" class="boton-pequeño" style="color: var(--colorTexto); text-decoration: none; cursor: pointer; padding: 6px 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="@gratisPasado.Tipo.ImagenIcono" style="width: 22px; height: 22px;" alt="@gratisPasado.Tipo.Nombre" />
+
+                                    <div style="font-size: 14px;">
+                                        @gratisAño.Count.ToString()
+                                    </div>
+                                </div>      
+                            </a>
+                        </div>
+                    }
                 }
             </div>
         }
@@ -264,7 +285,7 @@ else
 
     @if (string.IsNullOrEmpty(añoSeleccionado) == false)
     {
-        <div style="display: flex; flex-direction: column; gap: 40px; margin: 55px auto 40px auto;">
+        <div class="cuerpo-ancho" style="display: flex; flex-direction: column; gap: 40px; margin-top: 40px; margin-bottom: 40px;">
             @foreach (var gratisPasado in gratisPasados)
             {
                 List<Juegos.JuegoGratis> gratisAño = new List<Juegos.JuegoGratis>();
@@ -280,13 +301,11 @@ else
                 if (gratisAño.Count > 0)
                 {
                     <div class="caja-archivo-contenido">
-                        <div id="pasado-@gratisPasado.Tipo.Nombre" style="max-width: 200px;">
-                            <img src="@gratisPasado.Tipo.ImagenLogo" alt="Store" style="width: 100%; max-height: 70px; object-fit: contain;" />
+                        <div id="pasado-@gratisPasado.Tipo.Nombre" class="caja-archivo-titulo">
+                            <img src="@gratisPasado.Tipo.ImagenLogo" alt="@gratisPasado.Tipo.Nombre" style="max-width: 150px; max-height: 70px; object-fit: contain;" />
                         </div>
 
-                        <hr>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-content: flex-start;">
+                        <div style="padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; justify-content: flex-start;">
                             @{
                                 int i = 1;
                                 while (i < 13)
@@ -303,6 +322,8 @@ else
 
                                     if (gratisMensual.Count > 0)
                                     {
+                                        gratisMensual = gratisMensual.OrderBy(g => g.Nombre).ToList();
+
                                         <div>
                                             <label>@Herramientas.Idiomas.BuscarTexto(idioma, "Month." + i.ToString(), "Months") (@gratisMensual.Count.ToString())</label>
 

@@ -290,7 +290,7 @@
         <pepeizqs_deals_blazor_web.Componentes.Admin.Juego idioma="@idioma" juego="@juego"/>
     }
 
-    <div style="margin: 40px 0px;">
+    <div class="cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px;">
         @if (juego.Imagenes != null)
         {
             if (juego.Tipo == JuegoTipo.Game)
@@ -3082,7 +3082,7 @@
             }
 
             <div style="margin-bottom: 20px;">
-                <div style="background-color: var(--fondoOscuro); border: 1px solid var(--fondoBotonPequeño); padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
+                <div style="background-color: var(--fondoSubsubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px 30px; display: flex; align-items: center; flex-direction: row;">
                     <button @onclick="@(e => BundleCerrar(e))" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
                         <div style="max-width: 24px; max-height: 24px;">
                             <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

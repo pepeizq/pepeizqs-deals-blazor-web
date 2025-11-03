@@ -226,6 +226,19 @@
 	}
 </style>
 
+<style>
+	.caja-bundle-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+
+	.caja-bundle-mensaje {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+		border: 1px solid var(--fondoSubsubcabecera);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+</style>
+
 @if (bundle != null)
 {
 	if (tipo == Tipo.Bundle)
@@ -260,7 +273,7 @@
 				enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
 			}
 
-			<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
+			<div class="cuerpo-ancho" style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
 				<button @onclick="(e => AbrirBundle(e, enlaceBundle))" class="boton-pequeño" style="text-align: center; padding: 20px; font-size: 20px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
 				</button>
@@ -277,7 +290,7 @@
 			enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon, false);
 		}
 
-		<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
+		<div class="cuerpo-ancho" style="position: sticky; top: var(--alturaCabecera); z-index: 1000; width: 100%;">
 			<button @onclick="(e => AbrirBundle(e, enlaceBundle))" class="boton-pequeño" style="text-align: center; padding: 20px; font-size: 20px;">
 				@Herramientas.Idiomas.BuscarTexto(idioma, "String26", "Bundle")
 			</button>
@@ -371,10 +384,10 @@
 
 						if (bundle.Pick == true)
 						{
-							<div class="caja-diseño bundle-espacio bundle-espacio2" style="border-radius: 0px; font-size: 18px; display: flex; align-items: center; flex-direction: row; justify-content: center; margin-bottom: 30px;">
+							<div class="caja-bundle-contenido cuerpo-ancho bundle-espacio bundle-espacio2" style="border-radius: 0px; font-size: 18px; display: flex; align-items: center; flex-direction: row; justify-content: center; margin-bottom: 30px;">
 								@foreach (var tier2 in OrdenarTiers(bundle.Tiers))
 								{
-									<div class="bundle-espacio3" style="text-align: center; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); display: flex; align-items: center; gap: 5px;">
+									<div class="caja-bundle-mensaje bundle-espacio3" style="text-align: center; display: flex; align-items: center; gap: 5px;">
 										@if (tier2.CantidadJuegos == 1)
 										{
 											<label>@tier2.CantidadJuegos.ToString() @Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Bundle") • @Herramientas.Precios.Euro(decimal.Parse(tier2.Precio))</label>
@@ -397,10 +410,10 @@
 							espacioFondo = string.Empty;
 						}
 
-						<div class="caja-diseño bundle-espacio" style="border-radius: 0px; @espacioFondo">
+						<div class="caja-bundle-contenido cuerpo-ancho bundle-espacio" style="@espacioFondo">
 							@if (bundle.Pick == false)
 							{
-								<div style="font-size: 18px; background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; margin-bottom: 30px;">
+								<div class="caja-bundle-mensaje" style="font-size: 18px; padding: 20px; margin-bottom: 30px;">
 									<div style="margin-bottom: 5px;">
 										Tier @tier.Posicion: @Herramientas.Precios.Euro(decimal.Parse(tier.Precio))
 									</div>

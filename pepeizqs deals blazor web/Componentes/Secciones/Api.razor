@@ -4,8 +4,36 @@
 @using pepeizqs_deals_blazor_web.Componentes.Interfaz
 
 @inject IHttpContextAccessor Contexto
+@inject IJSRuntime JavaScript
 
 <Titulo tipo="@Titulo.Tipo.Api" idioma="@idioma"/>
+
+<script>
+	window.clipboardCopy = {
+		copyText: function(text) {
+			navigator.clipboard.writeText(text);
+		}
+	};
+</script>
+
+@if (enseñarAlerta == true)
+{
+	<div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
+		<div style="display: flex; align-items: center; gap: 10px;">
+			<div>
+				@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Clipboard")
+			</div>
+
+			<button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+				<div style="width: 20px; height: 20px;">
+					<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+						<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+					</svg>
+				</div>
+			</button>
+		</div>
+	</div>
+}
 
 <style>
 	.boton-pestañas {
@@ -25,18 +53,31 @@
 		}
 </style>
 
+<style>
+	.caja-api-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+
+	.caja-api-titulo {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+		padding: 20px 30px;
+		border: 1px solid var(--fondoSubsubcabecera);
+	}
+</style>
+
 <div class="subcabecera">
 	<div class="cuerpo-ancho sub-subcabecera">
-		<h1 style="font-size: 18px; width: fit-content; margin: 0px;">
+		<h1 style="font-size: 18px; width: fit-content; margin: 0px; padding: 9px 0px;">
 			@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Api")
 		</h1>
 	</div>
 </div>
 
-<div style="max-width: 1200px; margin: 40px auto;">
-	<div style="display: flex; align-items: start; gap: 50px; margin-top: 20px;">
-		<div style="width: 33%;">
-			<div class="caja-diseño" style="padding: 10px; display: flex; align-items: center; flex-direction: column; gap: 10px;">
+<div class="cuerpo-ancho" style="margin-top: 40px; margin-bottom: 40px;">
+	<div style="display: flex; align-items: start; gap: 50px;">
+		<div style="width: 25%;">
+			<div class="caja-api-contenido" style="padding: 10px; display: flex; align-items: center; flex-direction: column; gap: 10px;">
 				<button @onclick="(e => MostrarJuegos1(e))" class="boton-pestañas" style="@estiloJuegos1;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Api")
 				</button>
@@ -67,176 +108,418 @@
 			</div>
 		</div>
 
-		<div style="width: 100%;">
+		<div style="width: 100%; display: flex; flex-direction: column; gap: 40px;">
 			@if (mostrarJuegos1 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/game/6391/Cyberpunk_2077/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/game/6391";
+				string enlaceEjemplo3 = "https://pepeizqdeals.com/steam/1091500/";
+				string enlaceEjemplo4 = "https://store.steampowered.com/app/1091500/Cyberpunk_2077/";
+                string enlaceEjemplo5 = "https://pepeizqdeals.com/api/steam/1091500";
+                string enlaceEjemplo6 = "https://pepeizqdeals.com/gog/cyberpunk_2077";
+                string enlaceEjemplo7 = "https://www.gog.com/game/cyberpunk_2077";
+                string enlaceEjemplo8 = "https://pepeizqdeals.com/api/gog/cyberpunk_2077";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/game/<label style="text-decoration: underline;">6391</label>/Cyberpunk_2077/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin: 20px 0px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/game/<label style="text-decoration: underline;">6391</label>/Cyberpunk_2077/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/game/6391</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/game/6391</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 
-				<div class="caja-diseño" style="padding: 40px; margin-top: 40px;">
-					<div style="margin-bottom: 20px;">
+				<div class="caja-api-contenido">
+					<div class="caja-api-titulo">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Api")
 					</div>
 
-					<div>
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Api")
-					</div>
-					
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/steam/<label style="text-decoration: underline;">1091500</label></label>
-					</div>
+					<div style="padding: 30px;">
+						<div>
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Api")
+						</div>
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 5px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://store.steampowered.com/app/<label style="text-decoration: underline;">1091500</label>/Cyberpunk_2077/</label>
-					</div>
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/steam/<label style="text-decoration: underline;">1091500</label></label>
+							</div>
 
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Api")
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo3))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/steam/1091500</label>
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-bottom: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://store.steampowered.com/app/<label style="text-decoration: underline;">1091500</label>/Cyberpunk_2077/</label>
+							</div>
+
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo4))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
+
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Api")
+
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/steam/1091500</label>
+							</div>
+
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo5))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
 					</div>
 				</div>
 
-				<div class="caja-diseño" style="padding: 40px; margin-top: 40px;">
-					<div style="margin-bottom: 20px;">
+				<div class="caja-api-contenido">
+					<div class="caja-api-titulo">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Api")
 					</div>
 
-					<div>
-						@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Api")
-					</div>
+					<div style="padding: 30px;">
+						<div>
+							@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Api")
+						</div>
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/gog/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
-					</div>
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/gog/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
+							</div>
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 5px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://www.gog.com/game/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
-					</div>
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo6))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
 
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Api")
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-bottom: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://www.gog.com/game/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
+							</div>
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/gog/cyberpunk_2077</label>
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo7))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
+
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Api")
+
+						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+							<div style="padding: 10px 15px;">
+								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/gog/cyberpunk_2077</label>
+							</div>
+
+							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo8))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+								<div style="width: 24px;">
+									<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+										<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+									</svg>
+								</div>
+							</button>
+						</div>
 					</div>
 				</div>
 			}
 
 			@if (mostrarBundles1 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/bundle/199/Brutal_Beat_Em_Ups/";
+				string enlaceEjemplo2 = "https://pepeizqdeals.com/api/bundle/199/";
+				string enlaceEjemplo3 = "https://pepeizqdeals.com/api/bundle/199/games/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/bundle/<label style="text-decoration: underline;">199</label>/Brutal_Beat_Em_Ups/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/bundle/<label style="text-decoration: underline;">199</label>/Brutal_Beat_Em_Ups/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/bundle/199/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/bundle/199/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/bundle/199/games/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/bundle/199/games/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo3))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
 
 			@if (mostrarBundles2 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+                string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-bundles/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-bundles/25/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String18", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-bundles/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-bundles/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String19", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-bundles/<label style="text-decoration: underline;">25</label>/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-bundles/<label style="text-decoration: underline;">25</label>/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
 
 			@if (mostrarGratis1 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-free/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-free/25/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-free/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-free/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String25", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-free/<label style="text-decoration: underline;">25</label>/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-free/<label style="text-decoration: underline;">25</label>/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
 
 			@if (mostrarSuscripciones1 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-subscriptions/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-subscriptions/25/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String27", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-subscriptions/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-subscriptions/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String28", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-subscriptions/<label style="text-decoration: underline;">25</label>/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-subscriptions/<label style="text-decoration: underline;">25</label>/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
 
 			@if (mostrarNoticias1 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/news/293/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/news/293/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/news/<label style="text-decoration: underline;">293</label></label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/news/<label style="text-decoration: underline;">293</label></label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String16", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/news/293/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/news/293/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
 
 			@if (estiloNoticias2 == true)
 			{
-				<div class="caja-diseño" style="padding: 40px;">
+				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-news/";
+                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-news/25/";
+
+				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px; margin-bottom: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-news/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-news/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String22", "Api")
 
-					<div style="padding: 10px 15px; background-color: var(--fondoCodigo); margin-top: 20px;">
-						<label style="text-decoration: none;">https://pepeizqdeals.com/api/last-news/<label style="text-decoration: underline;">25</label>/</label>
+					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
+						<div style="padding: 10px 15px;">
+							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-news/<label style="text-decoration: underline;">25</label>/</label>
+						</div>
+
+						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
+							<div style="width: 24px;">
+								<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+									<path d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+								</svg>
+							</div>
+						</button>
 					</div>
 				</div>
 			}
@@ -356,4 +639,45 @@
 		estiloNoticias2 = true;
 		fondoNoticias2 = fondo;		
 	}
+
+	#region Portapapeles
+
+	bool enseñarAlerta = false;
+	private PeriodicTimer cronometro = null;
+	private int cronometroContador = 0;
+	private int cronometroLimite = 10;
+
+	private async void CopiarAlClipboard(MouseEventArgs e, string texto)
+	{
+		enseñarAlerta = true;
+		await JavaScript.InvokeVoidAsync("clipboardCopy.copyText", texto);
+
+		cronometroContador = 0;
+		cronometro = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+		while (await cronometro.WaitForNextTickAsync())
+		{
+			cronometroContador += 1;
+
+			if (cronometroContador > cronometroLimite)
+			{
+				enseñarAlerta = false;
+				cronometro.Dispose();
+				await InvokeAsync(StateHasChanged);
+			}
+		}
+	}
+
+	private void CerrarAvisoClipboard()
+	{
+		enseñarAlerta = false;
+		cronometroContador = 0;
+
+		if (cronometro != null)
+		{
+			cronometro.Dispose();
+		}
+	}
+
+	#endregion
 }

@@ -577,7 +577,7 @@
 
 		@if (tipo == Tipo.Bundle)
 		{
-			<button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="padding: 0px; @fondoColor">
+			<a class="boton-pequeño" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div style="padding: 0px; position: relative;">
 					@{
 						bool añadirNuevo = false;
@@ -652,7 +652,7 @@
 						}
 					</div>
 				</div>
-			</button>
+			</a>
 		}
 
 		@if (tipo == Tipo.Noticia)

@@ -42,7 +42,7 @@
 }
 
 .pie {
-    background-color: var(--fondoOscuro);
+    background-color: color-mix(in srgb, var(--fondoOscuro) 55%, var(--fondoCuerpo));
     font-size: var(--tamañoTexto);
     color: var(--colorTexto);
 }

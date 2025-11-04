@@ -913,98 +913,7 @@ namespace BaseDatos.Usuarios
 			return yaTiene;
 		}
 
-		public static bool UsuarioTieneDeseado(string usuarioId, string juegoId, JuegoDRM drm, SqlConnection conexion = null)
-		{
-			bool yaTiene = false;
-
-			if (string.IsNullOrEmpty(usuarioId) == false)
-			{
-				if (conexion == null)
-				{
-					conexion = Herramientas.BaseDatos.Conectar();
-				}
-				else
-				{
-					if (conexion.State != System.Data.ConnectionState.Open)
-					{
-						conexion = Herramientas.BaseDatos.Conectar();
-					}
-				}
-
-				if (drm == JuegoDRM.Steam)
-				{
-					string busquedaSteam = "SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(SteamWishlist, ',') WHERE VALUE IN ((SELECT idSteam FROM juegos WHERE id=@juegoId))) AND id=@id";
-
-					using (SqlCommand comando = new SqlCommand(busquedaSteam, conexion))
-					{
-						comando.Parameters.AddWithValue("@id", usuarioId);
-						comando.Parameters.AddWithValue("@juegoId", juegoId);
-
-						using (SqlDataReader lector = comando.ExecuteReader())
-						{
-							if (lector.Read() == true)
-							{
-								if (lector.IsDBNull(0) == false)
-								{
-									yaTiene = true;
-								}
-							}
-						}
-					}
-				}
-
-				if (drm == JuegoDRM.GOG)
-				{
-					string busquedaGog = "SELECT id FROM AspNetUsers WHERE EXISTS(SELECT * FROM STRING_SPLIT(GogWishlist, ',') WHERE VALUE IN ((SELECT idGog FROM juegos WHERE id=@juegoId))) AND id=@id";
-
-					using (SqlCommand comando = new SqlCommand(busquedaGog, conexion))
-					{
-						comando.Parameters.AddWithValue("@id", usuarioId);
-						comando.Parameters.AddWithValue("@juegoId", juegoId);
-
-						using (SqlDataReader lector = comando.ExecuteReader())
-						{
-							if (lector.Read() == true)
-							{
-								if (lector.IsDBNull(0) == false)
-								{
-									yaTiene = true;
-								}
-							}
-						}
-					}
-				}
-
-				string busqueda = @"DECLARE @array NVARCHAR(MAX);
-									SET @array = (SELECT Wishlist FROM AspNetUsers WHERE id=@id);
-
-									SELECT * FROM OPENJSON(@array)
-									WITH (IdBaseDatos int,
-									DRM int) WHERE IdBaseDatos=@juegoId AND DRM=@drm";
-
-				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
-				{
-					comando.Parameters.AddWithValue("@id", usuarioId);
-					comando.Parameters.AddWithValue("@juegoId", juegoId);
-					comando.Parameters.AddWithValue("@drm", (int)drm);
-
-					using (SqlDataReader lector = comando.ExecuteReader())
-					{
-						if (lector.Read() == true)
-						{
-							if (lector.IsDBNull(0) == false)
-							{
-								yaTiene = true;
-							}
-						}
-					}
-				}
-			}
-
-			return yaTiene;
-		}
-
-		public static string UsuarioQuiereCorreos(string usuarioId, SqlConnection conexion = null)
+		public static string UsuarioQuiereCorreos(string usuarioId, string seccion, SqlConnection conexion = null)
 		{
 			if (string.IsNullOrEmpty(usuarioId) == false)
 			{
@@ -1020,7 +929,7 @@ namespace BaseDatos.Usuarios
 					}
 				}
 
-				string busqueda = "SELECT NotificationLows, EmailConfirmed, Email FROM AspNetUsers WHERE Id=@Id";
+				string busqueda = "SELECT " + seccion + ", EmailConfirmed, Email FROM AspNetUsers WHERE Id=@Id";
 
 				using (SqlCommand comando = new SqlCommand(busqueda, conexion))
 				{

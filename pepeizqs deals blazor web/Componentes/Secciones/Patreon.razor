@@ -40,83 +40,85 @@
 	</div>
 </div>
 
-<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; background-color: var(--fondoBotonPequeño); padding: 20px 45px; width: fit-content;">
-	@{
-		WebApplicationBuilder builder = WebApplication.CreateBuilder();
-		string? patreonEnlace = builder.Configuration.GetValue<string>("RedesSociales:Patreon");
-	}
+<div class="cuerpo-ancho">
+	<div style="position: sticky; top: var(--alturaCabecera); z-index: 1000; background-color: var(--fondoBotonPequeño); padding: 20px 45px; width: fit-content;">
+		@{
+			WebApplicationBuilder builder = WebApplication.CreateBuilder();
+			string? patreonEnlace = builder.Configuration.GetValue<string>("RedesSociales:Patreon");
+		}
 
-	<a href="@patreonEnlace" target="_blank">@patreonEnlace</a>
-</div>
+		<a href="@patreonEnlace" target="_blank">@patreonEnlace</a>
+	</div>
 
-<div style="margin: 40px auto; display: flex; flex-direction: column; gap: 30px;">
-	<div class="caja-patreon-contenido">
-		<div style="display: flex; align-items: center; gap: 30px;">
-			<div style="width: 30%;">
-				<img src="/imagenes/patreon/patreon1.webp" style="width: 100%; height: 100%;"/>
-			</div>
-
-			<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
-				<div style="font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Patreon")
+	<div style="margin: 40px auto; display: flex; flex-direction: column; gap: 30px;">
+		<div class="caja-patreon-contenido">
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div style="width: 30%;">
+					<img src="/imagenes/patreon/patreon1.webp" style="width: 100%; height: 100%;" />
 				</div>
 
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Patreon")
+				<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
+					<div style="font-size: 18px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Patreon")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Patreon")
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="caja-patreon-contenido">
-		<div style="display: flex; align-items: center; gap: 30px;">
-			<div style="width: 30%;">
-				<img src="/imagenes/patreon/patreon2.webp" style="width: 100%; height: 100%;"/>
-			</div>
-
-			<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
-				<div style="font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Patreon")
+		<div class="caja-patreon-contenido">
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div style="width: 30%;">
+					<img src="/imagenes/patreon/patreon2.webp" style="width: 100%; height: 100%;" />
 				</div>
 
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Patreon")
-				</div>
-			</div>
-		</div>
-	</div>
+				<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
+					<div style="font-size: 18px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Patreon")
+					</div>
 
-	<div class="caja-patreon-contenido">
-		<div style="display: flex; align-items: center; gap: 30px;">
-			<div style="width: 30%;">
-				<img src="/imagenes/patreon/patreon3.webp" style="width: 100%; height: 100%;"/>
-			</div>
-
-			<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
-				<div style="font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Patreon")
-				</div>
-
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Patreon")
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "Patreon")
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="caja-patreon-contenido">
-		<div style="display: flex; align-items: center; gap: 30px;">
-			<div style="width: 30%;">
-				<img src="/imagenes/patreon/patreon4.webp" style="width: 100%; height: 100%;"/>
-			</div>
-
-			<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
-				<div style="font-size: 18px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Patreon")
+		<div class="caja-patreon-contenido">
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div style="width: 30%;">
+					<img src="/imagenes/patreon/patreon3.webp" style="width: 100%; height: 100%;" />
 				</div>
 
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Patreon")
+				<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
+					<div style="font-size: 18px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Patreon")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "Patreon")
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="caja-patreon-contenido">
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div style="width: 30%;">
+					<img src="/imagenes/patreon/patreon4.webp" style="width: 100%; height: 100%;" />
+				</div>
+
+				<div style="width: 70%; display: flex; flex-direction: column; gap: 10px;">
+					<div style="font-size: 18px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Patreon")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Patreon")
+					</div>
 				</div>
 			</div>
 		</div>

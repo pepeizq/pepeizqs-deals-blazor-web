@@ -185,10 +185,10 @@ namespace BaseDatos.Juegos
 
                             bool notificar = false;
 
-                            if ((minimo.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Precio > 0 && minimo.Precio > 0 && nuevaOferta.Precio + 0.2m < minimo.Precio) ||
-                                (minimo.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.PrecioCambiado > 0 && minimo.PrecioCambiado > 0 && nuevaOferta.PrecioCambiado + 0.2m < minimo.PrecioCambiado) ||
-                                (minimo.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.PrecioCambiado > 0 && minimo.Precio > 0 && nuevaOferta.PrecioCambiado + 0.2m < minimo.Precio) ||
-                                (minimo.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Precio > 0 && minimo.PrecioCambiado > 0 && nuevaOferta.Precio + 0.2m < minimo.PrecioCambiado))
+                            if ((minimo.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Precio > 0 && minimo.Precio > 0 && nuevaOferta.Precio + 0.1m < minimo.Precio) ||
+                                (minimo.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.PrecioCambiado > 0 && minimo.PrecioCambiado > 0 && nuevaOferta.PrecioCambiado + 0.1m < minimo.PrecioCambiado) ||
+                                (minimo.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.PrecioCambiado > 0 && minimo.Precio > 0 && nuevaOferta.PrecioCambiado + 0.1m < minimo.Precio) ||
+                                (minimo.Moneda != Herramientas.JuegoMoneda.Euro && nuevaOferta.Moneda == Herramientas.JuegoMoneda.Euro && nuevaOferta.Precio > 0 && minimo.PrecioCambiado > 0 && nuevaOferta.Precio + 0.1m < minimo.PrecioCambiado))
                             {
                                 notificar = true;
 
@@ -289,7 +289,7 @@ namespace BaseDatos.Juegos
 
 											BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado);
 
-											string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado, conexion);
+											string correo = Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado, "NotificationLows");
 
 											if (string.IsNullOrEmpty(correo) == false)
 											{

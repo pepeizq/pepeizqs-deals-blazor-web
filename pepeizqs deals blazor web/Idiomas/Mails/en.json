@@ -18,5 +18,8 @@
   "Mail3": "following link",
   "Confirm1": "Confirm your email",
   "Confirm2": "To confirm your email click on the",
-  "Confirm3": "following link"
+  "Confirm3": "following link",
+  "String1": "{0} has been added to {1} {2}",
+  "String2": "{0} has been added to {1} {2} bundle",
+  "String3": "Open Bundle"
 }

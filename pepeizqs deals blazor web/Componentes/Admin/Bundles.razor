@@ -584,6 +584,34 @@
             BaseDatos.Bundles.Insertar.Ejecutar(bundle);
             BaseDatos.Portapapeles.Borrar.Ejecutar(bundle.Enlace);
 
+            foreach (var juego in bundle.Juegos)
+            {
+                List<string> usuariosInteresados = BaseDatos.Usuarios.Buscar.ListaUsuariosTienenDeseado(int.Parse(juego.JuegoId), juego.DRM);
+
+                if (usuariosInteresados?.Count > 0)
+                {
+                    foreach (var usuarioInteresado in usuariosInteresados)
+                    {
+                        if (BaseDatos.Usuarios.Buscar.UsuarioTieneJuego(usuarioInteresado, int.Parse(juego.JuegoId), juego.DRM) == false)
+                        {
+                            string correo = BaseDatos.Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado, "NotificationWishlistBundles");
+
+                            if (string.IsNullOrEmpty(correo) == false)
+                            {
+                                try
+                                {
+                                    Herramientas.Correos.EnviarNuevoDeseadoBundle(usuarioInteresado, bundle, juego, correo);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BaseDatos.Errores.Insertar.Mensaje("Enviar Correo Deseado Bundle", ex);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             enlace = null;
         }
     }

@@ -8,129 +8,176 @@
 <style>
 	.caja-cuenta-contenido {
 		background-color: var(--fondoSubsubcabecera);
-		border: 2px solid var(--fondoSubcabecera);
-		padding: 30px;
 		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+
+	.caja-cuenta-titulo {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+		font-size: 16px;
+		padding: 20px 30px;
+		border: 1px solid var(--fondoSubsubcabecera);
 	}
 </style>
 
 <div style="display: flex; flex-direction: column; gap: 30px;">
 	<div class="caja-cuenta-contenido">
-		<div style="display: flex; align-items: start; gap: 30px;">
-			<div class="checkbox-caja">
-				<input type="checkbox" class="checkbox-interior" checked="@estadoMinimos" @onchange="ClickearCambioMinimos" style="margin-top: 20px;">
-			</div>
+		<div class="caja-cuenta-titulo">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "AccountNotificationsMail")
+		</div>
 
-			<div style="display: flex; flex-direction: column; gap: 10px;">
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail1", "Account")
+		<div style="padding: 30px;">
+			<div style="display: flex; align-items: start; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoDeseadosMinimos" @onchange="ClickearCambioDeseadosMinimos" style="margin-top: 20px;">
 				</div>
 
-				<div>
-					@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail2", "Account")
-				</div>	
+				<div style="display: flex; flex-direction: column; gap: 10px;">
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String16", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "AccountNotificationsMail")
+					</div>	
 				
-				<hr style="margin: 10px 0px" />
+					<hr style="margin: 10px 0px" />
 
-				<div style="font-size: 14px;">
-					@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail11", "Account")
+					<div style="font-size: 14px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "AccountNotificationsMail")
+					</div>
+				</div>
+			</div>
+			
+			<hr style="margin: 25px 0;"/>
+
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoDeseadosBundles" @onchange="ClickearCambioDeseadosBundles">
+				</div>
+
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String17", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String18", "AccountNotificationsMail")
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoBundles" @onchange="ClickearCambioBundles">
+	<div class="caja-cuenta-contenido">
+		<div class="caja-cuenta-titulo">
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String19", "AccountNotificationsMail")
 		</div>
 
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail3", "Account")
+		<div style="padding: 30px;">
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoBundles" @onchange="ClickearCambioBundles">
+				</div>
+
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String3", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String4", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail4", "Account")
-			</div>
-		</div>
-	</div>
+			<hr style="margin: 25px 0;"/>
 
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoGratis" @onchange="ClickearCambioGratis">
-		</div>
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoGratis" @onchange="ClickearCambioGratis">
+				</div>
 
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail5", "Account")
-			</div>
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String5", "AccountNotificationsMail")
+					</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail6", "Account")
-			</div>
-		</div>
-	</div>
-
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoSuscripciones" @onchange="ClickearCambioSuscripciones">
-		</div>
-
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail7", "Account")
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String6", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail8", "Account")
-			</div>
-		</div>
-	</div>
+			<hr style="margin: 25px 0;"/>
 
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoWeb" @onchange="ClickearCambioWeb">
-		</div>
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoSuscripciones" @onchange="ClickearCambioSuscripciones">
+				</div>
 
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail12", "Account")
-			</div>
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String7", "AccountNotificationsMail")
+					</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail13", "Account")
-			</div>
-		</div>
-	</div>
-
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoDesvendido" @onchange="ClickearCambioDesvendido">
-		</div>
-
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail14", "Account")
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String8", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail15", "Account")
+			<hr style="margin: 25px 0;" />
+
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoWeb" @onchange="ClickearCambioWeb">
+				</div>
+
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String12", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String13", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
 
-	<div class="caja-cuenta-contenido" style="display: flex; align-items: center;">
-		<div class="checkbox-caja">
-			<input type="checkbox" class="checkbox-interior" checked="@estadoOtros" @onchange="ClickearCambioOtros">
-		</div>
+			<hr style="margin: 25px 0;" />
 
-		<div style="padding-left: 30px;">
-			<div style="margin-bottom: 10px;">
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail9", "Account")
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoDesvendido" @onchange="ClickearCambioDesvendido">
+				</div>
+
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String14", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
 
-			<div>
-				@Herramientas.Idiomas.BuscarTexto(idioma, "NotificationsMail10", "Account")
+			<hr style="margin: 25px 0;" />
+
+			<div style="display: flex; align-items: center; gap: 30px;">
+				<div class="checkbox-caja">
+					<input type="checkbox" class="checkbox-interior" checked="@estadoOtros" @onchange="ClickearCambioOtros">
+				</div>
+
+				<div>
+					<div style="margin-bottom: 10px;">
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String9", "AccountNotificationsMail")
+					</div>
+
+					<div>
+						@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "AccountNotificationsMail")
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -145,7 +192,7 @@
 
 	private Usuario usuario = new Usuario();
 
-	private string estadoMinimos = null;
+	
 
 	private string estadoBundles = null;
 	private string estadoGratis = null;
@@ -162,17 +209,33 @@
 		{
 			if (usuario.NotificationLows == null)
 			{
-				estadoMinimos = null;
+				estadoDeseadosMinimos = null;
 			}
 			else
 			{
 				if (usuario.NotificationLows == true)
 				{
-					estadoMinimos = "checked";
+					estadoDeseadosMinimos = "checked";
 				}
 				else
 				{
-					estadoMinimos = null;
+					estadoDeseadosMinimos = null;
+				}
+			}
+
+			if (usuario.NotificationWishlistBundles == null)
+			{
+				estadoDeseadosBundles = null;
+			}
+			else
+			{
+				if (usuario.NotificationWishlistBundles == true)
+				{
+					estadoDeseadosBundles = "checked";
+				}
+				else
+				{
+					estadoDeseadosBundles = null;
 				}
 			}
 
@@ -274,24 +337,51 @@
 		}
 	}
 
-	private async void ClickearCambioMinimos()
+	private string estadoDeseadosMinimos = null;
+
+	private async void ClickearCambioDeseadosMinimos()
 	{
 		if (usuario != null)
 		{
 			bool boolMinimos = false;
 
-			if (estadoMinimos == null)
+			if (estadoDeseadosMinimos == null)
 			{
-				estadoMinimos = "checked";
+				estadoDeseadosMinimos = "checked";
 				boolMinimos = true;
 			}
 			else
 			{
-				estadoMinimos = null;
+				estadoDeseadosMinimos = null;
 				boolMinimos = false;
 			}
 
 			usuario.NotificationLows = boolMinimos;
+
+			await UserManager.UpdateAsync(usuario);
+		}	
+	}
+
+	private string estadoDeseadosBundles = null;
+
+	private async void ClickearCambioDeseadosBundles()
+	{
+		if (usuario != null)
+		{
+			bool boolDeseados = false;
+
+			if (estadoDeseadosBundles == null)
+			{
+				estadoDeseadosBundles = "checked";
+				boolDeseados = true;
+			}
+			else
+			{
+				estadoDeseadosBundles = null;
+				boolDeseados = false;
+			}
+
+			usuario.NotificationWishlistBundles = boolDeseados;
 
 			await UserManager.UpdateAsync(usuario);
 		}	

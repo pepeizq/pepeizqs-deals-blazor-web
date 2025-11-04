@@ -55,6 +55,10 @@ public class Usuario : IdentityUser
 
 	[PersonalData]
 	[Column(TypeName = "bit(1)")]
+	public bool? NotificationWishlistBundles { get; set; }
+
+	[PersonalData]
+	[Column(TypeName = "bit(1)")]
 	public bool? NotificationBundles { get; set; }
 
 	[PersonalData]

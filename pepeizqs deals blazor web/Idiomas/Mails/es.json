@@ -18,5 +18,8 @@
   "Mail3": "siguiente enlace",
   "Confirm1": "Confirma tu correo",
   "Confirm2": "Para confirmar tu correo clickea en el",
-  "Confirm3": "siguiente enlace"
+  "Confirm3": "siguiente enlace",
+  "String1": "{0} ha sido añadido al {2} de {1}",
+  "String2": "{0} ha sido añadido al bundle {2} de {1}",
+  "String3": "Abrir Bundle"
 }

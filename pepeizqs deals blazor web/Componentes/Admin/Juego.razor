@@ -1477,7 +1477,7 @@
 
                     // BaseDatos.Usuarios.Actualizar.Opcion("WishlistData", JsonSerializer.Serialize(datosDeseados), usuarioInteresado);
 
-					string correo = BaseDatos.Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado);
+					string correo = BaseDatos.Usuarios.Buscar.UsuarioQuiereCorreos(usuarioInteresado, "NotificationLows");
 
 					if (string.IsNullOrEmpty(correo) == false)
 					{

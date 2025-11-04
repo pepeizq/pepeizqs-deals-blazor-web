@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using ApexCharts;
+using Bundles2;
 using Juegos;
 using MailKit;
 using MailKit.Net.Imap;
@@ -512,6 +513,81 @@ namespace Herramientas
 
 				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos);
 			}
+		}
+
+		public static void EnviarNuevoDeseadoBundle(string usuarioId, Bundle bundle, BundleJuego juego, string correoHacia)
+		{
+			string idioma = global::BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+
+			if (string.IsNullOrEmpty(idioma) == true)
+			{
+				idioma = "en";
+			}
+
+			string html = @"<!DOCTYPE html>
+							<html>
+							<head>
+								<meta charset=""utf-8"" />
+								<title></title>
+							</head>
+							<body>
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+									<div style=""display: flex; align-items: center; gap: 20px; color: #f5f5f5; background-color: #0d1621;"">
+										<img src=""{{imagenJuego}}"" style=""max-width: 200px;""/>
+				        
+										<div style=""padding: 10px;"">
+											{{mensajeAviso}}
+										</div>
+									</div>
+
+									<div style=""margin-top: 40px;"">
+										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none;"">
+											<img src=""{{imagenBundle}}"" style=""max-width: 100%; max-height: 100%;"" />
+										</a>
+									</div>
+
+									<div style=""margin-top: 20px;"">
+										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: center; border: 0px;"">
+											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 17px; margin: 15px;"">
+												{{mensajeAbrir}}
+											</div>
+										</a>
+									</div>
+
+									<div style=""margin-top: 40px;"">
+										<div>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+										</div>
+										<div style=""margin-top: 20px; font-size: 14px;"">
+											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+										</div>
+									</div>
+								</div>
+							</body>
+							</html>";
+
+			string enlace = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, false, false);
+			html = html.Replace("{{enlace}}", enlace);
+			html = html.Replace("{{imagenJuego}}", juego.Imagen);
+
+			string mensajeAviso = null;
+			if (bundle.NombreBundle.ToLower().Contains("bundle") == true)
+			{
+				mensajeAviso = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Mails"), juego.Nombre, bundle.NombreTienda, bundle.NombreBundle);
+			}
+			else
+			{
+				mensajeAviso = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Mails"), juego.Nombre, bundle.NombreTienda, bundle.NombreBundle);
+			}
+
+			html = html.Replace("{{mensajeAviso}}", mensajeAviso);
+			html = html.Replace("{{imagenBundle}}", bundle.ImagenNoticia);
+			html = html.Replace("{{mensajeAbrir}}", Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Mails"));
+
+			html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
+			html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
+
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, mensajeAviso, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle);
 		}
 
 		public static bool EnviarCorreo(string html, string titulo, string correoDesde, string correoHacia)

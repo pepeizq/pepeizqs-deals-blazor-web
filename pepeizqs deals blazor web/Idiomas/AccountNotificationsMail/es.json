@@ -1,0 +1,21 @@
+{
+  "String1": "Deseados",
+  "String2": "Se te notificará por correo cuando un juego de tus deseados tenga un nuevo precio mínimo histórico.",
+  "String3": "Bundles",
+  "String4": "Se te notificará por correo cuando un nuevo bundle aparezca.",
+  "String5": "Gratis",
+  "String6": "Se te notificará por correo cuando un nuevo juego de pago se pueda adquirir gratis temporalmente.",
+  "String7": "Suscripciones",
+  "String8": "Se te notificará por correo cuando nuevos juegos aparezcan en servicios de suscripción que se puedan canjear en plataformas como Steam o GOG.",
+  "String9": "Otros",
+  "String10": "Se te notificará por correo cuando noticias relevantes aparezcan en la web y estas no sean de las categorías anteriores.",
+  "String11": "Nota: Para evitar spam de correos sólo se envían correos cuando el nuevo precio mínimo histórico tiene una diferencia de al menos 10 céntimos de euro respecto al anterior precio.",
+  "String12": "Web",
+  "String13": "Se te notificará por correo cuando haya alguna noticia nueva relacionada con la web como actualizaciones o cambios.",
+  "String14": "Retiradas",
+  "String15": "Se te notificará por correo cuando juegos vayan a ser retirados de la venta en las tiendas oficiales.",
+  "String16": "Mínimos Históricos",
+  "String17": "Bundles",
+  "String18": "Se te notificará con un correo cuando un juego de tus deseados aparezca en un bundle.",
+  "String19": "Noticias"
+}

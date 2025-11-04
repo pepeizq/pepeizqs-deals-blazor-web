@@ -1,0 +1,21 @@
+{
+  "String1": "Lista de desejos",
+  "String2": "Você será notificado por e-mail quando um jogo em sua lista de desejos atingir um novo preço mínimo histórico.",
+  "String3": "Pacotes",
+  "String4": "Você será notificado por e-mail quando um novo pacote aparecer.",
+  "String5": "Livre",
+  "String6": "Você será notificado por e-mail quando um novo jogo pago estiver temporariamente disponível gratuitamente.",
+  "String7": "Assinaturas",
+  "String8": "Você será notificado por e-mail quando novos jogos aparecerem em serviços de assinatura que podem ser resgatados em plataformas como Steam ou GOG.",
+  "String9": "Outros",
+  "String10": "Você será notificado por e-mail quando surgirem notícias relevantes no site e que não sejam das categorias anteriores.",
+  "String11": "Nota: Para evitar emails de spam, os emails só são enviados quando o novo preço histórico apresenta uma diferença de pelo menos 10 cêntimos de euro face ao preço anterior.",
+  "String12": "Rede",
+  "String13": "Você será notificado por e-mail quando houver novas notícias relacionadas ao site, como atualizações ou alterações.",
+  "String14": "Removido",
+  "String15": "Você será notificado por e-mail quando os jogos forem retirados da venda nas lojas oficiais.",
+  "String16": "Mínimos históricos",
+  "String17": "Pacotes",
+  "String18": "Você será notificado por e-mail quando um jogo da sua lista de desejos aparecer em um pacote.",
+  "String19": "Notícias"
+}

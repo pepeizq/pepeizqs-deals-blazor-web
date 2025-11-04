@@ -1,0 +1,21 @@
+{
+  "String1": "Wishlist",
+  "String2": "You will be notified by email when a game on your wishlist reaches a new historical low price.",
+  "String3": "Bundles",
+  "String4": "You will be notified by email when a new bundle appears.",
+  "String5": "Free",
+  "String6": "You will be notified by email when a new paid game is temporarily available for free.",
+  "String7": "Subscriptions",
+  "String8": "You will be notified by email when new games appear on subscription services that can be redeemed on platforms such as Steam or GOG.",
+  "String9": "Others",
+  "String10": "You will be notified by email when relevant news appears on the website and these are not from the previous categories.",
+  "String11": "Note: To avoid spam emails, emails are only sent when the new historical price has a difference of at least 10 euro cents compared to the previous price.",
+  "String12": "Web",
+  "String13": "You will be notified by email when there is any new news related to the website such as updates or changes.",
+  "String14": "Delisted",
+  "String15": "You will be notified by email when games are being removed from sale in official stores.",
+  "String16": "Historical Lows",
+  "String17": "Bundles",
+  "String18": "You will be notified by email when a game on your wishlist appears in a bundle.",
+  "String19": "News"
+}

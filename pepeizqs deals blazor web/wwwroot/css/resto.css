@@ -88,8 +88,9 @@
     font-size: 16px;
     border: 0px;
     text-decoration: none;
-    transition: transform .2s;
+    transition: transform .2s, background-color .1s linear;
     filter: saturate(0.85);
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.28),0px 0px 1px 0px rgba(0, 0, 0, 0.24);
 }
 
     .boton-pequeño:hover {

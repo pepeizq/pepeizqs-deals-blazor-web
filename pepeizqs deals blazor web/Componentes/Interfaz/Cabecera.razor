@@ -612,52 +612,14 @@
 
             using (conexion)
             {
-                if (APIs.Steam.Juego.Detectar(textoBuscador) == true)
+                bool usuarioLogeado = false;
+
+                if (string.IsNullOrEmpty(usuarioId) == false)
                 {
-                    textoBuscador = APIs.Steam.Juego.LimpiarID(textoBuscador);
-
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, textoBuscador) };
-
-                    if (resultadosMostrar.Count > 0)
-                    {
-                        textoBuscador = resultadosMostrar[0].Nombre;
-                    }
+                    usuarioLogeado = true;
                 }
-                else if (APIs.GOG.Juego.Detectar(textoBuscador) == true)
-                {
-                    textoBuscador = APIs.GOG.Juego.LimpiarSlug(textoBuscador);
 
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, textoBuscador) };
-
-                    if (resultadosMostrar.Count > 0)
-                    {
-                        textoBuscador = resultadosMostrar[0].Nombre;
-                    }
-                }
-                else if (APIs.EpicGames.Juego.Detectar(textoBuscador) == true)
-                {
-                    textoBuscador = APIs.EpicGames.Juego.LimpiarSlug(textoBuscador);
-
-                    resultadosMostrar = new List<Juegos.Juego>() { BaseDatos.Juegos.Buscar.UnJuego(null, null, null, textoBuscador) };
-
-                    if (resultadosMostrar.Count > 0)
-                    {
-                        textoBuscador = resultadosMostrar[0].Nombre;
-                    }
-                }
-                else
-                {
-                    bool usuarioLogeado = false;
-
-                    if (string.IsNullOrEmpty(usuarioId) == false)
-                    {
-                        usuarioLogeado = true;
-                    }
-
-                    resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).ToList());
-                
-                    StateHasChanged();
-                }
+                resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).AsParallel().ToList());
             }
         }
         else

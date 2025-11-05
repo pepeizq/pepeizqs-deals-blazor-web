@@ -559,18 +559,16 @@
                                 <div style="width: 25%;">
                                     @if (string.IsNullOrEmpty(aviso.Enlace) == false)
                                     {
+                                        string avisoEnlaceNuevaPestaña = "_self";
+
                                         if (aviso.EnlaceNuevaPestaña == true)
                                         {
-                                            <button @onclick="(e => AbrirEnlace(e, aviso.Enlace, true))" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
-                                                <div>@aviso.Titulo</div>
-                                            </button>
+                                            avisoEnlaceNuevaPestaña = "_blank";
                                         }
-                                        else
-                                        {
-                                            <button @onclick="(e => AbrirEnlace(e, aviso.Enlace, false))" class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
-                                                <div>@aviso.Titulo</div>
-                                            </button>                                            
-                                        } 
+
+                                        <a class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);" href="@aviso.Enlace" target="@avisoEnlaceNuevaPestaña">
+                                            <div>@aviso.Titulo</div>
+                                        </a>
                                     }
                                     else
                                     {
@@ -1590,11 +1588,11 @@
                                                         </div>
                                                     }
 
-                                                    <button @onclick="(e => AbrirEnlace(e, enlace))" class="juego-boton-pequeño" style="display: block; width: 100%;">
+                                                     <a class="boton-pequeño" title="@precio.Tienda" href="@enlace" target="_blank" style="width: 100%;">
                                                         <div class="caja-drm-tienda" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
                                                             <img src="@SacarImagenTienda(precio.Tienda)" class="juego-imagen-boton" alt="@precio.Tienda" loading="lazy" />
 
-                                                            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                                                            <div style="font-size: 14px; flex: 1; display: flex; flex-direction: column; gap: 8px;">
                                                                 <div>
                                                                     @ComprobarEdicion(juego.Nombre, precio.Nombre)
                                                                 </div>
@@ -1666,7 +1664,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             }
 
@@ -1721,7 +1719,7 @@
 
                                                         if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                                         {
-                                                            enlaceBajo = Herramientas.EnlaceAcortador.Generar(precioBajo.Enlace, precioBajo.Tienda, usuarioPatreon);
+                                                            enlaceBajo = Herramientas.EnlaceAcortador.Generar(precioBajo.Enlace, precioBajo.Tienda, usuarioPatreon, false);
                                                         }
 
                                                         <div>
@@ -1737,11 +1735,11 @@
                                                                 </div>
                                                             }
 
-                                                            <button @onclick="(e => AbrirEnlace(e, enlaceBajo))" class="juego-boton-pequeño" style="display: block; width: 100%;">
+                                                             <a class="boton-pequeño" title="@precioBajo.Tienda" href="@enlaceBajo" target="_blank" style="width: 100%;">
                                                                 <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 20px;">
                                                                     <img src="@SacarImagenTienda(precioBajo.Tienda)" class="juego-imagen-boton" alt="@precioBajo.Tienda" loading="lazy" />
 
-                                                                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                                                                    <div style="font-size: 14px; flex: 1; display: flex; flex-direction: column; gap: 8px;">
                                                                         <div>
                                                                             @ComprobarEdicion(juego.Nombre, precioBajo.Nombre)
                                                                         </div>
@@ -1813,7 +1811,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </button>
+                                                            </a>
                                                         </div>         
                                                     }
                                                 }
@@ -1834,7 +1832,7 @@
                 }
             }
 
-            @if (juego.Bundles != null)
+            @if (juego.Bundles?.Count > 0)
             {
                 <div id="bundles" class="caja-diseño juego-caja-espacio">
                     @if (BundlesDisponibles(juego.Bundles).Count > 0)
@@ -1855,7 +1853,7 @@
 
                                     if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                     {
-                                        enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon);
+                                        enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle2.Enlace, bundle3.Tipo, usuarioPatreon, false);
                                     }
 
                                     <a class="juego-boton-pequeño" href="@enlaceBundle" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
@@ -1936,7 +1934,7 @@
                 </div>
             }
 
-            @if (juego.Gratis != null)
+            @if (juego.Gratis?.Count > 0)
             {
                 <div id="gratis" class="caja-diseño juego-caja-espacio">
                     @if (GratisDisponibles(juego.Gratis).Count > 0)
@@ -1951,7 +1949,7 @@
 
                             if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                             {
-                                enlaceGratis = Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon);
+                                enlaceGratis = Herramientas.EnlaceAcortador.Generar(gratis2.Enlace, gratis2.Tipo, usuarioPatreon, false);
                             }
 
                             <a class="juego-boton-pequeño" href="@enlaceGratis" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
@@ -2021,7 +2019,7 @@
                 </div>
             }
 
-            @if (juego.Suscripciones != null)
+            @if (juego.Suscripciones?.Count > 0)
             {
                 <div id="suscripciones" class="caja-diseño juego-caja-espacio">
                     @if (SuscripcionesDisponibles(juego.Suscripciones).Count > 0)
@@ -2043,7 +2041,7 @@
 
                                 if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
                                 {
-                                    enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(enlaceSuscripcion, suscripcion2.Tipo, usuarioPatreon);
+                                    enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(enlaceSuscripcion, suscripcion2.Tipo, usuarioPatreon, false);
                                 }
 
                                 <a class="juego-boton-pequeño" href="@enlaceSuscripcion" target="_blank" rel="nofollow" style="font-size: 17px; padding: 20px 25px; margin-top: 10px; margin-bottom: 10px; cursor: pointer; display: inline-block; width: 100%;">
@@ -2613,36 +2611,36 @@
                                 string enlacePCGamingWiki = "https://pcgamingwiki.com/api/appid.php?appid=" + juego.IdSteam.ToString();
                                 string enlaceIsThereAnyDeal = "https://pcgamingwiki.com/api/appid.php?appid=" + juego.IdSteam.ToString();
 
-                                <button @onclick="(e => AbrirEnlace(e, enlaceSteamDB, true))" class="boton-pequeño" title="SteamDB" style="width: fit-content; padding: 10px;">
+                                <a class="boton-pequeño" title="SteamDB" href="@enlaceSteamDB" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamdb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="steamdb"/>
-                                </button>
-                                <button @onclick="(e => AbrirEnlace(e, enlaceProtonDB, true))" class="boton-pequeño" title="ProtonDB" style="width: fit-content; padding: 10px;">
+                                </a>
+                                <a class="boton-pequeño" title="ProtonDB" href="@enlaceProtonDB" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/protondb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="protondb"/>
-                                </button>
-                                <button @onclick="(e => AbrirEnlace(e, enlacePCGamingWiki, true))" class="boton-pequeño" title="PCGamingWiki" style="width: fit-content; padding: 10px;">
+                                </a>
+                                <a class="boton-pequeño" title="PCGamingWiki" href="@enlacePCGamingWiki" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/pcgamingwiki.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="pcgamingwiki"/>
-                                </button>
-                                <button @onclick="(e => AbrirEnlace(e, enlaceIsThereAnyDeal, true))" class="boton-pequeño" title="IsThereAnyDeal" style="width: fit-content; padding: 10px;">
+                                </a>
+                                <a class="boton-pequeño" title="IsThereAnyDeal" href="@enlaceIsThereAnyDeal" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/isthereanydeal.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
-                                </button>
+                                </a>
                             }
 
                             @if (juego.IdGog > 0)
                             {
                                 string enlaceGogDB = "https://www.gogdb.org/product/" + juego.IdGog.ToString();
 
-                                <button @onclick="(e => AbrirEnlace(e, enlaceGogDB, true))" class="boton-pequeño" title="GOG Database" style="width: fit-content; padding: 10px;">
+                                <a class="boton-pequeño" title="GogDB" href="@enlaceGogDB" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/gogdb.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="gogdb"/>
-                                </button>
+                                </a>
                             }
 
                             @if (juego.IdSteam > 0 && juego.Tipo == JuegoTipo.Game)
                             {
                                 string enlaceSteamGifts = "https://www.steamgifts.com/app/" + juego.IdSteam.ToString();
 
-                                <button @onclick="(e => AbrirEnlace(e, enlaceSteamGifts, true))" class="boton-pequeño" title="SteamGifts" style="width: fit-content; padding: 10px;">
+                                <a class="boton-pequeño" title="SteamGifts" href="@enlaceSteamGifts" target="_blank" style="width: fit-content; padding: 10px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno("/imagenes/webs/steamgifts.webp", 30, 30)" style="width: 30px; height: 30px;" loading="lazy" alt="isthereanydeal"/>
-                                </button>
+                                </a>
                             }
                         </div>
                     </div>
@@ -3675,7 +3673,7 @@
                                 Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
                                 Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
                                 Color = "fondoBotonPequeño",
-                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false),
                                 EnlaceNuevaPestaña = true
                             });
                         }
@@ -3724,7 +3722,7 @@
                             Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "GameMessages"),
                             Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "GameMessages"),
                             Color = "fondoBotonPequeño",
-                            Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                            Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false),
                             EnlaceNuevaPestaña = true
                         });
                     }
@@ -3838,7 +3836,7 @@
                                 Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String19", "GameMessages"),
                                 Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String20", "GameMessages"),
                                 Color = "fondoBotonPequeño",
-                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon),
+                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.Caracteristicas.DemoIdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false),
                                 EnlaceNuevaPestaña = true
                             });
                         }

@@ -359,7 +359,7 @@
 
                         if (suscripcionSeleccionadaTipo.UsuarioEnlacesEspecificos == false)
                         {
-                            enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(suscripcionSeleccionadaTipo.Enlace, suscripcionSeleccionadaTipo.Id, usuarioPatreon);
+                            enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(suscripcionSeleccionadaTipo.Enlace, suscripcionSeleccionadaTipo.Id, usuarioPatreon, false);
                         }
 
                         <CajaJuego idSuscripcion="@juego.Id" enlaceSuscripcion="@enlaceSuscripcion" drmSuscripcion="@juego.DRM" idioma="@idioma" juego="@juego.Juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Suscripciones" userAgent="@userAgent" />

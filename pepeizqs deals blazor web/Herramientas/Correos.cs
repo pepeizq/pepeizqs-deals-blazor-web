@@ -535,7 +535,7 @@ namespace Herramientas
 									<div style=""display: flex; align-items: center; gap: 20px; color: #f5f5f5; background-color: #0d1621;"">
 										<img src=""{{imagenJuego}}"" style=""max-width: 200px;""/>
 				        
-										<div style=""padding: 10px;"">
+										<div style=""padding: 10px; line-height: 25px;"">
 											{{mensajeAviso}}
 										</div>
 									</div>

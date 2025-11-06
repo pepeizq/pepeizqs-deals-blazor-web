@@ -300,8 +300,14 @@
 	if (bundle.Tiers != null)
 	{
 		decimal totalMinimos = 0;
+		string marginBundle = "margin: 40px 0px;";
 
-		<div style="margin: 40px 0px;">
+		if (tipo == Tipo.Noticia)
+		{
+			marginBundle = "margin: 40px 0px 0px 0px;";
+		}
+
+		<div style="@marginBundle">
 			@if (bundle.Tiers.Count > 0)
 			{
 				int i = 0;
@@ -405,7 +411,7 @@
 
 						string espacioFondo = "margin-bottom: 40px;";
 
-						if (i == bundle.Tiers.Count - 1 || bundle.Pick == true)
+						if (i == bundle.Tiers.Count - 1 || bundle.Pick == true )
 						{
 							espacioFondo = string.Empty;
 						}

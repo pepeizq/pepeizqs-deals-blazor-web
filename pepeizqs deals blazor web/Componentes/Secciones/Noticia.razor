@@ -181,7 +181,16 @@
 	<div class="cuerpo-ancho">
 		<img class="juego-fondo" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondo, 1536, 496)" alt="Background" loading="lazy" />
 
-		<div style="position: relative; display: flex; flex-direction: column; gap: 40px; margin-top: 40px; margin-bottom: 40px;">
+		@{
+			string añadirMarginSuperior = string.Empty;
+
+			if (noticia.Tipo != NoticiaTipo.Bundles)
+			{
+				añadirMarginSuperior = "margin-top: 40px;";
+			}
+		}
+
+		<div style="position: relative; display: flex; flex-direction: column; gap: 40px; margin-bottom: 40px; @añadirMarginSuperior">
 			@if (noticia.Tipo == NoticiaTipo.Bundles)
 			{
 				if (noticia.BundleId > 0)

@@ -135,7 +135,7 @@
 		<div class="cuerpo-ancho sub-subcabecera">
 			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
-				<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, false))">
+				<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, false))">
 					<h1 style="font-size: 18px; margin: 0px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Bundle")
 					</h1>
@@ -147,7 +147,7 @@
 					{
 						if (tipo != Bundles2.BundleTipo.Desconocido)
 						{
-							<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Bundles2.BundlesCargar.DevolverBundle(tipo).NombreTienda">
+							<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center; box-shadow: none;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Bundles2.BundlesCargar.DevolverBundle(tipo).NombreTienda">
 								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Bundles2.BundlesCargar.DevolverBundle(tipo).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
 							</button>
 						}
@@ -190,7 +190,7 @@
 						</div>
 					</div>
 
-					<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, true))">
+					<button class="boton-pequeño" style="@CambiarEstilo(Bundles2.BundleTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Bundles2.BundleTipo.Desconocido, true))">
 						<div style="font-size: 16px;">
 							@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Bundle")
 						</div>

@@ -172,7 +172,7 @@
     <div class="cuerpo-ancho sub-subcabecera">
         @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
-            <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, false))">
+            <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, false))">
                 <h1 style="font-size: 18px; margin: 0px;">
                     @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Free")
                 </h1>
@@ -184,7 +184,7 @@
                 {
                     if (tipo != Gratis2.GratisTipo.Desconocido)
                     {
-                        <button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Gratis2.GratisCargar.DevolverGratis(tipo).Nombre">
+                        <button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center; box-shadow: none;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Gratis2.GratisCargar.DevolverGratis(tipo).Nombre">
                             <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Gratis2.GratisCargar.DevolverGratis(tipo).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
                         </button>
                     }
@@ -192,7 +192,7 @@
             }
 
             <div style="margin-left: auto; display: flex; justify-content: right;">
-                <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, true))">
+                <button class="boton-pequeño" style="@CambiarEstilo(Gratis2.GratisTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Gratis2.GratisTipo.Desconocido, true))">
                     <div style="font-size: 16px;">
                         @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Free")
                     </div>

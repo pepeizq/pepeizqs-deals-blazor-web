@@ -136,7 +136,7 @@
     <div class="cuerpo-ancho sub-subcabecera">
         @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
-            <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, false))">
+            <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, false))">
                 <h1 style="font-size: 18px; margin: 0px;">
                     @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Subscriptions")
                 </h1>
@@ -150,7 +150,7 @@
                     {
                         if (suscripcionActual.Tipo.Id != Suscripciones2.SuscripcionTipo.Desconocido)
                         {
-                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
+                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 16px; border-radius: 5px; display: flex; align-items: center; box-shadow: none;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
                                 <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).ImagenIcono)" style="width: 20px; height: 20px;" alt="Store" />
                             </button>
                         }
@@ -162,7 +162,7 @@
                     {
                         if (suscripcionActual.Tipo.Id == tipoSeleccionado)
                         {
-                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
+                            <button class="boton-pequeño" style="@CambiarEstilo(suscripcionActual.Tipo.Id, false, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => SuscripcionAbrir(e, suscripcionActual))" title="@Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id).Nombre">
                                 <div style="display: flex; align-items: center; gap: 15px;">
                                     @{
                                         var elegido = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcionActual.Tipo.Id);
@@ -183,13 +183,13 @@
             @if (tipoSeleccionado == Suscripciones2.SuscripcionTipo.Desconocido)
             {
                 <div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
-                    <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, true))">
+                    <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, false, true) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, false, true))">
                         <div style="font-size: 16px;">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Subscriptions")
                         </div>
                     </button>
 
-                    <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, true, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, true, false))">
+                    <button class="boton-pequeño" style="@CambiarEstilo(Suscripciones2.SuscripcionTipo.Desconocido, true, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Suscripciones2.SuscripcionTipo.Desconocido, true, false))">
                         <div style="font-size: 16px;">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Subscriptions")
                         </div>

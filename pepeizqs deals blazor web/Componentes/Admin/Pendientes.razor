@@ -31,7 +31,7 @@
                     }
                 }
 
-                <button @onclick="@(e => ClickearTiendaPendientes(e, pendiente.Tienda.Id, pendiente.Tienda.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; @fondo">
+                <button @onclick="@(e => ClickearTiendaPendientes(e, pendiente.Tienda.Id, pendiente.Tienda.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; box-shadow: none; @fondo">
                     <img src="@pendiente.Tienda.ImagenIcono" style="margin: 0px 8px; height: 16px; width: 16px;" /> @pendiente.Tienda.Nombre (@pendiente.Pendientes.Count)
                 </button>
             }
@@ -57,7 +57,7 @@
                     }
                 }
 
-                <button @onclick="@(e => ClickearSuscripcionPendientes(e, pendiente.Suscripcion.Id.ToString(), pendiente.Suscripcion.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; @fondo">
+                <button @onclick="@(e => ClickearSuscripcionPendientes(e, pendiente.Suscripcion.Id.ToString(), pendiente.Suscripcion.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; box-shadow: none; @fondo">
                     <img src="@pendiente.Suscripcion.ImagenIcono" style="margin: 0px 8px; height: 16px; width: 16px;" /> @pendiente.Suscripcion.Nombre (@pendiente.Pendientes.Count)
                 </button>
             }
@@ -83,7 +83,7 @@
                     }
                 }
 
-                <button @onclick="@(e => ClickearStreamingPendientes(e, pendiente.Streaming.Id.ToString(), pendiente.Streaming.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; @fondo">
+                <button @onclick="@(e => ClickearStreamingPendientes(e, pendiente.Streaming.Id.ToString(), pendiente.Streaming.Nombre))" class="boton-pequeño" style="margin: 10px 0px; display: block; box-shadow: none; @fondo">
                     <img src="@pendiente.Streaming.ImagenIcono" style="margin: 0px 8px; height: 16px; width: 16px;" /> @pendiente.Streaming.Nombre (@pendiente.Pendientes.Count)
                 </button>
             }
@@ -220,13 +220,13 @@
     @if (string.IsNullOrEmpty(textoBuscador) == false)
     {
         <div style="display: flex; align-items: center; gap: 20px; margin: 20px 0px;">
-            <button @onclick="@(e => CambiarPestañas(e, 0))" class="boton-pequeño" style="width: 130px; text-align: center; @estiloJuegos">Juegos (@buscadorPendientesJuegos.Count.ToString())</button>
+            <button @onclick="@(e => CambiarPestañas(e, 0))" class="boton-pequeño" style="width: 130px; text-align: center; box-shadow: none; @estiloJuegos">Juegos (@buscadorPendientesJuegos.Count.ToString())</button>
 
-            <button @onclick="@(e => CambiarPestañas(e, 1))" class="boton-pequeño" style="width: 130px; text-align: center; @estiloDLCs">DLCs (@buscadorPendientesDLCs.Count.ToString())</button>
+            <button @onclick="@(e => CambiarPestañas(e, 1))" class="boton-pequeño" style="width: 130px; text-align: center; box-shadow: none; @estiloDLCs">DLCs (@buscadorPendientesDLCs.Count.ToString())</button>
 
-            <button @onclick="@(e => CambiarPestañas(e, 2))" class="boton-pequeño" style="width: 180px; text-align: center; @estiloBandasSonoras">Bandas Sonoras (@buscadorPendientesBandasSonoras.Count.ToString())</button>
+            <button @onclick="@(e => CambiarPestañas(e, 2))" class="boton-pequeño" style="width: 180px; text-align: center; box-shadow: none; @estiloBandasSonoras">Bandas Sonoras (@buscadorPendientesBandasSonoras.Count.ToString())</button>
 
-            <button @onclick="@(e => CambiarPestañas(e, 3))" class="boton-pequeño" style="width: 130px; text-align: center; @estiloSoftware">Software (@buscadorPendientesSoftware.Count.ToString())</button>
+            <button @onclick="@(e => CambiarPestañas(e, 3))" class="boton-pequeño" style="width: 130px; text-align: center; box-shadow: none; @estiloSoftware">Software (@buscadorPendientesSoftware.Count.ToString())</button>
         </div>
 
         @if (pestañaJuegos == true)

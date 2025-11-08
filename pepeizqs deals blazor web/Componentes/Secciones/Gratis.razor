@@ -134,7 +134,7 @@
 
         contenidoJson = contenidoJson.Replace("@posicion", (j + 1).ToString());
         contenidoJson = contenidoJson.Replace("@nombre", juegosActuales[j].Nombre);
-        contenidoJson = contenidoJson.Replace("@enlace", "https://pepeizqdeals.com/game/" + juegosActuales[j].JuegoId.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegosActuales[j].Nombre) + "/");
+        contenidoJson = contenidoJson.Replace("@enlace", "https://" + dominio + "/game/" + juegosActuales[j].JuegoId.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juegosActuales[j].Nombre) + "/");
         contenidoJson = contenidoJson.Replace("@imagen", juegosActuales[j].Imagen);
 
         j += 1;
@@ -142,7 +142,7 @@
 
     contenidoJson = contenidoJson + "] }";
 
-    <Titulo tipo="@Titulo.Tipo.Gratis" idioma="@idioma" keywords="@keywords" tituloGratis="@titulo" contenidoJsonGratis="@contenidoJson"/>
+    <Titulo tipo="@Titulo.Tipo.Gratis" idioma="@idioma" dominio="@dominio" keywords="@keywords" tituloGratis="@titulo" contenidoJsonGratis="@contenidoJson"/>
 }
 
 <script>
@@ -363,6 +363,7 @@ else
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private string dominio = null;
 
     [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
     [PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -380,6 +381,7 @@ else
         idioma = datos.Idioma;
         usuarioId = datos.UsuarioId;
         userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
         if (string.IsNullOrEmpty(usuarioId) == false)
         {

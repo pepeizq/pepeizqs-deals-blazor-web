@@ -22,6 +22,15 @@
 			</script>
 		}
 	}
+	else if (tipo == Tipo.Bundle)
+	{
+		if (string.IsNullOrEmpty(contenidoJsonBundle) == false)
+		{
+			<script type="application/ld+json">
+				@((MarkupString)contenidoJsonBundle)
+			</script>
+		}
+	}
 	else if (tipo == Tipo.Curator)
 	{
 		if (string.IsNullOrEmpty(contenidoJsonCurator) == false)
@@ -138,42 +147,42 @@
 				"@@type": "ListItem",
 				"position": 1,
 				"name": "Bundles",
-				"item": "https://pepeizqdeals.com/bundles"
+				"item": "https://@dominio/bundles"
 			  },{
 				"@@type": "ListItem",
 				"position": 2,
 				"name": "Historial Lows",
-				"item": "https://pepeizqdeals.com/historical-lows"
+				"item": "https://@dominio/historical-lows"
 			  },{
 				"@@type": "ListItem",
 				"position": 3,
 				"name": "Free",
-				"item": "https://pepeizqdeals.com/free"
+				"item": "https://@dominio/free"
 			  },{
 				"@@type": "ListItem",
 				"position": 4,
 				"name": "Subscriptions",
-				"item": "https://pepeizqdeals.com/subscriptions"
+				"item": "https://@dominio/subscriptions"
 			  },{
 				"@@type": "ListItem",
 				"position": 5,
 				"name": "Patreon",
-				"item": "https://pepeizqdeals.com/patreon"
+				"item": "https://@dominio/patreon"
 			  },{
 				"@@type": "ListItem",
 				"position": 6,
 				"name": "Compare",
-				"item": "https://pepeizqdeals.com/compare"
+				"item": "https://@dominio/compare"
 			  },{
 				"@@type": "ListItem",
 				"position": 7,
 				"name": "API",
-				"item": "https://pepeizqdeals.com/api"
+				"item": "https://@dominio/api"
 			  },{
 				"@@type": "ListItem",
 				"position": 8,
 				"name": "Last Added",
-				"item": "https://pepeizqdeals.com/last-added"
+				"item": "https://@dominio/last-added"
 			  }]
 			}
 		</script>
@@ -213,11 +222,10 @@
 	}
 	else
 	{
-		<link rel="canonical" href="@enlaceEnNoticia" hreflang="x-default" />
-		<link rel="alternate" href="@enlaceEsNoticia" hreflang="es" />
+		<link rel="canonical" href="@enlaceEnNoticia"/>
 	}
 	
-	<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://pepeizqdeals.com/rss-en.xml" />
+	<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://@dominio/rss-en.xml" />
 
 	<meta name="twitter:site" content="@@pepeizqdeals" />
 	<meta name="twitter:domain" content="pepeizqdeals.com" />
@@ -230,6 +238,9 @@
 
 	[Parameter]
 	public string idioma { get; set; }
+
+	[Parameter]
+	public string dominio { get; set; }
 
 	[Parameter]
 	public Tipo tipo { get; set; }
@@ -446,8 +457,8 @@
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Api");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Api");
-			enlace ??= "https://pepeizqdeals.com/api";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/api";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Bundle)
@@ -462,32 +473,32 @@
 		{
 			titulo ??= tituloBundles;
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Bundle");
-			enlace ??= "https://pepeizqdeals.com/bundles/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/bundles/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Comparador)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Compare");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String20", "Compare");
-			enlace ??= "https://pepeizqdeals.com/compare/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/compare/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Contacto)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Contact");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Contact");
-			enlace ??= "https://pepeizqdeals.com/contact/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/contact/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Coste)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "CostWeb");
 			descripcion ??= descripcionCoste;
-			enlace ??= "https://pepeizqdeals.com/cost-web";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/cost-web";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Curator)
@@ -502,8 +513,8 @@
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Wishlist");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Wishlist");
-			enlace ??= "https://pepeizqdeals.com/wishlist/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/wishlist/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Filtro)
@@ -512,16 +523,16 @@
 
 			titulo ??= tituloKeywords.Titulo;
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Filter");
-			enlace ??= "https://pepeizqdeals.com/filter/" + idsFiltro + "/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/filter/" + idsFiltro + "/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= tituloKeywords.Keywords;
 		}
 		else if (tipo == Tipo.Gratis)
 		{
 			titulo ??= tituloGratis;
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Free");
-			enlace ??= "https://pepeizqdeals.com/free/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/free/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.Juego)
@@ -537,7 +548,7 @@
 				descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String104", "Game");
 			}
 			
-			enlace ??= "https://pepeizqdeals.com/game/" + idJuego.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombreJuego) + "/";
+			enlace ??= "https://" + dominio + "/game/" + idJuego.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombreJuego) + "/";
 			imagen ??= imagenJuego;
 			keywords2 ??= JuegoKeywords(categoriasJuego);
 		}
@@ -545,8 +556,8 @@
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "HistoricalLows") ;
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String22", "HistoricalLows");
-			enlace ??= "https://pepeizqdeals.com/historical-lows/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";	
+			enlace ??= "https://" + dominio + "/historical-lows/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Noticia)
@@ -570,32 +581,32 @@
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Patreon");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Patreon");
-			enlace ??= "https://pepeizqdeals.com/patreon";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentradapatreon.webp";
+			enlace ??= "https://" + dominio + "/patreon";
+			imagen ??= "https://" + dominio + "/logo/logoentradapatreon.webp";
 			keywords ??= "patreon, " + keywordsVacias;
 		}
 		else if (tipo == Tipo.Portada)
 		{
 			titulo ??= "pepeizq's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
-			enlace ??= "https://pepeizqdeals.com/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Privacidad)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "Privacy");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Privacy");
-			enlace ??= "https://pepeizqdeals.com/privacy/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/privacy/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.RSS)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "RSS");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "RSS");
-			enlace ??= "https://pepeizqdeals.com/rss";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/rss";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywordsVacias;
 		}
 		else if (tipo == Tipo.Suscripciones)
@@ -613,30 +624,30 @@
 
 			if (string.IsNullOrEmpty(enlaceAlternativoSuscripciones) == false)
 			{
-				enlace = "https://pepeizqdeals.com/subscriptions/" + enlaceAlternativoSuscripciones + "/";
+				enlace = "https://" + dominio + "/subscriptions/" + enlaceAlternativoSuscripciones + "/";
 			}
 			else
 			{
-				enlace ??= "https://pepeizqdeals.com/subscriptions/";
+				enlace ??= "https://" + dominio + "/subscriptions/";
 			}
 
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.UltimasNoticias)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews") ;
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String4", "LastNews");
-			enlace ??= "https://pepeizqdeals.com/last-news/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/last-news/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 		else if (tipo == Tipo.UltimosAñadidos)
 		{
 			titulo ??= Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastAdded");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastAdded");
-			enlace ??= "https://pepeizqdeals.com/last-added/";
-			imagen ??= "https://pepeizqdeals.com/logo/logoentrada.webp";
+			enlace ??= "https://" + dominio + "/last-added/";
+			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
 			keywords2 ??= keywords;
 		}
 

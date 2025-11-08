@@ -20,7 +20,7 @@
 
 @if (string.IsNullOrEmpty(perfilUsuarioId) == true)
 {
-	<Titulo tipo="@Titulo.Tipo.Deseados" idioma="@idioma"/>
+	<Titulo tipo="@Titulo.Tipo.Deseados" idioma="@idioma" dominio="@dominio"/>
 }
 
 <script>
@@ -640,6 +640,7 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string dominio = null;
 
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
@@ -673,6 +674,7 @@
 		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

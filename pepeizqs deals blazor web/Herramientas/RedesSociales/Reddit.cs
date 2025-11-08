@@ -6,7 +6,7 @@ namespace Herramientas.RedesSociales
 {
 	public static class Reddit
 	{
-		public static async Task<bool> Postear(Noticias.Noticia noticia)
+		public static async Task<bool> Postear(Noticias.Noticia noticia, string dominio)
 		{
 			WebApplicationBuilder builder = WebApplication.CreateBuilder();
 			string cuenta = builder.Configuration.GetValue<string>("Reddit:Cuenta");
@@ -14,7 +14,7 @@ namespace Herramientas.RedesSociales
 			string clientId = builder.Configuration.GetValue<string>("Reddit:ClientID");
 			string clientSecret = builder.Configuration.GetValue<string>("Reddit:ClientSecret");
 
-            var webAgent = new Reddit2.BotWebAgent(cuenta, contraseña, clientId, clientSecret, "https://pepeizqdeals.com/");          
+            var webAgent = new Reddit2.BotWebAgent(cuenta, contraseña, clientId, clientSecret, "https://" + dominio + "/");          
             var reddit = new RedditSharp.Reddit(webAgent, false);
             
 			RedditSharp.Things.Subreddit subreddit = await reddit.GetSubredditAsync("gamedealsue");

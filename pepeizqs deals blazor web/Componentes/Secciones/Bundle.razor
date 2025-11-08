@@ -17,7 +17,7 @@
 	{
 		string titulo = bundle.NombreBundle + " • " + bundle.NombreTienda;
 		string descripcion = string.Empty;
-		string enlace = "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/";
+		string enlace = "https://" + dominio + "/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/";
 		string imagen = string.Empty;
 
 		if (bundle.Tiers != null)
@@ -177,7 +177,7 @@
 		contenidoJson = contenidoJson.Replace("@reseñasMediaJson", reseñasMediaJson.ToString());
 		contenidoJson = contenidoJson.Replace("@reseñasCantidadJson", reseñasCantidadJson.ToString());
 
-		<Titulo tipo="@Titulo.Tipo.Bundle" idioma="@idioma" tituloBundle="@titulo" descripcionBundle="@descripcion" enlaceBundle="@enlace"
+		<Titulo tipo="@Titulo.Tipo.Bundle" idioma="@idioma" dominio="@dominio" tituloBundle="@titulo" descripcionBundle="@descripcion" enlaceBundle="@enlace"
 				imagenBundle="@imagen" keywords="@keywords" contenidoJsonBundle="@contenidoJson"/>
 	}
 }
@@ -270,7 +270,7 @@
 
 			if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
-				enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon);
+				enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon, false);
 			}
 
 			<div class="cuerpo-ancho" style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
@@ -504,6 +504,7 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -527,6 +528,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

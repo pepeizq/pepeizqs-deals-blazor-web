@@ -49,7 +49,7 @@
                         Strings.ChrW(34) + "@type" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "ListItem" + Strings.ChrW(34) + "," + Environment.NewLine +
                         Strings.ChrW(34) + "position" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + (i + 1).ToString() + Strings.ChrW(34) + "," + Environment.NewLine +
                         Strings.ChrW(34) + "name" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + componente.Juegos[i].Nombre + Strings.ChrW(34) + "," + Environment.NewLine +
-                        Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://pepeizqdeals.com/game/" + componente.Juegos[i].JuegoId.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(componente.Juegos[i].Nombre) + "/" + Strings.ChrW(34) + "," + Environment.NewLine +
+                        Strings.ChrW(34) + "url" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + "https://" + dominio + "/game/" + componente.Juegos[i].JuegoId.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(componente.Juegos[i].Nombre) + "/" + Strings.ChrW(34) + "," + Environment.NewLine +
                         Strings.ChrW(34) + "image" + Strings.ChrW(34) + ":" + Strings.ChrW(34) + componente.Juegos[i].Imagen + Strings.ChrW(34) + "}";
 
                     i += 1;
@@ -77,7 +77,7 @@
         }
     }
 
-    <Titulo tipo="@Titulo.Tipo.Suscripciones" idioma="@idioma" tituloAlternativoSuscripciones="@tituloSuscripcion" enlaceAlternativoSuscripciones="@suscripcionSeleccionadaTexto" 
+    <Titulo tipo="@Titulo.Tipo.Suscripciones" idioma="@idioma" dominio="@dominio" tituloAlternativoSuscripciones="@tituloSuscripcion" enlaceAlternativoSuscripciones="@suscripcionSeleccionadaTexto" 
             keywords="@keywords" contenidoJsonSuscripciones="@contenidoJson"/>
 }
 
@@ -346,7 +346,7 @@
                 @if (suscripcionSeleccionadaTipo.UsuarioEnlacesEspecificos == false)
                 {
                     <div style="position: sticky; top: var(--alturaCabecera); z-index: 1000;">
-                        <a href="@Herramientas.EnlaceAcortador.Generar(suscripcionSeleccionadaTipo.Enlace, suscripcionSeleccionadaTipo.Id, usuarioPatreon)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
+                        <a href="@Herramientas.EnlaceAcortador.Generar(suscripcionSeleccionadaTipo.Enlace, suscripcionSeleccionadaTipo.Id, usuarioPatreon, false)" class="boton-pequeño" style="text-align: center; padding: 15px 20px; font-size: 18px;" target="_blank">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "String5", "Subscriptions")
                         </a>
                     </div>
@@ -355,7 +355,7 @@
                 <div class="caja-archivo-contenido" style="margin: 40px 0px; padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px;">
                     @foreach (var juego in suscripcionSeleccionadaJuegosMostrar)
                     {
-                        string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
+                        string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon, false);
 
                         if (suscripcionSeleccionadaTipo.UsuarioEnlacesEspecificos == false)
                         {
@@ -375,11 +375,11 @@
             {
                 foreach (var juego in suscripcionesUltimas)
                 {
-                    string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon);
+                    string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(juego.Enlace, juego.Tipo, usuarioPatreon, false);
 
                     if (Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).UsuarioEnlacesEspecificos == false)
                     {
-                        enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Enlace, Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Id, usuarioPatreon);
+                        enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Enlace, Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(juego.Tipo).Id, usuarioPatreon, false);
                     }
 
                     <div>
@@ -540,6 +540,7 @@ else
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private string dominio = null;
 
     [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
     [PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -559,6 +560,7 @@ else
         idioma = datos.Idioma;
         usuarioId = datos.UsuarioId;
         userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
         if (string.IsNullOrEmpty(usuarioId) == false)
         {

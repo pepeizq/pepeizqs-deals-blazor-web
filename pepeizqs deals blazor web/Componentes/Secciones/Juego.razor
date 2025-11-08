@@ -102,7 +102,7 @@
         }
     }
 
-    <Titulo tipo="@Titulo.Tipo.Juego" idioma="@idioma" nombreJuego="@juego.Nombre" drmsEnseñarJuego="@drmsEnseñar" descripcionJuego="@juego.Caracteristicas?.Descripcion"
+    <Titulo tipo="@Titulo.Tipo.Juego" idioma="@idioma" dominio="@dominio" nombreJuego="@juego.Nombre" drmsEnseñarJuego="@drmsEnseñar" descripcionJuego="@juego.Caracteristicas?.Descripcion"
             idJuego="@juego.Id" gamePassJuego="@gamePass" imagenJuego="@juego.Imagenes?.Header_460x215" categoriasJuego="@juego.Categorias"
             estrellasJsonJuego="@estrellasJson" cantidadJsonJuego="@cantidadJson" precioBajoJsonJuego="@precioBajoJson"
             precioAltoJsonJuego="@precioAltoJson" fechaJsonJuego="@fechaJson" preciosCantidadJsonJuego="@preciosJson?.Count"/>
@@ -3285,7 +3285,7 @@
                                 {
                                     if (tienda.Id == puntosDatos.Items.FirstOrDefault()?.Tienda)
                                     {
-                                        icono = "https://pepeizqdeals.com/" + tienda.ImagenIcono;
+                                        icono = "https://" + dominio + "/" + tienda.ImagenIcono;
                                         nombre = tienda.Nombre;
                                     }
                                 }
@@ -3574,6 +3574,7 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
+    private string dominio = null;
 
     [PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
     [PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -3607,6 +3608,7 @@
         idioma = datos.Idioma;
         usuarioId = datos.UsuarioId;
         userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
         idiomaJuego = idioma;
 
@@ -4741,7 +4743,7 @@
     {
         List<JuegoTieneDesea> usuarioTieneDesea2 = new List<JuegoTieneDesea>();
 
-         foreach (DRM drm in JuegoDRM2.GenerarListado())
+        foreach (DRM drm in JuegoDRM2.GenerarListado())
         {
             if (drm.Id != JuegoDRM.NoEspecificado)
             {

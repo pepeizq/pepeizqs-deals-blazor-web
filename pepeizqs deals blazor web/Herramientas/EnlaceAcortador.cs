@@ -237,6 +237,10 @@ namespace Herramientas
 				{
 					enlace = APIs.Humble.Suscripcion.Referido(enlace);
 				}
+				else if (tipo == SuscripcionTipo.LunaStandard || tipo == SuscripcionTipo.LunaPremium || tipo == SuscripcionTipo.LunaClaims)
+				{
+					enlace = APIs.AmazonLuna.Suscripcion.Referido(enlace);
+				}
 			}
 
 			//----------------------------------------

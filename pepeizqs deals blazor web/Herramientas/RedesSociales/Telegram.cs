@@ -8,7 +8,7 @@ namespace Herramientas.RedesSociales
 {
 	public static class Telegram
 	{
-		public static async Task<bool> Postear(Noticias.Noticia noticia)
+		public static async Task<bool> Postear(Noticias.Noticia noticia, string dominio)
 		{
 			WebApplicationBuilder builder = WebApplication.CreateBuilder();
 			string token = builder.Configuration.GetValue<string>("Telegram:Token");
@@ -31,9 +31,9 @@ namespace Herramientas.RedesSociales
 
 				if (string.IsNullOrEmpty(enlace) == false)
 				{
-					if (enlace.Contains("https://pepeizqdeals.com") == false)
+					if (enlace.Contains("https://" + dominio) == false)
 					{
-						enlace = "https://pepeizqdeals.com" + enlace;
+						enlace = "https://" + dominio + enlace;
 					}
 				}
 

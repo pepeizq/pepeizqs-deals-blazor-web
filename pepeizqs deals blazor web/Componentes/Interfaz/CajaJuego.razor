@@ -228,19 +228,34 @@
 	string fondoColor = string.Empty;
 	string fondoDescuento = "background-color: darkgreen;";
 
-	if (usuarioTieneJuego == true)
+	if (string.IsNullOrEmpty(color) == true)
 	{
-		fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
-		fondoDescuento = "backdrop-filter: brightness(70%);";
+		if (usuarioTieneJuego == true)
+		{
+			fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoBien));";
+			fondoDescuento = "backdrop-filter: brightness(70%);";
+		}
+		else
+		{
+			usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(usuarioDeseadosSteam, usuarioDeseadosWeb, usuarioDeseadosGog, juego, drmUsar, true);
+
+			if (usuarioTieneDeseado == true)
+			{
+				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
+				fondoDescuento = "backdrop-filter: brightness(70%);";
+			}
+		}
 	}
 	else
 	{
-		usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(usuarioDeseadosSteam, usuarioDeseadosWeb, usuarioDeseadosGog, juego, drmUsar, true);
-
-		if (usuarioTieneDeseado == true)
+		if (color != "var(--fondoBotonPequeño)")
 		{
-			fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoAlerta));";
+			fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), " + color + ");";
 			fondoDescuento = "backdrop-filter: brightness(70%);";
+		}
+		else
+		{
+			fondoColor = "background-color: var(--fondoBotonPequeño);";
 		}
 	}
 
@@ -854,6 +869,9 @@
 
 	[Parameter]
 	public string userAgent { get; set; }
+
+	[Parameter]
+	public string color { get; set; }
 
 	[Parameter]
 	public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }

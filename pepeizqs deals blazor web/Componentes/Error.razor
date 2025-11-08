@@ -1,17 +1,39 @@
 ﻿@page "/error"
 
+@inject IHttpContextAccessor Contexto
+
 <HeadContent>
     <PageTitle>Error • pepeizq's deals</PageTitle>
 
     <meta name="robots" content="nosnippet" />
 
-	<link rel="canonical" href="https://pepeizqdeals.com/error" />
+	<link rel="canonical" href="https://@dominio/error" />
 </HeadContent>
 
-<img src="https://i.imgur.com/vSrZZztl.png"  />
+<style>
+    .caja-error {
+        background-color: var(--fondoSubsubcabecera);
+        border: 2px solid var(--fondoSubcabecera);
+        padding: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+    }
+</style>
 
-<div style="margin: 40px auto; font-size: 18px;">This is not the content you were looking for</div>
+<div class="caja-error cuerpo-ancho" style="margin: 40px auto;">
+    <img src="https://@dominio/imagenes/otros/error.webp" style="max-width: 100%;" />
+
+    <div style="margin-top: 30px; font-size: 18px;">This is not the content you were looking for</div>
+</div>
 
 @code {
 
+    #nullable disable
+
+    private string dominio = null;
+
+    protected override void OnInitialized()
+    {
+        Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+        dominio = datos.Dominio;
+    }
 }

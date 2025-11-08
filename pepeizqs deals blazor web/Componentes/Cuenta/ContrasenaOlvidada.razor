@@ -61,6 +61,7 @@
     #nullable disable
 
     private string idioma = "en";
+    private string dominio = null;
 
     private string correo = string.Empty;
 
@@ -70,6 +71,7 @@
     {
         Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
         idioma = datos.Idioma;
+        dominio = datos.Dominio;
     }
 
     private void CambiarCorreo(ChangeEventArgs texto)
@@ -94,7 +96,7 @@
                     string codigo = await UserManager.GeneratePasswordResetTokenAsync(usuario);
                     codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
 
-                    string enlaceFinal = "https://pepeizqdeals.com/account/reset-password?code=" + codigo;
+                    string enlaceFinal = "https://" + dominio + "/account/reset-password?code=" + codigo;
 
                     Herramientas.Correos.EnviarContraseñaOlvidada(idioma, enlaceFinal, correo);
                     mensajeExito = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ForgotPassword");

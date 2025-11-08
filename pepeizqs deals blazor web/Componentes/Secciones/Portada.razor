@@ -32,20 +32,21 @@
 		""@type"": ""Organization"",
 		""name"": ""pepeizq's deals"",
 		""description"": ""@descripcion"",
-        ""url"": ""https://pepeizqdeals.com/"",
+        ""url"": ""https://@dominio/"",
         ""brand"": ""pepeizq's apps"",
 		""logo"": {
 			""@type"": ""ImageObject"",
-			""logo"": ""https://pepeizqdeals.com/logo/logo6.png"",
+			""logo"": ""https://@dominio/logo/logo6.png"",
 			""caption"": ""pepeizq's deals logo"" },
 		""contactPoint"": {
 			""@type"": ""ContactPoint"",
 			""contactType"": ""customer service"",
-			""url"": ""https://pepeizqdeals.com/contact/"",
+			""url"": ""https://@dominio/contact/"",
 			""availableLanguage"": [ ""English"", ""Spanish"" ] },
 		""sameAs"": [ ""@patreon"", ""@discord"", ""@telegram"", ""@twitter"", ""@steam"", ""@bluesky""]
 	}";
 
+	contenidoJson = contenidoJson.Replace("@dominio", dominio);
 	contenidoJson = contenidoJson.Replace("@descripcion", Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index"));
 	contenidoJson = contenidoJson.Replace("@patreon", patreon);
 	contenidoJson = contenidoJson.Replace("@discord", discord);
@@ -54,7 +55,7 @@
 	contenidoJson = contenidoJson.Replace("@steam", steam);
 	contenidoJson = contenidoJson.Replace("@bluesky", bluesky);
 
-	<Titulo tipo="@Titulo.Tipo.Portada" idioma="@idioma" contenidoJsonPortada="@contenidoJson"/>
+	<Titulo tipo="@Titulo.Tipo.Portada" idioma="@idioma" dominio="@dominio" contenidoJsonPortada="@contenidoJson"/>
 }
 
 <style>
@@ -89,6 +90,11 @@
 	.destacados-galeria-fila {
 		display: flex;
 		overflow: auto;
+		padding: 5px 0px;
+		gap: 10px;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin-top: 5px;
 	}
 
 	.destacados-galeria-fila:after {
@@ -99,10 +105,10 @@
 
 	.destacados-galeria-columna {
 		float: left;
-		width: 16.66%;
+		width: 16%;
 		flex: 0 0 auto;
-		padding: 3px 3px 0px 3px;
 		aspect-ratio: 92/43;
+		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.28),0px 0px 1px 0px rgba(0, 0, 0, 0.24);
 	}
 
 	.destacados-galeria-captura {
@@ -192,33 +198,25 @@
 	100% { width: 100%; }
 	}
 </style>
+
+<script>
+	function anularEnlace(event) {
+	  event.preventDefault() 
+	}
+</script>
 	
 @if (juegosDestacadosMostrar?.Count > 0)
 {
 	<div class="portada-espacio cuerpo-ancho">
-		@if (juegoSeleccionado != null)
+		@if (juegosDestacadosMostrar[posicionMostrarDestacados].Juego != null)
 		{
-			string colorSeleccionado = "var(--fondoOscuro)";
-
-			if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM) == true)
-			{
-				colorSeleccionado = "var(--fondoBien)";
-			}
-			else
-			{
-				if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juegoSeleccionado, juegoSeleccionado.PrecioMinimosHistoricos[0].DRM, true) == true)
-				{
-					colorSeleccionado = "var(--fondoAlerta)";
-				}
-			}
-
-			<a href="/game/@juegoSeleccionado.IdMaestra.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juegoSeleccionado.Nombre)/" style="cursor: pointer; border: 0px; padding: 0px; display: block; width: 100%;">
-				<div style="position: relative; padding: 3px; background-color: @colorSeleccionado;">
-					<div class="destacado-mostrar" @onmouseover="@(e => EnseñarDestacadoVideo(e, juegoSeleccionado))">
+			<a href="/game/@juegosDestacadosMostrar[posicionMostrarDestacados].Juego.IdMaestra.ToString()/@Herramientas.EnlaceAdaptador.Nombre(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Nombre)/" style="cursor: pointer; border: 0px; padding: 0px; display: block; width: 100%;">
+				<div style="position: relative; box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.28),0px 0px 1px 0px rgba(0, 0, 0, 0.24); background-color: @juegosDestacadosMostrar[posicionMostrarDestacados].Color;">
+					<div class="destacado-mostrar" @onmouseover="@(e => EnseñarDestacadoVideo(e, juegosDestacadosMostrar[posicionMostrarDestacados].Juego))">
 						@if (string.IsNullOrEmpty(videoDestacado) == false)
 						{
 							<div class="destacado-fondo">
-								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%;" alt="@juegoSeleccionado.Nombre">
+								<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Imagenes.Library_1920x620, 1314, 424)" style="width: 100%;" alt="@juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Nombre">
 							</div>
 
 							<div class="destacado-video">
@@ -230,16 +228,16 @@
 						}
 						else
 						{
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(fondoDestacado, 1314, 424)" style="width: 100%; aspect-ratio: 96/31;" alt="@juegoSeleccionado.Nombre">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Imagenes.Library_1920x620, 1314, 424)" style="width: 100%; aspect-ratio: 96/31;" alt="@juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Nombre">
 						}
 
-						<div style="position: absolute; left: 0; bottom: 0; background-image: linear-gradient(to bottom, rgba(255,0,0,0), @colorSeleccionado);
-															display: flex; align-items: end; justify-content: space-between; width: 100%;" class="destacado-hueco">
+						<div style="position: absolute; left: 0; bottom: 0; background-image: linear-gradient(to bottom, rgba(255,0,0,0), @juegosDestacadosMostrar[posicionMostrarDestacados].Color);
+									display: flex; align-items: end; justify-content: space-between; width: 100%;" class="destacado-hueco">
 
-							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(logoDestacado)" class="destacado-logo-medidas" alt="@juegoSeleccionado.Nombre">
+							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Imagenes.Logo)" class="destacado-logo-medidas" alt="@juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Nombre">
 
 							<div style="display: flex; align-items: center; margin-bottom: 30px; color: var(--colorTexto);">
-								<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juegoSeleccionado.PrecioMinimosHistoricos[0].DRM), 40, 40)" style="margin-right: 20px;" alt="DRM" />
+								<img class="destacado-icono" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(JuegoDRM2.SacarImagen(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos[0].DRM), 40, 40)" style="margin-right: 20px;" alt="DRM" />
 
 								@{
 									string iconoTienda = string.Empty;
@@ -247,7 +245,7 @@
 
 									foreach (var tienda in tiendas)
 									{
-										if (tienda.Id == juegoSeleccionado.PrecioMinimosHistoricos[0].Tienda)
+										if (tienda.Id == juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos[0].Tienda)
 										{
 											iconoTienda = tienda.ImagenIcono;
 											break;
@@ -259,25 +257,47 @@
 
 								<div class="destacado-sombra" style="display: flex; align-items: center;">
 									<div class="destacado-precio-descuento" style="background-color: darkgreen;">
-										@juegoSeleccionado.PrecioMinimosHistoricos[0].Descuento.ToString()%
+										@juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos[0].Descuento.ToString()%
 									</div>
 									<div class="destacado-precio-descuento" style="background-color: var(--fondoOscuro);">
 										@{
 											string precioMostrar = string.Empty;
 
-											if (juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado > 0)
+											if (juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos?[0].PrecioCambiado > 0)
 											{
-												precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].PrecioCambiado);
+												precioMostrar = Herramientas.Precios.Euro(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos?[0].PrecioCambiado);
 											}
 											else
 											{
-												precioMostrar = Herramientas.Precios.Euro(juegoSeleccionado.PrecioMinimosHistoricos?[0].Precio);
+												precioMostrar = Herramientas.Precios.Euro(juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos?[0].Precio);
 											}
 										}
 
 										@precioMostrar
 									</div>
 								</div>
+
+								@if (string.IsNullOrEmpty(usuarioId) == false && juegosDestacadosMostrar[posicionMostrarDestacados].Color != "var(--fondoBien)" && @juegosDestacadosMostrar[posicionMostrarDestacados].DeseadoImportado == false)
+								{
+									<div onclick="anularEnlace(event)" style="margin-left: 20px;">
+										<button @onclick="@(e => CambiarEstadoDeseado(e, usuarioId, juegosDestacadosMostrar[posicionMostrarDestacados], juegosDestacadosMostrar[posicionMostrarDestacados].Juego.PrecioMinimosHistoricos[0].DRM))" class="boton-pequeño" style="width: fit-content; padding: 10px; background-color: @juegosDestacadosMostrar[posicionMostrarDestacados].Color;">
+											<div class="svg-boton" style="width: 35px; height: 35px;">
+												@if (juegosDestacadosMostrar[posicionMostrarDestacados].Color == "var(--fondoAlerta)")
+												{
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+														<path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
+													</svg>
+												}
+												else
+												{
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+														<path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z" />
+													</svg>
+												}
+											</div>
+										</button>
+									</div>
+								}
 							</div>
 						</div>
 					</div>
@@ -291,31 +311,17 @@
 				bool mostrarBarra = false;
 				string opacidad = string.Empty;
 
-				if (juegoSeleccionado != null)
+				if (juegosDestacadosMostrar[posicionMostrarDestacados] != null)
 				{
-					if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
+					if (destacado.Juego.IdMaestra == juegosDestacadosMostrar[posicionMostrarDestacados].Juego.IdMaestra)
 					{
 						opacidad = "opacity: 1;";
 						mostrarBarra = true;
 					}
 				}
 
-				string colorFondoDestacado = "background-color: var(--fondoOscuro);";
-
-				if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM) == true)
-				{
-					colorFondoDestacado = "background-color: var(--fondoBien);";
-				}
-				else
-				{
-					if (Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, destacado, destacado.PrecioMinimosHistoricos[0].DRM, true) == true)
-					{
-						colorFondoDestacado = "background-color: var(--fondoAlerta);";
-					}
-				}
-
-				<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="@colorFondoDestacado">
-					<img @key="destacado.Id.ToString()" class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Nombre">
+				<div class="destacados-galeria-columna" @onclick="@(e => CambiarJuegoDestacado(e, destacado))" style="background-color: @destacado.Color;">
+					<img @key="destacado.Juego.Id.ToString()" class="destacados-galeria-captura destacados-galeria-cursor" src="@Herramientas.Ficheros.Imagenes.ServidorExterno(destacado.Juego.Imagenes.Header_460x215, 214, 100)" style="@opacidad" alt="@destacado.Juego.Nombre">
 
 					@if (mostrarBarra == true)
 					{
@@ -464,7 +470,7 @@
 
 			<Virtualize Context="juego" Items="juegosMinimosMostrar" ItemSize="107" OverscanCount="12">
 				<ItemContent>
-					<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="@tipoJuego" userAgent="@userAgent"/>
+					<CajaJuego idioma="@idioma" juego="@juego.Juego" color="@juego.Color" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="@tipoJuego" userAgent="@userAgent"/>
 				</ItemContent>
 			</Virtualize>
 		</div>
@@ -659,14 +665,13 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
 	private bool usuarioPatreon = false;
 	private bool usuarioAdmin = false;
 
-	private string fondoDestacado = string.Empty;
-	private string logoDestacado = string.Empty;
 	private string videoDestacado = string.Empty;
 
 	private SqlConnection conexion = new SqlConnection();
@@ -677,6 +682,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+		dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -732,12 +738,49 @@
 		{
 			#region Destacados
 
-			juegosDestacadosMostrar ??= BaseDatos.Portada.Buscar.Destacados(conexion);
-
-			if (juegosDestacadosMostrar.Count > 0)
+			if (juegosDestacadosMostrar == null || juegosDestacadosMostrar?.Count == 0)
 			{
-				juegoSeleccionado = juegosDestacadosMostrar[0];
-				CambiarDestacadoImagenes();
+				List<Juegos.Juego> juegosDestacadosMostrar2 = BaseDatos.Portada.Buscar.Destacados(conexion);
+
+				foreach (var juego in juegosDestacadosMostrar2)
+				{
+					JuegoMostrar juegoDestacadoMostrar = new JuegoMostrar
+					{
+						Juego = juego,
+						DeseadoImportado = false,
+						Color = "var(--fondoBotonPequeño)"
+					};
+
+					if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM) == true)
+					{
+						juegoDestacadoMostrar.Color = "var(--fondoBien)";
+					}
+					else
+					{
+						if (Herramientas.Deseados.ComprobarSiEstaImportado(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+						{
+							juegoDestacadoMostrar.Color = "var(--fondoAlerta)";
+							juegoDestacadoMostrar.DeseadoImportado = true;
+						}
+						if (Herramientas.Deseados.ComprobarSiEstaWeb(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+						{
+							juegoDestacadoMostrar.Color = "var(--fondoAlerta)";
+						}
+					}
+
+					if (juegosDestacadosMostrar == null)
+					{
+						juegosDestacadosMostrar = new List<JuegoMostrar>();
+					}
+
+					juegosDestacadosMostrar.Add(juegoDestacadoMostrar);
+				}
+
+				if (juegosDestacadosMostrar?.Count > 0)
+				{
+					posicionMostrarDestacados = 0;
+					videoDestacado = null;
+				}
 			}
 
 			CronometroDestacados();
@@ -750,29 +793,26 @@
 			{
 				noticias ??= BaseDatos.Noticias.Buscar.Actuales(tipoSeleccionadoNoticias, 3, conexion);
 
-				if (noticias != null)
+				if (noticias?.Count > 0)
 				{
-					if (noticias.Count > 0)
+					foreach (var noticia in noticias)
 					{
-						foreach (var noticia in noticias)
-						{
-							bool añadirTipo = true;
+						bool añadirTipo = true;
 
-							if (tiposActualesNoticias.Count > 0)
+						if (tiposActualesNoticias.Count > 0)
+						{
+							foreach (var tipoActual in tiposActualesNoticias)
 							{
-								foreach (var tipoActual in tiposActualesNoticias)
+								if (tipoActual == noticia.Tipo)
 								{
-									if (tipoActual == noticia.Tipo)
-									{
-										añadirTipo = false;
-									}
+									añadirTipo = false;
 								}
 							}
+						}
 
-							if (añadirTipo == true)
-							{
-								tiposActualesNoticias.Add(noticia.Tipo);
-							}
+						if (añadirTipo == true)
+						{
+							tiposActualesNoticias.Add(noticia.Tipo);
 						}
 					}
 				}
@@ -828,41 +868,48 @@
 	{
 		videoDestacado = null;
 
-		if (juegoSeleccionado.Media != null)
+		if (juegosDestacadosMostrar[posicionMostrarDestacados].Juego?.Media?.Videos?.Count > 0)
 		{
-			if (juegoSeleccionado.Media.Videos != null)
-			{
-				if (juegoSeleccionado.Media.Videos.Count > 0)
-				{
-					videoDestacado = juegoSeleccionado.Media.Videos[0].Micro;
-				}
-			}
+			videoDestacado = juegosDestacadosMostrar[posicionMostrarDestacados].Juego.Media.Videos[0].Micro;
 		}
 	}
 
 	#region Destacados
 
-	[PersistentState] public List<Juegos.Juego> juegosDestacadosMostrar { get; set; }
-	private Juegos.Juego juegoSeleccionado = new Juegos.Juego();
+	[PersistentState] public List<JuegoMostrar> juegosDestacadosMostrar { get; set; }
+	[PersistentState] public int posicionMostrarDestacados { get; set; }
+
 	private PeriodicTimer cronometro = null;
 	private int cronometroContador = 0;
 	private int cronometroLimite = 30;
 
-	private void CambiarJuegoDestacado(MouseEventArgs args, Juegos.Juego nuevoJuego)
+	public class JuegoMostrar
 	{
-		juegoSeleccionado = nuevoJuego;
-		CambiarDestacadoImagenes();
+		public Juegos.Juego Juego { get; set; }
+		public bool DeseadoImportado { get; set; }
+		public string Color { get; set; }
+	}
+
+	private void CambiarJuegoDestacado(MouseEventArgs args, JuegoMostrar destacadoSeleccionado)
+	{
+		int nuevaPosicion = 0;
+
+		foreach (var destacado in juegosDestacadosMostrar)
+		{
+			if (destacado == destacadoSeleccionado)
+			{
+				break;
+			}
+
+			nuevaPosicion += 1;
+		}
+
+		posicionMostrarDestacados = nuevaPosicion;
+		videoDestacado = null;
 
 		cronometroContador = 0;
 		cronometro.Dispose();
 		CronometroDestacados();
-	}
-
-	private void CambiarDestacadoImagenes()
-	{
-		fondoDestacado = juegoSeleccionado.Imagenes.Library_1920x620;
-		logoDestacado = juegoSeleccionado.Imagenes.Logo;
-		videoDestacado = null;
 	}
 
 	private async void CronometroDestacados()
@@ -882,12 +929,12 @@
 				{
 					if (tomarSiguiente == true)
 					{
-						juegoSeleccionado = destacado;
-						CambiarDestacadoImagenes();
+						posicionMostrarDestacados = posicionMostrarDestacados + 1;
+						videoDestacado = null;
 						break;
 					}
 
-					if (destacado.IdMaestra == juegoSeleccionado.IdMaestra)
+					if (destacado.Juego.IdMaestra == juegosDestacadosMostrar[posicionMostrarDestacados].Juego.IdMaestra)
 					{
 						tomarSiguiente = true;
 					}
@@ -897,12 +944,44 @@
 
 				if (i == juegosDestacadosMostrar.Count)
 				{
-					juegosDestacadosMostrar = BaseDatos.Portada.Buscar.Destacados(conexion);
+					juegosDestacadosMostrar.Clear();
 
-					if (juegosDestacadosMostrar.Count > 0)
+					List<Juegos.Juego> juegosDestacadosMostrar2 = BaseDatos.Portada.Buscar.Destacados(conexion);
+
+					if (juegosDestacadosMostrar2?.Count > 0)
 					{
-						juegoSeleccionado = juegosDestacadosMostrar[0];
-						CambiarDestacadoImagenes();
+						posicionMostrarDestacados = 0;
+						videoDestacado = null;
+					}
+
+					foreach (var juego in juegosDestacadosMostrar2)
+					{
+						JuegoMostrar juegoDestacadoMostrar = new JuegoMostrar
+						{
+							Juego = juego,
+							DeseadoImportado = false,
+							Color = "var(--fondoBotonPequeño)"
+						};
+
+						if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM) == true)
+						{
+							juegoDestacadoMostrar.Color = "var(--fondoBien)";
+						}
+						else
+						{
+							if (Herramientas.Deseados.ComprobarSiEstaImportado(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+							{
+								juegoDestacadoMostrar.Color = "var(--fondoAlerta)";
+								juegoDestacadoMostrar.DeseadoImportado = true;
+							}
+
+							if (Herramientas.Deseados.ComprobarSiEstaWeb(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+							{
+								juegoDestacadoMostrar.Color = "var(--fondoAlerta)";
+							}
+						}
+
+						juegosDestacadosMostrar.Add(juegoDestacadoMostrar);
 					}
 				}
 
@@ -925,32 +1004,26 @@
 		{
 			List<string> categoriasNumeros = new List<string>();
 
-			if (categorias != null)
+			if (categorias?.Count > 0)
 			{
-				if (categorias.Count > 0)
+				foreach (var categoria in categorias)
 				{
-					foreach (var categoria in categorias)
+					if (categoria.Estado == true)
 					{
-						if (categoria.Estado == true)
-						{
-							categoriasNumeros.Add(Convert.ChangeType(categoria.Categoria, categoria.Categoria.GetTypeCode()).ToString());
-						}
+						categoriasNumeros.Add(Convert.ChangeType(categoria.Categoria, categoria.Categoria.GetTypeCode()).ToString());
 					}
 				}
 			}
 
 			List<string> drmsNumeros = new List<string>();
 
-			if (drms != null)
+			if (drms?.Count > 0)
 			{
-				if (drms.Count > 0)
+				foreach (var drm in drms)
 				{
-					foreach (var drm in drms)
+					if (drm.Estado == true)
 					{
-						if (drm.Estado == true)
-						{
-							drmsNumeros.Add(Convert.ChangeType(drm.DRMId, drm.DRMId.GetTypeCode()).ToString());
-						}
+						drmsNumeros.Add(Convert.ChangeType(drm.DRMId, drm.DRMId.GetTypeCode()).ToString());
 					}
 				}
 			}
@@ -976,7 +1049,7 @@
 			}
 			else if (tipoSeleccionadoMinimos == MinimosTipo.Proximamente)
 			{
-                juegosMinimosGestor = BaseDatos.Portada.Buscar.Proximamente(cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion);
+				juegosMinimosGestor = BaseDatos.Portada.Buscar.Proximamente(cantidadJuegosMinimos, categoriasNumeros, drmsNumeros, conexion);
 			}
 		}
 		catch (Exception ex)
@@ -1050,8 +1123,8 @@
 	#region Minimos Filtrado
 
 	[PersistentState] public List<Juegos.Juego> juegosMinimosGestor { get; set; }
-	private List<Juegos.Juego> juegosMinimosMostrar = new List<Juegos.Juego>();
-    private MinimosTipo tipoSeleccionadoMinimos = MinimosTipo.Nuevos;
+	private List<JuegoMostrar> juegosMinimosMostrar = new List<JuegoMostrar>();
+	private MinimosTipo tipoSeleccionadoMinimos = MinimosTipo.Nuevos;
 
 	private enum MinimosTipo
 	{
@@ -1065,60 +1138,84 @@
 	{
 		GenerarListaMinimos(cargaInicial);
 
-		if (juegosMinimosGestor != null)
+		if (juegosMinimosGestor?.Count > 0)
 		{
-			if (juegosMinimosGestor.Count > 0)
+			juegosMinimosMostrar.Clear();
+
+			foreach (var juego in juegosMinimosGestor)
 			{
-				juegosMinimosMostrar.Clear();
+				bool ocultar = false;
 
-				foreach (var juego in juegosMinimosGestor)
+				if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
 				{
-					bool ocultar = false;
-
-					if (string.IsNullOrEmpty(ocultarJuegosUsuarioSteam) == false)
+					if (ocultarJuegosUsuarioSteam == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.Steam)
 					{
-						if (ocultarJuegosUsuarioSteam == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.Steam)
+						foreach (var juegoUsuario in juegosUsuario.Steam)
 						{
-							foreach (var juegoUsuario in juegosUsuario.Steam)
+							if (juego.IdSteam == juegoUsuario.Id)
 							{
-								if (juego.IdSteam == juegoUsuario.Id)
-								{
-									ocultar = true;
-									break;
-								}
+								ocultar = true;
+								break;
 							}
 						}
 					}
+				}
 
-					if (string.IsNullOrEmpty(ocultarJuegosUsuarioGog) == false)
+				if (string.IsNullOrEmpty(ocultarJuegosUsuarioGog) == false)
+				{
+					if (ocultarJuegosUsuarioGog == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.GOG)
 					{
-						if (ocultarJuegosUsuarioGog == "checked" && juego.PrecioMinimosHistoricos[0].DRM == JuegoDRM.GOG)
+						foreach (var juegoUsuario in juegosUsuario.Gog)
 						{
-							foreach (var juegoUsuario in juegosUsuario.Gog)
+							if (juego.IdGog == juegoUsuario.Id)
 							{
-								if (juego.IdGog == juegoUsuario.Id)
-								{
-									ocultar = true;
-									break;
-								}
+								ocultar = true;
+								break;
 							}
 						}
 					}
+				}
 
-					if (ocultar == false)
+				if (ocultar == false)
+				{
+					if (juegosMinimosMostrar == null)
 					{
-						juegosMinimosMostrar.Add(juego);
+						juegosMinimosMostrar = new List<JuegoMostrar>();
 					}
+
+					JuegoMostrar juegoMinimoMostrar = new JuegoMostrar
+					{
+						Juego = juego,
+						DeseadoImportado = false,
+						Color = "var(--fondoBotonPequeño)"
+					};
+
+					if (Herramientas.UsuarioJuegos.ComprobarSiTiene(juegosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM) == true)
+					{
+						juegoMinimoMostrar.Color = "var(--fondoBien)";
+					}
+					else
+					{
+						if (Herramientas.Deseados.ComprobarSiEstaImportado(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+						{
+							juegoMinimoMostrar.Color = "var(--fondoAlerta)";
+							juegoMinimoMostrar.DeseadoImportado = true;
+						}
+
+						if (Herramientas.Deseados.ComprobarSiEstaWeb(deseadosUsuario, juego, juego.PrecioMinimosHistoricos[0].DRM, true) == true)
+						{
+							juegoMinimoMostrar.Color = "var(--fondoAlerta)";
+						}
+					}
+
+					juegosMinimosMostrar.Add(juegoMinimoMostrar);
 				}
 			}
 		}
 
-		if (juegosMinimosMostrar != null)
+		if (juegosMinimosMostrar?.Count > 0)
 		{
-			if (juegosMinimosMostrar.Count > 0)
-			{
-				await InvokeAsync(StateHasChanged);
-			}
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -1163,7 +1260,7 @@
 		{
 			BaseDatos.Usuarios.Actualizar.Opcion("IndexOption1", valor, usuarioId, conexion);
 		}
-		
+
 		Filtros();
 	}
 
@@ -1279,7 +1376,7 @@
 		{
 			BaseDatos.Usuarios.Actualizar.Opcion("IndexCategories", JsonSerializer.Serialize(categorias), usuarioId, conexion);
 		}
-		
+
 		Filtros();
 	}
 
@@ -1360,6 +1457,33 @@
 		{
 			return "background-color: var(--botonSubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25),0px 0px 1px 0px rgba(0, 0, 0, 0.25);";
 		}
+	}
+
+	#endregion
+
+	#region Deseados
+
+	private async void CambiarEstadoDeseado(MouseEventArgs e, string usuarioId, JuegoMostrar juego, JuegoDRM drm)
+	{
+		bool estado = true;
+
+		if (juego.Color == "var(--fondoAlerta)")
+		{
+			estado = false;
+		}
+
+		Herramientas.Deseados.CambiarEstado(usuarioId, juego.Juego, estado, drm);
+
+		if (estado == true)
+		{
+			juego.Color = "var(--fondoAlerta)";
+		}
+		else
+		{
+			juego.Color = "var(--fondoBotonPequeño)";
+		}
+
+		await InvokeAsync(StateHasChanged);
 	}
 
 	#endregion

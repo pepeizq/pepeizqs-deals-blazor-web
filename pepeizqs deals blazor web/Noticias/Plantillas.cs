@@ -465,7 +465,7 @@ namespace Noticias
             return plantilla;
         }
 
-		public static Plantilla Despedidas(string enlace, DateTime fecha, int juegoId)
+		public static Plantilla Despedidas(string enlace, DateTime fecha, int juegoId, string dominio)
 		{
 			Plantilla plantilla = new Plantilla();
 
@@ -501,8 +501,8 @@ namespace Noticias
 				plantilla.ContenidoEn = "<div>" + string.Format(Idiomas.BuscarTexto("en", "Goodbye2", "NewsTemplates"), juego.Nombre, enlace) + "</div>";
 				plantilla.ContenidoEs = "<div>" + string.Format(Idiomas.BuscarTexto("es", "Goodbye2", "NewsTemplates"), juego.Nombre, enlace) + "</div>";
 
-				plantilla.ContenidoEn = plantilla.ContenidoEn + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("en", "Goodbye3", "NewsTemplates"), "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
-				plantilla.ContenidoEs = plantilla.ContenidoEs + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("es", "Goodbye3", "NewsTemplates"), "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
+				plantilla.ContenidoEn = plantilla.ContenidoEn + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("en", "Goodbye3", "NewsTemplates"), "https://" + dominio + "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
+				plantilla.ContenidoEs = plantilla.ContenidoEs + Environment.NewLine + Environment.NewLine + "<div style=" + Strings.ChrW(34) + "margin-top: 20px;" + Strings.ChrW(34) + ">" + string.Format(Idiomas.BuscarTexto("es", "Goodbye3", "NewsTemplates"), "https://" + dominio + "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/");
 
 				if (juego.Imagenes.Header_460x215 != null)
 				{

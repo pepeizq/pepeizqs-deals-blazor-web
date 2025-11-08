@@ -82,6 +82,9 @@
     [Parameter]
     public string idioma { get; set; }
 
+    [Parameter]
+    public string dominio { get; set; }
+
     private Usuario usuario = new Usuario();
 
     private string correoDefecto = string.Empty;
@@ -113,7 +116,7 @@
             string codigo = await UserManager.GenerateEmailConfirmationTokenAsync(usuario);
             codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
 
-            string enlaceFinal = "https://pepeizqdeals.com/account/confirm-email?userId=" + usuarioId + "&code=" + codigo;
+            string enlaceFinal = "https://" + dominio + "/account/confirm-email?userId=" + usuarioId + "&code=" + codigo;
 
             Herramientas.Correos.EnviarConfirmacionCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correo);
             correoConfirmadoEnviado = true;
@@ -140,7 +143,7 @@
                     string codigo = await UserManager.GenerateChangeEmailTokenAsync(usuario, correoNuevo);
                     codigo = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(codigo));
 
-                    string enlaceFinal = "https://pepeizqdeals.com/account/confirm-email-change?userId=" + usuarioId + "&email=" + correoNuevo + "&code=" + codigo;
+                    string enlaceFinal = "https://" + dominio + "/account/confirm-email-change?userId=" + usuarioId + "&email=" + correoNuevo + "&code=" + codigo;
 
                     Herramientas.Correos.EnviarCambioCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correoNuevo);
                     correoCambioEnviado = true;

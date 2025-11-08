@@ -43,7 +43,7 @@
 		}
 	}
 
-	<Titulo tipo="@Titulo.Tipo.UltimosAñadidos" idioma="@idioma" keywords="@keywords"/>
+	<Titulo tipo="@Titulo.Tipo.UltimosAñadidos" idioma="@idioma" dominio="@dominio" keywords="@keywords"/>
 }
 
 <div class="subcabecera">
@@ -72,6 +72,7 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+    private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -84,6 +85,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

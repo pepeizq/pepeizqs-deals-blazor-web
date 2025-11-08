@@ -10,6 +10,7 @@
 @using global::Noticias
 @using pepeizqs_deals_web.Data
 
+@inject IHttpContextAccessor Contexto
 @inject IBlazorNotificationService ServicioNotificaciones
 
 <style>
@@ -647,6 +648,8 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
     #nullable disable
 
+    private string dominio = null;
+
     private SqlConnection conexion = new SqlConnection();
 
     private NoticiaTipo noticiaTipoSeleccionada = NoticiaTipo.Bundles;
@@ -671,6 +674,12 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
     private bool enviadoDiscord = false;
     private bool enviandoReddit = false;
     private bool enviadoReddit = false;
+
+    protected override void OnInitialized()
+    {
+        Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
+        dominio = datos.Dominio;
+    }
 
     private void CambiarNoticiaTipo(ChangeEventArgs texto)
     {
@@ -700,17 +709,17 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
             }
             else if (noticiaTipoSeleccionada == NoticiaTipo.Web)
             {
-                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+                noticia.Imagen = "https://" + dominio + "/logo/logoentrada.webp";
                 noticia.Fecha = DateTime.Now.AddDays(7);
             }
             else if (noticiaTipoSeleccionada == NoticiaTipo.Patreon)
             {
-                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentradapatreon.webp";
+                noticia.Imagen = "https://" + dominio + "/logo/logoentradapatreon.webp";
                 noticia.Fecha = DateTime.Now.AddDays(7);
             }
             else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
             {
-                noticia.Imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+                noticia.Imagen = "https://" + dominio + "/logo/logoentrada.webp";
                 noticia.Fecha = DateTime.Now;
             }
         }
@@ -816,7 +825,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 try
                 {
-                    enviadoTwitter = await Herramientas.RedesSociales.Twitter.Twitear(noticiaAñadir);
+                    enviadoTwitter = await Herramientas.RedesSociales.Twitter.Twitear(noticiaAñadir, dominio);
                 }
                 catch (Exception ex)
                 {
@@ -831,7 +840,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 try
                 {
-                    enviadoBluesky = await Herramientas.RedesSociales.Bluesky.Postear(noticiaAñadir);
+                    enviadoBluesky = await Herramientas.RedesSociales.Bluesky.Postear(noticiaAñadir, dominio);
                 }
                 catch (Exception ex)
                 {
@@ -846,7 +855,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 try
                 {
-                    enviadoTelegram = await Herramientas.RedesSociales.Telegram.Postear(noticiaAñadir);
+                    enviadoTelegram = await Herramientas.RedesSociales.Telegram.Postear(noticiaAñadir, dominio);
                 }
                 catch (Exception ex)
                 {
@@ -861,7 +870,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 try
                 {
-                    enviadoDiscord = await Herramientas.RedesSociales.Discord.Postear(noticiaAñadir);
+                    enviadoDiscord = await Herramientas.RedesSociales.Discord.Postear(noticiaAñadir, dominio);
                 }
                 catch (Exception ex)
                 {
@@ -878,7 +887,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
                 try
                 {
-                    enviadoReddit = await Herramientas.RedesSociales.Reddit.Postear(noticiaAñadir);
+                    enviadoReddit = await Herramientas.RedesSociales.Reddit.Postear(noticiaAñadir, dominio);
                 }
                 catch (Exception ex)
                 {
@@ -1078,7 +1087,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
     private void SeleccionarJuegoAñadirEnlace(MouseEventArgs e, string id, string nombre)
     {
-        contenidoEnlace = "https://pepeizqdeals.com/game/" + id + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/";
+        contenidoEnlace = "https://" + dominio + "/game/" + id + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/";
         tituloEnlace = nombre;
         juegosBuscadorEnlace = new List<global::Juegos.Juego>();
     }
@@ -1159,7 +1168,7 @@ else if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
 
         if (noticiaTipoSeleccionada == NoticiaTipo.Despedidas)
         {
-            noticia = Plantillas.Despedidas(enlaceDespedidas, fechaDespedidas, id);
+            noticia = Plantillas.Despedidas(enlaceDespedidas, fechaDespedidas, id, dominio);
             plantillaCargada = true;
         }
     }

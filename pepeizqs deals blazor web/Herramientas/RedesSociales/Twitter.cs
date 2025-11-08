@@ -10,7 +10,7 @@ namespace Herramientas.RedesSociales
 {
 	public static class Twitter
 	{
-		public static async Task<bool> Twitear(Noticias.Noticia noticia)
+		public static async Task<bool> Twitear(Noticias.Noticia noticia, string dominio)
 		{
 			WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
@@ -32,9 +32,9 @@ namespace Herramientas.RedesSociales
 
 			if (string.IsNullOrEmpty(enlace) == false)
 			{
-				if (enlace.Contains("https://pepeizqdeals.com") == false) 
+				if (enlace.Contains("https://" + dominio) == false) 
 				{
-					enlace = "https://pepeizqdeals.com" + enlace;
+					enlace = "https://" + dominio + enlace;
                 }
 			}
 

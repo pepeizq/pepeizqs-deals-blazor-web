@@ -17,15 +17,15 @@ namespace Herramientas.Redireccionador
 			{
 				if (noticia.Tipo == NoticiaTipo.Bundles)
 				{
-					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.BundleTipo));
+					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.BundleTipo, false, false));
 				}
 				else if (noticia.Tipo == NoticiaTipo.Gratis)
 				{
-					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.GratisTipo));
+					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.GratisTipo, false, false));
 				}
 				else if (noticia.Tipo == NoticiaTipo.Suscripciones)
 				{
-					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.SuscripcionTipo));
+					return Redirect(Herramientas.EnlaceAcortador.Generar(noticia.Enlace, noticia.SuscripcionTipo, false, false));
 				}
 				else
 				{

@@ -12,15 +12,15 @@ namespace Herramientas
 {
     public class Rss : Controller
     {
-        public string dominio = "https://pepeizqdeals.com";
-
         #region Noticias
 
         [ResponseCache(Duration = 3000)]
         [HttpGet("rss-en.xml")]
         public IActionResult GenerarEnRSS()
         {
-            SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS in English from the web", new Uri(dominio), "RSSUrl", DateTime.Now)
+			string dominio = "https://" + HttpContext.Request.Host.Value;
+
+			SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS in English from the web", new Uri(dominio), "RSSUrl", DateTime.Now)
             {
                 Copyright = new TextSyndicationContent($"{DateTime.Now.Year}")
             };
@@ -85,7 +85,9 @@ namespace Herramientas
         [HttpGet("rss-es.xml")]
         public IActionResult GenerarEsRSS()
         {
-            SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS en Español de la web", new Uri(dominio), "RSSUrl", DateTime.Now)
+			string dominio = "https://" + HttpContext.Request.Host.Value;
+
+			SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS en Español de la web", new Uri(dominio), "RSSUrl", DateTime.Now)
             {
                 Copyright = new TextSyndicationContent($"{DateTime.Now.Year}")
             };
@@ -150,7 +152,9 @@ namespace Herramientas
         [HttpGet("news-rss")]
         public IActionResult CogerNoticiasRSS()
         {
-            if (User.Identity.IsAuthenticated == true)
+			string dominio = "https://" + HttpContext.Request.Host.Value;
+
+			if (User.Identity.IsAuthenticated == true)
             {
                 if (global::BaseDatos.Usuarios.Buscar.RolDios(User.FindFirst(ClaimTypes.NameIdentifier).Value) == true)
                 {
@@ -162,7 +166,7 @@ namespace Herramientas
                         {
                             if (noticia.Imagen.Contains("https://") == false)
                             {
-                                noticia.Imagen = "https://pepeizqdeals.com" + noticia.Imagen;
+                                noticia.Imagen = dominio + noticia.Imagen;
                             }
                         }
 
@@ -177,10 +181,12 @@ namespace Herramientas
         #endregion
 
         [ResponseCache(Duration = 3000)]
-        [HttpGet("rss/{drm}/{cantidadAnalisis}")]
-        public IActionResult GenerarUltimasOfertas(string drm, int cantidadAnalisis)
+        [HttpGet("rss/{drm}/{cantidadReseñas}")]
+        public IActionResult GenerarUltimasOfertas(string drm, int cantidadReseñas)
         {
-            List<string> drmsUsar = new List<string>();
+			string dominio = "https://" + HttpContext.Request.Host.Value;
+
+			List<string> drmsUsar = new List<string>();
 
             foreach (var drm2 in Juegos.JuegoDRM2.GenerarListado())
             {
@@ -197,14 +203,14 @@ namespace Herramientas
 
             if (drmsUsar.Count > 0)
             {
-				if (cantidadAnalisis < 200)
+				if (cantidadReseñas < 200)
 				{
-					cantidadAnalisis = 199;
+					cantidadReseñas = 199;
 				}
 
-				if (cantidadAnalisis > 10000)
+				if (cantidadReseñas > 10000)
 				{
-					cantidadAnalisis = 9999;
+					cantidadReseñas = 9999;
 				}
 
 				SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS Last Deals", new Uri(dominio), "RSSUrl", DateTime.Now)
@@ -214,7 +220,7 @@ namespace Herramientas
 
 				List<SyndicationItem> items = new List<SyndicationItem>();
 
-				List<Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.Minimos(0, 50, null, drmsUsar, null, cantidadAnalisis);
+				List<Juegos.Juego> juegos = global::BaseDatos.Portada.Buscar.Minimos(0, 50, null, drmsUsar, null, cantidadReseñas);
 
 				if (juegos.Count > 0)
 				{

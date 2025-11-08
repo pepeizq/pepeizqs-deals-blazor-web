@@ -4,7 +4,7 @@
 
 @inject IHttpContextAccessor Contexto
 
-<Titulo tipo="@Titulo.Tipo.Privacidad" idioma="@idioma"/>
+<Titulo tipo="@Titulo.Tipo.Privacidad" idioma="@idioma" dominio="@dominio"/>
 
 <style>
 	.caja-privacidad-contenido {
@@ -69,12 +69,14 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string dominio = null;
 
 	protected override void OnInitialized()
 	{
 		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

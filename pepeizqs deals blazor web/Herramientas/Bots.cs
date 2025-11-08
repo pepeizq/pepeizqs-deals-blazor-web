@@ -90,15 +90,10 @@ namespace Herramientas
 		[HttpGet("robots.txt")]
 		public IActionResult Robots()
 		{
-			WebApplicationBuilder builder = WebApplication.CreateBuilder();
-			string piscinaApp = builder.Configuration.GetValue<string>("PoolWeb:Contenido");
-			string piscinaUsada = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+			string dominio = HttpContext.Request.Host.Value;
 
 			StringBuilder sb = new StringBuilder();
-
-			if (piscinaApp == piscinaUsada)
-			{
-				sb.Append(@"Sitemap: https://pepeizqdeals.com/sitemap.xml
+			sb.Append(@"Sitemap: https://" + dominio + @"/sitemap.xml
 
 User-agent: *
 Disallow: /account/
@@ -115,14 +110,13 @@ Disallow: /6*
 Disallow: /7*
 Disallow: /8*
 Disallow: /9*
-");
-			}
-            else
-            {
-				sb.Append("User-agent: *\r\nDisallow: /");
-			}
 
-            return new ContentResult
+Sitemap: https://" + dominio + @"/sitemap.xml
+");
+
+			//sb.Append("User-agent: *\r\nDisallow: /");
+
+			return new ContentResult
 			{
 				Content = sb.ToString(),
 				StatusCode = 200

@@ -142,7 +142,7 @@
             }
             else
             {
-				string enlaceClipboard = "https://pepeizqdeals.com/?search=" + textoBuscador;
+				string enlaceClipboard = "https://" + dominio + "/?search=" + textoBuscador;
 
                 <button @onclick="(e => CopiarAlClipboard(e, enlaceClipboard))" style="border: 0px; background: transparent;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Header")">
                     <div style="width: 14px; max-height: 16px;">
@@ -420,7 +420,12 @@
                         {
                             if (usuarioTieneDeseado == false)
                             {
-                                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEsta(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEstaImportado(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
+                            }
+
+                            if (usuarioTieneDeseado == false)
+                            {
+                                usuarioTieneDeseado = Herramientas.Deseados.ComprobarSiEstaWeb(deseadosUsuario, juego, Juegos.JuegoDRM.NoEspecificado);
                             }
 
                             if (usuarioTieneDeseado == true)
@@ -477,6 +482,9 @@
 
     [Parameter]
     public string userAgent { get; set; }
+
+    [Parameter]
+    public string dominio { get; set; }
 
     [Parameter]
     public bool usuarioAdmin { get; set; }
@@ -687,7 +695,7 @@
     {
         if (textoEnlace?.Contains("https://") == false)
         {
-            textoEnlace = "https://pepeizqdeals.com" + textoEnlace;
+            textoEnlace = "https://" + dominio + textoEnlace;
         }
 
         enseñarAlerta = true;

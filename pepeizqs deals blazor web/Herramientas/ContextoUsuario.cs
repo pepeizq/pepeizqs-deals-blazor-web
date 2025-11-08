@@ -12,6 +12,7 @@ namespace Herramientas
             datos.Idioma = contexto?.HttpContext?.Request?.Headers["Accept-Language"].ToString().Split(";")?.FirstOrDefault()?.Split(",").FirstOrDefault() ?? "en";
             datos.UsuarioId = contexto?.HttpContext?.User?.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             datos.UserAgent = contexto?.HttpContext?.Request?.Headers?.UserAgent.ToString();
+			datos.Dominio = contexto?.HttpContext?.Request?.Host.Value;
 
 			return datos;
         }
@@ -22,5 +23,6 @@ namespace Herramientas
 		public string Idioma {  get; set; }
         public string UsuarioId { get; set; }
         public string UserAgent { get; set; }
-    }
+		public string Dominio { get; set; }
+	}
 }

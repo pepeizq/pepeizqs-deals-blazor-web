@@ -73,7 +73,7 @@
 		}
 	}
 
-	<Titulo tipo="@Titulo.Tipo.Comparador" idioma="@idioma" keywords="@keywords"/>
+	<Titulo tipo="@Titulo.Tipo.Comparador" idioma="@idioma" dominio="@dominio" keywords="@keywords"/>
 }
 
 <script>
@@ -2034,6 +2034,7 @@ else
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string dominio = null;
 
 	[Parameter]
 	public string ids { get; set; }
@@ -2071,6 +2072,7 @@ else
         Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
         idioma = datos.Idioma;
         usuarioId = datos.UsuarioId;
+		dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

@@ -39,7 +39,7 @@
 
 			jsonAñadir = jsonAñadir.Replace("@posicion", i.ToString());
 			jsonAñadir = jsonAñadir.Replace("@titulo", noticiaMostrar.TituloEn);
-			jsonAñadir = jsonAñadir.Replace("@enlace", "https://pepeizqdeals.com/news/" + noticiaMostrar.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticiaMostrar.TituloEn + "/"));
+			jsonAñadir = jsonAñadir.Replace("@enlace", "https://" + dominio + "/news/" + noticiaMostrar.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticiaMostrar.TituloEn + "/"));
 
 			if (i < noticiasMostrar.Count - 1)
 			{
@@ -52,7 +52,7 @@
 		}
 	}
 
-	<Titulo tipo="@Titulo.Tipo.UltimasNoticias" idioma="@idioma" keywords="@keywords" contenidoJsonUltimasNoticias="@jsonContenido"/>
+	<Titulo tipo="@Titulo.Tipo.UltimasNoticias" idioma="@idioma" dominio="@dominio" keywords="@keywords" contenidoJsonUltimasNoticias="@jsonContenido"/>
 }
 
 <style>
@@ -84,7 +84,7 @@
 		<div class="cuerpo-ancho sub-subcabecera">
 			@if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 			{
-				<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, false))">
+				<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, false))">
 					<h1 style="font-size: 18px; margin: 0px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")
 					</h1>
@@ -92,7 +92,7 @@
 
 				<div style="margin-left: auto; display: flex; justify-content: right; align-items: center; gap: 20px;">
 					<div style="margin-left: auto; display: flex; justify-content: right;">
-						<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, true))">
+						<button class="boton-pequeño" style="@CambiarEstilo(Noticias.NoticiaTipo.Desconocido, true) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, Noticias.NoticiaTipo.Desconocido, true))">
 							<div style="font-size: 16px;">
 								@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "LastNews")
 							</div>
@@ -119,7 +119,7 @@
 					{
 						if (tipo != Noticias.NoticiaTipo.Desconocido)
 						{
-							<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Noticias.NoticiasCargar.Traduccion(tipo, idioma)">
+							<button class="boton-pequeño" style="@CambiarEstilo(tipo, false) width: fit-content; padding: 8px 20px; border-radius: 5px; box-shadow: none;" @onclick="@(e => CambiarTipo(e, tipo, false))" title="@Noticias.NoticiasCargar.Traduccion(tipo, idioma)">
 								@Noticias.NoticiasCargar.Traduccion(tipo, idioma)
 							</button>
 						}
@@ -289,6 +289,7 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	private List<string> fechas = new List<string>();
 	[PersistentState] public List<Noticias.Noticia> noticiasMostrar { get; set; }
@@ -303,6 +304,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

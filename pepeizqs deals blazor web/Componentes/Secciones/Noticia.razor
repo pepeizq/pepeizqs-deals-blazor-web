@@ -80,7 +80,7 @@
 	contenidoJson = contenidoJson.Replace("@fecha", noticia.FechaEmpieza.ToString("yyyy-MM-ddTHH:mm:ss"));
 	contenidoJson = contenidoJson.Replace("@descripcion", descripcionJson);
 
-	<Titulo tipo="@Titulo.Tipo.Noticia" idioma="@idioma" tituloNoticia="@titulo" descripcionNoticia="@descripcion" 
+	<Titulo tipo="@Titulo.Tipo.Noticia" idioma="@idioma" dominio="@dominio" tituloNoticia="@titulo" descripcionNoticia="@descripcion" 
 			enlaceEnNoticia="@enlaceIngles" enlaceEsNoticia="@enlaceEspañol" keywords="@keywords" contenidoJsonNoticia="@contenidoJson"/>
 }
 
@@ -137,7 +137,7 @@
 {
 	if (usuarioAdmin == true)
 	{
-		<pepeizqs_deals_blazor_web.Componentes.Admin.Noticia idioma="@idioma" noticiaId="@noticia.Id" />
+		<pepeizqs_deals_blazor_web.Componentes.Admin.Noticia idioma="@idioma" dominio="@dominio" noticiaId="@noticia.Id" />
 	}
 
 	<div class="subcabecera">
@@ -407,7 +407,7 @@
 				{
 					string enlaceAnterior = "/news/" + noticiaAnterior.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(Herramientas.Idiomas.ElegirTexto(idioma, noticiaAnterior.TituloEn, noticiaAnterior.TituloEs)) + "/";
 
-					<button @onclick="(e => AbrirNoticia(e, enlaceAnterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+					<a href="@enlaceAnterior" @onclick="(e => AbrirNoticia(e, enlaceAnterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
 						<div style="max-width: 16px;">
 							<svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
 								<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
@@ -415,14 +415,14 @@
 						</div>
 
 						@Herramientas.Idiomas.ElegirTexto(idioma, noticiaAnterior.TituloEn, noticiaAnterior.TituloEs)
-					</button>
+					</a>
 				}
 
 				@if (noticiaPosterior?.Id > 0)
 				{
 					string enlacePosterior = "/news/" + noticiaPosterior.Id + "/" + Herramientas.EnlaceAdaptador.Nombre(Herramientas.Idiomas.ElegirTexto(idioma, noticiaPosterior.TituloEn, noticiaPosterior.TituloEs)) + "/";
 
-					<button @onclick="(e => AbrirNoticia(e, enlacePosterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+					<a href="@enlacePosterior" @onclick="(e => AbrirNoticia(e, enlacePosterior, false))" class="boton-pequeño" style="color: var(--colorTextoVisitado); background-color: var(--fondoBotonPequeño); border: 0px; padding: 12px 20px; text-decoration: none; width: 50%; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
 						@Herramientas.Idiomas.ElegirTexto(idioma, noticiaPosterior.TituloEn, noticiaPosterior.TituloEs)
 
 						<div style="max-width: 16px;">
@@ -430,7 +430,7 @@
 								<path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
 							</svg>
 						</div>
-					</button>
+					</a>
 				}
 			</div>
 		</div>
@@ -444,6 +444,7 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -486,6 +487,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+		dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -508,8 +510,8 @@
 				}
 
 				titulo = Herramientas.Idiomas.ElegirTexto(idioma, noticia.TituloEn, noticia.TituloEs);
-				enlaceIngles = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
-				enlaceEspañol = "https://pepeizqdeals.com/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
+				enlaceIngles = "https://" + dominio + "/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/";
+				enlaceEspañol = "https://" + dominio + "/news/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEs) + "/";
 
 				juegos ??= BaseDatos.Juegos.Buscar.MultiplesJuegos(Herramientas.Listados.Generar(noticia.Juegos));
 
@@ -580,7 +582,7 @@
                         cambiarEnlace = enlaceEspañol;
 					}
 
-                    cambiarEnlace = cambiarEnlace.Replace("https://pepeizqdeals.com", null);
+                    cambiarEnlace = cambiarEnlace.Replace("https://" + dominio, null);
 
 					await JavaScript.InvokeVoidAsync("ChangeUrl", cambiarEnlace);
 				}				

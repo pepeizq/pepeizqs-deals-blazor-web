@@ -6,7 +6,7 @@
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
-<Titulo tipo="@Titulo.Tipo.Api" idioma="@idioma"/>
+<Titulo tipo="@Titulo.Tipo.Api" idioma="@idioma" dominio="@dominio"/>
 
 <script>
 	window.clipboardCopy = {
@@ -111,21 +111,21 @@
 		<div style="width: 100%; display: flex; flex-direction: column; gap: 40px;">
 			@if (mostrarJuegos1 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/game/6391/Cyberpunk_2077/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/game/6391";
-				string enlaceEjemplo3 = "https://pepeizqdeals.com/steam/1091500/";
+				string enlaceEjemplo1 = "https://" + dominio + "/game/6391/Cyberpunk_2077/";
+				string enlaceEjemplo2 = "https://" + dominio + "/api/game/6391";
+				string enlaceEjemplo3 = "https://" + dominio + "/steam/1091500/";
 				string enlaceEjemplo4 = "https://store.steampowered.com/app/1091500/Cyberpunk_2077/";
-                string enlaceEjemplo5 = "https://pepeizqdeals.com/api/steam/1091500";
-                string enlaceEjemplo6 = "https://pepeizqdeals.com/gog/cyberpunk_2077";
+				string enlaceEjemplo5 = "https://" + dominio + "/api/steam/1091500";
+				string enlaceEjemplo6 = "https://" + dominio + "/gog/cyberpunk_2077";
                 string enlaceEjemplo7 = "https://www.gog.com/game/cyberpunk_2077";
-                string enlaceEjemplo8 = "https://pepeizqdeals.com/api/gog/cyberpunk_2077";
+				string enlaceEjemplo8 = "https://" + dominio + "/api/gog/cyberpunk_2077";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin: 20px 0px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/game/<label style="text-decoration: underline;">6391</label>/Cyberpunk_2077/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/game/<label style="text-decoration: underline;">6391</label>/Cyberpunk_2077/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -141,7 +141,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/game/6391</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/game/6391</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -166,7 +166,7 @@
 
 						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 							<div style="padding: 10px 15px;">
-								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/steam/<label style="text-decoration: underline;">1091500</label></label>
+								<label style="text-decoration: none; cursor: initial;">https://@dominio/steam/<label style="text-decoration: underline;">1091500</label></label>
 							</div>
 
 							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo3))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -196,7 +196,7 @@
 
 						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 							<div style="padding: 10px 15px;">
-								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/steam/1091500</label>
+								<label style="text-decoration: none; cursor: initial;">https://@dominio/api/steam/1091500</label>
 							</div>
 
 							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo5))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -222,7 +222,7 @@
 
 						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 							<div style="padding: 10px 15px;">
-								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/gog/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
+								<label style="text-decoration: none; cursor: initial;">https://@dominio/gog/<label style="text-decoration: underline;">cyberpunk_2077</label></label>
 							</div>
 
 							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo6))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -252,7 +252,7 @@
 
 						<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 							<div style="padding: 10px 15px;">
-								<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/gog/cyberpunk_2077</label>
+								<label style="text-decoration: none; cursor: initial;">https://@dominio/api/gog/cyberpunk_2077</label>
 							</div>
 
 							<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo8))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -269,16 +269,16 @@
 
 			@if (mostrarBundles1 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/bundle/199/Brutal_Beat_Em_Ups/";
-				string enlaceEjemplo2 = "https://pepeizqdeals.com/api/bundle/199/";
-				string enlaceEjemplo3 = "https://pepeizqdeals.com/api/bundle/199/games/";
+				string enlaceEjemplo1 = "https://" + dominio + "/bundle/199/Brutal_Beat_Em_Ups/";
+				string enlaceEjemplo2 = "https://" + dominio + "/api/bundle/199/";
+				string enlaceEjemplo3 = "https://" + dominio + "/api/bundle/199/games/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String11", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/bundle/<label style="text-decoration: underline;">199</label>/Brutal_Beat_Em_Ups/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/bundle/<label style="text-decoration: underline;">199</label>/Brutal_Beat_Em_Ups/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -294,7 +294,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 5px; margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/bundle/199/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/bundle/199/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -310,7 +310,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/bundle/199/games/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/bundle/199/games/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo3))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -326,15 +326,15 @@
 
 			@if (mostrarBundles2 == true)
 			{
-                string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-bundles/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-bundles/25/";
+                string enlaceEjemplo1 = "https://" + dominio + "/api/last-bundles/";
+				string enlaceEjemplo2 = "https://" + dominio + "/api/last-bundles/25/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String18", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-bundles/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-bundles/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -350,7 +350,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-bundles/<label style="text-decoration: underline;">25</label>/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-bundles/<label style="text-decoration: underline;">25</label>/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -366,15 +366,15 @@
 
 			@if (mostrarGratis1 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-free/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-free/25/";
+				string enlaceEjemplo1 = "https://" + dominio + "/api/last-free/";
+                string enlaceEjemplo2 = "https://" + dominio + "/api/last-free/25/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String24", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-free/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-free/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -390,7 +390,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-free/<label style="text-decoration: underline;">25</label>/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-free/<label style="text-decoration: underline;">25</label>/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -406,15 +406,15 @@
 
 			@if (mostrarSuscripciones1 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-subscriptions/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-subscriptions/25/";
+				string enlaceEjemplo1 = "https://" + dominio + "/api/last-subscriptions/";
+                string enlaceEjemplo2 = "https://" + dominio + "/api/last-subscriptions/25/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String27", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-subscriptions/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-subscriptions/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -430,7 +430,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-subscriptions/<label style="text-decoration: underline;">25</label>/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-subscriptions/<label style="text-decoration: underline;">25</label>/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -446,15 +446,15 @@
 
 			@if (mostrarNoticias1 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/news/293/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/news/293/";
+				string enlaceEjemplo1 = "https://" + dominio + "/news/293/";
+                string enlaceEjemplo2 = "https://" + dominio + "/api/news/293/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String15", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/news/<label style="text-decoration: underline;">293</label></label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/news/<label style="text-decoration: underline;">293</label></label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -470,7 +470,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/news/293/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/news/293/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -486,15 +486,15 @@
 
 			@if (estiloNoticias2 == true)
 			{
-				string enlaceEjemplo1 = "https://pepeizqdeals.com/api/last-news/";
-                string enlaceEjemplo2 = "https://pepeizqdeals.com/api/last-news/25/";
+				string enlaceEjemplo1 = "https://" + dominio + "/api/last-news/";
+                string enlaceEjemplo2 = "https://" + dominio + "/api/last-news/25/";
 
 				<div class="caja-api-contenido" style="padding: 30px;">
 					@Herramientas.Idiomas.BuscarTexto(idioma, "String21", "Api")
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-news/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-news/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo1))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -510,7 +510,7 @@
 
 					<div style="display: flex; align-items: center; gap: 20px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoBotonPequeño); margin-top: 20px; margin-bottom: 20px;">
 						<div style="padding: 10px 15px;">
-							<label style="text-decoration: none; cursor: initial;">https://pepeizqdeals.com/api/last-news/<label style="text-decoration: underline;">25</label>/</label>
+							<label style="text-decoration: none; cursor: initial;">https://@dominio/api/last-news/<label style="text-decoration: underline;">25</label>/</label>
 						</div>
 
 						<button @onclick="(e => CopiarAlClipboard(e, enlaceEjemplo2))" class="juego-boton-pequeño" style="width: fit-content; padding: 10px 15px; display: flex; margin-left: auto;">
@@ -533,12 +533,14 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+	private string dominio = null;
 
 	protected override void OnInitialized()
 	{
 		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

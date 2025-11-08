@@ -8,7 +8,32 @@ namespace APIs.AmazonLuna
 {
 	public static class Suscripcion
 	{
-		public static Suscripciones2.Suscripcion Generar()
+		public static Suscripciones2.Suscripcion GenerarClaims()
+		{
+			Suscripciones2.Suscripcion amazon = new Suscripciones2.Suscripcion
+			{
+				Id = Suscripciones2.SuscripcionTipo.LunaClaims,
+				Nombre = "Luna Claims",
+				ImagenLogo = "/imagenes/suscripciones/lunaclaims_logo.webp",
+				ImagenIcono = "/imagenes/streaming/amazonluna_icono.webp",
+				Enlace = "https://luna.amazon.es/claims/",
+				DRMDefecto = JuegoDRM.Amazon,
+				AdminInteractuar = true,
+				UsuarioEnlacesEspecificos = true,
+				ParaSiempre = true,
+				Precio = 4.99
+			};
+
+			DateTime fechaPrime = DateTime.Now;
+			fechaPrime = fechaPrime.AddMonths(1);
+			fechaPrime = new DateTime(fechaPrime.Year, fechaPrime.Month, fechaPrime.Day, 19, 0, 0);
+
+			amazon.FechaSugerencia = fechaPrime;
+
+			return amazon;
+		}
+
+		public static Suscripciones2.Suscripcion GenerarStandard()
 		{
 			Suscripciones2.Suscripcion amazon = new Suscripciones2.Suscripcion
 			{
@@ -50,6 +75,20 @@ namespace APIs.AmazonLuna
 			return amazon;
 		}
 
+		public static string Referido(string enlace)
+		{
+			if (enlace.Contains("?") == true)
+			{
+				enlace = enlace + "&tag=ofedeunpan-21";
+			}
+			else
+			{
+				enlace = enlace + "?tag=ofedeunpan-21";
+			}
+
+			return enlace;
+		}
+
 		public static async Task Buscar(SqlConnection conexion = null)
 		{
 			await Task.Yield();
@@ -72,7 +111,7 @@ namespace APIs.AmazonLuna
 
 			#region Standard
 
-			BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
+			BaseDatos.Admin.Actualizar.Tiendas(GenerarStandard().Id.ToString().ToLower(), DateTime.Now, 0, conexion);
 
 			idsBorrar = new List<int>();
 			cantidad = 0;
@@ -137,7 +176,7 @@ namespace APIs.AmazonLuna
 							}
 						}
 
-						string sqlBuscar = "SELECT idJuegos FROM " + GenerarPremium().TablaPendientes + " WHERE enlace=@enlace";
+						string sqlBuscar = "SELECT idJuegos FROM " + GenerarStandard().TablaPendientes + " WHERE enlace=@enlace";
 
 						using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
 						{
@@ -148,7 +187,7 @@ namespace APIs.AmazonLuna
 								if (lector.Read() == true)
 								{
 									cantidad += 1;
-									BaseDatos.Admin.Actualizar.Tiendas(Generar().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
+									BaseDatos.Admin.Actualizar.Tiendas(GenerarStandard().Id.ToString().ToLower(), DateTime.Now, cantidad, conexion);
 
 									if (lector.IsDBNull(0) == false)
 									{
@@ -246,7 +285,7 @@ namespace APIs.AmazonLuna
 
 						if (encontrado == false)
 						{
-							BaseDatos.Suscripciones.Insertar.Temporal(conexion, Generar().Id.ToString().ToLower(), juego.Id, juego.Nombre);
+							BaseDatos.Suscripciones.Insertar.Temporal(conexion, GenerarStandard().Id.ToString().ToLower(), juego.Id, juego.Nombre);
 						}
 					}
 				}
@@ -273,7 +312,7 @@ namespace APIs.AmazonLuna
 					}
 					catch (Exception ex)
 					{
-						BaseDatos.Errores.Insertar.Mensaje(Generar().Id.ToString().ToLower(), ex, conexion);
+						BaseDatos.Errores.Insertar.Mensaje(GenerarStandard().Id.ToString().ToLower(), ex, conexion);
 					}
 				}
 			}

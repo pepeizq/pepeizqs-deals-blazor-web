@@ -37,7 +37,7 @@
     <header style="background-color: var(--fondoOscuro); z-index: 9999; position: sticky; top: 0; padding: 15px; display: flex; width: 100%; border-bottom: 1px solid var(--fondoBotonPequeño);">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" style="padding: 0px; width: 100%;">
             <div class="cabecera-poner">
-                <Cabecera idioma="@idioma" usuarioId="@usuarioId" userAgent="@userAgent" usuarioAdmin="@usuarioAdmin"/>
+                <Cabecera idioma="@idioma" usuarioId="@usuarioId" userAgent="@userAgent" usuarioAdmin="@usuarioAdmin" dominio="@dominio"/>
             </div>
         </nav>
     </header>
@@ -67,7 +67,7 @@
         }
     </script>
 
-    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false && host?.Contains("pepeizqdeals.com") == true)
+    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false && dominio?.Contains("pepeizqdeals.com") == true)
     {
         <script async src='https://visitas.pepeizq.workers.dev/script.js' data-cf-beacon='{"send":{"to": "https://visitas.pepeizq.workers.dev/"},"token": "b8f0af1685ca4f0484bb45dba08198cb"}'></script>
     }
@@ -87,7 +87,7 @@
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
-    private string host = null;
+    private string dominio = null;
     private bool usuarioAdmin = false;
 
     protected override async Task OnInitializedAsync()
@@ -101,7 +101,7 @@
             idioma = HttpContext?.Request?.Headers["Accept-Language"].ToString().Split(";").FirstOrDefault()?.Split(",").FirstOrDefault();
             usuarioId = HttpContext?.User?.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext?.Request?.Headers.UserAgent.ToString();
-            host = HttpContext?.Request?.Host.Value;
+            dominio = HttpContext?.Request?.Host.Value;
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)

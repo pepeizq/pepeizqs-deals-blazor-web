@@ -15,7 +15,7 @@ namespace APIs.PrimeGaming
 				ImagenFondo = "/imagenes/suscripciones/primegaming_fondo.webp",
 				Enlace = "https://gaming.amazon.com/",
 				DRMDefecto = JuegoDRM.Amazon,
-				AdminInteractuar = true,
+				AdminInteractuar = false,
 				UsuarioEnlacesEspecificos = true,
 				ParaSiempre = true,
                 Precio = 4.99

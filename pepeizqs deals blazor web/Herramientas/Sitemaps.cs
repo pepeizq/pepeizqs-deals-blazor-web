@@ -11,7 +11,9 @@ namespace Herramientas
 		[HttpGet("sitemap.xml")]
 		public IActionResult Maestro()
 		{
-			List<string> sitemaps = ["https://pepeizqdeals.com/sitemap-main.xml"];
+			string dominio = HttpContext.Request.Host.Value;
+
+			List<string> sitemaps = ["https://" + dominio + "/sitemap-main.xml"];
 
 			int cantidadJuegos = global::BaseDatos.Sitemaps.Buscar.Cantidad("juegos");
 
@@ -22,7 +24,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-games-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-games-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -37,7 +39,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-bundles-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-bundles-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -52,7 +54,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-free-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-free-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -67,7 +69,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-subscriptions-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-subscriptions-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -82,7 +84,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-news-en-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-news-en-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -90,7 +92,7 @@ namespace Herramientas
 				//i = 0;
 				//while (i <= segmentacion)
 				//{
-				//	sitemaps.Add("https://pepeizqdeals.com/sitemap-news-es-" + i.ToString() + ".xml");
+				//	sitemaps.Add("https://" + dominio + "/sitemap-news-es-" + i.ToString() + ".xml");
 
 				//	i += 1;
 				//}
@@ -105,7 +107,7 @@ namespace Herramientas
 				int i = 0;
 				while (i <= segmentacion)
 				{
-					sitemaps.Add("https://pepeizqdeals.com/sitemap-curators-" + i.ToString() + ".xml");
+					sitemaps.Add("https://" + dominio + "/sitemap-curators-" + i.ToString() + ".xml");
 
 					i += 1;
 				}
@@ -135,32 +137,34 @@ namespace Herramientas
 		[HttpGet("sitemap-main.xml")]
 		public IActionResult Principal()
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
 			string textoIndex = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/</loc>" + Environment.NewLine +
 					"<changefreq>hourly</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoIndex);
 
 			string textoBundles = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/bundles/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/bundles/</loc>" + Environment.NewLine +
 					"<changefreq>daily</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoBundles);
 
 			string textoGratis = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/free/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/free/</loc>" + Environment.NewLine +
 					"<changefreq>daily</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoGratis);
 
 			string textoSuscripciones = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/subscriptions/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/subscriptions/</loc>" + Environment.NewLine +
 					"<changefreq>daily</changefreq>" + Environment.NewLine +
 					"</url>";
 
@@ -171,7 +175,7 @@ namespace Herramientas
 				if (suscripcion.AdminInteractuar == true)
 				{
 					string textoSuscripcion = "<url>" + Environment.NewLine +
-						"<loc>https://pepeizqdeals.com/subscriptions/" + Herramientas.EnlaceAdaptador.Nombre(suscripcion.Nombre.ToLower()) + "/</loc>" + Environment.NewLine +
+						"<loc>https://" + dominio + "/subscriptions/" + Herramientas.EnlaceAdaptador.Nombre(suscripcion.Nombre.ToLower()) + "/</loc>" + Environment.NewLine +
 						"<changefreq>daily</changefreq>" + Environment.NewLine +
 						"</url>";
 
@@ -180,40 +184,40 @@ namespace Herramientas
 			}
 
 			string textoMinimos = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/historical-lows/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/historical-lows/</loc>" + Environment.NewLine +
 					"<changefreq>hourly</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoMinimos);
 
 			string textoNoticias = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/last-news/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/last-news/</loc>" + Environment.NewLine +
 					"<changefreq>hourly</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoNoticias);
 
 			string textoAñadidos = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/last-added/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/last-added/</loc>" + Environment.NewLine +
 					"<changefreq>hourly</changefreq>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoAñadidos);
 
 			string textoPatreon = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/patreon/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/patreon/</loc>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoPatreon);
 
 			string textoComparador = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/compare/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/compare/</loc>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoComparador);
 
 			string textoApi = "<url>" + Environment.NewLine +
-					"<loc>https://pepeizqdeals.com/api/</loc>" + Environment.NewLine +
+					"<loc>https://" + dominio + "/api/</loc>" + Environment.NewLine +
 					"</url>";
 
 			sb.Append(textoApi);
@@ -233,7 +237,7 @@ namespace Herramientas
 						titulo = titulo.Replace("&", "&amp;");
 
 						string texto = "<url>" + Environment.NewLine +
-						"<loc>https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + EnlaceAdaptador.Nombre(noticia.TituloEn) + "/</loc>" + Environment.NewLine +
+						"<loc>https://" + dominio + "/news/" + noticia.Id.ToString() + "/" + EnlaceAdaptador.Nombre(noticia.TituloEn) + "/</loc>" + Environment.NewLine +
 						"<news:news>" + Environment.NewLine +
 						"<news:publication>" + Environment.NewLine +
 						"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
@@ -262,6 +266,8 @@ namespace Herramientas
 		[HttpGet("sitemap-games-{i:int}.xml")]
 		public IActionResult Juegos(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
@@ -276,7 +282,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Juegos(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Juegos(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -299,6 +305,8 @@ namespace Herramientas
         [HttpGet("sitemap-bundles-{i:int}.xml")]
 		public IActionResult Bundles(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
@@ -313,7 +321,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Bundles(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Bundles(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -336,6 +344,8 @@ namespace Herramientas
 		[HttpGet("sitemap-free-{i:int}.xml")]
 		public IActionResult Gratis(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
@@ -350,7 +360,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Gratis(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Gratis(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -373,6 +383,8 @@ namespace Herramientas
 		[HttpGet("sitemap-subscriptions-{i:int}.xml")]
 		public IActionResult Suscripciones(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
@@ -387,7 +399,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Suscripciones(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Suscripciones(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -410,6 +422,8 @@ namespace Herramientas
 		[HttpGet("sitemap-news-en-{i:int}.xml")]
 		public IActionResult NoticiasIngles(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\"\r\n    xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
 
@@ -424,7 +438,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.NoticiasIngles(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.NoticiasIngles(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -447,6 +461,8 @@ namespace Herramientas
 		[HttpGet("sitemap-news-es-{i:int}.xml")]
 		public IActionResult NoticiasEspañol(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\"\r\n    xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
 
@@ -461,7 +477,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.NoticiasEspañol(minimo - 1, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.NoticiasEspañol(dominio, minimo - 1, maximo);
 
 			if (lineas.Count > 0)
 			{
@@ -484,6 +500,8 @@ namespace Herramientas
 		[HttpGet("sitemap-curators-{i:int}.xml")]
 		public IActionResult Curators(int i)
 		{
+			string dominio = HttpContext.Request.Host.Value;
+
 			StringBuilder sb = new StringBuilder();
 			sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\r\n        xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\">\r\n");
 
@@ -498,7 +516,7 @@ namespace Herramientas
 				minimo = 0;
 			}
 
-			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Curators(minimo, maximo);
+			List<string> lineas = global::BaseDatos.Sitemaps.Buscar.Curators(dominio, minimo, maximo);
 
 			if (lineas.Count > 0)
 			{

@@ -28,8 +28,8 @@
 {
 	string titulo = curator.Nombre + " (Curator)";
 	string descripcion = Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Curators");
-	string enlace = "https://pepeizqdeals.com/curator/" + slug + "/";
-	string imagen = "https://pepeizqdeals.com/logo/logoentrada.webp";
+	string enlace = "https://" + dominio + "/curator/" + slug + "/";
+	string imagen = "https://" + dominio + "/logo/logoentrada.webp";
 
 	if (string.IsNullOrEmpty(curator.Descripcion) == false)
 	{
@@ -88,7 +88,7 @@
 
 	contenidoJson = contenidoJson + "}" + Environment.NewLine + "}";
 
-	<Titulo tipo="@Titulo.Tipo.Curator" idioma="@idioma" tituloCurator="@titulo" descripcionCurator="@descripcion" enlaceCurator="@enlace"
+	<Titulo tipo="@Titulo.Tipo.Curator" idioma="@idioma" dominio="@dominio" tituloCurator="@titulo" descripcionCurator="@descripcion" enlaceCurator="@enlace"
 			imagenCurator="@imagen" keywords="@keywords" contenidoJsonCurator="@contenidoJson"/>
 
 	<div class="subcabecera">
@@ -255,6 +255,7 @@
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -280,6 +281,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

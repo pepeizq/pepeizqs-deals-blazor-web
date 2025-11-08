@@ -5,7 +5,7 @@
 
 @inject IHttpContextAccessor Contexto
 
-<Titulo tipo="@Titulo.Tipo.Contacto" idioma="@idioma"/>
+<Titulo tipo="@Titulo.Tipo.Contacto" idioma="@idioma" dominio="@dominio"/>
 
 <style>
 	.caja-contacto-contenido {
@@ -82,12 +82,14 @@
 
 	private string idioma = "en";
 	private string usuarioId = null;
+    private string dominio = null;
 
 	protected override void OnInitialized()
 	{
 		Herramientas.ContextoUsuarioDatos datos = Herramientas.ContextoUsuario.Leer(Contexto);
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

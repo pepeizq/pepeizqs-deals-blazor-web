@@ -53,7 +53,7 @@ namespace BaseDatos.Sitemaps
 			return cantidad;
 		}
 
-		public static List<string> Juegos(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> Juegos(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -119,7 +119,7 @@ namespace BaseDatos.Sitemaps
 							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
 							{
 								string texto = "<url>" + Environment.NewLine +
-									 "<loc>https://pepeizqdeals.com/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
+									 "<loc>https://" + dominio + "/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
 
 								if (fecha.Year > 1)
 								{
@@ -138,7 +138,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> Bundles(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> Bundles(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -207,7 +207,7 @@ namespace BaseDatos.Sitemaps
 							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
 							{
 								string texto = "<url>" + Environment.NewLine +
-									 "<loc>https://pepeizqdeals.com/bundle/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
+									 "<loc>https://" + dominio + "/bundle/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
 
 								if (fecha.Year > 1)
 								{
@@ -226,7 +226,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> Gratis(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> Gratis(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -295,7 +295,7 @@ namespace BaseDatos.Sitemaps
 							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
 							{
 								string texto = "<url>" + Environment.NewLine +
-									 "<loc>https://pepeizqdeals.com/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
+									 "<loc>https://" + dominio + "/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
 
 								if (fecha.Year > 1)
 								{
@@ -314,7 +314,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> Suscripciones(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> Suscripciones(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -383,7 +383,7 @@ namespace BaseDatos.Sitemaps
 							if (id > 0 && string.IsNullOrEmpty(nombre) == false)
 							{
 								string texto = "<url>" + Environment.NewLine +
-									 "<loc>https://pepeizqdeals.com/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
+									 "<loc>https://" + dominio + "/game/" + id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(nombre) + "/</loc>" + Environment.NewLine;
 
 								if (fecha.Year > 1)
 								{
@@ -402,7 +402,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> NoticiasIngles(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> NoticiasIngles(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -483,8 +483,7 @@ namespace BaseDatos.Sitemaps
 								tituloEn = tituloEn.Replace("&", "&amp;");
 
 								string texto = "<url>" + Environment.NewLine +
-									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/</loc>" + Environment.NewLine +
-									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "es" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/?Language=es" + Strings.ChrW(34) + " />" + Environment.NewLine +
+									"<loc>https://" + dominio + "/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/</loc>" + Environment.NewLine +
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
 									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
@@ -510,7 +509,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> NoticiasEspañol(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> NoticiasEspañol(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -591,8 +590,7 @@ namespace BaseDatos.Sitemaps
 								tituloEs = tituloEs.Replace("&", "&amp;");
 
 								string texto = "<url>" + Environment.NewLine +
-									"<loc>https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/</loc>" + Environment.NewLine +
-									"<xhtml:link rel=" + Strings.ChrW(34) + "alternate" + Strings.ChrW(34) + " hreflang=" + Strings.ChrW(34) + "en" + Strings.ChrW(34) + " href=" + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/" + Strings.ChrW(34) + " />" + Environment.NewLine +
+									"<loc>https://" + dominio + "/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/</loc>" + Environment.NewLine +	
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
 									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
@@ -618,7 +616,7 @@ namespace BaseDatos.Sitemaps
 			return lineas;
 		}
 
-		public static List<string> Curators(int id1, int id2, SqlConnection conexion = null)
+		public static List<string> Curators(string dominio, int id1, int id2, SqlConnection conexion = null)
 		{
 			List<string> lineas = new List<string>();
 
@@ -674,7 +672,7 @@ namespace BaseDatos.Sitemaps
 							if (string.IsNullOrEmpty(slug) == false)
 							{
 								string texto = "<url>" + Environment.NewLine +
-									 "<loc>https://pepeizqdeals.com/curator/" + slug + "/</loc>" + Environment.NewLine;
+									 "<loc>https://" + dominio + "/curator/" + slug + "/</loc>" + Environment.NewLine;
 
 								if (fecha.Year > 1)
 								{

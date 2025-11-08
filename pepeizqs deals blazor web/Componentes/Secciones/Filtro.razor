@@ -11,7 +11,7 @@
 @inject IHttpContextAccessor Contexto
 @inject IJSRuntime JavaScript
 
-<Titulo tipo="@Titulo.Tipo.Filtro" idioma="@idioma" idsFiltro="@ids"/>
+<Titulo tipo="@Titulo.Tipo.Filtro" idioma="@idioma" dominio="@dominio" idsFiltro="@ids"/>
 
 <script>
 	window.ChangeUrl = function (url) {
@@ -567,8 +567,8 @@ else
 		</div>
 
 		<div style="width: 100%;">
-			<div style="margin: -10px 0px; display: flex; flex-direction: column;">
-				<Virtualize Context="juego" Items="@resultadosGestor" ItemSize="107" OverscanCount="20">
+			<div style="margin: -30px 0px; display: flex; flex-direction: column; gap: 30px;">
+				<Virtualize Context="juego" Items="@resultadosGestor" ItemSize="107">
 					<ItemContent>
 						<CajaJuego idioma="@idioma" juego="@juego" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.Filtro" userAgent="@userAgent" />
 					</ItemContent>
@@ -588,6 +588,7 @@ else
 	private string idioma = "en";
 	private string usuarioId = null;
 	private string userAgent = null;
+	private string dominio = null;
 
 	[PersistentState] public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
 	[PersistentState] public Usuario deseadosUsuario { get; set; }
@@ -606,6 +607,7 @@ else
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
+        dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{

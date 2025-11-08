@@ -189,6 +189,9 @@
 	public string idioma { get; set; }
 
 	[Parameter]
+	public string dominio { get; set; }
+
+	[Parameter]
 	public int noticiaId { get; set; }
 
 	public global::Noticias.Noticia noticia = new global::Noticias.Noticia();
@@ -408,22 +411,22 @@
 
 	private async void EnviarTwitter(MouseEventArgs e)
 	{
-		await Herramientas.RedesSociales.Twitter.Twitear(noticia);
+		await Herramientas.RedesSociales.Twitter.Twitear(noticia, dominio);
 	}
 
 	private async void EnviarBlueSky(MouseEventArgs e)
 	{
-		await Herramientas.RedesSociales.Bluesky.Postear(noticia);
+		await Herramientas.RedesSociales.Bluesky.Postear(noticia, dominio);
 	}
 
 	private async void EnviarTelegram(MouseEventArgs e)
 	{
-		await Herramientas.RedesSociales.Telegram.Postear(noticia);
+		await Herramientas.RedesSociales.Telegram.Postear(noticia, dominio);
 	}
 
 	private async void EnviarDiscord(MouseEventArgs e)
 	{
-		await Herramientas.RedesSociales.Discord.Postear(noticia);
+		await Herramientas.RedesSociales.Discord.Postear(noticia, dominio);
 	}
 
 	private async void EnviarNotificacionesPush(MouseEventArgs e)
@@ -433,6 +436,6 @@
 
 	private async void EnviarReddit(MouseEventArgs e)
 	{
-		await Herramientas.RedesSociales.Reddit.Postear(noticia);
+		await Herramientas.RedesSociales.Reddit.Postear(noticia, dominio);
 	}
 }

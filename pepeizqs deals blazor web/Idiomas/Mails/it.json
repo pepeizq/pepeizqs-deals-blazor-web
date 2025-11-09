@@ -18,5 +18,10 @@
   "Mail3": "seguente collegamento",
   "Confirm1": "Conferma la tua email",
   "Confirm2": "Per confermare la tua email clicca su",
-  "Confirm3": "seguente collegamento"
+  "Confirm3": "seguente collegamento",
+  "String1": "{0} è stato aggiunto a {1} {2}",
+  "String2": "{0} è stato aggiunto al pacchetto {1} {2}",
+  "String3": "Pacchetto aperto",
+  "String4": "{0} giochi dalla tua lista dei desideri sono in {1}",
+  "String5": "{0} ha rilasciato un nuovo bundle con {1} giochi dalla tua lista dei desideri:"
 }

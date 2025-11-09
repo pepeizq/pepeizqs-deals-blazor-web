@@ -21,5 +21,7 @@
   "Confirm3": "following link",
   "String1": "{0} has been added to {1} {2}",
   "String2": "{0} has been added to {1} {2} bundle",
-  "String3": "Open Bundle"
+  "String3": "Open Bundle",
+  "String4": "{0} games from your wishlist are in the {1}",
+  "String5": "{0} has released a new bundle with {1} games from your wishlist:"
 }

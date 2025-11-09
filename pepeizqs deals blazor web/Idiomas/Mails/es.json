@@ -21,5 +21,7 @@
   "Confirm3": "siguiente enlace",
   "String1": "{0} ha sido añadido al {2} de {1}",
   "String2": "{0} ha sido añadido al bundle {2} de {1}",
-  "String3": "Abrir Bundle"
+  "String3": "Abrir Bundle",
+  "String4": "{0} of your wishlist games are in the {1}",
+  "String5": "En {0} han puesto un nuevo bundle con {1} juegos de tus deseados:"
 }

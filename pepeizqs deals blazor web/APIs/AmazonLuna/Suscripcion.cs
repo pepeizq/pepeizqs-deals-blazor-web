@@ -48,7 +48,7 @@ namespace APIs.AmazonLuna
 				ParaSiempre = false,
 				Precio = 4.99,
 				AdminPendientes = true,
-				TablaPendientes = "suscripcionlunastandard"
+				TablaPendientes = "suscripcionlunapremium"
 			};
 
 			return amazon;
@@ -176,7 +176,7 @@ namespace APIs.AmazonLuna
 							}
 						}
 
-						string sqlBuscar = "SELECT idJuegos FROM " + GenerarStandard().TablaPendientes + " WHERE enlace=@enlace";
+						string sqlBuscar = "SELECT idJuegos FROM " + GenerarPremium().TablaPendientes + " WHERE enlace=@enlace";
 
 						using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
 						{

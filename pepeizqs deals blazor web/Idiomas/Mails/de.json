@@ -18,5 +18,10 @@
   "Mail3": "folgenden Link",
   "Confirm1": "Bestätigen Sie Ihre E-Mail",
   "Confirm2": "Um Ihre E-Mail zu bestätigen, klicken Sie auf",
-  "Confirm3": "folgenden Link"
+  "Confirm3": "folgenden Link",
+  "String1": "{0} wurde zu {1} {2} hinzugefügt",
+  "String2": "{0} wurde zum Paket {1} {2} hinzugefügt",
+  "String3": "Bündel öffnen",
+  "String4": "{0} Spiele von Ihrer Wunschliste sind in den {1}",
+  "String5": "{0} hat ein neues Bundle mit {1} Spielen von Ihrer Wunschliste veröffentlicht:"
 }

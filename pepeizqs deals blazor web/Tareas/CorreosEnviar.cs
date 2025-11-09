@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using Herramientas;
+using Herramientas.Correos;
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
 
@@ -69,7 +70,7 @@ namespace Tareas
 
 											if (jsons?.Count == 1)
 											{
-												bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+												bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
 
 												if (enviado == true)
 												{
@@ -82,7 +83,7 @@ namespace Tareas
 											}
 											else if (jsons?.Count > 1)
 											{
-												Herramientas.Correos.EnviarNuevosMinimos(jsons, pendiente.CorreoHacia);
+												Herramientas.Correos.DeseadoMinimo.Nuevos(jsons, pendiente.CorreoHacia);
 
 												foreach (var pendiente2 in pendientes.ToList())
 												{
@@ -95,9 +96,49 @@ namespace Tareas
 												pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
 											}
 										}
+										else if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
+										{
+											List<CorreoDeseadoBundleJson> jsons = new List<CorreoDeseadoBundleJson>();
+
+											foreach (var pendiente2 in pendientes)
+											{
+												if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
+												{
+													jsons.Add(JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente2.Json));
+												}
+											}
+
+											if (jsons?.Count == 1)
+											{
+												bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+												if (enviado == true)
+												{
+													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+												}
+												else
+												{
+													break;
+												}
+											}
+											else if (jsons?.Count > 1)
+											{
+												Herramientas.Correos.DeseadoBundle.Nuevos(jsons, pendiente.CorreoHacia);
+
+												foreach (var pendiente2 in pendientes.ToList())
+												{
+													if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle)
+													{
+														BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
+													}
+												}
+
+												pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle);
+											}
+										}
 										else
 										{
-											bool enviado = Herramientas.Correos.EnviarCorreo(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+											bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
 
 											if (enviado == true)
 											{

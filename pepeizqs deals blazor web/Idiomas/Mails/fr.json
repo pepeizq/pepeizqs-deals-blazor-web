@@ -18,5 +18,10 @@
   "Mail3": "lien suivant",
   "Confirm1": "Confirmez votre email",
   "Confirm2": "Pour confirmer votre email cliquez sur le",
-  "Confirm3": "lien suivant"
+  "Confirm3": "lien suivant",
+  "String1": "{0} a été ajouté à {1} {2}",
+  "String2": "{0} a été ajouté au forfait {1} {2}",
+  "String3": "Offre groupée ouverte",
+  "String4": "{0} jeux de votre liste de souhaits se trouvent dans le {1}",
+  "String5": "{0} a publié un nouveau pack comprenant {1} jeux de votre liste de souhaits :"
 }

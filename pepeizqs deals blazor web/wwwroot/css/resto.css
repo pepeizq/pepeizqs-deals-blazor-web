@@ -95,7 +95,7 @@
 
     .boton-pequeño:hover {
         color: var(--colorTextoHover);
-        background-color: var(--fondoBotonPequeñoHover);
+        background: color-mix(in srgb, var(--fondoBotonPequeño), var(--fondoOscuro) 50%);
         transform: scale(1.01);
     }
 

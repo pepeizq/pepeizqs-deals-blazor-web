@@ -118,7 +118,7 @@
 
             string enlaceFinal = "https://" + dominio + "/account/confirm-email?userId=" + usuarioId + "&code=" + codigo;
 
-            Herramientas.Correos.EnviarConfirmacionCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correo);
+            Herramientas.Correos.Cuenta.ConfirmacionCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correo);
             correoConfirmadoEnviado = true;
         }
     }
@@ -145,7 +145,7 @@
 
                     string enlaceFinal = "https://" + dominio + "/account/confirm-email-change?userId=" + usuarioId + "&email=" + correoNuevo + "&code=" + codigo;
 
-                    Herramientas.Correos.EnviarCambioCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correoNuevo);
+                    Herramientas.Correos.Cuenta.CambioCorreo(usuario.Language, HtmlEncoder.Default.Encode(enlaceFinal), correoNuevo);
                     correoCambioEnviado = true;
                 }
                 else

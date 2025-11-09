@@ -82,6 +82,7 @@ namespace BaseDatos.CorreosEnviar
 		ContraseñaCambio,
 		CorreoCambio,
 		CorreoConfirmacion,
-		DeseadoBundle
+		DeseadoBundle,
+		DeseadosBundle
 	}
 }

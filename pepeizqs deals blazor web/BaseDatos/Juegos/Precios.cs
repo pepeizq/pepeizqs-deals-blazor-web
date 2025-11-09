@@ -295,7 +295,7 @@ namespace BaseDatos.Juegos
 											{
 												try
 												{
-													Herramientas.Correos.EnviarNuevoMinimo(usuarioInteresado, id, minimo, correo);
+													Herramientas.Correos.DeseadoMinimo.Nuevo(usuarioInteresado, id, minimo, correo);
 												}
 												catch (Exception ex)
 												{

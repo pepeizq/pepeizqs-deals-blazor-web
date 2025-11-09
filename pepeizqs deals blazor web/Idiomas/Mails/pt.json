@@ -18,5 +18,10 @@
   "Mail3": "seguinte link",
   "Confirm1": "Confirme seu e-mail",
   "Confirm2": "Para confirmar seu e-mail clique no",
-  "Confirm3": "seguinte link"
+  "Confirm3": "seguinte link",
+  "String1": "{0} foi adicionado a {1} {2}",
+  "String2": "{0} foi adicionado ao pacote {1} {2}",
+  "String3": "Abrir pacote",
+  "String4": "{0} jogos da sua lista de desejos estão em {1}",
+  "String5": "{0} lançou um novo pacote com {1} jogos da sua lista de desejos:"
 }

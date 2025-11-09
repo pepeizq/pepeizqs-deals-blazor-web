@@ -98,7 +98,7 @@
 
                     string enlaceFinal = "https://" + dominio + "/account/reset-password?code=" + codigo;
 
-                    Herramientas.Correos.EnviarContraseñaOlvidada(idioma, enlaceFinal, correo);
+                    Herramientas.Correos.Cuenta.ContraseñaOlvidada(idioma, enlaceFinal, correo);
                     mensajeExito = Herramientas.Idiomas.BuscarTexto(idioma, "String4", "ForgotPassword");
                 }
             }

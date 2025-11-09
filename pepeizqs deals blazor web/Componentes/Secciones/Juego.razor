@@ -170,6 +170,19 @@
 </script>
 
 <style>
+	.caja-juego-contenido {
+		background-color: var(--fondoSubsubcabecera);
+		box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+	}
+
+	.caja-juego-titulo {
+		background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));
+		padding: 20px 30px;
+		border: 1px solid var(--fondoSubsubcabecera);
+	}
+</style>
+
+<style>
     .boton-reseñas {
         display: inline-block;
     }
@@ -209,7 +222,7 @@
     }
 
     .juego-caja-espacio {
-        padding: 40px;
+        padding: 30px;
     }
 
     @@media(max-width: 900px) {
@@ -480,41 +493,38 @@
                         if (añadirDivAnalisisJugadores == true)
                         {
                             <div class="tooltip-juego" onmousemove="enseñarTooltip(event, 'tooltip-reviews')" style="padding: 10px 20px; display: flex; flex-direction: row; align-items: stretch; gap: 15px;">
-                                @if (juego.Analisis != null)
+                                @if (string.IsNullOrEmpty(juego.Analisis?.Cantidad) == false && string.IsNullOrEmpty(juego.Analisis?.Porcentaje) == false)
                                 {
-                                    if (string.IsNullOrEmpty(juego.Analisis.Cantidad) == false && string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false)
+                                    if (juego.Analisis.Cantidad.Length > 1)
                                     {
-                                        if (juego.Analisis.Cantidad.Length > 1)
-                                        {
-                                            <button onclick="moverScroll('reviews')" class="boton boton-reseñas" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
-                                                <div style="@fondoCajas border: 1px solid var(--fondoBotonPequeño); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; gap: 10px;">
-                                                    <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
-                                                        @if (int.Parse(juego.Analisis.Porcentaje) > 74)
-                                                        {
-                                                            <img src="/imagenes/analisis/positivo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                        }
+                                        <button onclick="moverScroll('reviews')" class="boton boton-reseñas" style="width: fit-content; padding: 0px; color: var(--colorTexto); background: transparent;">
+                                            <div style="@fondoCajas border: 1px solid var(--fondoBotonPequeño); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; gap: 10px;">
+                                                <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                                                    @if (int.Parse(juego.Analisis.Porcentaje) > 74)
+                                                    {
+                                                        <img src="/imagenes/analisis/positivo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                    }
 
-                                                        @if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
-                                                        {
-                                                            <img src="/imagenes/analisis/meh3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                        }
+                                                    @if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
+                                                    {
+                                                        <img src="/imagenes/analisis/meh3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                    }
 
-                                                        @if (int.Parse(juego.Analisis.Porcentaje) < 50)
-                                                        {
-                                                            <img src="/imagenes/analisis/negativo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
-                                                        }
+                                                    @if (int.Parse(juego.Analisis.Porcentaje) < 50)
+                                                    {
+                                                        <img src="/imagenes/analisis/negativo3.svg" style="width: 30px; height: 30px;" alt="Reviews" loading="lazy" />
+                                                    }
 
-                                                        <div style="font-size: 17px;">
-                                                            @juego.Analisis.Porcentaje%
-                                                        </div>
-                                                    </div>
-
-                                                    <div style="font-size: 14px;">
-                                                        @Herramientas.Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad)
+                                                    <div style="font-size: 17px;">
+                                                        @juego.Analisis.Porcentaje%
                                                     </div>
                                                 </div>
-                                            </button>
-                                        }
+
+                                                <div style="font-size: 14px;">
+                                                    @Herramientas.Calculadora.RedondearAnalisis(idioma, juego.Analisis.Cantidad)
+                                                </div>
+                                            </div>
+                                        </button>
                                     }
                                 }
 
@@ -2135,84 +2145,78 @@
                 {
                     @if (string.IsNullOrEmpty(juego.Caracteristicas.Descripcion) == false)
                     {
-                        <div class="caja-diseño juego-caja-espacio">
+                        <div class="caja-juego-contenido juego-caja-espacio">
                             @WebUtility.HtmlDecode(juego.Caracteristicas.Descripcion)
                         </div>
                     }
 
                     @if (juego.Caracteristicas.Desarrolladores2 != null || juego.Caracteristicas.Editores2 != null || juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000) || juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
                     {
-                        <div class="caja-diseño juego-caja-espacio" style="display: flex; flex-direction: column; gap: 20px;">
-                            @if (juego.Caracteristicas.Desarrolladores2 != null)
+                        <div class="caja-juego-contenido juego-caja-espacio" style="display: flex; flex-direction: column; gap: 20px;">
+                            @if (juego.Caracteristicas.Desarrolladores2?.Count > 0)
                             {
-                                if (juego.Caracteristicas.Desarrolladores2.Count > 0)
-                                {
-                                    <div>
-                                        <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Game")</div>
+                                <div>
+                                    <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String35", "Game")</div>
 
-                                        @{
-                                            int i = 0;
+                                    @{
+                                        int i = 0;
 
-                                            foreach (var desarrollador in juego.Caracteristicas.Desarrolladores2)
+                                        foreach (var desarrollador in juego.Caracteristicas.Desarrolladores2)
+                                        {
+                                            if (i > 0)
                                             {
-                                                if (i > 0)
-                                                {
-                                                    <label style="margin-right: 5px;">,</label>
-                                                }
-
-                                                if (desarrollador.Id > 0)
-                                                {
-                                                    <button onclick="moverScroll('curator-@desarrollador.Id.ToString()')" class="boton" style="padding: 0px; background-color: transparent; color: var(--colorEnlace); text-decoration: underline; font-size: 16px; width: fit-content;">@desarrollador.Nombre</button>
-                                                }
-                                                else
-                                                {
-                                                    if (string.IsNullOrEmpty(desarrollador.Nombre) == false)
-                                                    {
-                                                        @WebUtility.HtmlDecode(desarrollador.Nombre)
-                                                    }
-                                                }
-
-                                                i += 1;
+                                                <label style="margin-right: 5px;">,</label>
                                             }
+
+                                            if (desarrollador.Id > 0)
+                                            {
+                                                <button onclick="moverScroll('curator-@desarrollador.Id.ToString()')" class="boton" style="padding: 0px; background-color: transparent; color: var(--colorEnlace); text-decoration: underline; font-size: 16px; width: fit-content;">@desarrollador.Nombre</button>
+                                            }
+                                            else
+                                            {
+                                                if (string.IsNullOrEmpty(desarrollador.Nombre) == false)
+                                                {
+                                                    @WebUtility.HtmlDecode(desarrollador.Nombre)
+                                                }
+                                            }
+
+                                            i += 1;
                                         }
-                                    </div>
-                                }
-                            }       
+                                    }
+                                </div>
+                            }      
                             
-                            @if (juego.Caracteristicas.Editores2 != null)
+                            @if (juego.Caracteristicas.Editores2?.Count > 0)
                             {
-                                if (juego.Caracteristicas.Editores2.Count > 0)
-                                {
-                                    <div>
-                                        <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String36", "Game")</div>
+                                <div>
+                                    <div>@Herramientas.Idiomas.BuscarTexto(idioma, "String36", "Game")</div>
 
-                                        @{
-                                            int i = 0;
+                                    @{
+                                        int i = 0;
 
-                                            foreach (var editor in juego.Caracteristicas.Editores2)
+                                        foreach (var editor in juego.Caracteristicas.Editores2)
+                                        {
+                                            if (i > 0)
                                             {
-                                                if (i > 0)
-                                                {
-                                                    <label style="margin-right: 5px;">,</label>
-                                                }
-
-                                                if (editor.Id > 0)
-                                                {
-                                                    <button onclick="moverScroll('curator-@editor.Id.ToString()')" class="boton" style="padding: 0px; background-color: transparent; color: var(--colorEnlace); text-decoration: underline; font-size: 16px; width: fit-content;">@editor.Nombre</button>
-                                                }
-                                                else
-                                                {
-                                                    if (string.IsNullOrEmpty(editor.Nombre) == false)
-                                                    {
-                                                        @WebUtility.HtmlDecode(editor.Nombre)
-                                                    }
-                                                }
-
-                                                i += 1;
+                                                <label style="margin-right: 5px;">,</label>
                                             }
+
+                                            if (editor.Id > 0)
+                                            {
+                                                <button onclick="moverScroll('curator-@editor.Id.ToString()')" class="boton" style="padding: 0px; background-color: transparent; color: var(--colorEnlace); text-decoration: underline; font-size: 16px; width: fit-content;">@editor.Nombre</button>
+                                            }
+                                            else
+                                            {
+                                                if (string.IsNullOrEmpty(editor.Nombre) == false)
+                                                {
+                                                    @WebUtility.HtmlDecode(editor.Nombre)
+                                                }
+                                            }
+
+                                            i += 1;
                                         }
-                                    </div>
-                                }
+                                    }
+                                </div>
                             }
 
                             @if (juego.Caracteristicas.FechaLanzamientoSteam > new DateTime(615043584000000000) || juego.GalaxyGOG?.FechaLanzamiento > new DateTime(615043584000000000))
@@ -2304,23 +2308,24 @@
                             }
                         }
 
-                        <div class="caja-diseño" style="padding: 30px; width: 100%;">
-                            <div style="margin-bottom: 5px;">
-                                @if (accesibilidad.Count > 0)
-                                {
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String102", "Game")
-                                }
-                                else
-                                {
-                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String49", "Game")
-                                }
+                        <div class="caja-juego-contenido">
+                            <div class="caja-juego-titulo">
+                                <div style="margin-bottom: 5px;">
+                                    @if (accesibilidad.Count > 0)
+                                    {
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String102", "Game")
+                                    }
+                                    else
+                                    {
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String49", "Game")
+                                    }
+                                </div>
+                                <div style="font-size: 14px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String50", "Game")
+                                </div>
                             </div>
-                            <div style="font-size: 14px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String50", "Game")
-                            </div>
-                            <hr />
 
-                            <div style="display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
+                            <div style="padding: 20px 30px; display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
                                 @foreach (var categoria in categorias)
                                 {
                                     string cadenaCategoria = Herramientas.Idiomas.BuscarTexto(idioma, categoria, "Categories");
@@ -2374,16 +2379,17 @@
 
                     @if (juego.Etiquetas?.Count > 0)
                     {
-                        <div class="caja-diseño" style="padding: 30px; width: 100%;">
-                            <div style="margin-bottom: 5px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String47", "Game")
+                        <div class="caja-juego-contenido">
+                            <div class="caja-juego-titulo">
+                                <div style="margin-bottom: 5px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String47", "Game")
+                                </div>
+                                <div style="font-size: 14px;">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String48", "Game")
+                                </div>
                             </div>
-                            <div style="font-size: 14px;">
-                                @Herramientas.Idiomas.BuscarTexto(idioma, "String48", "Game")
-                            </div>
-                            <hr />
 
-                            <div style="display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
+                            <div style="padding: 20px 30px; display: flex; align-items: center; flex-flow: wrap; grid-gap: 10px;">
                                 @foreach (var etiqueta in juego.Etiquetas)
                                 {
                                     string cadenaEtiqueta = Herramientas.Idiomas.BuscarTexto(idioma, etiqueta, "Tags");
@@ -2409,18 +2415,17 @@
 
                     @if (juego.Caracteristicas?.Enlaces?.Count > 0)
                     {
-                        <div id="links" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column;">
-                            <div>
+                        <div id="links" class="caja-juego-contenido">
+                            <div class="caja-juego-titulo">
                                 <div style="margin-bottom: 5px;">
                                     @Herramientas.Idiomas.BuscarTexto(idioma, "String95", "Game")
                                 </div>
                                 <div style="font-size: 14px;">
                                     @Herramientas.Idiomas.BuscarTexto(idioma, "String96", "Game")
                                 </div>
-                                <hr />
                             </div>
 
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 5px;">
+                            <div style="padding: 20px 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 5px;">
                                 @foreach (var enlace in juego.Caracteristicas.Enlaces)
                                 {
                                     if (enlace.Contains("https://www.twitch.tv/") == true || enlace.Contains("https://twitch.tv/") == true)
@@ -2592,18 +2597,17 @@
                         </div>
                     }
 
-                    <div id="links" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column;">
-                        <div>
+                    <div id="links" class="caja-juego-contenido">
+                        <div class="caja-juego-titulo">
                             <div style="margin-bottom: 5px;">
                                 @Herramientas.Idiomas.BuscarTexto(idioma, "String88", "Game")
                             </div>
                             <div style="font-size: 14px;">
                                 @Herramientas.Idiomas.BuscarTexto(idioma, "String94", "Game")
                             </div>
-                            <hr />
                         </div>
 
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="padding: 20px 30px; display: flex; align-items: center; gap: 10px;">
                             @if (juego.IdSteam > 0)
                             {
                                 string enlaceSteamDB = "https://steamdb.info/app/" + juego.IdSteam.ToString();
@@ -2680,70 +2684,8 @@
                         {
                             juegosCurator = juegosCurator.Where(x => x.Analisis != null).Where(x => x.Analisis.Cantidad != null).OrderByDescending(x => int.Parse(x.Analisis.Cantidad.Replace(",", null))).ThenBy(x => x.Nombre).ToList();
 
-                            <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
-                                <div>
-                                    <div style="display: flex; align-items: center; gap: 20px;">
-                                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Curator.Imagen, 60, 60)" alt="@curator.Curator.Nombre" style="width: 60px; height: 60px;" loading="lazy" />
-
-                                        <a href="/curator/@curator.Curator.Slug.ToLower()/" target="_blank" style="text-decoration: none;">
-                                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                <div style="font-size: 18px;">
-                                                    @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String89", "Game"), curator.Curator.Nombre)
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-
-                                    <hr />
-
-                                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-                                        @{
-                                            int i = curator.Posicion;
-
-                                            @if (juegosCurator.Count > 4)
-                                            {
-                                                <button @onclick="@(e => CuratorAtras(e, curator, juegosCurator.Count))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; left: -80px;" title="Back">
-                                                    <div style="max-width: 24px;">
-                                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
-                                                        </svg>
-                                                    </div>
-                                                </button>
-                                            }
-
-                                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; width: 100%;">
-                                                @while (i < (curator.Posicion + 4))
-                                                {
-                                                    if (i < juegosCurator.Count)
-                                                    {
-                                                        <CajaJuego idCurator="@curator.Curator.Id" idioma="@idioma" juego="@juegosCurator[i]" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorJuego" userAgent="@userAgent"/>
-                                                    }
-
-                                                    i += 1;
-                                                }
-                                            </div>
-
-                                            @if (juegosCurator.Count > 4)
-                                            {
-                                                <button @onclick="@(e => CuratorAdelante(e, curator, juegosCurator.Count))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; right: -80px;" title="Next">
-                                                    <div style="max-width: 24px;">
-                                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
-                                                        </svg>
-                                                    </div>
-                                                </button>
-                                            }                                     
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 20px;">
+                            <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-juego-contenido">
+                                <div class="caja-juego-titulo" style="display: flex; align-items: center; gap: 20px;">
                                     <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Curator.Imagen, 60, 60)" alt="@curator.Curator.Nombre" style="width: 60px; height: 60px;" loading="lazy" />
 
                                     <a href="/curator/@curator.Curator.Slug.ToLower()/" target="_blank" style="text-decoration: none;">
@@ -2754,6 +2696,62 @@
                                         </div>
                                     </a>
                                 </div>
+
+                                <div style="padding: 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+                                    @{
+                                        int i = curator.Posicion;
+
+                                        @if (juegosCurator.Count > 4)
+                                        {
+                                            <button @onclick="@(e => CuratorAtras(e, curator, juegosCurator.Count))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; left: -80px;" title="Back">
+                                                <div style="max-width: 24px;">
+                                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        }
+
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; width: 100%;">
+                                            @while (i < (curator.Posicion + 4))
+                                            {
+                                                if (i < juegosCurator.Count)
+                                                {
+                                                    <CajaJuego idCurator="@curator.Curator.Id" idioma="@idioma" juego="@juegosCurator[i]" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorJuego" userAgent="@userAgent"/>
+                                                }
+
+                                                i += 1;
+                                            }
+                                        </div>
+
+                                        @if (juegosCurator.Count > 4)
+                                        {
+                                            <button @onclick="@(e => CuratorAdelante(e, curator, juegosCurator.Count))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; right: -80px;" title="Next">
+                                                <div style="max-width: 24px;">
+                                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                                        <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        }                                     
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-juego-contenido">
+                            <div class="caja-juego-titulo" style="display: flex; align-items: center; gap: 20px;">
+                                <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Curator.Imagen, 60, 60)" alt="@curator.Curator.Nombre" style="width: 60px; height: 60px;" loading="lazy" />
+
+                                <a href="/curator/@curator.Curator.Slug.ToLower()/" target="_blank" style="text-decoration: none;">
+                                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                                        <div style="font-size: 18px;">
+                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String89", "Game"), curator.Curator.Nombre)
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     }
@@ -2763,35 +2761,33 @@
 
             @if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
-                <div id="reviews" class="caja-diseño" style="padding: 30px; display: flex; flex-direction: column; gap: 10px;">
-                    <div>
+                <div id="reviews" class="caja-juego-contenido" style="display: flex; flex-direction: column;">
+                    <div class="caja-juego-titulo">
                         <div style="font-size: 18px; margin-bottom: 5px;">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Reviews")
                         </div>
+
                         <div style="font-size: 14px;">
                             @Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Reviews")
                         </div>
-                        <hr />
                     </div>
 
-                    <div style="display: flex; align-items: flex-start; gap: 40px;">
+                    <div style="padding: 30px; display: flex; align-items: flex-start; gap: 40px;">
                         @if ((usuarioPatreon == true || usuarioAdmin == true) && juego.IdSteam > 0)
                         {
-                            <div style="width: 25%; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="width: 25%; display: flex; flex-direction: column; gap: 5px;">
                                 @{
                                     string idiomaGlobal = "global";
-                                    string subrayadoGlobal = string.Empty;
+                                    string estiloGlobal = "background-color: transparent; color: var(--colorEnlace); box-shadow: none;";
 
                                     if (idiomaReseñas == idiomaGlobal)
                                     {
-                                        subrayadoGlobal = "border-bottom: 1px solid var(--colorEnlace);";
+                                        estiloGlobal = "background-color: var(--fondoBotonPequeño); color: var(--colorTexto);";
                                     }
                                 }
 
-                                <button @onclick="(e => ReseñasIdioma(e, idiomaGlobal))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-                                    <div style="@subrayadoGlobal padding-bottom: 5px;">
-                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Reviews")
-                                    </div>
+                                <button @onclick="(e => ReseñasIdioma(e, idiomaGlobal))" class="boton-pequeño" style="text-align: center; @estiloGlobal">
+                                    @Herramientas.Idiomas.BuscarTexto(idioma, "String8", "Reviews")
                                 </button>
 
                                 @{
@@ -2815,17 +2811,15 @@
                                     {
                                         if (idioma2.SteamReseñas == true)
                                         {
-                                            string subrayado = string.Empty;
+                                            string estiloPais = "background-color: transparent; color: var(--colorEnlace); box-shadow: none;";
 
                                             if (idiomaReseñas == idioma2.SteamAPI)
                                             {
-                                                subrayado = "border-bottom: 1px solid var(--colorEnlace);";
+                                                estiloPais = "background-color: var(--fondoBotonPequeño); color: var(--colorTexto);";
                                             }
 
-                                            <button @onclick="(e => ReseñasIdioma(e, idioma2.SteamAPI))" style="color: var(--colorEnlace); border: 0; background: transparent; padding: 0px;">
-                                                <div style="@subrayado padding-bottom: 5px;">
-                                                    @idioma2.Traduccion
-                                                </div>
+                                            <button @onclick="(e => ReseñasIdioma(e, idioma2.SteamAPI))" class="boton-pequeño" style="text-align: center; @estiloPais">
+                                                @idioma2.Traduccion
                                             </button>
                                         }
                                     }
@@ -2835,7 +2829,7 @@
 
                         @if (idiomaReseñas == "global")
                         {
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 20px; width: 100%;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 5px; width: 100%;">
                                 @foreach (var reseñasRegion in reseñasRegiones)
                                 {
                                     if (reseñasRegion != null)
@@ -2850,7 +2844,7 @@
 
                                         string imagenRegion = "/imagenes/banderas/" + reseñasRegion.Idioma + ".svg";
 
-                                        <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 10px; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                                        <div style="padding: 10px; display: flex; align-items: center; gap: 10px; justify-content: center;">
                                             <img src="@imagenRegion" style="height: 26px;" loading="lazy" />
 
                                             <div>
@@ -2883,91 +2877,93 @@
                             if (reseñasAmpliadas.CantidadPositivos > 0)
                             {
                                 <div style="width: 100%; display: flex; flex-direction: column; gap: 20px;">
-                                    <div style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px;">
-                                        <div style="margin-bottom: 10px;">
-                                            @{
-                                                string idiomaTraduccion = idiomaReseñas;
+                                    <div>
+                                        <div style="padding: 0px 20px 5px 20px;">
+                                            <div style="margin-bottom: 10px;">
+                                                @{
+                                                    string idiomaTraduccion = idiomaReseñas;
 
-                                                foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
-                                                {
-                                                    if (idioma2.SteamAPI == idiomaReseñas)
+                                                    foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
                                                     {
-                                                        idiomaTraduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                                        if (idioma2.SteamAPI == idiomaReseñas)
+                                                        {
+                                                            idiomaTraduccion = Herramientas.Idiomas.BuscarTexto(idioma, idioma2.Id, "Languages");
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Reviews"), idiomaTraduccion.ToLower())
-                                        </div>
+                                                @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Reviews"), idiomaTraduccion.ToLower())
+                                            </div>
 
-                                        <div style="display: flex; align-items: center; gap: 20px;">
-                                            @{
-                                                int total = reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos;
-                                                int porcentaje = Herramientas.Calculadora.SacarDescuento(reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos, reseñasAmpliadas.CantidadNegativos);
+                                            <div style="display: flex; align-items: center; gap: 20px;">
+                                                @{
+                                                    int total = reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos;
+                                                    int porcentaje = Herramientas.Calculadora.SacarDescuento(reseñasAmpliadas.CantidadPositivos + reseñasAmpliadas.CantidadNegativos, reseñasAmpliadas.CantidadNegativos);
 
-                                                if (reseñasAmpliadas.CantidadPositivos > 0 && reseñasAmpliadas.CantidadNegativos == 0)
-                                                {
-                                                    porcentaje = 99;
+                                                    if (reseñasAmpliadas.CantidadPositivos > 0 && reseñasAmpliadas.CantidadNegativos == 0)
+                                                    {
+                                                        porcentaje = 99;
+                                                    }
                                                 }
-                                            }
 
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <div>
-                                                    @if (porcentaje > 74)
-                                                    {
-                                                        <img src="/imagenes/analisis/positivo3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <div>
+                                                        @if (porcentaje > 74)
+                                                        {
+                                                            <img src="/imagenes/analisis/positivo3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
+                                                        }
 
-                                                    @if (porcentaje > 49 && porcentaje < 75)
-                                                    {
-                                                        <img src="/imagenes/analisis/meh3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                                        @if (porcentaje > 49 && porcentaje < 75)
+                                                        {
+                                                            <img src="/imagenes/analisis/meh3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
+                                                        }
 
-                                                    @if (porcentaje < 50)
-                                                    {
-                                                        <img src="/imagenes/analisis/negativo3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
-                                                    }
+                                                        @if (porcentaje < 50)
+                                                        {
+                                                            <img src="/imagenes/analisis/negativo3.svg" style="width: 26px; height: 26px;" alt="Reviews" loading="lazy" />
+                                                        }
+                                                    </div>
+
+                                                    <div>
+                                                        @porcentaje%
+                                                    </div>
                                                 </div>
 
                                                 <div>
-                                                    @porcentaje%
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Reviews"), total.ToString("N0"))
-                                            </div>
-
-                                            <div style="color: var(--deckVerificado); display: flex; align-items: center; gap: 10px;">
-                                                <div style="max-width: 16px;">
-                                                    <svg class="svg-boton" style="fill: var(--deckVerificado);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2l144 0c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48l-97.5 0c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3l0-38.3 0-48 0-24.9c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32L0 224c0-17.7 14.3-32 32-32z"/>
-                                                    </svg>
+                                                    @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Reviews"), total.ToString("N0"))
                                                 </div>
 
-                                                @reseñasAmpliadas.CantidadPositivos.ToString("N0")
-                                            </div>
+                                                <div style="color: var(--deckVerificado); display: flex; align-items: center; gap: 10px;">
+                                                    <div style="max-width: 16px;">
+                                                        <svg class="svg-boton" style="fill: var(--deckVerificado);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                            <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2l144 0c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48l-97.5 0c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3l0-38.3 0-48 0-24.9c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32L0 224c0-17.7 14.3-32 32-32z"/>
+                                                        </svg>
+                                                    </div>
 
-                                            <div style="color: var(--colorTextoPeligro); display: flex; align-items: center; gap: 10px;">
-                                                <div style="max-width: 16px;">
-                                                    <svg class="svg-boton" style="fill: var(--colorTextoPeligro);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                        <path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2l144 0c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48l-97.5 0c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7l0 38.3 0 48 0 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384l64 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32L32 96C14.3 96 0 110.3 0 128L0 352c0 17.7 14.3 32 32 32z"/>
-                                                    </svg>
+                                                    @reseñasAmpliadas.CantidadPositivos.ToString("N0")
                                                 </div>
 
-                                                @reseñasAmpliadas.CantidadNegativos.ToString("N0")
+                                                <div style="color: var(--colorTextoPeligro); display: flex; align-items: center; gap: 10px;">
+                                                    <div style="max-width: 16px;">
+                                                        <svg class="svg-boton" style="fill: var(--colorTextoPeligro);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                            <path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2l144 0c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48l-97.5 0c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7l0 38.3 0 48 0 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384l64 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32L32 96C14.3 96 0 110.3 0 128L0 352c0 17.7 14.3 32 32 32z"/>
+                                                        </svg>
+                                                    </div>
+
+                                                    @reseñasAmpliadas.CantidadNegativos.ToString("N0")
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     @if (reseñasAmpliadas?.Contenido != null)
                                     {
-                                        foreach (var analisis in reseñasAmpliadas.Contenido)
+                                        foreach (var reseñas in reseñasAmpliadas.Contenido)
                                         {
-                                            <a href="https://steamcommunity.com/profiles/@analisis.Autor.SteamID/recommended/@juego.IdSteam/" target="_blank" style="color: var(--colorTexto); text-decoration: none;">
-                                                <div class="boton-expandir2" style="background-color: var(--fondoMinimo); border: 1px solid var(--fondoBotonPequeño); padding: 20px; border-radius: 5px;">
+                                            <a href="https://steamcommunity.com/profiles/@reseñas.Autor.SteamID/recommended/@juego.IdSteam/" target="_blank" style="color: var(--colorTexto); text-decoration: none;">
+                                                <div class="boton-expandir2" style="background-color: var(--fondoBotonPequeño); border: 1px solid var(--fondoBotonPequeño); padding: 20px; box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.28),0px 0px 1px 0px rgba(0, 0, 0, 0.24);">
                                                     <div style="display: flex; align-items: center; gap: 20px;">
-                                                        @if (analisis.Positiva == true)
+                                                        @if (reseñas.Positiva == true)
                                                         {
                                                             <div style="max-width: 16px;">
                                                                 <svg class="svg-boton" style="fill: var(--deckVerificado);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -2988,9 +2984,9 @@
                                                         {
                                                             <div>
                                                                 @{
-                                                                    TimeSpan tiempoSpan = TimeSpan.FromMinutes(analisis.Autor.TiempoJugadoSiempre);
+                                                                    TimeSpan tiempoSpan = TimeSpan.FromMinutes(reseñas.Autor.TiempoJugadoSiempre);
 
-                                                                    decimal tiempoD = Convert.ToDecimal(analisis.Autor.TiempoJugadoSiempre) / 60;
+                                                                    decimal tiempoD = Convert.ToDecimal(reseñas.Autor.TiempoJugadoSiempre) / 60;
                                                                 }
 
                                                                 @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String7", "Reviews"), tiempoD.ToString("N1"))
@@ -2999,7 +2995,7 @@
 
                                                         <div>
                                                             @{
-                                                                DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(analisis.TicksCreado);
+                                                                DateTimeOffset fecha = DateTimeOffset.FromUnixTimeSeconds(reseñas.TicksCreado);
                                                                 DateTime fechaCreado = fecha.UtcDateTime;
                                                             }
 
@@ -3010,7 +3006,7 @@
                                                     <hr />
 
                                                     <div style="white-space: pre-line; max-width: 100%; overflow-wrap: anywhere;">
-                                                        @analisis.Contenido
+                                                        @reseñas.Contenido
                                                     </div>
                                                 </div>
                                             </a>
@@ -3127,7 +3123,7 @@
 @if (juego != null && enseñarDeck == true)
 {
     <div class="opciones-panel">
-        <div class="caja-diseño" style="max-width: 900px; padding: 40px; overflow-y: scroll;">
+        <div class="caja-juego-contenido" style="max-width: 900px; padding: 40px; overflow-y: scroll;">
             <div style="display: flex; align-items: start; flex-direction: row; gap: 40px;">
                 <button @onclick="@(e => DeckCerrar(e))" class="boton-pequeño" style="width: fit-content; padding: 10px 15px;">
                     <div style="width: 24px;">
@@ -3138,7 +3134,7 @@
                 </button>
 
                 <div style="display: flex; flex-direction: column;">
-                    <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="caja-juego-titulo" style="display: flex; align-items: center; gap: 20px;">
                         <label style="font-size: 18px;">@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Deck")</label>
 
                         <div style="height: 24px;">
@@ -3176,77 +3172,74 @@
                         <label>@string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String4", "Deck"), juego.Nombre)</label>
                     }
 
-                    @if (juego.DeckTokens != null)
+                    @if (juego.DeckTokens?.Count > 0)
                     {
-                        if (juego.DeckTokens.Count > 0)
-                        {
-                            <hr />
+                        <hr />
 
-                            <div style="display: flex; flex-direction: column; gap: 20px;">
-                                @foreach (var token in juego.DeckTokens)
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            @foreach (var token in juego.DeckTokens)
+                            {
+                                if (token.Tipo == 1)
                                 {
-                                    if (token.Tipo == 1)
-                                    {
-                                        <div style="background-color: var(--fondoAlerta); padding: 8px 16px;">
-                                            @{
-                                                string cadenaMensaje = Herramientas.Idiomas.BuscarTexto(idioma, token.Mensaje, "Deck");
+                                    <div style="background-color: var(--fondoAlerta); padding: 8px 16px;">
+                                        @{
+                                            string cadenaMensaje = Herramientas.Idiomas.BuscarTexto(idioma, token.Mensaje, "Deck");
 
-                                                if (string.IsNullOrEmpty(cadenaMensaje) == false)
-                                                {
-                                                    <label style="font-size: 15px;">@cadenaMensaje</label>
-                                                }
-                                                else
-                                                {
-                                                    global::BaseDatos.Errores.Insertar.Mensaje("Deck no encontrado", token.Mensaje, "https://store.steampowered.com/app/" + juego.IdSteam);
+                                            if (string.IsNullOrEmpty(cadenaMensaje) == false)
+                                            {
+                                                <label style="font-size: 15px;">@cadenaMensaje</label>
+                                            }
+                                            else
+                                            {
+                                                global::BaseDatos.Errores.Insertar.Mensaje("Deck no encontrado", token.Mensaje, "https://store.steampowered.com/app/" + juego.IdSteam);
 
-                                                    <label>@token.Mensaje (No Check)</label>
-                                                }
+                                                <label>@token.Mensaje (No Check)</label>
+                                            }
+                                        }
+                                    </div>
+                                }
+                            }
+
+                            @foreach (var token in juego.DeckTokens)
+                            {
+                                if (token.Tipo != 1)
+                                {
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <div style="max-height: 20px; max-width: 20px;">
+                                            @if (token.Tipo == 2)
+                                            {
+                                                <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.193 15.606a7 7 0 0 1-9.799-9.799l9.8 9.8Zm1.414-1.414a7 7 0 0 0-9.799-9.799l9.8 9.8ZM19.001 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="var(--colorTexto)"></path></svg>
+                                            }
+
+                                            @if (token.Tipo == 3)
+                                            {
+                                                <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19ZM8.61079 9.44444V15H11.3886V9.44444H8.61079ZM9.07372 8.05245C9.34781 8.23558 9.67004 8.33333 9.99967 8.33333C10.4417 8.33333 10.8656 8.15774 11.1782 7.84518C11.4907 7.53262 11.6663 7.10869 11.6663 6.66667C11.6663 6.33703 11.5686 6.0148 11.3855 5.74072C11.2023 5.46663 10.942 5.25301 10.6375 5.12687C10.3329 5.00072 9.99783 4.96771 9.67452 5.03202C9.35122 5.09633 9.05425 5.25507 8.82116 5.48815C8.58808 5.72124 8.42934 6.01821 8.36503 6.34152C8.30072 6.66482 8.33373 6.99993 8.45988 7.30447C8.58602 7.60902 8.79964 7.86931 9.07372 8.05245Z" fill="var(--deckJugable)"></path></svg>
+                                            }
+
+                                            @if (token.Tipo == 4)
+                                            {
+                                                <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19ZM8.33342 11.9222L14.4945 5.76667L16.4556 7.72779L8.33342 15.8556L3.26675 10.7833L5.22786 8.82223L8.33342 11.9222Z" fill="var(--deckVerificado)"></path></svg>
                                             }
                                         </div>
-                                    }
-                                }
 
-                                @foreach (var token in juego.DeckTokens)
-                                {
-                                    if (token.Tipo != 1)
-                                    {
-                                        <div style="display: flex; align-items: center; gap: 15px;">
-                                            <div style="max-height: 20px; max-width: 20px;">
-                                                @if (token.Tipo == 2)
-                                                {
-                                                    <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.193 15.606a7 7 0 0 1-9.799-9.799l9.8 9.8Zm1.414-1.414a7 7 0 0 0-9.799-9.799l9.8 9.8ZM19.001 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="var(--colorTexto)"></path></svg>
-                                                }
+                                        @{
+                                            string cadenaMensaje = Herramientas.Idiomas.BuscarTexto(idioma, token.Mensaje, "Deck");
 
-                                                @if (token.Tipo == 3)
-                                                {
-                                                    <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19ZM8.61079 9.44444V15H11.3886V9.44444H8.61079ZM9.07372 8.05245C9.34781 8.23558 9.67004 8.33333 9.99967 8.33333C10.4417 8.33333 10.8656 8.15774 11.1782 7.84518C11.4907 7.53262 11.6663 7.10869 11.6663 6.66667C11.6663 6.33703 11.5686 6.0148 11.3855 5.74072C11.2023 5.46663 10.942 5.25301 10.6375 5.12687C10.3329 5.00072 9.99783 4.96771 9.67452 5.03202C9.35122 5.09633 9.05425 5.25507 8.82116 5.48815C8.58808 5.72124 8.42934 6.01821 8.36503 6.34152C8.30072 6.66482 8.33373 6.99993 8.45988 7.30447C8.58602 7.60902 8.79964 7.86931 9.07372 8.05245Z" fill="var(--deckJugable)"></path></svg>
-                                                }
-
-                                                @if (token.Tipo == 4)
-                                                {
-                                                    <svg style="display: block; width: 100%; height: 100%;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19ZM8.33342 11.9222L14.4945 5.76667L16.4556 7.72779L8.33342 15.8556L3.26675 10.7833L5.22786 8.82223L8.33342 11.9222Z" fill="var(--deckVerificado)"></path></svg>
-                                                }
-                                            </div>
-
-                                            @{
-                                                string cadenaMensaje = Herramientas.Idiomas.BuscarTexto(idioma, token.Mensaje, "Deck");
-
-                                                if (string.IsNullOrEmpty(cadenaMensaje) == false)
-                                                {
-                                                    <label style="font-size: 15px;">@cadenaMensaje</label>
-                                                }
-                                                else
-                                                {
-                                                    global::BaseDatos.Errores.Insertar.Mensaje("Deck no encontrado", token.Mensaje, "https://store.steampowered.com/app/" + juego.IdSteam);
-
-                                                    <label>@token.Mensaje (No Check)</label>
-                                                }
+                                            if (string.IsNullOrEmpty(cadenaMensaje) == false)
+                                            {
+                                                <label style="font-size: 15px;">@cadenaMensaje</label>
                                             }
-                                        </div>
-                                    }
+                                            else
+                                            {
+                                                global::BaseDatos.Errores.Insertar.Mensaje("Deck no encontrado", token.Mensaje, "https://store.steampowered.com/app/" + juego.IdSteam);
+
+                                                <label>@token.Mensaje (No Check)</label>
+                                            }
+                                        }
+                                    </div>
                                 }
-                            </div>
-                        }
+                            }
+                        </div>
                     }
                 </div>
             </div>

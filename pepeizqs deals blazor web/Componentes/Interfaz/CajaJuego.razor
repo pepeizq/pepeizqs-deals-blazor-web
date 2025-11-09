@@ -253,10 +253,6 @@
 			fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), " + color + ");";
 			fondoDescuento = "backdrop-filter: brightness(70%);";
 		}
-		else
-		{
-			fondoColor = "background-color: var(--fondoBotonPequeño);";
-		}
 	}
 
 	bool usuarioConectado = false;
@@ -466,11 +462,6 @@
 
 		@if (tipo == Tipo.PortadaNuevos || tipo == Tipo.PortadaPopulares || tipo == Tipo.PortadaLanzamientos || tipo == Tipo.PortadaProximamente)
 		{
-			if (string.IsNullOrEmpty(fondoColor) == true)
-			{
-				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
-			}
-
 			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
@@ -523,11 +514,6 @@
 
 		@if (tipo == Tipo.MinimosHistoricos)
 		{
-			if (string.IsNullOrEmpty(fondoColor) == true)
-			{
-				fondoColor = "background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro));";
-			}
-
 			<a class="boton-pequeño" style="padding: 0px; @fondoColor" href="@enlace" target="@enlaceNuevaPestaña">
 				<div class="perfil-flexible-centrado">
 					<div style="max-width: 230px;">
@@ -542,24 +528,21 @@
 
 							<img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(iconoTienda)" style="width: 20px; height: 20px;" loading="lazy" />
 
-							@if (juego.Analisis != null)
+							@if (string.IsNullOrEmpty(juego.Analisis?.Porcentaje) == false)
 							{
-								if (string.IsNullOrEmpty(juego.Analisis.Porcentaje) == false)
+								if (int.Parse(juego.Analisis.Porcentaje) > 74)
 								{
-									if (int.Parse(juego.Analisis.Porcentaje) > 74)
-									{
-										<img src="/imagenes/analisis/positivo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Good" />
-									}
+									<img src="/imagenes/analisis/positivo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Good" />
+								}
 
-									if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
-									{
-										<img src="/imagenes/analisis/meh3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Meh" />
-									}
+								if (int.Parse(juego.Analisis.Porcentaje) > 49 && int.Parse(juego.Analisis.Porcentaje) < 75)
+								{
+									<img src="/imagenes/analisis/meh3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Meh" />
+								}
 
-									if (int.Parse(juego.Analisis.Porcentaje) < 50)
-									{
-										<img src="/imagenes/analisis/negativo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Bad" />
-									}
+								if (int.Parse(juego.Analisis.Porcentaje) < 50)
+								{
+									<img src="/imagenes/analisis/negativo3.svg" style="max-width: 22px; max-height: 22px;" loading="lazy" alt="Reviews Bad" />
 								}
 							}
 						</div>

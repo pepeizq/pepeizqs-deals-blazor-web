@@ -179,7 +179,7 @@
                 if (resultado2.Succeeded == true)
                 {
                     mensajeExito = Herramientas.Idiomas.BuscarTexto(idioma, "ChangePassword14", "Account");
-                    Herramientas.Correos.EnviarCambioContraseña(idioma, usuario.Email);
+                    Herramientas.Correos.Cuenta.CambioContraseña(idioma, usuario.Email);
                 }
                 else
                 {

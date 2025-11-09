@@ -1,0 +1,222 @@
+﻿#nullable disable
+
+using Juegos;
+using System.Text.Json;
+
+namespace Herramientas.Correos
+{
+	public class CorreoMinimoJson
+	{
+		public string Precio { get; set; }
+		public string TiendaNombre { get; set; }
+		public string TiendaIcono { get; set; }
+		public string Nombre { get; set; }
+		public string Imagen { get; set; }
+		public string Enlace { get; set; }
+		public string Descuento { get; set; }
+		public string Idioma { get; set; }
+	}
+
+	public static class DeseadoMinimo
+	{
+		public static void Nuevo(string usuarioId, int idJuego, JuegoPrecio precio, string correoHacia)
+		{
+			Juego juego = global::BaseDatos.Juegos.Buscar.UnJuego(idJuego);
+			Nuevo(usuarioId, juego, precio, correoHacia);
+		}
+
+		public static void Nuevo(string usuarioId, Juego juego, JuegoPrecio precio, string correoHacia)
+		{
+			string idioma = global::BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
+
+			if (string.IsNullOrEmpty(idioma) == true)
+			{
+				idioma = "en";
+			}
+
+			string html = @"<!DOCTYPE html>
+							<html>
+							<head>
+								<meta charset=""utf-8"" />
+								<title></title>
+							</head>
+							<body>
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+									<div style=""line-height: 24px;"">
+										{{descripcion}}
+									</div>
+
+									<div style=""margin-top: 40px;"">
+										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none; "">
+											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px;"">
+												<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 100%; margin-top: 10px;"" />
+											</div>
+											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; margin-top: 10px;"">
+												<img src=""{{imagenTienda}}"" style=""width: 120px; margin-right: 10px;"" />
+												<div class=""juego-descuento"" style=""margin: 10px; padding: 10px; background-color: darkgreen;"">
+													{{descuento}}
+												</div>
+												<div style=""padding: 5px 10px;"">
+													{{precio}}
+												</div>
+											</div>
+										</a>
+									</div>
+
+									<div style=""margin-top: 20px;"">
+										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: center; border: 0px; "">
+											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 17px; margin: 15px;"">
+												{{mensajeAbrir}}
+											</div>
+										</a>
+									</div>
+
+									<div style=""margin-top: 40px;"">
+										<div>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+										</div>
+										<div style=""margin-top: 20px; font-size: 14px;"">
+											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+										</div>
+									</div>
+								</div>
+							</body>
+							</html>";
+
+			string precio2 = Herramientas.Precios.Euro(precio.Precio);
+
+			if (precio.PrecioCambiado > 0)
+			{
+				precio2 = Herramientas.Precios.Euro(precio.PrecioCambiado);
+			}
+
+			string tiendaFinal = string.Empty;
+			string imagenTienda = string.Empty;
+			List<Tiendas2.Tienda> tiendas = Tiendas2.TiendasCargar.GenerarListado();
+
+			foreach (var tienda in tiendas)
+			{
+				if (tienda.Id == precio.Tienda)
+				{
+					tiendaFinal = tienda.Nombre;
+					imagenTienda = "https://pepeizqdeals.com/" + tienda.Imagen300x80;
+				}
+			}
+
+			string titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "Lows1", "Mails"), juego.Nombre, precio2, tiendaFinal);
+			string descripcion = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "Lows2", "Mails"), juego.Nombre, tiendaFinal);
+			string imagen = juego.Imagenes.Header_460x215;
+			string descuento = precio.Descuento.ToString() + "%";
+			string enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, false, false);
+
+			string mensajeAbrir = string.Empty;
+
+			if (juego.Tipo == JuegoTipo.Game)
+			{
+				mensajeAbrir = Herramientas.Idiomas.BuscarTexto(idioma, "Lows3", "Mails");
+			}
+			else if (juego.Tipo == JuegoTipo.DLC)
+			{
+				mensajeAbrir = Herramientas.Idiomas.BuscarTexto(idioma, "Lows4", "Mails");
+			}
+			else
+			{
+				mensajeAbrir = Herramientas.Idiomas.BuscarTexto(idioma, "Lows5", "Mails");
+			}
+
+			html = html.Replace("{{descripcion}}", descripcion);
+			html = html.Replace("{{imagen}}", imagen);
+			html = html.Replace("{{descuento}}", descuento);
+			html = html.Replace("{{precio}}", precio2);
+			html = html.Replace("{{enlace}}", enlace);
+			html = html.Replace("{{imagenTienda}}", imagenTienda);
+			html = html.Replace("{{mensajeAbrir}}", mensajeAbrir);
+			html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
+			html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
+
+			CorreoMinimoJson json = new CorreoMinimoJson();
+			json.Precio = precio2;
+			json.TiendaNombre = tiendaFinal;
+			json.TiendaIcono = imagenTienda;
+			json.Nombre = juego.Nombre;
+			json.Imagen = imagen;
+			json.Enlace = enlace;
+			json.Descuento = descuento;
+			json.Idioma = idioma;
+
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo, JsonSerializer.Serialize(json));
+		}
+
+		public static void Nuevos(List<CorreoMinimoJson> jsons, string correoHacia)
+		{
+			if (jsons?.Count > 0)
+			{
+				string idioma = jsons[0].Idioma;
+
+				if (string.IsNullOrEmpty(idioma) == true)
+				{
+					idioma = "en";
+				}
+
+				string titulo = string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "Lows6", "Mails"), jsons.Count);
+
+				string html = @"<!DOCTYPE html>
+							<html>
+							<head>
+								<meta charset=""utf-8"" />
+								<title></title>
+							</head>
+							<body>
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								";
+
+				foreach (var json in jsons)
+				{
+					string htmlJson = @"<div style=""margin-bottom: 30px; display: flex; flex-direction: column; gap: 40px; color: #f5f5f5; background-color: #0d1621; padding: 20px;"">
+											<a href=""{{enlace}}"" style=""color: #f5f5f5; user-select: none; width: 100%; text-align: left; font-size: 16px; text-decoration: none;"" target=""_blank"">
+												<div>
+													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px;"">
+														<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 300px; margin-top: 10px;"" />
+													</div>
+													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; margin-top: 10px;"">
+														<img src=""{{imagenTienda}}"" style=""width: 120px; margin-right: 10px;"" />
+														<div class=""juego-descuento"" style=""margin: 10px; padding: 10px; background-color: darkgreen;"">
+															{{descuento}}
+														</div>
+														<div style=""padding: 5px 10px;"">
+															{{precio}}
+														</div>
+													</div>
+												</div>
+											</a>
+										</div>";
+
+					htmlJson = htmlJson.Replace("{{enlace}}", json.Enlace);
+					htmlJson = htmlJson.Replace("{{imagen}}", json.Imagen);
+					htmlJson = htmlJson.Replace("{{imagenTienda}}", json.TiendaIcono);
+					htmlJson = htmlJson.Replace("{{descuento}}", json.Descuento);
+					htmlJson = htmlJson.Replace("{{precio}}", json.Precio);
+
+					html = html + htmlJson;
+				}
+
+				html = html + @"<div style=""margin-top: 40px;"">
+									<div>
+										&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+									</div>
+									<div style=""margin-top: 20px; font-size: 14px;"">
+										{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+									</div>
+								</div>
+							</div>
+						</body>
+						</html>";
+
+				html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
+				html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
+
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos);
+			}
+		}
+	}
+}

@@ -401,12 +401,7 @@
 
 	private void EnviarCorreoPrueba(MouseEventArgs e)
 	{
-		SqlConnection conexion = Herramientas.BaseDatos.Conectar();
-
-		using (conexion)
-		{
-			Herramientas.Correos.EnviarNuevaNoticia(noticia, "pepeizq@msn.com", conexion, "es-ES");
-		}
+		Herramientas.Correos.Noticias.Enviar(noticia, "pepeizq@msn.com", "es-ES", dominio);
 	}
 
 	private async void EnviarTwitter(MouseEventArgs e)

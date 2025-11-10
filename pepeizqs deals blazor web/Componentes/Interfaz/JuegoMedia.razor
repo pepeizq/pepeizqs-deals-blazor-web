@@ -26,7 +26,7 @@
     <div class="juego-galeria-contenedor">
         @if ((mediaMostrarPosicion >= 99999 && mediaMostrarPosicion <= 100003) && difuminar == false)
         {
-            <video style="width: 100vw; height: calc(100vh - 190px); cursor: pointer; max-width: 1320px; max-height: 742.50px; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
+            <video style="width: 100%; height: calc(100vh - 190px); cursor: pointer; background-image: url('@mediaMostrarCaptura'); background-size: cover; background-position: center;" controls="controls" preload="none" @onplay="EjecutarVideo">
                 <source src="@mediaMostrar" type="@mediaMostrarTipo" />
             </video>
         }
@@ -37,11 +37,11 @@
 
                 @if (difuminar == false)
                 {
-                    <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain;" alt="@nombre">
+                    <img src="@mediaMostrar" style="width: 100%; height: calc(100vh - 190px); object-fit: contain;" alt="@nombre">
                 }
                 else
                 {
-                    <img src="@mediaMostrar" style="width: 100vw; height: calc(100vh - 190px); max-width: 1320px; max-height: 742.50px; object-fit: contain; filter: blur(10px);" alt="@nombre">
+                    <img src="@mediaMostrar" style="width: 100%; height: calc(100vh - 190px); object-fit: contain; filter: blur(10px);" alt="@nombre">
                 }
             </div>
 

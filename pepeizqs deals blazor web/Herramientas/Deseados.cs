@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using Juegos;
-using Microsoft.Data.SqlClient;
 using pepeizqs_deals_web.Data;
 using System.Text.Json;
 
@@ -315,16 +314,7 @@ namespace Herramientas
 
 					if (deseadosSteam?.Count > 0)
 					{
-						foreach (var deseado in deseadosSteam)
-						{
-							if (juego.IdSteam > 0)
-							{
-								if (juego.IdSteam.ToString() == deseado && (drm == JuegoDRM.Steam || drm == JuegoDRM.NoEspecificado))
-								{
-									return true;
-								}
-							}
-						}
+						return deseadosSteam.Any(d => d == juego.IdSteam.ToString() && (drm == JuegoDRM.Steam || drm == JuegoDRM.NoEspecificado));
 					}
 				}
 			}
@@ -342,13 +332,7 @@ namespace Herramientas
 
 					if (deseadosGog?.Count > 0)
 					{
-						foreach (var deseado in deseadosGog)
-						{
-							if (juego.IdGog.ToString() == deseado && (drm == JuegoDRM.GOG || drm == JuegoDRM.NoEspecificado))
-							{
-								return true;
-							}
-						}
+						return deseadosGog.Any(d => d == juego.IdGog.ToString() && (drm == JuegoDRM.GOG || drm == JuegoDRM.NoEspecificado));
 					}
 				}
 			}
@@ -381,28 +365,13 @@ namespace Herramientas
 
 				if (deseadosWeb?.Count > 0)
 				{
-					foreach (var deseado in deseadosWeb)
+					if (usarIdMaestra == false)
 					{
-						if (usarIdMaestra == false)
-						{
-							if (juego.Id == int.Parse(deseado.IdBaseDatos))
-							{
-								if (drm == deseado.DRM || drm == JuegoDRM.NoEspecificado)
-								{
-									return true;
-								}
-							}
-						}
-						else
-						{
-							if (juego.IdMaestra == int.Parse(deseado.IdBaseDatos))
-							{
-								if (drm == deseado.DRM || drm == JuegoDRM.NoEspecificado)
-								{
-									return true;
-								}
-							}
-						}
+						return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && (drm == d.DRM || drm == JuegoDRM.NoEspecificado));
+					}
+					else
+					{
+						return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.IdMaestra && (drm == d.DRM || drm == JuegoDRM.NoEspecificado));
 					}
 				}
 			}
@@ -412,6 +381,8 @@ namespace Herramientas
 
 		public static bool ComprobarSiEsta(string deseadosSteamEnBruto, string deseadosWebEnBruto, string deseadosGogEnBruto, Juego juego, JuegoDRM drm = JuegoDRM.NoEspecificado, bool usarIdMaestra = false)
 		{
+			bool resultado = false;
+
 			if (usarIdMaestra == true && juego.IdMaestra == 0)
 			{
 				juego.IdMaestra = juego.Id;
@@ -428,20 +399,13 @@ namespace Herramientas
 						deseadosSteam = Listados.Generar(deseadosSteamEnBruto);
 					}
 
-					if (deseadosSteam != null)
+					if (deseadosSteam?.Count > 0)
 					{
-						if (deseadosSteam.Count > 0)
+						resultado = deseadosSteam.Any(d => d == juego.IdSteam.ToString() && (drm == JuegoDRM.Steam || drm == JuegoDRM.NoEspecificado));
+					
+						if (resultado == true)
 						{
-							foreach (var deseado in deseadosSteam)
-							{
-								if (juego.IdSteam > 0)
-								{
-									if (juego.IdSteam.ToString() == deseado && (drm == JuegoDRM.Steam || drm == JuegoDRM.NoEspecificado))
-									{
-										return true;
-									}
-								}
-							}
+							return true;
 						}
 					}
 				}
@@ -458,23 +422,19 @@ namespace Herramientas
 						deseadosGog = Listados.Generar(deseadosGogEnBruto);
 					}
 
-					if (deseadosGog != null)
+					if (deseadosGog?.Count > 0)
 					{
-						if (deseadosGog.Count > 0)
+						resultado = deseadosGog.Any(d => d == juego.IdGog.ToString() && (drm == JuegoDRM.GOG || drm == JuegoDRM.NoEspecificado));
+
+						if (resultado == true)
 						{
-							foreach (var deseado in deseadosGog)
-							{
-								if (juego.IdGog.ToString() == deseado && (drm == JuegoDRM.GOG || drm == JuegoDRM.NoEspecificado))
-								{
-									return true;
-								}
-							}
+							return true;
 						}
 					}
 				}
 			}
 
-			if (juego.Id > 0)
+			if (juego.Id > 0 || juego.IdMaestra > 0)
 			{
 				List<JuegoDeseado> deseadosWeb = new List<JuegoDeseado>();
 
@@ -483,33 +443,15 @@ namespace Herramientas
 					deseadosWeb = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosWebEnBruto);
 				}
 
-				if (deseadosWeb != null)
+				if (deseadosWeb?.Count > 0)
 				{
-					if (deseadosWeb.Count > 0)
+					if (usarIdMaestra == false)
 					{
-						foreach (var deseado in deseadosWeb)
-						{
-							if (usarIdMaestra == false)
-							{
-								if (juego.Id == int.Parse(deseado.IdBaseDatos))
-								{
-									if (drm == deseado.DRM || drm == JuegoDRM.NoEspecificado)
-									{
-										return true;
-									}
-								}
-							}
-							else
-							{
-								if (juego.IdMaestra == int.Parse(deseado.IdBaseDatos))
-								{
-									if (drm == deseado.DRM || drm == JuegoDRM.NoEspecificado)
-									{
-										return true;
-									}
-								}
-							}
-						}
+						return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && (drm == d.DRM || drm == JuegoDRM.NoEspecificado));
+					}
+					else
+					{
+						return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.IdMaestra && (drm == d.DRM || drm == JuegoDRM.NoEspecificado));
 					}
 				}
 			}
@@ -526,33 +468,15 @@ namespace Herramientas
 				deseadosWeb = JsonSerializer.Deserialize<List<JuegoDeseado>>(deseadosWebEnBruto);
 			}
 
-			if (deseadosWeb != null)
+			if (deseadosWeb?.Count > 0)
 			{
-				if (deseadosWeb.Count > 0)
+				if (usarIdMaestra == false)
 				{
-					foreach (var deseado in deseadosWeb)
-					{
-						if (usarIdMaestra == false)
-						{
-							if (juego.Id == int.Parse(deseado.IdBaseDatos))
-							{
-								if (drm == deseado.DRM)
-								{
-									return true;
-								}
-							}
-						}
-						else
-						{
-							if (juego.IdMaestra == int.Parse(deseado.IdBaseDatos))
-							{
-								if (drm == deseado.DRM)
-								{
-									return true;
-								}
-							}
-						}
-					}
+					return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
+				}
+				else
+				{
+					return deseadosWeb.Any(d => int.Parse(d.IdBaseDatos) == juego.IdMaestra && d.DRM == drm);
 				}
 			}
 
@@ -576,13 +500,7 @@ namespace Herramientas
 
 				if (deseados.Count > 0)
 				{
-					foreach (var deseado in deseados)
-					{
-						if (int.Parse(deseado.IdBaseDatos) == juego.Id && deseado.DRM == drm)
-						{
-							añadir = false;
-						}
-					}
+					añadir = !deseados.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
 				}
 
 				if (añadir == true)
@@ -602,25 +520,19 @@ namespace Herramientas
 
 				if (deseados.Count > 0)
 				{
-					for (int i = 0; i < deseados.Count; i += 1)
-					{
-						if (int.Parse(deseados[i].IdBaseDatos) == juego.Id && deseados[i].DRM == drm)
-						{
-							posicion = i;
-						}
-					}
-				}
+					posicion = deseados.FindIndex(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
 
-				if (posicion >= 0)
-				{
-					deseados.RemoveAt(posicion);
+					if (posicion >= 0)
+					{
+						deseados.RemoveAt(posicion);
+					}
 				}
 
 				global::BaseDatos.Usuarios.Actualizar.Opcion("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
 			}
 		}
 
-		public static List<JuegoTieneDesea> CambiarEstado(List<JuegoTieneDesea> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
+		public static void CambiarEstado(List<JuegoTieneDesea> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
 		{
 			List<JuegoDeseado> deseados = new List<JuegoDeseado>();
 
@@ -637,13 +549,7 @@ namespace Herramientas
 
 				if (deseados.Count > 0)
 				{
-					foreach (var deseado in deseados)
-					{
-						if (int.Parse(deseado.IdBaseDatos) == juego.Id && deseado.DRM == drm)
-						{
-							añadir = false;
-						}
-					}
+					añadir = !deseados.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
 				}
 
 				if (añadir == true)
@@ -656,13 +562,7 @@ namespace Herramientas
 
 					if (usuarioTieneDesea?.Count > 0)
 					{
-						foreach (var desea in usuarioTieneDesea)
-						{
-							if (desea.DRM == drm)
-							{
-								desea.Desea = true;
-							}
-						}
+						usuarioTieneDesea.Where(u => u.DRM == drm).ToList().ForEach(d => d.Desea = true);
 					}
 					else
 					{
@@ -683,35 +583,21 @@ namespace Herramientas
 
 				if (deseados.Count > 0)
 				{
-					for (int i = 0; i < deseados.Count; i += 1)
-					{
-						if (int.Parse(deseados[i].IdBaseDatos) == juego.Id && deseados[i].DRM == drm)
-						{
-							posicion = i;
-						}
-					}
-				}
+					posicion = deseados.FindIndex(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
 
-				if (posicion >= 0)
-				{
-					deseados.RemoveAt(posicion);
+					if (posicion >= 0)
+					{
+						deseados.RemoveAt(posicion);
+					}
 				}
 
 				global::BaseDatos.Usuarios.Actualizar.Opcion("Wishlist", JsonSerializer.Serialize(deseados), usuarioId);
 
 				if (usuarioTieneDesea != null)
 				{
-					foreach (var desea in usuarioTieneDesea)
-					{
-						if (desea.DRM == drm)
-						{
-							desea.Desea = false;
-						}
-					}
+					usuarioTieneDesea.Where(u => u.DRM == drm).ToList().ForEach(d => d.Desea = false);
 				}
 			}
-
-			return usuarioTieneDesea;
 		}
 	}
 }

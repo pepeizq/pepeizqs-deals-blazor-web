@@ -1,0 +1,273 @@
+﻿@using Juegos
+@using pepeizqs_deals_web.Data
+
+@if (curators?.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+{
+    foreach (var curator in curators)
+    {
+        List<int> juegosSteam = curator.Curator.SteamIds;
+
+        if (juegosSteam?.Count > 0)
+        {
+            if (curator.JuegosMostrar?.Count > 0)
+            {
+                <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-juego-contenido">
+                    <div class="caja-juego-titulo" style="display: flex; align-items: center; gap: 20px;">
+                        <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Curator.Imagen, 60, 60)" alt="@curator.Curator.Nombre" style="width: 60px; height: 60px;" loading="lazy" />
+
+                        <a href="/curator/@curator.Curator.Slug.ToLower()/" target="_blank" style="text-decoration: none;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="font-size: 18px;">
+                                    @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String89", "Game"), curator.Curator.Nombre)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div style="padding: 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+                        @if (juegosSteam?.Count > 0)
+                        {
+                            <button @onclick="@(e => CuratorAtras(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; left: -80px;" title="Back">
+                                <div style="max-width: 24px;">
+                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                                    </svg>
+                                </div>
+                            </button>
+                        }
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; width: 100%;">
+                            @foreach (var juegoCurator in curator.JuegosMostrar)
+                            {
+                                <CajaJuego idCurator="@curator.Curator.Id" idioma="@idioma" juego="@juegoCurator" juegosUsuario="@juegosUsuario" usuarioDeseadosSteam="@deseadosUsuario?.SteamWishlist" usuarioDeseadosWeb="@deseadosUsuario?.Wishlist" usuarioDeseadosGog="@deseadosUsuario?.GogWishlist" tipo="CajaJuego.Tipo.CuratorJuego" userAgent="@userAgent" />
+                            }
+                        </div>
+
+                        @if (juegosSteam?.Count > 0)
+                        {
+                            <button @onclick="@(e => CuratorAdelante(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; right: -80px;" title="Next">
+                                <div style="max-width: 24px;">
+                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                        <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                                    </svg>
+                                </div>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div id="curator-@curator.Curator.IdSteam.ToString()" class="caja-juego-contenido">
+                <div class="caja-juego-titulo" style="display: flex; align-items: center; gap: 20px;">
+                    <img src="@Herramientas.Ficheros.Imagenes.ServidorExterno(curator.Curator.Imagen, 60, 60)" alt="@curator.Curator.Nombre" style="width: 60px; height: 60px;" loading="lazy" />
+
+                    <a href="/curator/@curator.Curator.Slug.ToLower()/" target="_blank" style="text-decoration: none;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="font-size: 18px;">
+                                @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String89", "Game"), curator.Curator.Nombre)
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+
+    #nullable disable
+
+    [Parameter]
+    public string usuarioId { get; set; }
+
+    [Parameter]
+    public string idioma { get; set; }
+
+    [Parameter]
+    public string userAgent { get; set; }
+
+    [Parameter]
+    public Juego juego { get; set; }
+
+    [Parameter]
+    public Herramientas.UsuarioListadosJuegos juegosUsuario { get; set; }
+
+    [Parameter]
+    public Usuario deseadosUsuario { get; set; }
+
+    [PersistentState] public List<global::BaseDatos.Curators.CuratorFicha> curators { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool primerRender)
+    {
+        if (primerRender == true)
+        {
+            List<string> curatorsBuscar = new List<string>();
+
+            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+            {
+                if (juego.Caracteristicas != null)
+                {
+                    if (juego.Caracteristicas.Desarrolladores2?.Count > 0)
+                    {
+                        juego.Caracteristicas.Desarrolladores2.ForEach(x =>
+                        {
+                            if (x.Id > 0)
+                            {
+                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(x.Id.ToString());
+                                }
+                            }
+                        });
+                    }
+
+                    if (juego.Caracteristicas.Editores2?.Count > 0)
+                    {
+                        juego.Caracteristicas.Editores2.ForEach(x =>
+                        {
+                            if (x.Id > 0)
+                            {
+                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(x.Id.ToString());
+                                }
+                            }
+                        });
+                    }
+
+                    if (juego.Caracteristicas.Franquicias?.Count > 0)
+                    {
+                        juego.Caracteristicas.Franquicias.ForEach(x =>
+                        {
+                            if (x.Id > 0)
+                            {
+                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+
+                                if (añadir == true)
+                                {
+                                    curatorsBuscar.Add(x.Id.ToString());
+                                }
+                            }
+                        });
+                    }
+                }
+
+                if (curatorsBuscar?.Count > 0)
+                {
+                    curatorsBuscar.ForEach(async (c) =>
+                    {
+                        if (string.IsNullOrEmpty(c) == false)
+                        {
+                            global::BaseDatos.Curators.Curator curator2 = global::BaseDatos.Curators.Buscar.Uno(int.Parse(c));
+
+                            if (curator2 == null)
+                            {
+                                global::BaseDatos.Curators.Insertar.Ejecutar(await APIs.Steam.Curator.Extraer(c));
+                            }
+                            else
+                            {
+                                if (curator2.Fecha == null)
+                                {
+                                    global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
+                                }
+                                else
+                                {
+                                    if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(180))
+                                    {
+                                        global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
+                                    }
+                                }
+
+                                global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
+                                ficha.Curator = curator2;
+                                ficha.Posicion = 0;
+                                ficha.JuegosMostrar = new List<Juego>();
+
+                                bool añadir = true;
+
+                                if (curators == null)
+                                {
+                                    curators = new List<global::BaseDatos.Curators.CuratorFicha>();
+                                }
+                                else
+                                {
+                                    añadir = !curators.Any(c => c.Curator.Id == ficha.Curator.Id);
+                                }
+
+                                if (añadir == true)
+                                {
+                                    curators.Add(ficha);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (curators?.Count > 0)
+                {
+                    curators.ForEach(c =>
+                    {
+                        List<int> juegosSteam = c.Curator.SteamIds;
+
+                        int posicionBorrar = -1;
+
+                        if (juegosSteam?.Count > 0)
+                        {
+                            posicionBorrar = juegosSteam.FindIndex(c => c == juego.IdSteam);
+
+                            if (posicionBorrar > -1)
+                            {
+                                juegosSteam.RemoveAt(posicionBorrar);
+                            }
+                        }
+
+                        if (juegosSteam?.Count > 0)
+                        {
+                            c.Curator.SteamIds = BaseDatos.Juegos.Buscar.MultiplesJuegosSteamOrdenado(juegosSteam);
+                            c.JuegosMostrar = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(c.Curator.SteamIds.GetRange(c.Posicion, 4));
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private async void CuratorAtras(MouseEventArgs e, global::BaseDatos.Curators.CuratorFicha curator)
+    {
+        curator.Posicion = curator.Posicion - 4;
+
+        if (curator.Posicion < -3)
+        {
+            curator.Posicion = curator.Curator.SteamIds.Count - 4;
+        }
+        else if (curator.Posicion < 0)
+        {
+            curator.Posicion = 0;
+        }
+
+        curator.JuegosMostrar = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.Curator.SteamIds.GetRange(curator.Posicion, 4));
+    }
+
+    private void CuratorAdelante(MouseEventArgs e, global::BaseDatos.Curators.CuratorFicha curator)
+    {
+        curator.Posicion = curator.Posicion + 4;
+
+        if (curator.Posicion > curator.Curator.SteamIds.Count - 1)
+        {
+            curator.Posicion = 0;
+        }
+        else if (curator.Posicion > curator.Curator.SteamIds.Count - 3)
+        {
+            curator.Posicion = curator.Curator.SteamIds.Count - 4;
+        }
+
+        curator.JuegosMostrar = global::BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(curator.Curator.SteamIds.GetRange(curator.Posicion, 4));
+    }
+}

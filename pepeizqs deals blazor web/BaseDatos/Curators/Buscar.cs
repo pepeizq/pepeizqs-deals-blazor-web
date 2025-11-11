@@ -157,7 +157,8 @@ namespace BaseDatos.Curators
 
 	public class CuratorFicha
 	{
-		public Curator Curator;
-		public int Posicion;
+		public Curator Curator { get; set; }
+		public int Posicion { get; set; }
+		public List<global::Juegos.Juego> JuegosMostrar { get; set; }
 	}
 }

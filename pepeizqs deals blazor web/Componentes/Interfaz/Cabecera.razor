@@ -443,7 +443,7 @@
                             string enlace = "/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/";
                         }
 
-                        <button @onclick="(e => AbrirEnlace(e, enlace, false))" @oncontextmenu="(e => CopiarAlClipboard(e, enlace))" class="boton-pequeño" style="cursor: pointer; padding: 0px; @fondoColor">
+                        <a href="@enlace" @onclick="(e => AbrirEnlace(e, enlace, false))" class="boton-pequeño" style="cursor: pointer; padding: 0px; @fondoColor">
                             <div class="perfil-flexible-centrado">
                                 <div>
                                     <img src="@juego.Imagenes.Header_460x215" style="@imagen" />
@@ -459,7 +459,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </button>
+                        </a>
                     </div>
                 }
             </div>

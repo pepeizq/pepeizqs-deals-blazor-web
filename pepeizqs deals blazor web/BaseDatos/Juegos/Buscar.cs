@@ -746,30 +746,27 @@ namespace BaseDatos.Juegos
 			List<Juego> juegos = new List<Juego>();
 			string sqlBuscar = string.Empty;
 
-			if (ids != null)
+			if (ids?.Count > 0)
 			{
-				if (ids.Count > 0)
+				sqlBuscar = "SELECT * FROM juegos WHERE idSteam IN (";
+
+				int i = 0;
+				while (i < ids.Count)
 				{
-					sqlBuscar = "SELECT * FROM juegos WHERE idSteam IN (";
-
-					int i = 0;
-					while (i < ids.Count)
+					if (i == 0)
 					{
-						if (i == 0)
-						{
-							sqlBuscar = sqlBuscar + "'" + ids[i] + "'";
-						}
-						else
-						{
-							sqlBuscar = sqlBuscar + ", '" + ids[i] + "'";
-						}
-
-						i += 1;
+						sqlBuscar = sqlBuscar + "'" + ids[i] + "'";
+					}
+					else
+					{
+						sqlBuscar = sqlBuscar + ", '" + ids[i] + "'";
 					}
 
-					sqlBuscar = sqlBuscar + ")";
-					sqlBuscar = sqlBuscar + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+					i += 1;
 				}
+
+				sqlBuscar = sqlBuscar + ")";
+				sqlBuscar = sqlBuscar + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
 			}
 
 			if (string.IsNullOrEmpty(sqlBuscar) == false)
@@ -795,6 +792,63 @@ namespace BaseDatos.Juegos
 							Juego juego = new Juego();
 							juego = Cargar(juego, lector);
 							juegos.Add(juego);
+						}
+					}
+				}
+			}
+
+			return juegos;
+		}
+
+		public static List<int> MultiplesJuegosSteamOrdenado(List<int> ids, SqlConnection conexion = null)
+		{
+			List<int> juegos = new List<int>();
+			string sqlBuscar = string.Empty;
+
+			if (ids?.Count > 0)
+			{
+				sqlBuscar = "SELECT idSteam FROM juegos WHERE idSteam IN (";
+
+				int i = 0;
+				while (i < ids.Count)
+				{
+					if (i == 0)
+					{
+						sqlBuscar = sqlBuscar + "'" + ids[i] + "'";
+					}
+					else
+					{
+						sqlBuscar = sqlBuscar + ", '" + ids[i] + "'";
+					}
+
+					i += 1;
+				}
+
+				sqlBuscar = sqlBuscar + ")";
+				sqlBuscar = sqlBuscar + " ORDER BY CASE\r\n WHEN analisis = 'null' OR analisis IS NULL THEN 0 ELSE CONVERT(int, REPLACE(JSON_VALUE(analisis, '$.Cantidad'),',',''))\r\n END DESC";
+			}
+
+			if (string.IsNullOrEmpty(sqlBuscar) == false)
+			{
+				if (conexion == null)
+				{
+					conexion = Herramientas.BaseDatos.Conectar();
+				}
+				else
+				{
+					if (conexion.State != System.Data.ConnectionState.Open)
+					{
+						conexion = Herramientas.BaseDatos.Conectar();
+					}
+				}
+
+				using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+				{
+					using (SqlDataReader lector = comando.ExecuteReader())
+					{
+						while (lector.Read())
+						{
+							juegos.Add(lector.GetInt32(0));
 						}
 					}
 				}

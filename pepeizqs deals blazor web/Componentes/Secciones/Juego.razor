@@ -491,6 +491,33 @@
                                             }
                                         }
                                     }
+
+                                    @if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
+                                    {
+                                        if (juego.FreeToPlay.ToLower() == "true")
+                                        {
+                                            <div style="font-size: 14px; padding: 5px 10px; background-color: var(--fondoOscuro); box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5),0px 0px 1px 0px rgba(0, 0, 0, 0.5);">
+                                                @Herramientas.Idiomas.BuscarTexto(idioma, "String103", "Game")
+                                            </div>
+                                        }
+                                    }
+
+                                    @if (string.IsNullOrEmpty(juego.MayorEdad) == false)
+                                    {
+                                        if (juego.MayorEdad.ToLower() == "true")
+                                        {
+                                            <div style="font-size: 14px; padding: 5px 10px; background-color: var(--fondoOscuro); box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5),0px 0px 1px 0px rgba(0, 0, 0, 0.5);">
+                                                @Herramientas.Idiomas.BuscarTexto(idioma, "String105", "Game")
+                                            </div>                                            
+                                        }
+                                    }
+
+                                    @if (juego.InteligenciaArtificial == true)
+                                    {
+                                        <div style="font-size: 14px; padding: 5px 10px; background-color: var(--fondoOscuro); box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5),0px 0px 1px 0px rgba(0, 0, 0, 0.5);">
+                                            @Herramientas.Idiomas.BuscarTexto(idioma, "String106", "Game")
+                                        </div>    
+                                    }
                                 </div>
                             }
                         </div>
@@ -642,54 +669,6 @@
                     }
                 </div>
             </div>
-
-            @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
-            {
-                if (avisos.Count > 0)
-                {
-                    int contadorAvisos = 0;
-
-                    <div class="caja-juego-contenido" style="display: flex; flex-direction: column; padding: 10px;">
-                        @foreach (var aviso in avisos)
-                        {
-                            <div style="display: flex; align-items: center; gap: 30px;">
-                                <div style="width: 25%;">
-                                    @if (string.IsNullOrEmpty(aviso.Enlace) == false)
-                                    {
-                                        string avisoEnlaceNuevaPestaña = "_self";
-
-                                        if (aviso.EnlaceNuevaPestaña == true)
-                                        {
-                                            avisoEnlaceNuevaPestaña = "_blank";
-                                        }
-
-                                        <a class="boton-pequeño" style="text-align: center; padding: 10px 30px; text-decoration: none; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);" href="@aviso.Enlace" target="@avisoEnlaceNuevaPestaña">
-                                            <div>@aviso.Titulo</div>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <div class="boton-pequeño" style="text-align: center; padding: 10px 30px; border-radius: 5px; border: 1px solid var(--fondoBotonPequeño); background-color: var(--@aviso.Color);">
-                                            <div>@aviso.Titulo</div>
-                                        </div>
-                                    }
-                                </div>
-
-                                <div style="width: 75%;">
-                                    @aviso.Contenido
-                                </div>
-                            </div>
-
-                            contadorAvisos += 1;
-
-                            if (contadorAvisos < avisos.Count)
-                            {
-                                <hr/>
-                            }
-                        }
-                    </div>
-                }
-            }
 
             @foreach (DRM drm in JuegoDRM2.GenerarListado())
             {
@@ -3767,83 +3746,6 @@
                 drmsBoosteroid ??= global::BaseDatos.Streaming.Buscar.DRMs("boosteroid", juego.Id);
             }
 
-            #region Avisos 
-
-            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
-            {
-                avisos.Clear();
-
-                if (juego.Tipo == JuegoTipo.Game)
-                {
-                    if (string.IsNullOrEmpty(juego.FreeToPlay) == false)
-                    {
-                        if (juego.FreeToPlay.ToLower() == "true")
-                        {
-                            avisos.Add(new JuegoAviso
-                            {
-                                Id = "f2p",
-                                Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String1", "GameMessages"),
-                                Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String2", "GameMessages"),
-                                Color = "fondoBotonPequeño",
-                                Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false),
-                                EnlaceNuevaPestaña = true
-                            });
-                        }
-                    }
-                }
-
-                if (string.IsNullOrEmpty(juego.MayorEdad) == false)
-                {
-                    if (juego.MayorEdad.ToLower() == "true")
-                    {
-                        string cadenaSexo = null;
-
-                        if (juego.Tipo == JuegoTipo.Game)
-                        {
-                            cadenaSexo = "String4";
-                        }
-                        else if (juego.Tipo == JuegoTipo.DLC)
-                        {
-                            cadenaSexo = "String5";
-                        }
-
-                        string contenidoSexo = Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages");
-
-                        if (string.IsNullOrEmpty(usuarioId) == true)
-                        {
-                            contenidoSexo = string.Format("{0} {1}", Herramientas.Idiomas.BuscarTexto(idioma, cadenaSexo, "GameMessages"), Herramientas.Idiomas.BuscarTexto(idioma, "String6", "GameMessages"));
-                        }
-
-                        avisos.Add(new JuegoAviso
-                        {
-                            Id = "sexo",
-                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String3", "GameMessages"),
-                            Contenido = contenidoSexo,
-                            Color = "fondoAlerta"
-                        });      
-                    }
-                }
-
-                if (juego.Tipo == JuegoTipo.Game)
-                {
-                    if (juego.InteligenciaArtificial == true)
-                    {
-                        avisos.Add(new JuegoAviso
-                        {
-                            Id = "ia",
-                            Titulo = Herramientas.Idiomas.BuscarTexto(idioma, "String7", "GameMessages"),
-                            Contenido = Herramientas.Idiomas.BuscarTexto(idioma, "String8", "GameMessages"),
-                            Color = "fondoBotonPequeño",
-                            Enlace = Herramientas.EnlaceAcortador.Generar("https://store.steampowered.com/app/" + juego.IdSteam.ToString(), APIs.Steam.Tienda.Generar().Id, usuarioPatreon, false),
-                            EnlaceNuevaPestaña = true
-                        });
-                    }
-                }
-
-            }
-
-            #endregion
-
             if (string.IsNullOrEmpty(usuarioId) == false && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
                 usuarioTieneDesea ??= GenerarTieneDesea();
@@ -5815,22 +5717,6 @@
     private void RVCerrar(MouseEventArgs e)
     {
         enseñarRV = false;
-    }
-
-    #endregion
-
-    #region Avisos
-
-    public List<JuegoAviso> avisos = new List<JuegoAviso>();
-
-    public class JuegoAviso
-    {
-        public string Id { get; set; }
-        public string Titulo { get; set; }
-        public string Contenido { get; set; }
-        public string Color { get; set; }
-        public string Enlace { get; set; }
-        public bool EnlaceNuevaPestaña { get; set; }
     }
 
     #endregion

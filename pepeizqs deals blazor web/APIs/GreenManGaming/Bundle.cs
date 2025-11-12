@@ -1,6 +1,5 @@
 ﻿namespace APIs.GreenManGaming
 {
-
 	public static class Bundle
 	{
         public static Bundles2.Bundle Generar()

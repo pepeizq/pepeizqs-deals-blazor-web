@@ -10,7 +10,8 @@ namespace Bundles2
 		JingleJam,
 		IndieGala,
 		Itchio,
-        GreenManGaming
+        GreenManGaming,
+		Digiphile
     }
 
 	public class BundlesCargar
@@ -25,7 +26,8 @@ namespace Bundles2
 				APIs.JingleJam.Bundle.Generar(),
 				APIs.IndieGala.Bundle.Generar(),
 				APIs.itchio.Bundle.Generar(),
-				APIs.GreenManGaming.Bundle.Generar()
+				APIs.GreenManGaming.Bundle.Generar(),
+				APIs.Digiphile.Bundle.Generar()
             };
 
 			return bundles;

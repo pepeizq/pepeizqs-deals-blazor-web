@@ -25,7 +25,7 @@
                     </div>
 
                     <div style="padding: 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-                        @if (juegosSteam?.Count > 0)
+                        @if (juegosSteam?.Count > 4)
                         {
                             <button @onclick="@(e => CuratorAtras(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; left: -80px;" title="Back">
                                 <div style="max-width: 24px;">
@@ -43,7 +43,7 @@
                             }
                         </div>
 
-                        @if (juegosSteam?.Count > 0)
+                        @if (juegosSteam?.Count > 4)
                         {
                             <button @onclick="@(e => CuratorAdelante(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; right: -80px;" title="Next">
                                 <div style="max-width: 24px;">
@@ -231,7 +231,15 @@
                         if (juegosSteam?.Count > 0)
                         {
                             c.Curator.SteamIds = BaseDatos.Juegos.Buscar.MultiplesJuegosSteamOrdenado(juegosSteam);
-                            c.JuegosMostrar = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(c.Curator.SteamIds.GetRange(c.Posicion, 4));
+
+                            int cantidad = 4;
+
+                            if (c.Curator.SteamIds.Count < 4)
+                            {
+                                cantidad = c.Curator.SteamIds.Count;
+                            }
+
+                            c.JuegosMostrar = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(c.Curator.SteamIds.GetRange(c.Posicion, cantidad));
                         }
                     });
                 }

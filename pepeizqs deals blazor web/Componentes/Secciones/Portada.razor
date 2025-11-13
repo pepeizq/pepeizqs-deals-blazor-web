@@ -1484,8 +1484,7 @@
 
 	#region Noticias
 
-	[PersistentState]
-	public List<Noticias.Noticia> noticias { get; set; }
+	[PersistentState] public List<Noticias.Noticia> noticias { get; set; }
 
 	private PeriodicTimer cronometroNoticias = null;
 	private int cronometroNoticiasContador = 0;
@@ -1543,7 +1542,7 @@
 			estado = false;
 		}
 
-		Herramientas.Deseados.CambiarEstado(usuarioId, juego.Juego, estado, drm);
+		Herramientas.Deseados.CambiarEstado(usuarioId, juego.Juego, estado, drm, false);
 
 		foreach (var juego2 in juegosDestacadosMostrar)
 		{

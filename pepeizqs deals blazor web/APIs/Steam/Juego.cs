@@ -783,7 +783,7 @@ namespace APIs.Steam
 			return 0;
 		}
 
-		public static async Task<SteamAnalisisAPI> CargarDatosAnalisis(int id2, string idioma)
+		public static async Task<SteamAnalisisAPI> CargarDatosReseñas(int id2, string idioma)
 		{
 			string id = id2.ToString();
 
@@ -1418,7 +1418,7 @@ namespace APIs.Steam
 
 	#endregion
 
-	#region Clases Analisis
+	#region Clases Reseñas
 
 	public class SteamAnalisisAPI
 	{
@@ -1426,7 +1426,7 @@ namespace APIs.Steam
 		public SteamAnalisisAPISumario Sumario { get; set; }
 
 		[JsonPropertyName("reviews")]
-		public List<SteamAnalisisAPIAnalisis> Analisis { get; set; }
+		public List<SteamAnalisisAPIAnalisis> Reseñas { get; set; }
 	}
 
 	public class SteamAnalisisAPISumario

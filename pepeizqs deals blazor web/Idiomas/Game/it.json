@@ -1,6 +1,6 @@
 {
   "String1": "Apri dentro",
-  "String2": "Dati presi da Steam",
+  "String2": "Percentuale e numero di recensioni su Steam",
   "String3": "È già nella tua lista dei desideri",
   "String4": "Aggiungi alla lista dei desideri",
   "String5": "Hai già questo gioco su {0}",
@@ -104,5 +104,13 @@
   "String103": "Libero di giocare",
   "String104": "Dettagli del gioco su pepeizqdeals.com",
   "String105": "Contenuti sessuali",
-  "String106": "AI"
+  "String106": "AI",
+  "String107": "Numero di persone che giocano in questo momento su Steam",
+  "String108": "Nello sviluppo di questo gioco è stata utilizzata l'intelligenza artificiale",
+  "String109": "Questo gioco contiene contenuti di natura sessuale non adatti ai minori",
+  "String110": "Questo gioco è gratuito, ma potrebbe richiedere pagamenti aggiuntivi tramite DLC per goderti l'esperienza completa",
+  "String111": "Questo gioco richiede un dispositivo di realtà virtuale per giocare",
+  "String112": "Questo gioco è in accesso anticipato, il che significa che il suo sviluppo non è completo e mancherà di funzionalità",
+  "String113": "Prossimo",
+  "String114": "Indietro"
 }

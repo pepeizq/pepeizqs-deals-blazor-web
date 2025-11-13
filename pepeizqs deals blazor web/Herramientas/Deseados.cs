@@ -483,7 +483,7 @@ namespace Herramientas
 			return false;
 		}
 
-		public static void CambiarEstado(string usuarioId, Juego juego, bool estado, JuegoDRM drm)
+		public static void CambiarEstado(string usuarioId, Juego juego, bool estado, JuegoDRM drm, bool usarIdMaestra)
 		{
 			List<JuegoDeseado> deseados = new List<JuegoDeseado>();
 
@@ -500,13 +500,29 @@ namespace Herramientas
 
 				if (deseados.Count > 0)
 				{
-					añadir = !deseados.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
+					if (usarIdMaestra == false)
+					{
+						añadir = !deseados.Any(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
+					}
+					else
+					{
+						añadir = !deseados.Any(d => int.Parse(d.IdBaseDatos) == juego.IdMaestra && d.DRM == drm);
+					}
 				}
 
 				if (añadir == true)
 				{
 					JuegoDeseado deseado = new JuegoDeseado();
-					deseado.IdBaseDatos = juego.Id.ToString();
+
+					if (usarIdMaestra == false)
+					{
+						deseado.IdBaseDatos = juego.Id.ToString();
+					}
+					else
+					{
+						deseado.IdBaseDatos = juego.IdMaestra.ToString();
+					}
+
 					deseado.DRM = drm;
 
 					deseados.Add(deseado);
@@ -516,11 +532,18 @@ namespace Herramientas
 			}
 			else
 			{
-				int posicion = -1;
-
 				if (deseados.Count > 0)
 				{
-					posicion = deseados.FindIndex(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
+					int posicion = -1;
+
+					if (usarIdMaestra == false)
+					{
+						posicion = deseados.FindIndex(d => int.Parse(d.IdBaseDatos) == juego.Id && d.DRM == drm);
+					}
+					else
+					{
+						posicion = deseados.FindIndex(d => int.Parse(d.IdBaseDatos) == juego.IdMaestra && d.DRM == drm);
+					}
 
 					if (posicion >= 0)
 					{

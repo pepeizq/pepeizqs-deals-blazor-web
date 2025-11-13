@@ -281,7 +281,7 @@
 		idioma = datos.Idioma;
 		usuarioId = datos.UsuarioId;
 		userAgent = datos.UserAgent;
-        dominio = datos.Dominio;
+		dominio = datos.Dominio;
 
 		if (string.IsNullOrEmpty(usuarioId) == false)
 		{
@@ -333,7 +333,7 @@
 
 				if (juegosCurator.Count > 0)
 				{
-					foreach (var juegoCurator in juegosCurator)
+					juegosCurator.ForEach(juegoCurator =>
 					{
 						if (juegoCurator.Tipo == Juegos.JuegoTipo.Game)
 						{
@@ -356,7 +356,7 @@
 						{
 							juegosCuratorSoftware.Add(juegoCurator);
 						}
-					}
+					});
 
 					if (juegosCuratorJuegos.Count > 0)
 					{

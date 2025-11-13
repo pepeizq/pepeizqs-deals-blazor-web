@@ -96,7 +96,7 @@ namespace Herramientas
 			sb.Append(@"Sitemap: https://" + dominio + @"/sitemap.xml
 
 User-agent: *
-Disallow: /account/
+Disallow: /account/*
 Disallow: /link/*
 Disallow: /publisher/*
 Disallow: /es/*
@@ -110,8 +110,19 @@ Disallow: /6*
 Disallow: /7*
 Disallow: /8*
 Disallow: /9*
-
-Sitemap: https://" + dominio + @"/sitemap.xml
+Disallow: /*.apng$
+Disallow: /*.avif$
+Disallow: /*.gif$
+Disallow: /*.jpg$
+Disallow: /*.jpeg$
+Disallow: /*.png$
+Disallow: /*.svg$
+Disallow: /*.webp$
+Disallow: /*.bmp$
+Disallow: /*.ico$
+Disallow: /*.tiff$
+Disallow: /_framework/*
+Disallow: /_blazor/*
 ");
 
 			//sb.Append("User-agent: *\r\nDisallow: /");

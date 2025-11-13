@@ -27,13 +27,21 @@
                     <div style="padding: 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
                         @if (juegosSteam?.Count > 4)
                         {
-                            <button @onclick="@(e => CuratorAtras(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; left: -80px;" title="Back">
-                                <div style="max-width: 24px;">
-                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-                                    </svg>
+                            <div class="tooltip-juego" style="position: absolute; left: -80px;" onmousemove="enseñarTooltip(event, 'tooltip-curator-back-@curator.Curator.Id.ToString()')">
+                                <button @onclick="@(e => CuratorAtras(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String114", "Game")">
+                                    <div style="max-width: 24px;">
+                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <div id="tooltip-curator-back-@curator.Curator.Id.ToString()" class="tooltip-relleno">
+                                    <div style="margin: 8px; max-width: 300px; font-size: 14px;">
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String114", "Game")
+                                    </div>
                                 </div>
-                            </button>
+                            </div>
                         }
 
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; width: 100%;">
@@ -45,13 +53,21 @@
 
                         @if (juegosSteam?.Count > 4)
                         {
-                            <button @onclick="@(e => CuratorAdelante(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px; position: absolute; right: -80px;" title="Next">
-                                <div style="max-width: 24px;">
-                                    <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                        <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-                                    </svg>
+                            <div class="tooltip-juego" style="position: absolute; right: -80px;" onmousemove="enseñarTooltip(event, 'tooltip-curator-next-@curator.Curator.Id.ToString()')">
+                                <button @onclick="@(e => CuratorAdelante(e, curator))" class="boton-pequeño" style="width: auto; text-align: center; font-size: 23px; padding: 12px 15px;" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String113", "Game")">
+                                    <div style="max-width: 24px;">
+                                        <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <div id="tooltip-curator-next-@curator.Curator.Id.ToString()" class="tooltip-relleno">
+                                    <div style="margin: 8px; max-width: 300px; font-size: 14px;">
+                                        @Herramientas.Idiomas.BuscarTexto(idioma, "String113", "Game")
+                                    </div>
                                 </div>
-                            </button>
+                            </div>
                         }
                     </div>
                 </div>

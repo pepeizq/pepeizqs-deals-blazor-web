@@ -1,6 +1,6 @@
 {
   "String1": "Open in",
-  "String2": "Data taken from Steam",
+  "String2": "Percentage and number of reviews on Steam",
   "String3": "It's already on your Wishlist",
   "String4": "Add to Wishlist",
   "String5": "You already have this game on {0}",
@@ -104,5 +104,13 @@
   "String103": "Free to play",
   "String104": "Game details at pepeizqdeals.com",
   "String105": "Sexual content",
-  "String106": "AI"
+  "String106": "AI",
+  "String107": "Number of people playing right now on Steam",
+  "String108": "Artificial intelligence has been used in the development of this game",
+  "String109": "This game contains sexual content unsuitable for minors",
+  "String110": "This game is free to play, but may require additional payments through DLCs to enjoy the full experience",
+  "String111": "This game requires a virtual reality device to play",
+  "String112": "This game is in early access, which means its development is not complete and it will lack features",
+  "String113": "Next",
+  "String114": "Back"
 }

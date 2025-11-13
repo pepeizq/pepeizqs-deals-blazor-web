@@ -1,6 +1,6 @@
 {
   "String1": "Öffnen Sie in",
-  "String2": "Daten stammen von Steam",
+  "String2": "Prozentsatz und Anzahl der Bewertungen auf Steam",
   "String3": "Es ist bereits auf Ihrer Wunschliste",
   "String4": "Zur Wunschliste hinzufügen",
   "String5": "Sie haben dieses Spiel bereits auf {0}",
@@ -104,5 +104,13 @@
   "String103": "Kostenlos spielbar",
   "String104": "Spieldetails bei pepeizqdeals.com",
   "String105": "Sexuelle Inhalte",
-  "String106": "KI"
+  "String106": "KI",
+  "String107": "Anzahl der Leute, die gerade auf Steam spielen",
+  "String108": "Bei der Entwicklung dieses Spiels wurde künstliche Intelligenz eingesetzt",
+  "String109": "Dieses Spiel enthält sexuelle Inhalte, die für Minderjährige ungeeignet sind",
+  "String110": "Dieses Spiel kann kostenlos gespielt werden, es sind jedoch möglicherweise zusätzliche Zahlungen über DLCs erforderlich, um das volle Erlebnis genießen zu können",
+  "String111": "Zum Spielen dieses Spiels ist ein Virtual-Reality-Gerät erforderlich",
+  "String112": "Dieses Spiel befindet sich in der Early-Access-Phase, was bedeutet, dass die Entwicklung noch nicht abgeschlossen ist und es noch an Features mangelt",
+  "String113": "Nächste",
+  "String114": "Zurück"
 }

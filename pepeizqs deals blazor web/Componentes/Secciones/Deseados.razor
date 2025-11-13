@@ -344,7 +344,7 @@
 										string enlaceDeseado = Herramientas.EnlaceAcortador.Generar(juego.Precio.Enlace, juego.Precio.Tienda, usuarioPatreon, false);
 									}
 								
-									<button @onclick="(e => AbrirOferta(e, enlaceDeseado))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
+									<a href="@enlaceDeseado" target="_blank" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 										<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 											<div class="deseado-imagen">
 												@{
@@ -422,7 +422,7 @@
 												}
 											</div>
 										</div>
-									</button>
+									</a>
 
 									<AuthorizeView>
 										<Authorized>
@@ -457,7 +457,7 @@
 											string enlaceBundle = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, usuarioPatreon, false);
 
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<button @onclick="(e => AbrirOferta(e, enlaceBundle))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
+												<a href="@enlaceBundle" target="_blank" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{
@@ -533,7 +533,7 @@
 															</div>
 														</div>
 													</div>
-												</button>
+												</a>
 
 												<AuthorizeView>
 													<Authorized>
@@ -571,7 +571,7 @@
 											string enlaceSuscripcion = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, usuarioPatreon, false);
 
 											<div style="margin: 20px 0px; display: flex; align-items: center; position: relative;">
-												<button @onclick="(e => AbrirOferta(e, enlaceSuscripcion))" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
+												<a href="@enlaceSuscripcion" target="_blank" class="boton-pequeño" style="background: radial-gradient(ellipse at top left, var(--fondoBotonPequeño), var(--fondoOscuro)); padding: 2px;">
 													<div style="display: flex; align-items: stretch; justify-content: center; flex-direction: row;">
 														<div class="deseado-imagen">
 															@{
@@ -607,7 +607,7 @@
 															</div>
 														</div>
 													</div>
-												</button>
+												</a>
 
 												<AuthorizeView>
 													<Authorized>
@@ -951,7 +951,7 @@
 
 		if (juego != null)
 		{
-			Herramientas.Deseados.CambiarEstado(usuarioId, juego, false, drm);
+			Herramientas.Deseados.CambiarEstado(usuarioId, juego, false, drm, false);
 		}
 
 		if (deseadosOfertas.Count > 0)

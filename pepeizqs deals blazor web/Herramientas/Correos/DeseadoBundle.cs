@@ -35,7 +35,7 @@ namespace Herramientas.Correos
 							</head>
 							<body>
 								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
-									<div style=""display: flex; align-items: center; gap: 20px; color: #f5f5f5; background-color: #0d1621;"">
+									<div style=""display: flex; align-items: center; gap: 20px; color: #f5f5f5; background-color: #0d1621; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 										<img src=""{{imagenJuego}}"" style=""max-width: 200px;""/>
 				        
 										<div style=""padding: 10px; line-height: 25px;"">
@@ -44,13 +44,13 @@ namespace Herramientas.Correos
 									</div>
 
 									<div style=""margin-top: 40px;"">
-										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none;"">
+										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; text-align: left; font-size: 16px; border: 0px; text-decoration: none; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 											<img src=""{{imagenBundle}}"" style=""max-width: 100%; max-height: 100%;"" />
 										</a>
 									</div>
 
 									<div style=""margin-top: 20px;"">
-										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: center; border: 0px;"">
+										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; text-align: center; border: 0px; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 17px; margin: 15px;"">
 												{{mensajeAbrir}}
 											</div>
@@ -130,7 +130,7 @@ namespace Herramientas.Correos
 
 				foreach (var json in jsons)
 				{
-					string htmlJson = @"<div style=""margin-top: 20px; display: flex; align-content: center; align-items: center; justify-content: center; gap: 20px; color: #f5f5f5; background-color: #0d1621; padding: 20px;"">
+					string htmlJson = @"<div style=""margin-top: 20px; display: flex; align-content: center; align-items: center; justify-content: center; gap: 20px; color: #f5f5f5; background-color: #0d1621; padding: 20px; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 											<img src=""{{imagenJuego}}"" style=""max-width: 100%; max-height: 200px;"" />
 
 											<div>{{nombreJuego}}</div>
@@ -143,13 +143,13 @@ namespace Herramientas.Correos
 				}
 
 				html = html + @"<div style=""margin-top: 30px;"">
-									<a href=""{{enlaceBundle}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none;"">
+									<a href=""{{enlaceBundle}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 										<img src=""{{imagenBundle}}"" style=""max-width: 100%; max-height: 100%;"" />
 									</a>
 								</div>
 
 								<div style=""margin-top: 20px;"">
-									<a href=""{{enlaceBundle}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: center; border: 0px;"">
+									<a href=""{{enlaceBundle}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; text-align: center; border: 0px; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 										<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 17px; margin: 15px;"">
 											{{mensajeAbrir}}
 										</div>

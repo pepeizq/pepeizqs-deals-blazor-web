@@ -37,9 +37,8 @@ builder.Services.Configure<GzipCompressionProviderOptions>(opciones =>
 builder.Services.AddWebOptimizer(opciones => {
 	opciones.AddCssBundle("/css/bundle.css", new NUglify.Css.CssSettings
 	{
-		CommentMode = NUglify.Css.CssComment.None,
-
-	}, "lib/bootstrap/dist/css/bootstrap.css", "lib/bootstrap/dist/css/bootstrap-grid.css", "lib/bootstrap/dist/css/bootstrap-reboot.css", "lib/bootstrap/dist/css/bootstrap-utilities.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css");
+		CommentMode = NUglify.Css.CssComment.None
+	}, "lib/bootstrap/dist/css/bootstrap-utilities.css", "lib/bootstrap/dist/css/bootstrap.css", "lib/bootstrap/dist/css/bootstrap-grid.css", "lib/bootstrap/dist/css/bootstrap-reboot.css", "lib/bootstrap/dist/css/bootstrap-utilities.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css");
 
 	opciones.AddJavaScriptBundle("/superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.js");
 });

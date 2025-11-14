@@ -555,7 +555,7 @@ namespace Herramientas
 			}
 		}
 
-		public static void CambiarEstado(List<JuegoTieneDesea> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
+		public static List<JuegoTieneDesea> CambiarEstado(List<JuegoTieneDesea> usuarioTieneDesea, string usuarioId, Juego juego, bool estado, JuegoDRM drm)
 		{
 			List<JuegoDeseado> deseados = new List<JuegoDeseado>();
 
@@ -621,6 +621,8 @@ namespace Herramientas
 					usuarioTieneDesea.Where(u => u.DRM == drm).ToList().ForEach(d => d.Desea = false);
 				}
 			}
+
+			return usuarioTieneDesea;
 		}
 	}
 }

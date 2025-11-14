@@ -65,7 +65,7 @@
 
                                     if (string.IsNullOrEmpty(idiomaTraduccion) == false)
                                     {
-                                        @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Reviews"), idiomaTraduccion.ToLower())
+                                        @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String3", "Reviews"), idiomaTraduccion?.ToLower())
                                     }
                                 }
                             </div>
@@ -353,57 +353,56 @@
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
     {
-        if (primerRender == true)
+        if (primerRender == true && juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
-            if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+            cargado = false;
+
+            string idiomaSteam = "english";
+
+            if (string.IsNullOrEmpty(idioma) == false)
             {
-                cargado = false;
-
-                string idiomaSteam = "english";
-
-                if (string.IsNullOrEmpty(idioma) == false)
+                foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
                 {
-                    foreach (var idioma2 in Herramientas.Idiomas.ListadoIdiomasGenerar())
+                    if (idioma2.SteamReseñas == true)
                     {
-                        if (idioma2.SteamReseñas == true)
+                        if (idioma2.Id.ToLower() == idioma.ToLower())
                         {
-                            if (idioma2.Id.ToLower() == idioma.ToLower())
+                            idiomaSteam = idioma2.SteamAPI;
+                        }
+
+                        foreach (var codigo in idioma2.Codigos)
+                        {
+                            if (codigo.ToLower() == idioma.ToLower())
                             {
                                 idiomaSteam = idioma2.SteamAPI;
-                            }
-
-                            foreach (var codigo in idioma2.Codigos)
-                            {
-                                if (codigo.ToLower() == idioma.ToLower())
-                                {
-                                    idiomaSteam = idioma2.SteamAPI;
-                                }
                             }
                         }
                     }
                 }
+            }
 
-                idiomaReseñas = idiomaSteam;
+            idiomaReseñas = idiomaSteam;
 
-                if (BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
+            if (BaseDatos.Analisis.Buscar.DebeModificarse(juego.Id, idiomaSteam) == true)
+            {
+                APIs.Steam.SteamAnalisisAPI reseñas = await APIs.Steam.Juego.CargarDatosReseñas(juego.IdSteam, idiomaSteam);
+
+                if (reseñas?.Reseñas != null)
                 {
-                    APIs.Steam.SteamAnalisisAPI reseñas = await APIs.Steam.Juego.CargarDatosReseñas(juego.IdSteam, idiomaSteam);
+                    BaseDatos.Analisis.Insertar.Ejecutar(juego.Id, reseñas.Sumario.TotalPositivas, reseñas.Sumario.TotalNegativas, idiomaSteam, JsonSerializer.Serialize(reseñas.Reseñas));
 
-                    if (reseñas?.Reseñas != null)
-                    {
-                        BaseDatos.Analisis.Insertar.Ejecutar(juego.Id, reseñas.Sumario.TotalPositivas, reseñas.Sumario.TotalNegativas, idiomaSteam, JsonSerializer.Serialize(reseñas.Reseñas));
-
-                        reseñasAmpliadas = BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
-                    }
-                }
-                else
-                {
                     reseñasAmpliadas = BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
                 }
+            }
+            else
+            {
+                reseñasAmpliadas = BaseDatos.Analisis.Buscar.Cargar(juego.Id, idiomaSteam);
+            }
 
-                cargado = true;
-            }              
-        }
+            cargado = true;
+
+            await InvokeAsync(StateHasChanged);
+        }              
     }
 
     private async Task ReseñasIdioma(MouseEventArgs e, string idiomaSteam)

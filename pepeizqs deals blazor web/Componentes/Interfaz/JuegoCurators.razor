@@ -124,55 +124,52 @@
 
             if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
             {
-                if (juego.Caracteristicas != null)
+                if (juego.Caracteristicas?.Desarrolladores2?.Count > 0)
                 {
-                    if (juego.Caracteristicas.Desarrolladores2?.Count > 0)
+                    juego.Caracteristicas.Desarrolladores2.ForEach(x =>
                     {
-                        juego.Caracteristicas.Desarrolladores2.ForEach(x =>
+                        if (x.Id > 0)
                         {
-                            if (x.Id > 0)
+                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+
+                            if (añadir == true)
                             {
-                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
-
-                                if (añadir == true)
-                                {
-                                    curatorsBuscar.Add(x.Id.ToString());
-                                }
+                                curatorsBuscar.Add(x.Id.ToString());
                             }
-                        });
-                    }
+                        }
+                    });
+                }
 
-                    if (juego.Caracteristicas.Editores2?.Count > 0)
+                if (juego.Caracteristicas?.Editores2?.Count > 0)
+                {
+                    juego.Caracteristicas.Editores2.ForEach(x =>
                     {
-                        juego.Caracteristicas.Editores2.ForEach(x =>
+                        if (x.Id > 0)
                         {
-                            if (x.Id > 0)
+                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+
+                            if (añadir == true)
                             {
-                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
-
-                                if (añadir == true)
-                                {
-                                    curatorsBuscar.Add(x.Id.ToString());
-                                }
+                                curatorsBuscar.Add(x.Id.ToString());
                             }
-                        });
-                    }
+                        }
+                    });
+                }
 
-                    if (juego.Caracteristicas.Franquicias?.Count > 0)
+                if (juego.Caracteristicas?.Franquicias?.Count > 0)
+                {
+                    juego.Caracteristicas.Franquicias.ForEach(x =>
                     {
-                        juego.Caracteristicas.Franquicias.ForEach(x =>
+                        if (x.Id > 0)
                         {
-                            if (x.Id > 0)
-                            {
-                                bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
 
-                                if (añadir == true)
-                                {
-                                    curatorsBuscar.Add(x.Id.ToString());
-                                }
+                            if (añadir == true)
+                            {
+                                curatorsBuscar.Add(x.Id.ToString());
                             }
-                        });
-                    }
+                        }
+                    });
                 }
 
                 if (curatorsBuscar?.Count > 0)
@@ -259,7 +256,9 @@
                         }
                     });
                 }
-            }
+
+                await InvokeAsync(StateHasChanged);
+            }            
         }
     }
 

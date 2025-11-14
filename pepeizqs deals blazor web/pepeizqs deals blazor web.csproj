@@ -64,6 +64,7 @@
     <PackageReference Include="Telegram.Bot" Version="22.7.5" />
     <PackageReference Include="TweetinviAPI" Version="5.0.4" />
     <PackageReference Include="X.Bluesky" Version="2.0.7" />
+    <PackageReference Include="XiaoFengBlazor.VideoPlayer" Version="1.1.2023.1217" />
   </ItemGroup>
 
 </Project>

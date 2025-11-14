@@ -2766,7 +2766,7 @@
                                             </div>
                                         </a>
                                     }
-                                    else if (enlace.Contains("https://www.threads.net/") == true || enlace.Contains("https://threads.net/") == true)
+                                    else if (enlace.Contains("https://www.threads.net/") == true || enlace.Contains("https://threads.net/") == true || enlace.Contains("https://www.threads.com/") == true)
                                     {
                                         <a href="@enlace" target="_blank" class="boton-pequeño" title="Threads" style="width: fit-content; padding: 10px;">
                                             <div style="width: 30px; height: 30px; padding: 2px;">
@@ -2898,10 +2898,13 @@
                 }
             </div>
 
-            <JuegoCurators usuarioId="@usuarioId" idioma="@idioma" userAgent="@userAgent" juego="@juego" juegosUsuario="@juegosUsuario" deseadosUsuario="@deseadosUsuario"/>
+            @if (cargarComponentes == true)
+            {
+                <JuegoCurators usuarioId="@usuarioId" idioma="@idioma" userAgent="@userAgent" juego="@juego" juegosUsuario="@juegosUsuario" deseadosUsuario="@deseadosUsuario"/>
 
-            <JuegoReseñas usuarioId="@usuarioId" idioma="@idioma" userAgent="@userAgent" juego="@juego" usuarioAdmin="@usuarioAdmin" usuarioPatreon="@usuarioPatreon"/>
-
+                <JuegoReseñas usuarioId="@usuarioId" idioma="@idioma" userAgent="@userAgent" juego="@juego" usuarioAdmin="@usuarioAdmin" usuarioPatreon="@usuarioPatreon"/>
+            }  
+            
             @if (dlcs?.Count > 0)
             {
                 <div id="dlcs" class="caja-juego-contenido" style="background: color-mix(in srgb, var(--fondoSubsubcabecera), var(--fondoDlc) 70%);">
@@ -2912,7 +2915,7 @@
                     <div style="padding: 10px 30px; display: flex; flex-direction: column; gap: 20px;">
                         <Virtualize Context="dlc" Items="dlcs" ItemSize="107">
                             <ItemContent>
-                                 <CajaJuego juego="dlc" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoDLC" userAgent="@userAgent"/>
+                                <CajaJuego juego="dlc" idioma="@idioma" tipo="CajaJuego.Tipo.JuegoDLC" userAgent="@userAgent"/>
                             </ItemContent>
                         </Virtualize>
                     </div>
@@ -3483,11 +3486,13 @@
     [PersistentState] public List<Juegos.Juego> bandasSonoras { get; set; }
     [PersistentState] public List<Juegos.JuegoDRM> drmsGeforceNOW { get; set; }
     [PersistentState] public List<Juegos.JuegoDRM> drmsBoosteroid { get; set; }
-    
+
     private ApexChartOptions<PuntoGrafico> opcionesGrafico;
     private JuegoDRM drmGrafico = JuegoDRM.NoEspecificado;
 
     [PersistentState] public List<DRMEnseñar> drmsEnseñar { get; set; }
+
+    private bool cargarComponentes = false;
 
     protected override void OnInitialized()
     {
@@ -3738,6 +3743,10 @@
 
                 #endregion
             }
+
+            await base.OnAfterRenderAsync(primerRender);
+
+            cargarComponentes = true;
 
             await InvokeAsync(StateHasChanged);
         }
@@ -4234,9 +4243,9 @@
 
     #region Deseados
 
-    private async void CambiarEstadoDeseado(MouseEventArgs e, bool estado, JuegoDRM drm)
+    private async Task CambiarEstadoDeseado(MouseEventArgs e, bool estado, JuegoDRM drm)
     {
-        Herramientas.Deseados.CambiarEstado(usuarioTieneDesea, usuarioId, juego, estado, drm);
+        usuarioTieneDesea = Herramientas.Deseados.CambiarEstado(usuarioTieneDesea, usuarioId, juego, estado, drm);
 
         await InvokeAsync(StateHasChanged);
     }

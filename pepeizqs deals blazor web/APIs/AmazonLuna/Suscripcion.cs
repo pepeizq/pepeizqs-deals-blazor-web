@@ -13,7 +13,7 @@ namespace APIs.AmazonLuna
 			Suscripciones2.Suscripcion amazon = new Suscripciones2.Suscripcion
 			{
 				Id = Suscripciones2.SuscripcionTipo.LunaClaims,
-				Nombre = "Luna Claims",
+				Nombre = "Luna",
 				ImagenLogo = "/imagenes/suscripciones/lunaclaims_logo.webp",
 				ImagenIcono = "/imagenes/streaming/amazonluna_icono.webp",
 				Enlace = "https://luna.amazon.es/claims/",

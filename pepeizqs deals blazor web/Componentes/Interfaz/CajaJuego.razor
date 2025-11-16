@@ -148,7 +148,6 @@
 			}
 		}
 
-
 		if (oferta != null)
 		{
 			descuento = oferta.Descuento.ToString() + "%";
@@ -167,7 +166,7 @@
 
 			//--------------------------------------------------------
 
-			if (tipo == Tipo.MinimosHistoricos || tipo == Tipo.Noticia)
+			if (tipo == Tipo.MinimosHistoricos)
 			{
 				if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 				{
@@ -177,8 +176,6 @@
 				{
 					enlace = oferta.Enlace;
 				}
-
-				enlaceNuevaPestaña = "_blank";
 			}
 
 			//--------------------------------------------------------
@@ -194,6 +191,11 @@
 				}
 			}
 		}
+	}
+
+	if (tipo == Tipo.MinimosHistoricos || tipo == Tipo.Noticia)
+	{
+		enlaceNuevaPestaña = "_blank";
 	}
 
 	JuegoDRM drmUsar = JuegoDRM.NoEspecificado;

@@ -692,10 +692,21 @@ namespace BaseDatos.Juegos
 
 				if (string.IsNullOrEmpty(juego.Imagenes.Library_600x900) == false)
 				{
-                    if (juego.Imagenes.Library_600x900.Contains("i.imgur.com") == false)
-                    {
-                        juego.Imagenes.Library_600x900 = nuevoJuego.Imagenes.Library_600x900;
-                    }
+					bool cambiar = true;
+
+					if (juego.Imagenes.Library_600x900.Contains("i.imgur.com") == true)
+					{
+						cambiar = false;
+					}
+					else if (juego.Imagenes.Library_600x900.IndexOf("library_capsule.") - juego.Imagenes.Library_600x900.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					{
+						cambiar = false;
+					}
+
+					if (cambiar == true)
+					{
+						juego.Imagenes.Library_600x900 = nuevoJuego.Imagenes.Library_600x900;
+					}
                 }
 				else
 				{
@@ -704,11 +715,22 @@ namespace BaseDatos.Juegos
 
                 if (string.IsNullOrEmpty(juego.Imagenes.Library_1920x620) == false)
                 {
-                    if (juego.Imagenes.Library_1920x620.Contains("i.imgur.com") == false)
-                    {
-                        juego.Imagenes.Library_1920x620 = nuevoJuego.Imagenes.Library_1920x620;
-                    }
-                }
+					bool cambiar = true;
+
+					if (juego.Imagenes.Library_1920x620.Contains("i.imgur.com") == true)
+					{
+						cambiar = false;
+					}
+					else if (juego.Imagenes.Library_1920x620.IndexOf("library_hero.") - juego.Imagenes.Library_1920x620.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					{
+						cambiar = false;
+					}
+
+					if (cambiar == true)
+					{
+						juego.Imagenes.Library_1920x620 = nuevoJuego.Imagenes.Library_1920x620;
+					}
+				}
                 else
                 {
                     juego.Imagenes.Library_1920x620 = nuevoJuego.Imagenes.Library_1920x620;
@@ -716,10 +738,21 @@ namespace BaseDatos.Juegos
 
                 if (string.IsNullOrEmpty(juego.Imagenes.Logo) == false)
                 {
-                    if (juego.Imagenes.Logo.Contains("i.imgur.com") == false)
-                    {
-                        juego.Imagenes.Logo = nuevoJuego.Imagenes.Logo;
-                    }
+					bool cambiar = true;
+
+					if (juego.Imagenes.Logo.Contains("i.imgur.com") == true)
+					{
+						cambiar = false;
+					}
+					else if (juego.Imagenes.Logo.IndexOf("logo.") - juego.Imagenes.Logo.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					{
+						cambiar = false;
+					}
+
+					if (cambiar == true)
+					{
+						juego.Imagenes.Logo = nuevoJuego.Imagenes.Logo;
+					}
                 }
                 else
                 {
@@ -749,45 +782,42 @@ namespace BaseDatos.Juegos
 					juego.Idiomas = new List<JuegoIdioma>();
 				}
 
-				if (nuevoJuego.Idiomas != null)
+				if (nuevoJuego.Idiomas?.Count > 0)
 				{
-					if (nuevoJuego.Idiomas.Count > 0)
+					foreach (var nuevoIdioma in nuevoJuego.Idiomas)
 					{
-						foreach (var nuevoIdioma in nuevoJuego.Idiomas)
+						bool existe = false;
+
+						if (juego.Idiomas != null)
 						{
-							bool existe = false;
-
-							if (juego.Idiomas != null)
+							foreach (var viejoIdioma in juego.Idiomas)
 							{
-								foreach (var viejoIdioma in juego.Idiomas)
+								if (viejoIdioma.DRM == nuevoIdioma.DRM && nuevoIdioma.Idioma == viejoIdioma.Idioma)
 								{
-									if (viejoIdioma.DRM == nuevoIdioma.DRM && nuevoIdioma.Idioma == viejoIdioma.Idioma)
-									{
-										existe = true;
+									existe = true;
 
-										viejoIdioma.Audio = nuevoIdioma.Audio;
-										viejoIdioma.Texto = nuevoIdioma.Texto;
+									viejoIdioma.Audio = nuevoIdioma.Audio;
+									viejoIdioma.Texto = nuevoIdioma.Texto;
 
-										break;
-									}
+									break;
 								}
 							}
+						}
 
-							if (existe == false)
-							{
-								juego.Idiomas.Add(nuevoIdioma);
-							}
+						if (existe == false)
+						{
+							juego.Idiomas.Add(nuevoIdioma);
 						}
 					}
 				}
 
-				string añadirAnalisis = null;
+				string añadirReseñas = null;
 
 				if (nuevoJuego.Analisis != null)
 				{
 					if (string.IsNullOrEmpty(nuevoJuego.Analisis.Porcentaje) == false && string.IsNullOrEmpty(nuevoJuego.Analisis.Cantidad) == false)
 					{
-						añadirAnalisis = ", analisis=@analisis";
+						añadirReseñas = ", analisis=@analisis";
 					}
 				}
 
@@ -806,7 +836,7 @@ namespace BaseDatos.Juegos
 				using (conexion)
 				{
 					string sqlActualizar = "UPDATE juegos " +
-										"SET nombre=@nombre, imagenes=@imagenes, caracteristicas=@caracteristicas, media=@media, nombreCodigo=@nombreCodigo, categorias=@categorias, etiquetas=@etiquetas, fechaSteamAPIComprobacion=@fechaSteamAPIComprobacion, idiomas=@idiomas, deck=@deck, steamOS=@steamOS" + añadirAnalisis + " WHERE id=@id";
+										"SET nombre=@nombre, imagenes=@imagenes, caracteristicas=@caracteristicas, media=@media, nombreCodigo=@nombreCodigo, categorias=@categorias, etiquetas=@etiquetas, fechaSteamAPIComprobacion=@fechaSteamAPIComprobacion, idiomas=@idiomas, deck=@deck, steamOS=@steamOS" + añadirReseñas + " WHERE id=@id";
 
 					using (SqlCommand comando = new SqlCommand(sqlActualizar, conexion))
 					{
@@ -823,7 +853,7 @@ namespace BaseDatos.Juegos
 						comando.Parameters.AddWithValue("@deck", juego.Deck);
 						comando.Parameters.AddWithValue("@steamOS", juego.SteamOS);
 
-						if (string.IsNullOrEmpty(añadirAnalisis) == false)
+						if (string.IsNullOrEmpty(añadirReseñas) == false)
 						{
 							comando.Parameters.AddWithValue("@analisis", JsonSerializer.Serialize(nuevoJuego.Analisis));
 						}

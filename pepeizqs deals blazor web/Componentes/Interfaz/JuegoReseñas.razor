@@ -1,6 +1,8 @@
 ﻿@using Juegos
 @using System.Text.Json
 
+@attribute [StreamRendering(true)]
+
 <style>
 	.cargando {
 		width: 48px;
@@ -351,9 +353,9 @@
 
     private bool cargado = false;
 
-    protected override async Task OnAfterRenderAsync(bool primerRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (primerRender == true && juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+        if (juego.IdSteam > 0 && DateTime.Today > juego?.Caracteristicas?.FechaLanzamientoSteam && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
             cargado = false;
 

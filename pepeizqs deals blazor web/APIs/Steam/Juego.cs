@@ -14,6 +14,7 @@ namespace APIs.Steam
 	{
 		public static string dominioImagenes = "https://cdn.cloudflare.steamstatic.com";
 		public static string dominioImagenes2 = "https://shared.cloudflare.steamstatic.com";
+		public static string dominioImagenes3 = "https://shared.fastly.steamstatic.com";
 		public static string dominioVideos = "https://video.cloudflare.steamstatic.com/store_trailers/";
 		public static string dominioVideos2 = "https://video.akamai.steamstatic.com/store_trailers/";
 
@@ -207,32 +208,32 @@ namespace APIs.Steam
 							{
 								if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Header_460x215) == false)
 								{
-									imagenes.Header_460x215 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Header_460x215;
+									imagenes.Header_460x215 = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Header_460x215;
 								}
 								else
 								{
 									if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Capsule_231x87) == false)
 									{
-										imagenes.Header_460x215 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Capsule_231x87;
+										imagenes.Header_460x215 = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Capsule_231x87;
 									}
 								}
 
 								if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Capsule_231x87) == false)
 								{
-									imagenes.Capsule_231x87 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Capsule_231x87;
+									imagenes.Capsule_231x87 = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Capsule_231x87;
 								}
 
 								if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Library_600x900) == false)
 								{
-									imagenes.Library_600x900 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Library_600x900;
+									imagenes.Library_600x900 = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Library_600x900;
 								}
 
 								if (string.IsNullOrEmpty(datos2.Respuesta.Juegos[0].Imagenes?.Library_600x900) == false)
 								{
-									imagenes.Library_1920x620 = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Library_1920x620;
+									imagenes.Library_1920x620 = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/" + datos2.Respuesta.Juegos[0].Imagenes.Library_1920x620;
 								}
 
-								imagenes.Logo = dominioImagenes2 + "/store_item_assets/steam/apps/" + id + "/logo.png";
+								imagenes.Logo = dominioImagenes3 + "/store_item_assets/steam/apps/" + id + "/logo.png";
 							}
 
 							#endregion

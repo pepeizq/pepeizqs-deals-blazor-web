@@ -1,6 +1,8 @@
 ﻿@using Juegos
 @using pepeizqs_deals_web.Data
 
+@attribute [StreamRendering(true)]
+
 @if (curators?.Count > 0 && Herramientas.Bots.UserAgentEsBot(userAgent) == false)
 {
     foreach (var curator in curators)
@@ -116,149 +118,146 @@
 
     [PersistentState] public List<global::BaseDatos.Curators.CuratorFicha> curators { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool primerRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (primerRender == true)
+        List<string> curatorsBuscar = new List<string>();
+
+        if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
         {
-            List<string> curatorsBuscar = new List<string>();
-
-            if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
+            if (juego.Caracteristicas?.Desarrolladores2?.Count > 0)
             {
-                if (juego.Caracteristicas?.Desarrolladores2?.Count > 0)
+                juego.Caracteristicas.Desarrolladores2.ForEach(x =>
                 {
-                    juego.Caracteristicas.Desarrolladores2.ForEach(x =>
+                    if (x.Id > 0)
                     {
-                        if (x.Id > 0)
-                        {
-                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+                        bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
 
-                            if (añadir == true)
-                            {
-                                curatorsBuscar.Add(x.Id.ToString());
-                            }
+                        if (añadir == true)
+                        {
+                            curatorsBuscar.Add(x.Id.ToString());
                         }
-                    });
-                }
+                    }
+                });
+            }
 
-                if (juego.Caracteristicas?.Editores2?.Count > 0)
+            if (juego.Caracteristicas?.Editores2?.Count > 0)
+            {
+                juego.Caracteristicas.Editores2.ForEach(x =>
                 {
-                    juego.Caracteristicas.Editores2.ForEach(x =>
+                    if (x.Id > 0)
                     {
-                        if (x.Id > 0)
-                        {
-                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+                        bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
 
-                            if (añadir == true)
-                            {
-                                curatorsBuscar.Add(x.Id.ToString());
-                            }
+                        if (añadir == true)
+                        {
+                            curatorsBuscar.Add(x.Id.ToString());
                         }
-                    });
-                }
+                    }
+                });
+            }
 
-                if (juego.Caracteristicas?.Franquicias?.Count > 0)
+            if (juego.Caracteristicas?.Franquicias?.Count > 0)
+            {
+                juego.Caracteristicas.Franquicias.ForEach(x =>
                 {
-                    juego.Caracteristicas.Franquicias.ForEach(x =>
+                    if (x.Id > 0)
                     {
-                        if (x.Id > 0)
-                        {
-                            bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
+                        bool añadir = !curatorsBuscar.Any(c => c == x.Id.ToString());
 
-                            if (añadir == true)
-                            {
-                                curatorsBuscar.Add(x.Id.ToString());
-                            }
+                        if (añadir == true)
+                        {
+                            curatorsBuscar.Add(x.Id.ToString());
                         }
-                    });
-                }
+                    }
+                });
+            }
 
-                if (curatorsBuscar?.Count > 0)
+            if (curatorsBuscar?.Count > 0)
+            {
+                curatorsBuscar.ForEach(async (c) =>
                 {
-                    curatorsBuscar.ForEach(async (c) =>
+                    if (string.IsNullOrEmpty(c) == false)
                     {
-                        if (string.IsNullOrEmpty(c) == false)
-                        {
-                            global::BaseDatos.Curators.Curator curator2 = global::BaseDatos.Curators.Buscar.Uno(int.Parse(c));
+                        global::BaseDatos.Curators.Curator curator2 = global::BaseDatos.Curators.Buscar.Uno(int.Parse(c));
 
-                            if (curator2 == null)
+                        if (curator2 == null)
+                        {
+                            global::BaseDatos.Curators.Insertar.Ejecutar(await APIs.Steam.Curator.Extraer(c));
+                        }
+                        else
+                        {
+                            if (curator2.Fecha == null)
                             {
-                                global::BaseDatos.Curators.Insertar.Ejecutar(await APIs.Steam.Curator.Extraer(c));
+                                global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
                             }
                             else
                             {
-                                if (curator2.Fecha == null)
+                                if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(180))
                                 {
                                     global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
                                 }
-                                else
-                                {
-                                    if (curator2.Fecha?.Subtract(DateTime.Now) > TimeSpan.FromDays(180))
-                                    {
-                                        global::BaseDatos.Curators.Actualizar.Ejecutar(curator2);
-                                    }
-                                }
+                            }
 
-                                global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
-                                ficha.Curator = curator2;
-                                ficha.Posicion = 0;
-                                ficha.JuegosMostrar = new List<Juego>();
+                            global::BaseDatos.Curators.CuratorFicha ficha = new global::BaseDatos.Curators.CuratorFicha();
+                            ficha.Curator = curator2;
+                            ficha.Posicion = 0;
+                            ficha.JuegosMostrar = new List<Juego>();
 
-                                bool añadir = true;
+                            bool añadir = true;
 
-                                if (curators == null)
-                                {
-                                    curators = new List<global::BaseDatos.Curators.CuratorFicha>();
-                                }
-                                else
-                                {
-                                    añadir = !curators.Any(c => c.Curator.Id == ficha.Curator.Id);
-                                }
+                            if (curators == null)
+                            {
+                                curators = new List<global::BaseDatos.Curators.CuratorFicha>();
+                            }
+                            else
+                            {
+                                añadir = !curators.Any(c => c.Curator.Id == ficha.Curator.Id);
+                            }
 
-                                if (añadir == true)
-                                {
-                                    curators.Add(ficha);
-                                }
+                            if (añadir == true)
+                            {
+                                curators.Add(ficha);
                             }
                         }
-                    });
-                }
+                    }
+                });
+            }
 
-                if (curators?.Count > 0)
+            if (curators?.Count > 0)
+            {
+                curators.ForEach(c =>
                 {
-                    curators.ForEach(c =>
+                    List<int> juegosSteam = c.Curator.SteamIds;
+
+                    int posicionBorrar = -1;
+
+                    if (juegosSteam?.Count > 0)
                     {
-                        List<int> juegosSteam = c.Curator.SteamIds;
+                        posicionBorrar = juegosSteam.FindIndex(c => c == juego.IdSteam);
 
-                        int posicionBorrar = -1;
-
-                        if (juegosSteam?.Count > 0)
+                        if (posicionBorrar > -1)
                         {
-                            posicionBorrar = juegosSteam.FindIndex(c => c == juego.IdSteam);
+                            juegosSteam.RemoveAt(posicionBorrar);
+                        }
+                    }
 
-                            if (posicionBorrar > -1)
-                            {
-                                juegosSteam.RemoveAt(posicionBorrar);
-                            }
+                    if (juegosSteam?.Count > 0)
+                    {
+                        c.Curator.SteamIds = BaseDatos.Juegos.Buscar.MultiplesJuegosSteamOrdenado(juegosSteam);
+
+                        int cantidad = 4;
+
+                        if (c.Curator.SteamIds.Count < 4)
+                        {
+                            cantidad = c.Curator.SteamIds.Count;
                         }
 
-                        if (juegosSteam?.Count > 0)
-                        {
-                            c.Curator.SteamIds = BaseDatos.Juegos.Buscar.MultiplesJuegosSteamOrdenado(juegosSteam);
+                        c.JuegosMostrar = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(c.Curator.SteamIds.GetRange(c.Posicion, cantidad));
+                    }
+                });
+            }
 
-                            int cantidad = 4;
-
-                            if (c.Curator.SteamIds.Count < 4)
-                            {
-                                cantidad = c.Curator.SteamIds.Count;
-                            }
-
-                            c.JuegosMostrar = BaseDatos.Juegos.Buscar.MultiplesJuegosSteam(c.Curator.SteamIds.GetRange(c.Posicion, cantidad));
-                        }
-                    });
-                }
-
-                await InvokeAsync(StateHasChanged);
-            }            
+            await InvokeAsync(StateHasChanged);
         }
     }
 

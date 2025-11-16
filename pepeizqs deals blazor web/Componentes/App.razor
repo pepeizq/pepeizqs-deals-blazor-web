@@ -56,6 +56,7 @@
         <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
         <script src="@Assets["Inicio.js"]"></script>
         <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.0/hls.min.js"></script>
     }
 
     <script>
@@ -67,9 +68,9 @@
         }
     </script>
 
-    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false && dominio?.Contains("pepeizqdeals.com") == true)
+    @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false && usuarioAdmin == false && dominio?.Contains("pepe.deals") == true)
     {
-        <script async src='https://visitas.pepeizq.workers.dev/script.js' data-cf-beacon='{"send":{"to": "https://visitas.pepeizq.workers.dev/"},"token": "b8f0af1685ca4f0484bb45dba08198cb"}'></script>
+        <script async src='https://visitas.pepeizq.workers.dev/script.js' data-cf-beacon='{"send":{"to": "https://visitas.pepeizq.workers.dev/"},"token": "ec9ca034644a4d22b257719eb208876e"}'></script>
     }
 </body>
 
@@ -181,7 +182,7 @@
                         }
                         else
                         {
-                            if (usuario.PatreonCoins < 10)
+                            if (usuario.PatreonCoins < 20)
                             {
                                 if (usuario.PatreonLastLogin?.DayOfYear != DateTime.Now.DayOfYear)
                                 {

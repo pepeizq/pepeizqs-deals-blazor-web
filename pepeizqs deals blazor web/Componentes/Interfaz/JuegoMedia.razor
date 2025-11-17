@@ -8,7 +8,6 @@
         height: fit-content;
         margin-bottom: 20px;
         background: #141414;
-        border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0,0,0,0.7);
         position: relative;
@@ -50,10 +49,7 @@
         border: none;
         color: var(--colorTexto);
         padding: 6px 10px;
-        margin-right: 5px;
-        border-radius: 4px;
         cursor: pointer;
-        font-weight: bold;
     }
 
         .control-boton:hover {
@@ -68,7 +64,6 @@
         width: 100%;
         background: rgba(255,255,255,0.2);
         height: 6px;
-        border-radius: 3px;
         margin-bottom: 6px;
         cursor: pointer;
         position: relative;
@@ -78,52 +73,79 @@
         height: 100%;
         background: var(--fondoCodigo);
         width: 0%;
-        border-radius: 3px;
     }
 
     .tiempo-mensaje {
         color: var(--colorTexto);
         font-size: 0.85rem;
-        margin-left: 5px;
     }
 </style>
 
 <script>
     window.hlsPlayer = {
-        loadStream: function (url) {
+        loadStream: function (url, dotNetHelper) {
             const video = document.getElementById("reproductor");
             video.pause();
 
+            if (video._timeUpdateHandler) {
+                video.removeEventListener("timeupdate", video._timeUpdateHandler);
+                video._timeUpdateHandler = null;
+            }
+
             if (window.hls) {
-                window.hls.destroy();
+                try {
+                    window.hls.detachMedia();
+                    window.hls.destroy();
+                } catch (e) {
+                    console.warn("Error al destruir HLS:", e);
+                }
                 window.hls = null;
             }
 
             video.removeAttribute("src");
+            video.src = "";
+            video.currentTime = 0;
             video.load();
 
             const lowerUrl = url.toLowerCase();
 
             if (lowerUrl.endsWith(".m3u8")) {
                 if (Hls.isSupported()) {
-                    window.hls = new Hls();
+                    window.hls = new Hls({
+                        autoStartLoad: true,
+                        enableWorker: true,
+                        lowLatencyMode: false
+                    });
+
                     window.hls.loadSource(url);
                     window.hls.attachMedia(video);
-                    video.play();
                 } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
                     video.src = url;
-                    video.play();
                 }
-            }
-
-            if (lowerUrl.endsWith(".mp4") || lowerUrl.endsWith(".webm")) {
+            } else if (lowerUrl.endsWith(".mp4") || lowerUrl.endsWith(".webm")) {
                 video.src = url;
                 video.load();
-                video.play();
             }
+
+            video._timeUpdateHandler = function () {
+                dotNetHelper.invokeMethodAsync(
+                    "ActualizarTiempo",
+                    video.currentTime,
+                    video.duration
+                );
+            };
+
+            video.addEventListener("timeupdate", video._timeUpdateHandler);
         },
 
-        togglePlay: function(video) {
+        playVideo: function() {
+            const video = document.getElementById("reproductor");
+            video.play();
+        },
+
+        togglePlay: function() {
+            const video = document.getElementById("reproductor");
+
             if (video.paused) {
                 video.play();
                 return true;
@@ -133,7 +155,9 @@
             }
         },
 
-        toggleMute: function(video) {
+        toggleMute: function() {
+            const video = document.getElementById("reproductor");
+
             video.muted = !video.muted;
             return video.muted;
         },
@@ -150,14 +174,6 @@
             } else {
                 document.exitFullscreen();
             }
-        },
-
-        registerTimeUpdate: function(dotNetHelper) {
-            const video = document.getElementById("reproductor");
-
-            video.addEventListener("timeupdate", function() {
-                dotNetHelper.invokeMethodAsync("UpdateTime", video.currentTime, video.duration);
-            });
         },
 
         seek: function(clientX) {
@@ -195,25 +211,55 @@
     <div class="juego-galeria-contenedor">
         @if ((mediaMostrarPosicion >= 99999 && mediaMostrarPosicion <= 100003) && difuminar == false)
         {
-            <div style="display: flex; justify-items: center; justify-content: center;" @onclick="TogglePlay">
+            <div style="display: flex; justify-items: center; justify-content: center;">
                 <div class="pepe-video-contenedor">
-                    <video id="reproductor" style="width: 100%; height: calc(100vh - 190px);" @ref="videoRef" @onplay="EjecutarVideo">
-                        <source src="@mediaMostrar" type="@mediaMostrarTipo" />
+                    <video id="reproductor" style="width: 100%; height: calc(100vh - 190px);" @onclick="() => Reproducir(mediaMostrar)" @onplay="EjecutarVideo">
+                        <source src="@mediaMostrar" />
                     </video>
 
                     <div class="video-controles">
-                        <div class="progreso-contenedor" @onclick="Seek">
-                            <div class="progreso-barra" style="width:@ProgressPercent%;"></div>
+                        <div class="progreso-contenedor" @onclick="AdelantarAtrasarBarraVideo">
+                            <div class="progreso-barra" style="width: @porcentajeProgreso%;"></div>
                         </div>
 
                         <div class="controles-fila">
-                            <div style="display: flex; align-items: center; gap: 5px;">
-                                <button class="control-boton" @onclick="TogglePlay">@((isPlaying ? "Pause" : "Play"))</button>
-                                <button class="control-boton" @onclick="ToggleMute">@((isMuted ? "Unmute" : "Mute"))</button>
-                                <input type="range" class="volumen-deslizador" min="0" max="1" step="0.05" @bind="volume" @oninput="ChangeVolume" />
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <button class="control-boton" @onclick="() => Reproducir(mediaMostrar)">
+                                    <div style="display: flex; width: 20px; height: 20px;">
+                                        @if (estaReproduciendo == true)
+                                        {
+                                            <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                                                <path d="M176 96C149.5 96 128 117.5 128 144L128 496C128 522.5 149.5 544 176 544L240 544C266.5 544 288 522.5 288 496L288 144C288 117.5 266.5 96 240 96L176 96zM400 96C373.5 96 352 117.5 352 144L352 496C352 522.5 373.5 544 400 544L464 544C490.5 544 512 522.5 512 496L512 144C512 117.5 490.5 96 464 96L400 96z" />
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                                                <path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z" />
+                                            </svg>
+                                        }
+                                    </div>
+                                </button>
+                                <button class="control-boton" @onclick="Mutear">
+                                    <div style="display: flex; width: 20px; height: 20px;">
+                                        @if (estaMuteado == true)
+                                        {
+                                            <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                                                <path d="M80 416L128 416L262.1 535.2C268.5 540.9 276.7 544 285.2 544C304.4 544 320 528.4 320 509.2L320 130.8C320 111.6 304.4 96 285.2 96C276.7 96 268.5 99.1 262.1 104.8L128 224L80 224C53.5 224 32 245.5 32 272L32 368C32 394.5 53.5 416 80 416zM399 239C389.6 248.4 389.6 263.6 399 272.9L446 319.9L399 366.9C389.6 376.3 389.6 391.5 399 400.8C408.4 410.1 423.6 410.2 432.9 400.8L479.9 353.8L526.9 400.8C536.3 410.2 551.5 410.2 560.8 400.8C570.1 391.4 570.2 376.2 560.8 366.9L513.8 319.9L560.8 272.9C570.2 263.5 570.2 248.3 560.8 239C551.4 229.7 536.2 229.6 526.9 239L479.9 286L432.9 239C423.5 229.6 408.3 229.6 399 239z" />
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                                                <path d="M533.6 96.5C523.3 88.1 508.2 89.7 499.8 100C491.4 110.3 493 125.4 503.3 133.8C557.5 177.8 592 244.8 592 320C592 395.2 557.5 462.2 503.3 506.3C493 514.7 491.5 529.8 499.8 540.1C508.1 550.4 523.3 551.9 533.6 543.6C598.5 490.7 640 410.2 640 320C640 229.8 598.5 149.2 533.6 96.5zM473.1 171C462.8 162.6 447.7 164.2 439.3 174.5C430.9 184.8 432.5 199.9 442.8 208.3C475.3 234.7 496 274.9 496 320C496 365.1 475.3 405.3 442.8 431.8C432.5 440.2 431 455.3 439.3 465.6C447.6 475.9 462.8 477.4 473.1 469.1C516.3 433.9 544 380.2 544 320.1C544 260 516.3 206.3 473.1 171.1zM412.6 245.5C402.3 237.1 387.2 238.7 378.8 249C370.4 259.3 372 274.4 382.3 282.8C393.1 291.6 400 305 400 320C400 335 393.1 348.4 382.3 357.3C372 365.7 370.5 380.8 378.8 391.1C387.1 401.4 402.3 402.9 412.6 394.6C434.1 376.9 448 350.1 448 320C448 289.9 434.1 263.1 412.6 245.5zM80 416L128 416L262.1 535.2C268.5 540.9 276.7 544 285.2 544C304.4 544 320 528.4 320 509.2L320 130.8C320 111.6 304.4 96 285.2 96C276.7 96 268.5 99.1 262.1 104.8L128 224L80 224C53.5 224 32 245.5 32 272L32 368C32 394.5 53.5 416 80 416z" />
+                                            </svg>
+                                        }
+                                    </div>
+                                </button>
+                                <input type="range" class="volumen-deslizador" min="0" max="1" step="0.05" @bind="volumen" @oninput="VolumenCambiar" />
                             </div>
-                            <div class="tiempo-mensaje">@TimeDisplay</div>
-                            <button class="control-boton" @onclick="ToggleFullScreen">
+                            <div class="tiempo-mensaje">@tiempoMostrar</div>
+                            <button class="control-boton" @onclick="CambiarPantallaCompleta">
                                 <div style="display: flex; width: 20px; height: 20px;">
                                     <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                         <path d="M408 64L552 64C565.3 64 576 74.7 576 88L576 232C576 241.7 570.2 250.5 561.2 254.2C552.2 257.9 541.9 255.9 535 249L496 210L409 297C399.6 306.4 384.4 306.4 375.1 297L343.1 265C333.7 255.6 333.7 240.4 343.1 231.1L430.1 144.1L391.1 105.1C384.2 98.2 382.2 87.9 385.9 78.9C389.6 69.9 398.3 64 408 64zM232 576L88 576C74.7 576 64 565.3 64 552L64 408C64 398.3 69.8 389.5 78.8 385.8C87.8 382.1 98.1 384.2 105 391L144 430L231 343C240.4 333.6 255.6 333.6 264.9 343L296.9 375C306.3 384.4 306.3 399.6 296.9 408.9L209.9 495.9L248.9 534.9C255.8 541.8 257.8 552.1 254.1 561.1C250.4 570.1 241.7 576 232 576z" />
@@ -363,6 +409,11 @@
                 {
                     mediaMostrarTipo = null;
 
+                    if (mediaMostrar.Contains("?") == true)
+                    {
+                        mediaMostrar = mediaMostrar.Substring(0, mediaMostrar.IndexOf("?"));
+                    }
+
                     if (mediaMostrar.EndsWith(".mp4") == true)
                     {
                         mediaMostrarTipo = "video/mp4";
@@ -378,7 +429,7 @@
 
                     if (string.IsNullOrEmpty(mediaMostrarTipo) == false && javascriptListo == true)
                     {
-                        await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar);
+                        await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar, DotNetObjectReference.Create(this));
                     }
                 }
             }
@@ -400,8 +451,7 @@
         {
             javascriptListo = true;
 
-            await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar);
-            await JavaScript.InvokeVoidAsync("hlsPlayer.registerTimeUpdate", DotNetObjectReference.Create(this));
+            await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar, DotNetObjectReference.Create(this));
         }
     }
 
@@ -462,6 +512,11 @@
         {
             mediaMostrarTipo = null;
 
+            if (mediaMostrar.Contains("?") == true)
+            {
+                mediaMostrar = mediaMostrar.Substring(0, mediaMostrar.IndexOf("?"));
+            }
+
             if (mediaMostrar.EndsWith(".mp4") == true)
             {
                 mediaMostrarTipo = "video/mp4";
@@ -477,7 +532,7 @@
 
             if (string.IsNullOrEmpty(mediaMostrarTipo) == false && javascriptListo == true)
             {
-                await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar);
+                await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar, DotNetObjectReference.Create(this));
             }
         }
     }
@@ -487,56 +542,69 @@
         mediaMostrarCaptura = null;
     }
 
-    private ElementReference videoRef;
+    #region Video
 
-    private bool isPlaying = false;
-    private bool isMuted = false;
-    private double volume = 0.7;
+    private string videoReproduciendo = string.Empty;
+    private bool estaReproduciendo = false;
+    private bool estaMuteado = false;
+    private double volumen = 0.7;
 
-    private double ProgressPercent => duration > 0 ? (currentTime / duration) * 100 : 0;
-    private double currentTime = 0;
-    private double duration = 0;
-    private string TimeDisplay => $"{FormatTime(currentTime)} / {FormatTime(duration)}";
+    private double porcentajeProgreso => duracion > 0 ? (actualTiempo / duracion) * 100 : 0;
+    private double actualTiempo = 0;
+    private double duracion = 0;
+    private string tiempoMostrar => $"{FormatoTiempo(actualTiempo)} / {FormatoTiempo(duracion)}";
 
     [JSInvokable]
-    public Task UpdateTime(double current, double total)
+    public Task ActualizarTiempo(double actual, double total)
     {
-        currentTime = current;
-        duration = total;
+        actualTiempo = actual;
+        duracion = total;
         StateHasChanged();
         return Task.CompletedTask;
     }
 
-    private async Task TogglePlay()
+    private async Task Reproducir(string nuevoVideo)
     {
-        isPlaying = await JavaScript.InvokeAsync<bool>("hlsPlayer.togglePlay", videoRef);
+        if (videoReproduciendo != nuevoVideo)
+        {
+            videoReproduciendo = nuevoVideo;
+            await JavaScript.InvokeVoidAsync("hlsPlayer.loadStream", mediaMostrar, DotNetObjectReference.Create(this));
+            await JavaScript.InvokeVoidAsync("hlsPlayer.playVideo");
+            estaReproduciendo = true;
+        }
+        else
+        {
+            estaReproduciendo = await JavaScript.InvokeAsync<bool>("hlsPlayer.togglePlay");
+        }
     }
 
-    private async Task ToggleMute()
+    private async Task Mutear()
     {
-        isMuted = await JavaScript.InvokeAsync<bool>("hlsPlayer.toggleMute", videoRef);
+        estaMuteado = await JavaScript.InvokeAsync<bool>("hlsPlayer.toggleMute");
     }
 
-    private async Task ChangeVolume(ChangeEventArgs e)
+    private async Task VolumenCambiar(ChangeEventArgs e)
     {
-        volume = Convert.ToDouble(e.Value);
-        await JavaScript.InvokeVoidAsync("hlsPlayer.setVolume", videoRef, volume);
+        volumen = Convert.ToDouble(e.Value);
+        await JavaScript.InvokeVoidAsync("hlsPlayer.setVolume", volumen);
     }
 
-    private async Task ToggleFullScreen()
+    private async Task CambiarPantallaCompleta()
     {
         await JavaScript.InvokeVoidAsync("hlsPlayer.toggleFullScreen");
     }
 
-    private async Task Seek(MouseEventArgs e)
+    private async Task AdelantarAtrasarBarraVideo(MouseEventArgs e)
     {
         await JavaScript.InvokeVoidAsync("hlsPlayer.seek", e.ClientX);
     }
 
-    private string FormatTime(double t)
+    private string FormatoTiempo(double t)
     {
-        int minutes = (int)(t / 60);
-        int seconds = (int)(t % 60);
-        return $"{minutes:D2}:{seconds:D2}";
+        int minutos = (int)(t / 60);
+        int segundos = (int)(t % 60);
+        return $"{minutos:D2}:{segundos:D2}";
     }
+
+    #endregion
 }

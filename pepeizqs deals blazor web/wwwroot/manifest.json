@@ -1,6 +1,6 @@
 {
-  "name": "pepeizq's deals",
-  "short_name": "pepeizq's deals",
+  "name": "pepe's deals",
+  "short_name": "pepe's deals",
   "icons": [
     {
       "src": "/favicons/favicon-192x192.png",
@@ -26,7 +26,7 @@
   "categories": [
     "utilities"
   ],
-  "id": "pepeizqsdeals",
+  "id": "pepesdeals",
   "lang": "en",
   "orientation": "any"
 }

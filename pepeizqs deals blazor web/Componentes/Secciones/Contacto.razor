@@ -32,7 +32,7 @@
 			</svg>
 		</div>
 		<div>
-			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Contact") @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Contact"), "admin@pepeizqdeals.com")
+			@Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Contact") @string.Format(Herramientas.Idiomas.BuscarTexto(idioma, "String2", "Contact"), "admin@pepe.deals")
 		</div>
 	</div>
 </div>
@@ -153,7 +153,7 @@
 
 	private void EnviarmeCorreo()
 	{
-		formularioEnviado = Herramientas.Correos.Enviar.Ejecutar(formularioContenido, formularioTitulo, formularioCorreo, "admin@pepeizqdeals.com");
+		formularioEnviado = Herramientas.Correos.Enviar.Ejecutar(formularioContenido, formularioTitulo, formularioCorreo, "admin@pepe.deals");
 
 		if (formularioEnviado == true)
 		{

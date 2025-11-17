@@ -18,7 +18,7 @@ namespace Herramientas.Correos
 
 	public static class DeseadoBundle
 	{
-		public static void Nuevo(string usuarioId, Bundle bundle, BundleJuego juego, string correoHacia, string dominio)
+		public static void Nuevo(string usuarioId, Bundle bundle, BundleJuego juego, string correoHacia)
 		{
 			string idioma = global::BaseDatos.Usuarios.Buscar.IdiomaSobreescribir(usuarioId);
 
@@ -59,10 +59,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://{{dominio}}/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://{{dominio}}/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -89,7 +89,6 @@ namespace Herramientas.Correos
 
 			html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 			html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
-			html = html.Replace("{{dominio}}", dominio);
 
 			CorreoDeseadoBundleJson json = new CorreoDeseadoBundleJson();
 			json.BundleNombre = bundle.NombreBundle;
@@ -100,7 +99,7 @@ namespace Herramientas.Correos
 			json.ImagenJuego = juego.Imagen;
 			json.Idioma = idioma;
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, mensajeAviso, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle, JsonSerializer.Serialize(json));
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, mensajeAviso, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle, JsonSerializer.Serialize(json));
 		}
 
 		public static void Nuevos(List<CorreoDeseadoBundleJson> jsons, string correoHacia)
@@ -158,10 +157,10 @@ namespace Herramientas.Correos
 
 								<div style=""margin-top: 40px;"">
 									<div>
-										&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://{{dominio}}/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+										&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 									</div>
 									<div style=""margin-top: 20px; font-size: 14px;"">
-										{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+										{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 									</div>
 								</div>
 							</div>
@@ -179,7 +178,7 @@ namespace Herramientas.Correos
 				html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 				html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
 
-				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "deals@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle);
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle);
 			}
 		}
 	}

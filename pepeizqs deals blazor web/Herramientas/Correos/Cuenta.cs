@@ -26,10 +26,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -42,7 +42,7 @@ namespace Herramientas.Correos
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Reset1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaReseteada);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaReseteada);
 		}
 
 		public static void ContraseñaOlvidada(string idioma, string codigo, string correoHacia)
@@ -66,10 +66,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -84,7 +84,7 @@ namespace Herramientas.Correos
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Reset2", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaOlvidada);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaOlvidada);
 		}
 
 		public static void CambioContraseña(string idioma, string correoHacia)
@@ -108,10 +108,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -124,7 +124,7 @@ namespace Herramientas.Correos
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Change1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaCambio);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.ContraseñaCambio);
 		}
 
 		public static void CambioCorreo(string idioma, string codigo, string correoHacia)
@@ -148,10 +148,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -166,7 +166,7 @@ namespace Herramientas.Correos
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Mail1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoCambio);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoCambio);
 		}
 
 		public static void ConfirmacionCorreo(string idioma, string codigo, string correoHacia)
@@ -190,10 +190,10 @@ namespace Herramientas.Correos
 
 									<div style=""margin-top: 40px;"">
 										<div>
-											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepeizqdeals.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's deals</a>
+											&copy; {{año}} • <a href=""https://pepeizqapps.com/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepeizq's apps</a> • <a href=""https://pepe.deals/"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">pepe's deals</a>
 										</div>
 										<div style=""margin-top: 20px; font-size: 14px;"">
-											{{mensaje}} <a href=""https://pepeizqdeals.com/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
+											{{mensaje}} <a href=""https://pepe.deals/contact"" style=""color: #95c0fe; user-select: none; width: 100%; text-align: left; font-size: 16px;"" target=""_blank"">/contact/</a>
 										</div>
 									</div>
 								</div>
@@ -208,7 +208,7 @@ namespace Herramientas.Correos
 
 			string titulo = Herramientas.Idiomas.BuscarTexto(idioma, "Confirm1", "Mails");
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "admin@pepeizqdeals.com", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoConfirmacion);
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.CorreoConfirmacion);
 		}
 	}
 }

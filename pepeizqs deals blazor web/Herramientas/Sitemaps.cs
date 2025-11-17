@@ -240,7 +240,7 @@ namespace Herramientas
 						"<loc>https://" + dominio + "/news/" + noticia.Id.ToString() + "/" + EnlaceAdaptador.Nombre(noticia.TituloEn) + "/</loc>" + Environment.NewLine +
 						"<news:news>" + Environment.NewLine +
 						"<news:publication>" + Environment.NewLine +
-						"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
+						"<news:name>pepe's deals</news:name>" + Environment.NewLine +
 						"<news:language>en</news:language>" + Environment.NewLine +
 						"</news:publication>" + Environment.NewLine +
 						"<news:publication_date>" + noticia.FechaEmpieza.ToString("yyyy-MM-dd") + "</news:publication_date>" + Environment.NewLine +

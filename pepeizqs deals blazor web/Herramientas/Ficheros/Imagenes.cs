@@ -71,7 +71,7 @@ namespace Herramientas.Ficheros
 			{
 				if (enlace.IndexOf("/") == 0)
 				{
-					enlace = "https://pepeizqdeals.com" + enlace;
+					enlace = "https://pepe.deals" + enlace;
 				}
 
 				bool añadirServidor = true;

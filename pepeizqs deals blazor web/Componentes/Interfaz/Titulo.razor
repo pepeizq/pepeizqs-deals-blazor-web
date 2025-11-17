@@ -8,7 +8,7 @@
 	<meta name="og:description" content="@descripcion" />
 	<meta name="og:url" content="@enlace" />
 	<meta name="og:image" content="@imagen" />
-	<meta name="og:site_name" content="pepeizq's deals" />
+	<meta name="og:site_name" content="pepe's deals" />
 	<meta name="og:type" content="website" />
 	<meta name="robots" content="noimageindex" />
 	<meta name="keywords" content="@keywords2" />
@@ -225,7 +225,7 @@
 		<link rel="canonical" href="@enlaceEnNoticia"/>
 	}
 	
-	<link title="pepeizq's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://@dominio/rss-en.xml" />
+	<link title="pepe's deals • @Herramientas.Idiomas.BuscarTexto(idioma, "Title", "LastNews")" rel="alternate" type="application/rss+xml" href="https://@dominio/rss-en.xml" />
 
 	<meta name="twitter:site" content="@@pepeizqdeals" />
 	<meta name="twitter:domain" content="pepeizqdeals.com" />
@@ -587,7 +587,7 @@
 		}
 		else if (tipo == Tipo.Portada)
 		{
-			titulo ??= "pepeizq's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
+			titulo ??= "pepe's deals • " + Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
 			descripcion ??= Herramientas.Idiomas.BuscarTexto(idioma, "Subtitle", "Index");
 			enlace ??= "https://" + dominio + "/";
 			imagen ??= "https://" + dominio + "/logo/logoentrada.webp";
@@ -666,9 +666,9 @@
 		{
 			if (titulo.Length < 39 && tipo != Tipo.Portada)
 			{
-				if (titulo.Contains(" • pepeizq's deals") == false)
+				if (titulo.Contains(" • pepe's deals") == false)
 				{
-					titulo = titulo + " • pepeizq's deals";
+					titulo = titulo + " • pepe's deals";
 				}
 			}
 		}

@@ -65,7 +65,7 @@ namespace Herramientas
 
 		#nullable disable
 
-		private static string dominio = "https://pepeizqdeals.com";
+		private static string dominio = "https://pepe.deals";
 
 		public static string Generar(string enlace, string tienda = null, bool usuarioPatreon = false, bool acortar = true)
 		{

@@ -3,6 +3,7 @@
 using Juegos;
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace BaseDatos.Juegos
 {
@@ -698,7 +699,7 @@ namespace BaseDatos.Juegos
 					{
 						cambiar = false;
 					}
-					else if (juego.Imagenes.Library_600x900.IndexOf("library_capsule.") - juego.Imagenes.Library_600x900.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					else if (!Regex.IsMatch(juego.Imagenes.Library_600x900, $"{Regex.Escape("library_capsule.")}.*?{Regex.Escape("/" + juego.IdSteam.ToString() + "/")}"))
 					{
 						cambiar = false;
 					}
@@ -721,7 +722,7 @@ namespace BaseDatos.Juegos
 					{
 						cambiar = false;
 					}
-					else if (juego.Imagenes.Library_1920x620.IndexOf("library_hero.") - juego.Imagenes.Library_1920x620.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					else if (!Regex.IsMatch(juego.Imagenes.Library_1920x620, $"{Regex.Escape("library_hero.")}.*?{Regex.Escape("/" + juego.IdSteam.ToString() + "/")}"))
 					{
 						cambiar = false;
 					}
@@ -744,7 +745,7 @@ namespace BaseDatos.Juegos
 					{
 						cambiar = false;
 					}
-					else if (juego.Imagenes.Logo.IndexOf("logo.") - juego.Imagenes.Logo.IndexOf("/" + juego.IdSteam.ToString() + "/") > ("/" + juego.IdSteam.ToString() + "/").Length)
+					else if (!Regex.IsMatch(juego.Imagenes.Logo, $"{Regex.Escape("logo.")}.*?{Regex.Escape("/" + juego.IdSteam.ToString() + "/")}"))
 					{
 						cambiar = false;
 					}

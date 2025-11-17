@@ -20,7 +20,7 @@ namespace Herramientas
         {
 			string dominio = "https://" + HttpContext.Request.Host.Value;
 
-			SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS in English from the web", new Uri(dominio), "RSSUrl", DateTime.Now)
+			SyndicationFeed feed = new SyndicationFeed("pepe's deals", "RSS in English from the web", new Uri(dominio), "RSSUrl", DateTime.Now)
             {
                 Copyright = new TextSyndicationContent($"{DateTime.Now.Year}")
             };
@@ -87,7 +87,7 @@ namespace Herramientas
         {
 			string dominio = "https://" + HttpContext.Request.Host.Value;
 
-			SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS en Español de la web", new Uri(dominio), "RSSUrl", DateTime.Now)
+			SyndicationFeed feed = new SyndicationFeed("pepe's deals", "RSS en Español de la web", new Uri(dominio), "RSSUrl", DateTime.Now)
             {
                 Copyright = new TextSyndicationContent($"{DateTime.Now.Year}")
             };
@@ -213,7 +213,7 @@ namespace Herramientas
 					cantidadReseñas = 9999;
 				}
 
-				SyndicationFeed feed = new SyndicationFeed("pepeizq's deals", "RSS Last Deals", new Uri(dominio), "RSSUrl", DateTime.Now)
+				SyndicationFeed feed = new SyndicationFeed("pepe's deals", "RSS Last Deals", new Uri(dominio), "RSSUrl", DateTime.Now)
 				{
 					Copyright = new TextSyndicationContent($"{DateTime.Now.Year}")
 				};

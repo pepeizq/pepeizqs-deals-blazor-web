@@ -486,7 +486,7 @@ namespace BaseDatos.Sitemaps
 									"<loc>https://" + dominio + "/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEn) + "/</loc>" + Environment.NewLine +
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
-									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
+									"<news:name>pepe's deals</news:name>" + Environment.NewLine +
 									"<news:language>en</news:language>" + Environment.NewLine +
 									"</news:publication>" + Environment.NewLine;
 
@@ -593,7 +593,7 @@ namespace BaseDatos.Sitemaps
 									"<loc>https://" + dominio + "/news/" + id.ToString() + "/" + EnlaceAdaptador.Nombre(tituloEs) + "/</loc>" + Environment.NewLine +	
 									"<news:news>" + Environment.NewLine +
 									"<news:publication>" + Environment.NewLine +
-									"<news:name>pepeizq's deals</news:name>" + Environment.NewLine +
+									"<news:name>pepe's deals</news:name>" + Environment.NewLine +
 									"<news:language>es</news:language>" + Environment.NewLine +
 									"</news:publication>" + Environment.NewLine;
 

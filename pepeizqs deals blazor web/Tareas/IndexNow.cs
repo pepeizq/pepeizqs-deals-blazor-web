@@ -77,7 +77,7 @@ namespace Tareas
                                             {
                                                 if (juego.Id > 0 && string.IsNullOrEmpty(juego.Nombre) == false)
                                                 {
-                                                    peticionJuegos = peticionJuegos + Strings.ChrW(34) + "https://pepeizqdeals.com/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/" + Strings.ChrW(34);
+                                                    peticionJuegos = peticionJuegos + Strings.ChrW(34) + "https://pepe.deals/game/" + juego.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(juego.Nombre) + "/" + Strings.ChrW(34);
                                                 }
 
                                                 i += 1;
@@ -98,7 +98,7 @@ namespace Tareas
                                             {
                                                 if (bundle.Id > 0 && string.IsNullOrEmpty(bundle.NombreBundle) == false)
                                                 {
-                                                    peticionBundles = peticionBundles + Strings.ChrW(34) + "https://pepeizqdeals.com/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/" + Strings.ChrW(34);
+                                                    peticionBundles = peticionBundles + Strings.ChrW(34) + "https://pepe.deals/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/" + Strings.ChrW(34);
                                                 }
 
                                                 i += 1;
@@ -119,7 +119,7 @@ namespace Tareas
                                             {
                                                 if (noticia.Id > 0 && string.IsNullOrEmpty(noticia.TituloEn) == false)
                                                 {
-                                                    peticionNoticias = peticionNoticias + Strings.ChrW(34) + "https://pepeizqdeals.com/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/" + Strings.ChrW(34);
+                                                    peticionNoticias = peticionNoticias + Strings.ChrW(34) + "https://pepe.deals/news/" + noticia.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(noticia.TituloEn) + "/" + Strings.ChrW(34);
                                                 }
 
                                                 i += 1;
@@ -134,9 +134,9 @@ namespace Tareas
 										if (string.IsNullOrEmpty(peticionJuegos) == false && string.IsNullOrEmpty(peticionBundles) == false && string.IsNullOrEmpty(peticionNoticias) == false)
                                         {
                                             string peticionBing = @"{
-                      ""host"": ""pepeizqdeals.com"",
-                      ""key"": ""64d34e14606542e7b66ae9e2bc080d32"",
-                      ""keyLocation"": ""https://pepeizqdeals.com/64d34e14606542e7b66ae9e2bc080d32.txt"",
+                      ""host"": ""pepe.deals"",
+                      ""key"": ""732aae09f61d44d697d4bcd931ff2051 "",
+                      ""keyLocation"": ""https://pepe.deals/732aae09f61d44d697d4bcd931ff2051 .txt"",
                       ""urlList"": [";
                                             peticionBing = peticionBing + peticionJuegos + ", ";
 											peticionBing = peticionBing + peticionBundles + ", ";
@@ -145,19 +145,6 @@ namespace Tareas
 
                                             StringContent contenidoBing = new StringContent(peticionBing, Encoding.UTF8, "application/json");
                                             await cliente.PostAsync("https://www.bing.com/indexnow", contenidoBing);
-
-											string peticionSeznam = @"{
-                      ""host"": ""pepeizqdeals.com"",
-                      ""key"": ""d84fd3c5c7b0ea7c0cf394e8d5d6aebf9cd829"",
-                      ""keyLocation"": ""https://pepeizqdeals.com/d84fd3c5c7b0ea7c0cf394e8d5d6aebf9cd829.txt"",
-                      ""urlList"": [";
-											peticionSeznam = peticionSeznam + peticionJuegos + ", ";
-											peticionSeznam = peticionSeznam + peticionBundles + ", ";
-											peticionSeznam = peticionSeznam + peticionNoticias;
-											peticionSeznam = peticionSeznam + "]\r\n                    }";
-
-											StringContent contenidoSeznam = new StringContent(peticionSeznam, Encoding.UTF8, "application/json");
-											await cliente.PostAsync("https://search.seznam.cz/indexnow", contenidoSeznam);
 										}
                                     }
                                 }

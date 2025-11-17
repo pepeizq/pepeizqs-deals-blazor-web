@@ -14,11 +14,11 @@ namespace Herramientas
 
 			if (noticia.Id == 0)
 			{
-				enlace = "https://pepeizqdeals.com/link/news/" + noticia.IdMaestra.ToString() + "/";
+				enlace = "https://pepe.deals/link/news/" + noticia.IdMaestra.ToString() + "/";
 			}
 			else
 			{
-				enlace = "https://pepeizqdeals.com/link/news/" + noticia.Id.ToString() + "/";
+				enlace = "https://pepe.deals/link/news/" + noticia.Id.ToString() + "/";
 			}
 
 			string titulo = noticia.TituloEn;
@@ -26,7 +26,7 @@ namespace Herramientas
 
 			NotificationOptions opciones = new NotificationOptions
 			{
-				Icon = "https://pepeizqdeals.com/logo/logo6.png",
+				Icon = "https://pepe.deals/logo/logo6.png",
 				Image = noticia.Imagen,
 				Data = "url: " + Strings.ChrW(34) + noticia.Enlace + Strings.ChrW(34) + ", " + Environment.NewLine + "status: " + Strings.ChrW(34) + "open"
 			};
@@ -58,7 +58,7 @@ namespace Herramientas
 				//string publicKey = builder.Configuration.GetValue<string>("NotificacionesPush:PublicKey");
 				//string privateKey = builder.Configuration.GetValue<string>("NotificacionesPush:PrivateKey");
 
-				//VapidDetails vapidDetalles = new VapidDetails("https://pepeizqdeals.com", publicKey, privateKey);
+				//VapidDetails vapidDetalles = new VapidDetails("https://pepe.deals", publicKey, privateKey);
 				//WebPushClient webPushCliente = new WebPushClient();
 
 				//NotificacionSuscripcion usuario = global::BaseDatos.Usuarios.Buscar.UnUsuarioNotificacionesPush(usuarioId);

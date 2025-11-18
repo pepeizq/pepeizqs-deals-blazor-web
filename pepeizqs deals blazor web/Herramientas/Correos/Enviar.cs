@@ -28,10 +28,7 @@ namespace Herramientas.Correos
 				System.Net.Mail.SmtpClient cliente = new System.Net.Mail.SmtpClient();
 				cliente.Host = host;
 
-				string texto1 = "gmail.com";
-				string texto2 = correoDesde.ToLower();
-
-				if (texto2.Contains(texto1) == true)
+				if (correoDesde.ToLower().Contains("gmail.com") == true)
 				{
 					cliente.Port = 587;
 					cliente.Credentials = new System.Net.NetworkCredential(correoDesde, contraseña);
@@ -160,7 +157,7 @@ namespace Herramientas.Correos
 							}
 						}
 
-						global::BaseDatos.Errores.Insertar.Mensaje("Correo Enviar", ex);
+						global::BaseDatos.Errores.Insertar.Mensaje("Correo Enviar " + correoDesde + " - " + correoHacia, ex);
 
 						return false;
 					}

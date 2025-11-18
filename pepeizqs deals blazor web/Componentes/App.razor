@@ -13,8 +13,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <base href="/" />
 
+    <ResourcePreloader />
     <link rel="stylesheet" href="@Assets["/css/bundle.css"]" type="text/css" media="print" onload="this.media='all'" />
 
     <ImportMap />
@@ -53,10 +55,10 @@
     @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
         <div id="reconnect-modal" style="display: none;"></div>
-        <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
-        <script src="@Assets["inicio.js"]"></script>
+        <script src="@Assets["/_framework/blazor.web.js"]" autostart="false"></script>
+        <script src="@Assets["/inicio.js"]"></script>
         <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
-        <script src="@Assets["video.js"]"></script>
+        <script src="@Assets["/video.js"]"></script>
     }
 
     <script>
@@ -85,6 +87,7 @@
 
     private IComponentRenderMode renderizacion => HttpContext.AcceptsInteractiveRouting() ? InteractiveServer : null;
 
+    private string enlaceBase = null;
     private string idioma = "en";
     private string usuarioId = null;
     private string userAgent = null;
@@ -103,6 +106,9 @@
             usuarioId = HttpContext?.User?.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
             userAgent = HttpContext?.Request?.Headers.UserAgent.ToString();
             dominio = HttpContext?.Request?.Host.Value;
+
+            var path = HttpContext?.Request?.Path.ToString();
+            enlaceBase = path.EndsWith("/") ? path : path + "/";
         }
 
         if (string.IsNullOrEmpty(usuarioId) == false)

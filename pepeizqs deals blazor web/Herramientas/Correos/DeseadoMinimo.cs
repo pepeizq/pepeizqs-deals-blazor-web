@@ -47,13 +47,13 @@ namespace Herramientas.Correos
 									</div>
 
 									<div style=""margin-top: 40px;"">
-										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; padding: 6px; text-align: left; font-size: 16px; border: 0px; text-decoration: none; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
+										<a href=""{{enlace}}"" style=""color: #f5f5f5; background-color: #293751; display: inline-block; user-select: none; width: 100%; text-align: left; font-size: 16px; border: 0px; text-decoration: none; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px;"">
-												<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 100%; margin-top: 10px;"" />
+												<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 100%;"" />
 											</div>
-											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; margin-top: 10px;"">
+											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; padding: 15px;"">
 												<img src=""{{imagenTienda}}"" style=""width: 120px; margin-right: 10px;"" />
-												<div class=""juego-descuento"" style=""margin: 10px; padding: 10px; background-color: darkgreen;"">
+												<div style=""padding: 10px; background-color: darkgreen; box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px 0px, rgba(0, 0, 0, 0.1) 0px 0px 2px 0px;"">
 													{{descuento}}
 												</div>
 												<div style=""padding: 5px 10px;"">
@@ -64,7 +64,7 @@ namespace Herramientas.Correos
 									</div>
 
 									<div style=""margin-top: 20px;"">
-										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #0d1621; display: inline-block; user-select: none; width: 100%; text-align: center; border: 0px; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
+										<a href=""{{enlace}}"" style=""color: #95c0fe; background-color: #293751; display: inline-block; user-select: none; width: 100%; text-align: center; border: 0px; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"">
 											<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 17px; margin: 15px;"">
 												{{mensajeAbrir}}
 											</div>
@@ -167,20 +167,20 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #222b44; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 								";
 
 				foreach (var json in jsons)
 				{
-					string htmlJson = @"<div style=""margin-bottom: 30px; display: flex; flex-direction: column; gap: 40px; color: #f5f5f5; background-color: #0d1621; padding: 20px;"">
+					string htmlJson = @"<div style=""margin-bottom: 30px; display: flex; flex-direction: column; gap: 40px; color: #f5f5f5; background-color: #293751; padding: 20px;"">
 											<a href=""{{enlace}}"" style=""color: #f5f5f5; user-select: none; width: 100%; text-align: left; font-size: 16px; text-decoration: none; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);"" target=""_blank"">
 												<div>
 													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px;"">
-														<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 300px; margin-top: 10px;"" />
+														<img src=""{{imagen}}"" style=""max-width: 100%; max-height: 300px;"" />
 													</div>
-													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; margin-top: 10px;"">
+													<div style=""display: flex; align-content: center; align-items: center; justify-content: center; font-size: 18px; padding: 15px;"">
 														<img src=""{{imagenTienda}}"" style=""width: 120px; margin-right: 10px;"" />
-														<div class=""juego-descuento"" style=""margin: 10px; padding: 10px; background-color: darkgreen;"">
+														<div style=""padding: 10px; background-color: darkgreen;  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px 0px, rgba(0, 0, 0, 0.1) 0px 0px 2px 0px;"">
 															{{descuento}}
 														</div>
 														<div style=""padding: 5px 10px;"">

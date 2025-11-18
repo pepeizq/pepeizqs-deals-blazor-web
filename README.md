@@ -10,4 +10,4 @@ More Info:
 > [!NOTE]
 > For security reasons I do not include the database in the source code, nor the files appsettings.json and appsettings.Development.json (these files connect to the database).
 
-[![https://pepeizqdeals.com/](https://i.imgur.com/F4822GJ.png)](https://pepeizqdeals.com/)
+[![https://pepe.deals/](https://i.imgur.com/F4822GJ.png)](https://pepe.deals/)

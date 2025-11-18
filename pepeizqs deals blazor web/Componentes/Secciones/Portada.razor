@@ -405,7 +405,7 @@
 	</div>
 </div>
 
-<div style="background-color: var(--fondoPortadaNoticias);">
+<div style="background-color: color-mix(in srgb, var(--fondoSubcabecera) 15%, var(--fondoPortadaNoticias) 100%);">
     <div class="cuerpo-ancho" style="padding: 20px 0px; display: flex; flex-direction: column; gap: 40px;">
 		@{
 			string marginAbajo = string.Empty;
@@ -602,7 +602,7 @@
 {
 	<div class="opciones-panel">
 		<div style="max-width: 800px; background-color: var(--fondoSubcabecera); border: 2px solid var(--fondoSubcabecera); margin: 20px auto; overflow-y: scroll; scrollbar-color: var(--fondoCodigo) var(--fondoOscuro); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
-			<div style="display: flex; align-items: center; gap: 30px; padding: 20px; background-color: var(--fondoSubsubcabecera);">
+			<div style="display: flex; align-items: center; gap: 30px; padding: 20px; background: color-mix(in srgb, var(--fondoSubcabecera) 45%, var(--fondoBotonPequeño));">
 				<button class="boton-pequeño" @onclick="OcultarFiltrado" style="width: fit-content; padding: 10px 15px;">
 					<div style="max-width: 24px; max-height: 24px;">
 						<svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -619,7 +619,7 @@
 			<div style="display: flex; flex-direction: column; gap: 30px; padding: 20px;">
 				<AuthorizeView>
 					<Authorized>
-						<div style="display: flex; flex-direction: column; gap: 30px; background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+						<div style="display: flex; flex-direction: column; gap: 30px; background-color: var(--fondoSubsubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1),0px 0px 2px 0px rgba(0, 0, 0, 0.1); padding: 20px;">
 							<div style="display: flex; align-items: center; gap: 20px;">
 								<div class="checkbox-caja">
 									<input type="checkbox" class="checkbox-interior" checked="@ocultarJuegosUsuarioSteam" @onchange="OcultarJuegosUsuarioSteam">
@@ -643,7 +643,7 @@
 					</Authorized>
 				</AuthorizeView>
 
-				<div style="background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+				<div style="background-color: var(--fondoSubsubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1),0px 0px 2px 0px rgba(0, 0, 0, 0.1); padding: 20px;">
 					<div style="padding-bottom: 15px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption2", "Index")
 					</div>
@@ -685,7 +685,7 @@
 					</div>
 				</div>
 
-				<div style="background-color: var(--fondoSubsubcabecera); border: 2px solid var(--fondoSubcabecera); box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24); padding: 20px;">
+				<div style="background-color: var(--fondoSubsubcabecera); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1),0px 0px 2px 0px rgba(0, 0, 0, 0.1); padding: 20px;">
 					<div style="padding-bottom: 15px;">
 						@Herramientas.Idiomas.BuscarTexto(idioma, "FilterOption3", "Index")
 					</div>

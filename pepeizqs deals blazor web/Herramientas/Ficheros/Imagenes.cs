@@ -9,6 +9,15 @@ namespace Herramientas.Ficheros
 {
 	public static class Imagenes
 	{
+		public static string[] hostsPermitidos = new[]
+		{
+			"i.imgur.com",
+			"shared.cloudflare.steamstatic.com",
+			"shared.fastly.steamstatic.com",
+			"avatars.steamstatic.com",
+			"fanatical.imgix.net"
+		};
+
 		public static async Task<string> DescargarYGuardar(string enlace, string nombreFichero, int ancho, int alto)
 		{
 			bool generar = false;
@@ -69,35 +78,35 @@ namespace Herramientas.Ficheros
 		{
 			if (string.IsNullOrEmpty(enlace) == false)
 			{
-				if (enlace.IndexOf("/") == 0)
+				if (enlace.Contains("https://pepe.deals") == true)
 				{
-					enlace = "https://pepe.deals" + enlace;
+					enlace = enlace.Replace("https://pepe.deals", null);
 				}
 
-				bool añadirServidor = true;
+				//bool añadirServidor = true;
 
-				if (enlace.Contains("https://hb.imgix.net/") == true)
-				{
-					añadirServidor = false;
-				}
-				else if (enlace.Contains("https://i.imgur.com/") == true)
-				{
-					añadirServidor = false;
-				}
-                else if (enlace.Contains("https://media.greenmangamingbundles.com/") == true)
-                {
-                    añadirServidor = false;
-                }
+				//if (enlace.Contains("https://hb.imgix.net/") == true)
+				//{
+				//	añadirServidor = false;
+				//}
+				//else if (enlace.Contains("https://i.imgur.com/") == true)
+				//{
+				//	añadirServidor = false;
+				//}
+    //            else if (enlace.Contains("https://media.greenmangamingbundles.com/") == true)
+    //            {
+    //                añadirServidor = false;
+    //            }
 
-                if (añadirServidor == true)
-				{
-					//enlace = "https://wsrv.nl/?n=-1&output=webp&url=" + enlace;
+    //            if (añadirServidor == true)
+				//{
+				//	//enlace = "https://wsrv.nl/?n=-1&output=webp&url=" + enlace;
 
-					//if (ancho > 0 && alto > 0)
-					//{
-					//	enlace = enlace + "&w=" + ancho + "&h=" + alto + "&dpr=2";
-					//}
-				}
+				//	//if (ancho > 0 && alto > 0)
+				//	//{
+				//	//	enlace = enlace + "&w=" + ancho + "&h=" + alto + "&dpr=2";
+				//	//}
+				//}
 			}
 
 			return enlace;

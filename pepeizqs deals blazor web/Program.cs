@@ -1,7 +1,8 @@
-using ApexCharts;
+﻿using ApexCharts;
 using BlazorNotification;
 using Herramientas;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
@@ -34,14 +35,28 @@ builder.Services.Configure<GzipCompressionProviderOptions>(opciones =>
 
 #region Optimizador
 
-builder.Services.AddWebOptimizer(opciones => {
-	opciones.AddCssBundle("/css/bundle.css", new NUglify.Css.CssSettings
+builder.Services.AddWebOptimizer(
+	acciones => 
 	{
-		CommentMode = NUglify.Css.CssComment.None
-	}, "lib/bootstrap/dist/css/bootstrap-utilities.css", "lib/bootstrap/dist/css/bootstrap.css", "lib/bootstrap/dist/css/bootstrap-grid.css", "lib/bootstrap/dist/css/bootstrap-reboot.css", "lib/bootstrap/dist/css/bootstrap-utilities.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css");
+		acciones.AddCssBundle("/css/bundle.css", new NUglify.Css.CssSettings
+		{
+			CommentMode = NUglify.Css.CssComment.None
+		}, "lib/bootstrap/dist/css/bootstrap-utilities.css", "lib/bootstrap/dist/css/bootstrap.css", "lib/bootstrap/dist/css/bootstrap-grid.css", "lib/bootstrap/dist/css/bootstrap-reboot.css", "lib/bootstrap/dist/css/bootstrap-utilities.css", "css/maestro.css", "css/cabecera_cuerpo_pie.css", "css/resto.css", "css/site.css");
 
-	opciones.AddJavaScriptBundle("/superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.js");
-});
+		acciones.AddJavaScriptBundle("superjs.js", "lib/jquery/dist/jquery.min.js", "lib/bootstrap/dist/js/bootstrap.js");
+
+		acciones.MinifyCssFiles("css/bundle.css");
+		acciones.MinifyJsFiles("superjs.js", "inicio.js", "video.js");
+	},
+	opciones =>
+	{
+		opciones.EnableCaching = true;
+		opciones.EnableMemoryCache = true;
+		opciones.EnableDiskCache = true;
+		opciones.EnableTagHelperBundling = true;
+		opciones.AllowEmptyBundle = false;
+		opciones.HttpsCompression = HttpsCompressionMode.Compress;
+	});
 
 #endregion
 

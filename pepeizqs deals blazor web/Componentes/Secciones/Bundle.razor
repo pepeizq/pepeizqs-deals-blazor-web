@@ -1,5 +1,7 @@
 ﻿@page "/bundle/{bundleId:int}/{bundleNombre?}/"
 
+@attribute [StreamRendering(true)]
+
 @using APIs.Steam
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Identity
@@ -190,8 +192,9 @@
 
 <style>
 	.bundle-tabla {
-		grid-template-columns: 1fr 1fr 1fr 1fr;
-		grid-gap: 40px;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		grid-gap: 30px;
 	}
 
 	.bundle-espacio {
@@ -206,10 +209,10 @@
 		padding: 15px 30px;
 	}
 
-	@@media (max-width: 1000px) {
+	@@media (max-width: 900px) {
 		.bundle-tabla {
-			grid-template-columns: 1fr 1fr 1fr;
-			grid-gap: 20px;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			grid-gap: 10px;
 		}
 
 		.bundle-espacio {
@@ -453,7 +456,7 @@
 								</div>
 							}
 
-							<div class="bundle-tabla" style="display: grid;">
+							<div class="bundle-tabla">
 								@foreach (var juego in juegosTier)
 								{
 									bool mostrar = true;
@@ -548,7 +551,7 @@
 		{
 			if (bundle != null)
 			{
-				if (tipo == Tipo.Bundle)
+				if (tipo == Tipo.Bundle && string.IsNullOrEmpty(bundleNombre) == true)
 				{
 					await JavaScript.InvokeVoidAsync("ChangeUrl", "/bundle/" + bundle.Id.ToString() + "/" + Herramientas.EnlaceAdaptador.Nombre(bundle.NombreBundle) + "/");
 				}

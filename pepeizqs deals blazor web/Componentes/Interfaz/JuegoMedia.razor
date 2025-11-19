@@ -177,7 +177,7 @@
         loadStream: function (url, dotNetHelper) {
             const video = document.getElementById("reproductor");
 
-            if (video != null)
+            if (video != null && url != null && dotNetHelper != null)
             {
                 video.pause();
 
@@ -202,7 +202,7 @@
                 video.load();
 
                 const lowerUrl = url.toLowerCase();
-
+                
                 if (lowerUrl.endsWith(".m3u8")) {
                     if (Hls.isSupported()) {
                         window.hls = new Hls({
@@ -210,7 +210,7 @@
                             enableWorker: true,
                             lowLatencyMode: false
                         });
-
+                        console.log("Cargando URL de video:", url);
                         window.hls.loadSource(url);
                         window.hls.attachMedia(video);
                     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -325,7 +325,7 @@
         {
             <div style="display: flex; justify-items: center; justify-content: center;">
                 <div class="pepe-video-contenedor">
-                    <video id="reproductor" style="width: 100%; height: calc(100vh - 190px);" @onclick="() => Reproducir()" @onplay="EjecutarVideo">
+                    <video id="reproductor" style="width: 100%; height: calc(100vh - 190px); max-height: 900px;" @onclick="() => Reproducir()" @onplay="EjecutarVideo">
                         <source src="@mediaMostrar" />
                     </video>
 
@@ -336,7 +336,7 @@
 
                         <div class="controles-fila">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <button class="control-boton" @onclick="() => Reproducir()">
+                                <button class="control-boton" @onclick="() => Reproducir()" title="Play">
                                     <div style="display: flex; width: 20px; height: 20px;">
                                         @if (estaReproduciendo == true)
                                         {
@@ -352,7 +352,7 @@
                                         }
                                     </div>
                                 </button>
-                                <button class="control-boton" @onclick="Mutear">
+                                <button class="control-boton" @onclick="Mutear" title="Mute">
                                     <div style="display: flex; width: 20px; height: 20px;">
                                         @if (estaMuteado == true)
                                         {
@@ -368,10 +368,10 @@
                                         }
                                     </div>
                                 </button>
-                                <input type="range" class="volumen-deslizador" min="0" max="1" step="0.05" @bind="volumen" @oninput="VolumenCambiar" />
+                                <input type="range" class="volumen-deslizador" min="0" max="1" step="0.05" @bind="volumen" @oninput="VolumenCambiar" title="Volume"/>
                             </div>
                             <div class="tiempo-mensaje">@tiempoMostrar</div>
-                            <button class="control-boton" @onclick="CambiarPantallaCompleta">
+                            <button class="control-boton" @onclick="CambiarPantallaCompleta" title="Full Screen">
                                 <div style="display: flex; width: 20px; height: 20px;">
                                     <svg style="fill: var(--colorTexto);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                         <path d="M408 64L552 64C565.3 64 576 74.7 576 88L576 232C576 241.7 570.2 250.5 561.2 254.2C552.2 257.9 541.9 255.9 535 249L496 210L409 297C399.6 306.4 384.4 306.4 375.1 297L343.1 265C333.7 255.6 333.7 240.4 343.1 231.1L430.1 144.1L391.1 105.1C384.2 98.2 382.2 87.9 385.9 78.9C389.6 69.9 398.3 64 408 64zM232 576L88 576C74.7 576 64 565.3 64 552L64 408C64 398.3 69.8 389.5 78.8 385.8C87.8 382.1 98.1 384.2 105 391L144 430L231 343C240.4 333.6 255.6 333.6 264.9 343L296.9 375C306.3 384.4 306.3 399.6 296.9 408.9L209.9 495.9L248.9 534.9C255.8 541.8 257.8 552.1 254.1 561.1C250.4 570.1 241.7 576 232 576z" />
@@ -679,28 +679,43 @@
 
     private async Task Reproducir()
     {
-        estaReproduciendo = await JavaScript.InvokeAsync<bool>("hlsPlayer.togglePlay");
+        if (javascriptListo == true)
+        {
+            estaReproduciendo = await JavaScript.InvokeAsync<bool>("hlsPlayer.togglePlay");
+        }
     }
 
     private async Task Mutear()
     {
-        estaMuteado = await JavaScript.InvokeAsync<bool>("hlsPlayer.toggleMute");
+        if (javascriptListo == true)
+        {
+            estaMuteado = await JavaScript.InvokeAsync<bool>("hlsPlayer.toggleMute");
+        }
     }
 
     private async Task VolumenCambiar(ChangeEventArgs e)
     {
-        volumen = Convert.ToDouble(e.Value);
-        await JavaScript.InvokeVoidAsync("hlsPlayer.setVolume", volumen);
+        if (javascriptListo == true)
+        {
+            volumen = Convert.ToDouble(e.Value);
+            await JavaScript.InvokeVoidAsync("hlsPlayer.setVolume", volumen);
+        }
     }
 
     private async Task CambiarPantallaCompleta()
     {
-        await JavaScript.InvokeVoidAsync("hlsPlayer.toggleFullScreen");
+        if (javascriptListo == true)
+        {
+            await JavaScript.InvokeVoidAsync("hlsPlayer.toggleFullScreen");
+        }
     }
 
     private async Task AdelantarAtrasarBarraVideo(MouseEventArgs e)
     {
-        await JavaScript.InvokeVoidAsync("hlsPlayer.seek", e.ClientX);
+        if (javascriptListo == true)
+        {
+            await JavaScript.InvokeVoidAsync("hlsPlayer.seek", e.ClientX);
+        }
     }
 
     private string FormatoTiempo(double t)

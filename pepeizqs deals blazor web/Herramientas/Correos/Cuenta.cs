@@ -19,7 +19,7 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #293751; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 									<div>
 										{{texto1}}.
 									</div>
@@ -59,7 +59,7 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #293751; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 									<div>
 										{{texto1}} <a href=""{{codigo}}"" target=""_blank"">{{texto2}}</a>.
 									</div>
@@ -101,7 +101,7 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #293751; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 									<div>
 										{{texto1}}
 									</div>
@@ -141,7 +141,7 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #293751; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 									<div>
 										{{texto1}} <a href=""{{codigo}}"" target=""_blank"">{{texto2}}</a>.
 									</div>
@@ -183,7 +183,7 @@ namespace Herramientas.Correos
 								<title></title>
 							</head>
 							<body>
-								<div style=""min-width: 0; word-wrap: break-word; background-color: #002033; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
+								<div style=""min-width: 0; word-wrap: break-word; background-color: #293751; background-clip: border-box; border: 0px; padding: 40px; font-family: Roboto, Helevtica, Arial, sans-serif, serif, EmojiFont; font-size: 16px; color: #f5f5f5;"">
 									<div>
 										{{texto1}} <a href=""{{codigo}}"" target=""_blank"">{{texto2}}</a>.
 									</div>

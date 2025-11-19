@@ -11,7 +11,8 @@ namespace Bundles2
 		IndieGala,
 		Itchio,
         GreenManGaming,
-		Digiphile
+		Digiphile,
+		PlanetPlay
     }
 
 	public class BundlesCargar
@@ -27,7 +28,8 @@ namespace Bundles2
 				APIs.IndieGala.Bundle.Generar(),
 				APIs.itchio.Bundle.Generar(),
 				APIs.GreenManGaming.Bundle.Generar(),
-				APIs.Digiphile.Bundle.Generar()
+				APIs.Digiphile.Bundle.Generar(),
+				APIs.PlanetPlay.Bundle.Generar()
             };
 
 			return bundles;

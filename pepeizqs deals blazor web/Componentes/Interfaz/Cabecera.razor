@@ -21,6 +21,25 @@
     };
 </script>
 
+<script>
+    window.buscador = {
+        teclearBusqueda: function (elemento, dotNetRef, retraso) {
+
+            let timerId = null;
+
+            elemento.addEventListener("input", function (e) {
+                const valor = e.target.value;
+
+                clearTimeout(timerId);
+
+                timerId = setTimeout(() => {
+                    dotNetRef.invokeMethodAsync("EventoTecleoBuscador", valor);
+                }, retraso);
+            });
+        }
+    };
+</script>
+
 @if (enseñarAlerta == true)
 {
     <div style="width: fit-content; background-color: var(--fondoAlerta); color: var(--colorTexto); padding: 10px 15px; margin: 30px; top: var(--alturaCabecera); left: 0; position: fixed; z-index: 1001; box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28),0px 0px 2px 0px rgba(0, 0, 0, 0.24);">
@@ -29,7 +48,7 @@
                 @Herramientas.Idiomas.BuscarTexto(idioma, "String1", "Clipboard")
             </div>
 
-            <button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content;">
+            <button @onclick="CerrarAvisoClipboard" class="boton-pequeño" style="display: flex; padding: 0px; background-color: transparent; width: fit-content; box-shadow: none;">
                 <div style="width: 20px; height: 20px;">
                     <svg class="svg-boton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                         <path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z" />
@@ -130,7 +149,7 @@
     @if (Herramientas.Bots.UserAgentEsBot(userAgent) == false)
     {
         <div style="@fondoBuscador padding-right: 10px; display: flex; align-items: center; gap: 10px; transition: background-color 1000ms linear;">
-            <input type="text" @bind-value="textoBuscador" @bind-value:event="oninput" @bind-value:after="TextoCambiaBuscador" @onclick="ClickBuscador" @onfocusout="PerderBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px; border: 0px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
+            <input @ref="inputRef" type="text" @bind-value="@textoBuscador" @onclick="ClickBuscador" @onfocusout="PerderBuscador" class="entrada-texto" style="background-color: transparent; min-width: 50%; font-size: 14px; border: 0px;" placeholder="@Herramientas.Idiomas.BuscarTexto(idioma, "SearchPlaceholder", "Header")" />
 
             @if (resultadosMostrar == null || resultadosMostrar?.Count == 0)
             {
@@ -212,7 +231,7 @@
             </div>
         </a>
 
-        <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" title="@Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")">
+        <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" title="@Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Footer")">
             <div style="width: 22px; height: 22px;">
                 <svg class="svg-icono" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M0 256C0 209.4 12.5 165.6 34.3 127.1L144.1 318.3C166 357.5 207.9 384 256 384C270.3 384 283.1 381.7 296.8 377.4L220.5 509.6C95.9 492.3 0 385.3 0 256zM365.1 321.6C377.4 302.4 384 279.1 384 256C384 217.8 367.2 183.5 340.7 160H493.4C505.4 189.6 512 222.1 512 256C512 397.4 397.4 511.1 256 512L365.1 321.6zM477.8 128H256C193.1 128 142.3 172.1 130.5 230.7L54.2 98.5C101 38.5 174 0 256 0C350.8 0 433.5 51.5 477.8 128V128zM168 256C168 207.4 207.4 168 256 168C304.6 168 344 207.4 344 256C344 304.6 304.6 344 256 344C207.4 344 168 304.6 168 256z" />
@@ -352,7 +371,7 @@
                         </a>
 
                         <a class="texto-cabecera boton-superior" href="https://pepeizqapps.com/extension/pepeizq-deals" target="_blank" style="font-size: 15px;">
-                            @Herramientas.Idiomas.BuscarTexto(idioma, "Extension", "Footer")
+                            @Herramientas.Idiomas.BuscarTexto(idioma, "String10", "Footer")
                         </a>
 
                         @if (usuarioPatreon == false)
@@ -451,11 +470,11 @@
 
                                 <div style="width: 100%; padding-left: 20px; padding-right: 20px; display: flex; flex-direction: column; gap: 5px;">
                                     <div>
-                                        @juego.Nombre
+                                        @((MarkupString)ResaltarTexto(juego.Nombre, textoBuscador))
                                     </div>
 
                                     <div style="font-size: 15px;">
-                                        <CajaJuegoMensaje idioma="@idioma" juego="@juego"/>
+                                        @Herramientas.Buscador.GenerarMensaje(idioma, juego, true, true, true)
                                     </div>
                                 </div>
                             </div>
@@ -546,13 +565,19 @@
         if (string.IsNullOrEmpty(Search) == false)
         {
             textoBuscador = Search;
-            TextoCambiaBuscador();
+            // TextoCambiaBuscador();
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool primerRender)
     {
         enlace = NavManager.Uri;
+
+        if (primerRender == true)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JavaScript.InvokeVoidAsync("buscador.teclearBusqueda", inputRef, objRef, 200);
+        }
 
         await InvokeAsync(StateHasChanged);
     }
@@ -575,6 +600,8 @@
 
     #region Buscador
 
+    private ElementReference inputRef;
+    private DotNetObjectReference<Cabecera> objRef;
     [PersistentState] public List<Juegos.Juego> resultadosMostrar { get; set; }
     public string textoBuscador { get; set; } = string.Empty;
     private string fondoBuscador = "background-color: var(--fondoEntrada);";
@@ -592,54 +619,104 @@
         }
     }
 
-    private void TextoCambiaBuscador()
+    [JSInvokable]
+    public async Task EventoTecleoBuscador(string texto)
     {
-        textoBuscador = textoBuscador.Replace("'", null);
-        fondoBuscador = "background-color: var(--fondoBotonPequeñoHover); border-bottom: 1px solid var(--fondoBoton); margin-bottom: -1px;";
-
-        if (textoBuscador?.Trim().Length > 3)
+        if (string.IsNullOrWhiteSpace(texto) || texto.Length < 3)
         {
-            if (resultadosMostrar == null)
-            {
-                resultadosMostrar = new List<Juegos.Juego>();
-            }
+            resultadosMostrar?.Clear();
+            fondoBuscador = "background-color: var(--fondoEntrada);";
 
-            resultadosMostrar.RemoveAll(j => j.NombreCodigo != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
 
-            if (conexion == null)
-            {
-                conexion = Herramientas.BaseDatos.Conectar();
-            }
-            else
-            {
-                if (conexion.State != System.Data.ConnectionState.Open)
-                {
-                    conexion = Herramientas.BaseDatos.Conectar();
-                }
-            }
+        resultadosMostrar = await BuscarAsync(texto);
+        await InvokeAsync(StateHasChanged);
+    }
 
-            using (conexion)
-            {
-                bool usuarioLogeado = false;
-
-                if (string.IsNullOrEmpty(usuarioId) == false)
-                {
-                    usuarioLogeado = true;
-                }
-
-                resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).AsParallel().ToList());
-            }
+    private async Task<List<Juegos.Juego>> BuscarAsync(string texto)
+    {
+        if (conexion == null)
+        {
+            conexion = Herramientas.BaseDatos.Conectar();
         }
         else
         {
-            resultadosMostrar?.Clear();
-
-            if (string.IsNullOrEmpty(textoBuscador) == true)
+            if (conexion.State != System.Data.ConnectionState.Open)
             {
-                fondoBuscador = "background-color: var(--fondoEntrada);";
+                conexion = Herramientas.BaseDatos.Conectar();
             }
         }
+
+        bool usuarioLogeado = string.IsNullOrEmpty(usuarioId) == false;
+
+        return BaseDatos.Juegos.Buscar.Nombre(texto, conexion, 10, false, -1, usuarioLogeado).ToList();
     }
+
+    private string ResaltarTexto(string texto, string busqueda)
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            return texto;
+
+        // Escapar caracteres especiales para regex
+        var regexBusq = System.Text.RegularExpressions.Regex.Escape(busqueda);
+        return System.Text.RegularExpressions.Regex.Replace(
+            texto,
+            regexBusq,
+            match => $"<b>{match.Value}</b>",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase
+        );
+    }
+
+    // private void TextoCambiaBuscador()
+    // {
+    //     textoBuscador = textoBuscador.Replace("'", null);
+    //     fondoBuscador = "background-color: var(--fondoBotonPequeñoHover); border-bottom: 1px solid var(--fondoBoton); margin-bottom: -1px;";
+
+    //     if (textoBuscador?.Trim().Length > 3)
+    //     {
+    //         if (resultadosMostrar == null)
+    //         {
+    //             resultadosMostrar = new List<Juegos.Juego>();
+    //         }
+
+    //         resultadosMostrar.RemoveAll(j => j.NombreCodigo != Herramientas.Buscador.LimpiarNombre(textoBuscador));
+
+    //         if (conexion == null)
+    //         {
+    //             conexion = Herramientas.BaseDatos.Conectar();
+    //         }
+    //         else
+    //         {
+    //             if (conexion.State != System.Data.ConnectionState.Open)
+    //             {
+    //                 conexion = Herramientas.BaseDatos.Conectar();
+    //             }
+    //         }
+
+    //         using (conexion)
+    //         {
+    //             bool usuarioLogeado = false;
+
+    //             if (string.IsNullOrEmpty(usuarioId) == false)
+    //             {
+    //                 usuarioLogeado = true;
+    //             }
+
+    //             resultadosMostrar.AddRange(BaseDatos.Juegos.Buscar.Nombre(textoBuscador, conexion, 5, false, -1, usuarioLogeado).Where(x => resultadosMostrar.FirstOrDefault(y => y.Nombre == x.Nombre) == null).AsParallel().ToList());
+    //         }
+    //     }
+    //     else
+    //     {
+    //         resultadosMostrar?.Clear();
+
+    //         if (string.IsNullOrEmpty(textoBuscador) == true)
+    //         {
+    //             fondoBuscador = "background-color: var(--fondoEntrada);";
+    //         }
+    //     }
+    // }
 
     private void LimpiarBusqueda(MouseEventArgs e)
     {

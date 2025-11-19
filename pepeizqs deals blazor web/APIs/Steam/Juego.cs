@@ -477,19 +477,7 @@ namespace APIs.Steam
                                 {
                                     string videoEnlace = string.Empty;
 
-                                    if (string.IsNullOrEmpty(videoEnlace) == true && video.DatosMax != null)
-									{
-                                        foreach (var videoDatos in video.DatosMax)
-                                        {
-                                            if (videoDatos.Tipo.Contains("mp4") == true)
-                                            {
-                                                videoEnlace = videoDatos.Fichero;
-												videoEnlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace);
-                                            }
-                                        }
-                                    }
-
-									if (string.IsNullOrEmpty(videoEnlace) == true && video.DatosAdaptivo != null)
+									if (video.DatosAdaptivo != null)
 									{
 										foreach (var videoDatos in video.DatosAdaptivo)
 										{
@@ -500,36 +488,50 @@ namespace APIs.Steam
 											}
 										}
 									}
+									else
+									{
+										if (video.DatosMax != null)
+										{
+											foreach (var videoDatos in video.DatosMax)
+											{
+												if (videoDatos.Tipo.Contains("mp4") == true)
+												{
+													videoEnlace = videoDatos.Fichero;
+													videoEnlace = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", videoEnlace);
+												}
+											}
+										}
+									}
 
 									if (string.IsNullOrEmpty(videoEnlace) == false)
 									{
 										string microEnlace = string.Empty;
 
-                                        foreach (var microDatos in video.DatosMicro)
-                                        {
-                                            if (microDatos.Tipo.Contains("mp4") == true)
-                                            {
-                                                microEnlace = microDatos.Fichero;
-                                            }
-                                        }
+										foreach (var microDatos in video.DatosMicro)
+										{
+											if (microDatos.Tipo.Contains("mp4") == true)
+											{
+												microEnlace = microDatos.Fichero;
+											}
+										}
 
-                                        Juegos.JuegoMediaVideo nuevoVideo = new Juegos.JuegoMediaVideo
-                                        {
-                                            Nombre = video.Nombre,
-                                            Enlace = videoEnlace,
-                                            MayorEdad = !video.MayorEdad,
-                                            Captura = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.Captura),
-                                            CapturaPequeña = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.CapturaPequeña),
-                                            Micro = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", microEnlace)
-                                        };
+										Juegos.JuegoMediaVideo nuevoVideo = new Juegos.JuegoMediaVideo
+										{
+											Nombre = video.Nombre,
+											Enlace = videoEnlace,
+											MayorEdad = !video.MayorEdad,
+											Captura = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.Captura),
+											CapturaPequeña = dominioImagenes2 + "/store_item_assets/" + video.EnlaceFormato.Replace("${FILENAME}", video.CapturaPequeña),
+											Micro = dominioVideos + video.EnlaceFormato.Replace("steam/apps/", null).Replace("${FILENAME}", microEnlace)
+										};
 
-                                        videos.Add(nuevoVideo);
+										videos.Add(nuevoVideo);
 
-                                        if (videos.Count > 4)
-                                        {
-                                            break;
-                                        }
-                                    }
+										if (videos.Count > 4)
+										{
+											break;
+										}
+									}
                                 }
 
                                 if (videos.Count > 0)

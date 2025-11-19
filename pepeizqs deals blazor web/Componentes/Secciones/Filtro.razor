@@ -683,20 +683,17 @@ else
 		bool encontrado = false;
 
 		int i = 0;
-		if (idsLista != null)
+		if (idsLista?.Count > 0)
 		{
-			if (idsLista.Count > 0)
+			foreach (var id in idsLista)
 			{
-				foreach (var id in idsLista)
+				if (id == nuevaId)
 				{
-					if (id == nuevaId)
-					{
-						encontrado = true;
-						break;
-					}
-
-					i += 1;
+					encontrado = true;
+					break;
 				}
+
+				i += 1;
 			}
 		}
 

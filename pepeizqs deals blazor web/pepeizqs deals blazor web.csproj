@@ -15,6 +15,7 @@
     <CompressionEnabled>false</CompressionEnabled>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+<EnableMSDeployAppOffline>true</EnableMSDeployAppOffline>
   </PropertyGroup>
 
   <ItemGroup>

@@ -283,7 +283,7 @@ namespace BaseDatos.Juegos
 													datosDeseados = new DeseadosDatos();
 												}
 
-												datosDeseados.Cantidad += 1;
+												datosDeseados.Cantidad = datosDeseados.Cantidad + 1;
 												datosDeseados.UltimoJuego = DateTime.Now;
 											}
 

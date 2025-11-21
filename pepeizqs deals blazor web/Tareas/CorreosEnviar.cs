@@ -1,8 +1,10 @@
 ﻿#nullable disable
 
+using BaseDatos.Pendientes;
 using Herramientas;
 using Herramientas.Correos;
 using Microsoft.Data.SqlClient;
+using pepeizqs_deals_blazor_web.Componentes.Admin;
 using System.Text.Json;
 
 namespace Tareas
@@ -54,86 +56,85 @@ namespace Tareas
 
 								if (pendientes?.Count > 0)
 								{
+									List<CorreoMinimoFinal> correosMinimosFinal = new List<CorreoMinimoFinal>();
+									List<CorreoDeseadoBundleFinal> correosDeseadosBundleFinal = new List<CorreoDeseadoBundleFinal>();
+
 									foreach (var pendiente in pendientes.ToList())
 									{
-										if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
+										if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo)
 										{
-											List<CorreoMinimoJson> jsons = new List<CorreoMinimoJson>();
-
-											foreach (var pendiente2 in pendientes)
+											if (correosMinimosFinal.Any(c => c.CorreoHacia == pendiente.CorreoHacia) == false)
 											{
-												if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
+												CorreoMinimoFinal correoMinimoFinal = new CorreoMinimoFinal()
 												{
-													jsons.Add(JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente2.Json));
-												}
+													CorreoHacia = pendiente.CorreoHacia,
+													Jsons = new List<CorreoMinimoJson>() { JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente.Json) }
+												};
+
+												correosMinimosFinal.Add(correoMinimoFinal);
 											}
-
-											if (jsons?.Count == 1)
+											else
 											{
-												bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
-
-												if (enviado == true)
-												{
-													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
-												}
-												else
-												{
-													break;
-												}
-											}
-											else if (jsons?.Count > 1)
-											{
-												Herramientas.Correos.DeseadoMinimo.Nuevos(jsons, pendiente.CorreoHacia);
-
-												foreach (var pendiente2 in pendientes.ToList())
-												{
-													if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo)
-													{
-														BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
-													}
-												}
-
-												pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
+												correosMinimosFinal.Where(c => c.CorreoHacia == pendiente.CorreoHacia).FirstOrDefault().Jsons.Add(JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente.Json));
 											}
 										}
-										else if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
+										else if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos)
 										{
-											List<CorreoDeseadoBundleJson> jsons = new List<CorreoDeseadoBundleJson>();
-
-											foreach (var pendiente2 in pendientes)
+											if (string.IsNullOrEmpty(pendiente.Json) == false)
 											{
-												if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
+												if (correosMinimosFinal.Any(c => c.CorreoHacia == pendiente.CorreoHacia) == false)
 												{
-													jsons.Add(JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente2.Json));
-												}
-											}
+													CorreoMinimoFinal correoMinimoFinal = new CorreoMinimoFinal()
+													{
+														CorreoHacia = pendiente.CorreoHacia,
+														Jsons = new List<CorreoMinimoJson>()
+													};
 
-											if (jsons?.Count == 1)
-											{
-												bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
-
-												if (enviado == true)
-												{
-													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+													correoMinimoFinal.Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoMinimoJson>>(pendiente.Json));
+													correosMinimosFinal.Add(correoMinimoFinal);
 												}
 												else
 												{
-													break;
+													correosMinimosFinal.Where(c => c.CorreoHacia == pendiente.CorreoHacia).FirstOrDefault().Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoMinimoJson>>(pendiente.Json));
 												}
 											}
-											else if (jsons?.Count > 1)
+										}
+										else if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle)
+										{
+											if (correosDeseadosBundleFinal.Any(c => c.CorreoHacia == pendiente.CorreoHacia) == false)
 											{
-												Herramientas.Correos.DeseadoBundle.Nuevos(jsons, pendiente.CorreoHacia);
-
-												foreach (var pendiente2 in pendientes.ToList())
+												CorreoDeseadoBundleFinal correoDeseadosBundleFinal = new CorreoDeseadoBundleFinal()
 												{
-													if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle)
-													{
-														BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
-													}
-												}
+													CorreoHacia = pendiente.CorreoHacia,
+													Jsons = new List<CorreoDeseadoBundleJson>() { JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente.Json) }
+												};
 
-												pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle);
+												correosDeseadosBundleFinal.Add(correoDeseadosBundleFinal);
+											}
+											else
+											{
+												correosDeseadosBundleFinal.Where(c => c.CorreoHacia == pendiente.CorreoHacia).FirstOrDefault().Jsons.Add(JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente.Json));
+											}
+										}
+										else if (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle)
+										{
+											if (string.IsNullOrEmpty(pendiente.Json) == false)
+											{
+												if (correosDeseadosBundleFinal.Any(c => c.CorreoHacia == pendiente.CorreoHacia) == false)
+												{
+													CorreoDeseadoBundleFinal correoMinimoFinal = new CorreoDeseadoBundleFinal()
+													{
+														CorreoHacia = pendiente.CorreoHacia,
+														Jsons = new List<CorreoDeseadoBundleJson>()
+													};
+
+													correoMinimoFinal.Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoDeseadoBundleJson>>(pendiente.Json));
+													correosDeseadosBundleFinal.Add(correoMinimoFinal);
+												}
+												else
+												{
+													correosDeseadosBundleFinal.Where(c => c.CorreoHacia == pendiente.CorreoHacia).FirstOrDefault().Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoDeseadoBundleJson>>(pendiente.Json));
+												}
 											}
 										}
 										else
@@ -150,6 +151,80 @@ namespace Tareas
 											}
 										}
 									}
+
+									#region Minimos Historicos
+
+									foreach (var correoMinimoFinal in correosMinimosFinal)
+									{ 
+										if (correoMinimoFinal.Jsons.Count > 1)
+										{
+											Herramientas.Correos.DeseadoMinimo.Nuevos(correoMinimoFinal.Jsons, correoMinimoFinal.CorreoHacia);
+
+											foreach (var pendiente2 in pendientes.ToList())
+											{
+												if (pendiente2.CorreoHacia == correoMinimoFinal.CorreoHacia && (pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo || pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos))
+												{
+													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
+												}
+											}
+										}
+									}
+
+									foreach (var pendiente in pendientes.ToList())
+									{
+										if (pendiente.Fecha.AddMinutes(20) < DateTime.Now && (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo || pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos))
+										{
+											bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+											if (enviado == true)
+											{
+												BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+											}
+											else
+											{
+												break;
+											}
+										}
+									}
+
+									#endregion
+
+									#region Deseados Bundle 
+
+									foreach (var correoDeseadoBundle in correosDeseadosBundleFinal)
+									{
+										if (correoDeseadoBundle.Jsons.Count > 1)
+										{
+											Herramientas.Correos.DeseadoBundle.Nuevos(correoDeseadoBundle.Jsons, correoDeseadoBundle.CorreoHacia);
+
+											foreach (var pendiente2 in pendientes.ToList())
+											{
+												if (pendiente2.CorreoHacia == correoDeseadoBundle.CorreoHacia && (pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo || pendiente2.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos))
+												{
+													BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id, conexion);
+												}
+											}
+										}
+									}
+
+									foreach (var pendiente in pendientes.ToList())
+									{
+										if (pendiente.Fecha.AddMinutes(5) < DateTime.Now && (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle || pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle))
+										{
+											bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+											if (enviado == true)
+											{
+												BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id, conexion);
+											}
+											else
+											{
+												break;
+											}
+										}
+									}
+
+									#endregion
 								}
 							}
 						}
@@ -166,5 +241,17 @@ namespace Tareas
 		{
 			await base.StopAsync(stoppingToken);
 		}
+	}
+
+	public class CorreoMinimoFinal
+	{
+		public List<CorreoMinimoJson> Jsons { get; set; }
+		public string CorreoHacia { get; set; }
+	}
+
+	public class CorreoDeseadoBundleFinal
+	{
+		public List<CorreoDeseadoBundleJson> Jsons { get; set; }
+		public string CorreoHacia { get; set; }
 	}
 }

@@ -178,7 +178,7 @@ namespace Herramientas.Correos
 				html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 				html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
 
-				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle);
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadosBundle, JsonSerializer.Serialize(jsons));
 			}
 		}
 	}

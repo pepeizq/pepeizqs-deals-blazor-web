@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using System.Text.Json;
+using Tareas;
 
 namespace Herramientas.Correos
 {
@@ -67,95 +68,6 @@ namespace Herramientas.Correos
 						nuevaFecha = nuevaFecha.AddMinutes(10);
 
 						global::BaseDatos.Admin.Actualizar.TareaUso("correosEnviar", nuevaFecha);
-
-						List<global::BaseDatos.CorreosEnviar.CorreoPendienteEnviar> pendientes = global::BaseDatos.CorreosEnviar.Buscar.PendientesEnviar();
-
-						if (pendientes?.Count > 0)
-						{
-							foreach (var pendiente in pendientes.ToList())
-							{
-								if (pendiente.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
-								{
-									List<CorreoMinimoJson> jsons = new List<CorreoMinimoJson>();
-
-									foreach (var pendiente2 in pendientes)
-									{
-										if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo && string.IsNullOrEmpty(pendiente2.Json) == false)
-										{
-											jsons.Add(JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente2.Json));
-										}
-									}
-
-									if (jsons?.Count == 1)
-									{
-										bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
-
-										if (enviado == true)
-										{
-											global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id);
-										}
-										else
-										{
-											break;
-										}
-									}
-									else if (jsons?.Count > 1)
-									{
-										Herramientas.Correos.DeseadoMinimo.Nuevos(jsons, pendiente.CorreoHacia);
-
-										foreach (var pendiente2 in pendientes.ToList())
-										{
-											if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo)
-											{
-												global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id);
-											}
-										}
-
-										pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo);
-									}
-								}
-								else if (pendiente.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle && pendiente.Fecha.AddMinutes(10) < DateTime.Now)
-								{
-									List<CorreoDeseadoBundleJson> jsons = new List<CorreoDeseadoBundleJson>();
-
-									foreach (var pendiente2 in pendientes)
-									{
-										if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle && string.IsNullOrEmpty(pendiente2.Json) == false)
-										{
-											jsons.Add(JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente2.Json));
-										}
-									}
-
-									if (jsons?.Count == 1)
-									{
-										bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
-
-										if (enviado == true)
-										{
-											global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente.Id);
-										}
-										else
-										{
-											break;
-										}
-									}
-									else if (jsons?.Count > 1)
-									{
-										Herramientas.Correos.DeseadoBundle.Nuevos(jsons, pendiente.CorreoHacia);
-
-										foreach (var pendiente2 in pendientes.ToList())
-										{
-											if (pendiente2.CorreoHacia == pendiente.CorreoHacia && pendiente2.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle)
-											{
-												global::BaseDatos.CorreosEnviar.Borrar.Ejecutar(pendiente2.Id);
-											}
-										}
-
-										pendientes.RemoveAll(p => p.CorreoHacia == pendiente.CorreoHacia && p.Tipo == global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.DeseadoBundle);
-									}
-								}
-							}
-						}
 
 						global::BaseDatos.Errores.Insertar.Mensaje("Correo Enviar " + correoDesde + " - " + correoHacia, ex);
 

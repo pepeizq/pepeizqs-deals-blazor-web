@@ -87,7 +87,7 @@ namespace Herramientas.Correos
 					html = html.Replace("<ul>", @"<ul style=""line-height: 22px;"">");
 				}
 
-				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Noticia);
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, DateTime.Now, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Noticia);
 
 				return true;
 			}

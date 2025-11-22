@@ -10,18 +10,46 @@ namespace BaseDatos.Extension
 	{
 		public int Id { get; set; }
 		public string Nombre { get; set; }
-		public List<JuegoPrecio> MinimosHistoricos { get; set; }
-		public List<JuegoPrecio> PreciosActuales { get; set; }
-		public List<JuegoBundle> Bundles { get; set; }
-		public List<JuegoGratis> Gratis { get; set; }
-		public List<JuegoSuscripcion> Suscripciones { get; set; }
+		public List<ExtensionPrecio> MinimosHistoricos { get; set; }
+		public List<ExtensionPrecio> PreciosActuales { get; set; }
+		public List<ExtensionBundle> Bundles { get; set; }
+		public List<ExtensionGratis> Gratis { get; set; }
+		public List<ExtensionSuscripcion> Suscripciones { get; set; }
 		public int IdSteam { get; set; }
 		public int IdGOG { get; set; }
 		public string SlugGOG { get; set; }
 		public string SlugEpic { get; set; }
-		public double Dolar { get; set; }
-		public double Libra { get; set; }
 	}
+
+	public class ExtensionPrecio
+	{
+		public JuegoPrecio Datos { get; set; }
+		public string Tienda { get; set; }
+		public string TiendaIcono { get; set; }
+	}
+
+	public class ExtensionBundle
+	{
+		public JuegoBundle Datos { get; set; }
+		public string NombreBundle { get; set; }
+		public string TiendaBundle { get; set; }
+		public string IconoBundle { get; set; }
+	}
+
+	public class ExtensionGratis
+	{
+		public JuegoGratis Datos { get; set; }
+		public string NombreGratis { get; set; }
+		public string IconoGratis { get; set; }
+	}
+
+	public class ExtensionSuscripcion
+	{
+		public JuegoSuscripcion Datos { get; set; }
+		public string NombreSuscripcion { get; set; }
+		public string IconoSuscripcion { get; set; }
+	}
+
 
 	public static class Buscar
 	{
@@ -61,7 +89,6 @@ namespace BaseDatos.Extension
 			}
 
 			Extension extension = new Extension();
-			bool buscarDivisas = false;
 
 			using (SqlCommand comando = new SqlCommand(buscar, conexion))
 			{
@@ -88,20 +115,25 @@ namespace BaseDatos.Extension
 						{
 							if (string.IsNullOrEmpty(lector.GetString(2)) == false)
 							{
-								extension.MinimosHistoricos = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(2));
+								var listaTemporal = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(2));
 
-								if (extension.MinimosHistoricos != null)
+								if (listaTemporal != null)
 								{
-									if (extension.MinimosHistoricos.Count > 0)
+									foreach (var precio in listaTemporal)
 									{
-										foreach (var precio in extension.MinimosHistoricos)
+										if (extension.MinimosHistoricos == null)
 										{
-											if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado == 0)
-											{
-												buscarDivisas = true;
-												break;
-											}
+											extension.MinimosHistoricos = new List<ExtensionPrecio>();
 										}
+
+										precio.Enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, false, false);
+
+										extension.MinimosHistoricos.Add(new ExtensionPrecio
+										{
+											Datos = precio,
+											Tienda = Tiendas2.TiendasCargar.DevolverTienda(precio.Tienda).Nombre,
+											TiendaIcono = Tiendas2.TiendasCargar.DevolverTienda(precio.Tienda).ImagenIcono
+										});
 									}
 								}
 							}
@@ -111,20 +143,25 @@ namespace BaseDatos.Extension
 						{
 							if (string.IsNullOrEmpty(lector.GetString(3)) == false)
 							{
-								extension.PreciosActuales = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(3));
+								var listaTemporal = JsonSerializer.Deserialize<List<JuegoPrecio>>(lector.GetString(3));
 
-								if (extension.PreciosActuales != null)
+								if (listaTemporal != null)
 								{
-									if (extension.PreciosActuales.Count > 0)
+									foreach (var precio in listaTemporal)
 									{
-										foreach (var precio in extension.PreciosActuales)
+										if (extension.PreciosActuales == null)
 										{
-											if (precio.Moneda != Herramientas.JuegoMoneda.Euro && precio.PrecioCambiado == 0)
-											{
-												buscarDivisas = true;
-												break;
-											}
+											extension.PreciosActuales = new List<ExtensionPrecio>();
 										}
+
+										precio.Enlace = Herramientas.EnlaceAcortador.Generar(precio.Enlace, precio.Tienda, false, false);
+
+										extension.PreciosActuales.Add(new ExtensionPrecio
+										{
+											Datos = precio,
+											Tienda = Tiendas2.TiendasCargar.DevolverTienda(precio.Tienda).Nombre,
+											TiendaIcono = Tiendas2.TiendasCargar.DevolverTienda(precio.Tienda).ImagenIcono
+										});
 									}
 								}
 							}
@@ -134,7 +171,33 @@ namespace BaseDatos.Extension
 						{
 							if (string.IsNullOrEmpty(lector.GetString(4)) == false)
 							{
-								extension.Bundles = JsonSerializer.Deserialize<List<JuegoBundle>>(lector.GetString(4));
+								var listaTemporal = JsonSerializer.Deserialize<List<JuegoBundle>>(lector.GetString(4));
+
+								if (listaTemporal != null)
+								{
+									foreach (var bundle in listaTemporal)
+									{
+										var datosBundle = BaseDatos.Bundles.Buscar.UnBundle(bundle.BundleId);
+
+										if (datosBundle != null)
+										{
+											if (extension.Bundles == null)
+											{
+												extension.Bundles = new List<ExtensionBundle>();
+											}
+
+											bundle.Enlace = Herramientas.EnlaceAcortador.Generar(bundle.Enlace, bundle.Tipo, false, false);
+
+											extension.Bundles.Add(new ExtensionBundle
+											{
+												Datos = bundle,
+												NombreBundle = datosBundle.NombreBundle,
+												TiendaBundle = Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).NombreTienda,
+												IconoBundle = Bundles2.BundlesCargar.DevolverBundle(bundle.Tipo).ImagenIcono
+											});
+										}
+									}
+								}
 							}
 						}
 
@@ -142,7 +205,27 @@ namespace BaseDatos.Extension
 						{
 							if (string.IsNullOrEmpty(lector.GetString(5)) == false)
 							{
-								extension.Gratis = JsonSerializer.Deserialize<List<JuegoGratis>>(lector.GetString(5));
+								var listaTemporal = JsonSerializer.Deserialize<List<JuegoGratis>>(lector.GetString(5));
+
+								if (listaTemporal != null)
+								{
+									foreach (var gratis in listaTemporal)
+									{
+										if (extension.Gratis == null)
+										{
+											extension.Gratis = new List<ExtensionGratis>();
+										}
+
+										gratis.Enlace = Herramientas.EnlaceAcortador.Generar(gratis.Enlace, gratis.Tipo, false, false);
+
+										extension.Gratis.Add(new ExtensionGratis
+										{
+											Datos = gratis,
+											NombreGratis = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).Nombre,
+											IconoGratis = Gratis2.GratisCargar.DevolverGratis(gratis.Tipo).ImagenIcono
+										});
+									}
+								}
 							}
 						}
 
@@ -150,7 +233,27 @@ namespace BaseDatos.Extension
 						{
 							if (string.IsNullOrEmpty(lector.GetString(6)) == false)
 							{
-								extension.Suscripciones = JsonSerializer.Deserialize<List<JuegoSuscripcion>>(lector.GetString(6));
+								var listaTemporal = JsonSerializer.Deserialize<List<JuegoSuscripcion>>(lector.GetString(6));
+
+								if (listaTemporal != null)
+								{
+									foreach (var suscripcion in listaTemporal)
+									{
+										if (extension.Suscripciones == null)
+										{
+											extension.Suscripciones = new List<ExtensionSuscripcion>();
+										}
+
+										suscripcion.Enlace = Herramientas.EnlaceAcortador.Generar(suscripcion.Enlace, suscripcion.Tipo, false, false);
+
+										extension.Suscripciones.Add(new ExtensionSuscripcion
+										{
+											Datos = suscripcion,
+											NombreSuscripcion = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).Nombre,
+											IconoSuscripcion = Suscripciones2.SuscripcionesCargar.DevolverSuscripcion(suscripcion.Tipo).ImagenIcono
+										});
+									}
+								}
 							}
 						}
 
@@ -178,35 +281,6 @@ namespace BaseDatos.Extension
 							{
 								extension.SlugEpic = lector.GetString(10);
 							}
-						}
-					}
-				}
-			}
-
-			if (buscarDivisas == false)
-			{
-				return extension;
-			}
-
-			string buscar2 = "SELECT id, cantidad FROM divisas WHERE id='USD' OR id='GBP'";
-
-			using (SqlCommand comando = new SqlCommand(buscar2, conexion))
-			{
-				using (SqlDataReader lector = comando.ExecuteReader())
-				{
-					while (lector.Read() == true)
-					{
-						if (lector.IsDBNull(0) == false)
-						{
-							if (lector.GetString(0) == "USD")
-							{
-								extension.Dolar = decimal.ToDouble(lector.GetDecimal(1));
-							}
-
-							if (lector.GetString(0) == "GBP")
-							{
-								extension.Libra = decimal.ToDouble(lector.GetDecimal(1));
-                            }
 						}
 					}
 				}

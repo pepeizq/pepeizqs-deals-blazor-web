@@ -6,7 +6,7 @@ namespace BaseDatos.CorreosEnviar
 {
 	public static class Insertar
 	{
-		public static void Ejecutar(string html, string titulo, string correoDesde, string correoHacia, CorreoPendienteTipo tipo, string json = null, SqlConnection conexion = null)
+		public static void Ejecutar(string html, string titulo, string correoDesde, string correoHacia, DateTime fecha, CorreoPendienteTipo tipo, string json = null, SqlConnection conexion = null)
 		{
 			if (conexion == null)
 			{
@@ -40,7 +40,7 @@ namespace BaseDatos.CorreosEnviar
 				comando.Parameters.AddWithValue("@correoDesde", correoDesde);
 				comando.Parameters.AddWithValue("@correoHacia", correoHacia);
 				comando.Parameters.AddWithValue("@tipo", tipo);
-				comando.Parameters.AddWithValue("@fecha", DateTime.Now);
+				comando.Parameters.AddWithValue("@fecha", fecha);
 
 				if (string.IsNullOrEmpty(json) == false)
 				{

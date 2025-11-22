@@ -144,10 +144,10 @@ namespace Herramientas.Correos
 			json.Descuento = descuento;
 			json.Idioma = idioma;
 
-			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo, JsonSerializer.Serialize(json));
+			global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, DateTime.Now, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo, JsonSerializer.Serialize(json));
 		}
 
-		public static void Nuevos(List<CorreoMinimoJson> jsons, string correoHacia)
+		public static void Nuevos(List<CorreoMinimoJson> jsons, string correoHacia, DateTime horaOriginal)
 		{
 			if (jsons?.Count > 0)
 			{
@@ -215,7 +215,7 @@ namespace Herramientas.Correos
 				html = html.Replace("{{año}}", DateTime.Now.Year.ToString());
 				html = html.Replace("{{mensaje}}", Herramientas.Idiomas.BuscarTexto(idioma, "Message", "Mails"));
 
-				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos, JsonSerializer.Serialize(jsons));
+				global::BaseDatos.CorreosEnviar.Insertar.Ejecutar(html, titulo, "mail@pepe.deals", correoHacia, horaOriginal, global::BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos, JsonSerializer.Serialize(jsons));
 			}
 		}
 	}

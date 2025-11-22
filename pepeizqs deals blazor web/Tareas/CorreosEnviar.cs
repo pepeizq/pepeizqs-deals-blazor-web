@@ -1,10 +1,8 @@
 ﻿#nullable disable
 
-using BaseDatos.Pendientes;
 using Herramientas;
 using Herramientas.Correos;
 using Microsoft.Data.SqlClient;
-using pepeizqs_deals_blazor_web.Componentes.Admin;
 using System.Text.Json;
 
 namespace Tareas
@@ -68,7 +66,8 @@ namespace Tareas
 												CorreoMinimoFinal correoMinimoFinal = new CorreoMinimoFinal()
 												{
 													CorreoHacia = pendiente.CorreoHacia,
-													Jsons = new List<CorreoMinimoJson>() { JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente.Json) }
+													Jsons = new List<CorreoMinimoJson>() { JsonSerializer.Deserialize<CorreoMinimoJson>(pendiente.Json) },
+													HoraOriginal = pendiente.Fecha
 												};
 
 												correosMinimosFinal.Add(correoMinimoFinal);
@@ -87,7 +86,8 @@ namespace Tareas
 													CorreoMinimoFinal correoMinimoFinal = new CorreoMinimoFinal()
 													{
 														CorreoHacia = pendiente.CorreoHacia,
-														Jsons = new List<CorreoMinimoJson>()
+														Jsons = new List<CorreoMinimoJson>(),
+														HoraOriginal = pendiente.Fecha
 													};
 
 													correoMinimoFinal.Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoMinimoJson>>(pendiente.Json));
@@ -106,7 +106,8 @@ namespace Tareas
 												CorreoDeseadoBundleFinal correoDeseadosBundleFinal = new CorreoDeseadoBundleFinal()
 												{
 													CorreoHacia = pendiente.CorreoHacia,
-													Jsons = new List<CorreoDeseadoBundleJson>() { JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente.Json) }
+													Jsons = new List<CorreoDeseadoBundleJson>() { JsonSerializer.Deserialize<CorreoDeseadoBundleJson>(pendiente.Json) },
+													HoraOriginal = pendiente.Fecha
 												};
 
 												correosDeseadosBundleFinal.Add(correoDeseadosBundleFinal);
@@ -125,7 +126,8 @@ namespace Tareas
 													CorreoDeseadoBundleFinal correoMinimoFinal = new CorreoDeseadoBundleFinal()
 													{
 														CorreoHacia = pendiente.CorreoHacia,
-														Jsons = new List<CorreoDeseadoBundleJson>()
+														Jsons = new List<CorreoDeseadoBundleJson>(),
+														HoraOriginal = pendiente.Fecha
 													};
 
 													correoMinimoFinal.Jsons.AddRange(JsonSerializer.Deserialize<List<CorreoDeseadoBundleJson>>(pendiente.Json));
@@ -158,7 +160,7 @@ namespace Tareas
 									{ 
 										if (correoMinimoFinal.Jsons.Count > 1)
 										{
-											Herramientas.Correos.DeseadoMinimo.Nuevos(correoMinimoFinal.Jsons, correoMinimoFinal.CorreoHacia);
+											Herramientas.Correos.DeseadoMinimo.Nuevos(correoMinimoFinal.Jsons, correoMinimoFinal.CorreoHacia, correoMinimoFinal.HoraOriginal);
 
 											foreach (var pendiente2 in pendientes.ToList())
 											{
@@ -172,9 +174,11 @@ namespace Tareas
 
 									foreach (var pendiente in pendientes.ToList())
 									{
-										if (pendiente.Fecha.AddMinutes(20) < DateTime.Now && (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo || pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos))
+										if (pendiente.Fecha.AddMinutes(15) > DateTime.Now && (pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimo || pendiente.Tipo == BaseDatos.CorreosEnviar.CorreoPendienteTipo.Minimos))
 										{
 											bool enviado = Herramientas.Correos.Enviar.Ejecutar(pendiente.Html, pendiente.Titulo, pendiente.CorreoDesde, pendiente.CorreoHacia);
+
+											BaseDatos.Errores.Insertar.Mensaje("Correo " + pendiente.Tipo.ToString() + " se borra ID: " + pendiente.Id.ToString(), enviado.ToString());
 
 											if (enviado == true)
 											{
@@ -195,7 +199,7 @@ namespace Tareas
 									{
 										if (correoDeseadoBundle.Jsons.Count > 1)
 										{
-											Herramientas.Correos.DeseadoBundle.Nuevos(correoDeseadoBundle.Jsons, correoDeseadoBundle.CorreoHacia);
+											Herramientas.Correos.DeseadoBundle.Nuevos(correoDeseadoBundle.Jsons, correoDeseadoBundle.CorreoHacia, correoDeseadoBundle.HoraOriginal);
 
 											foreach (var pendiente2 in pendientes.ToList())
 											{
@@ -247,11 +251,13 @@ namespace Tareas
 	{
 		public List<CorreoMinimoJson> Jsons { get; set; }
 		public string CorreoHacia { get; set; }
+		public DateTime HoraOriginal { get; set; }
 	}
 
 	public class CorreoDeseadoBundleFinal
 	{
 		public List<CorreoDeseadoBundleJson> Jsons { get; set; }
 		public string CorreoHacia { get; set; }
+		public DateTime HoraOriginal { get; set; }
 	}
 }
